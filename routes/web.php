@@ -14,3 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Auth::routes();
+
+// デフォルトのログイン直後画面 You are logged in!
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/admin_users_edit', 'AdminController@index');

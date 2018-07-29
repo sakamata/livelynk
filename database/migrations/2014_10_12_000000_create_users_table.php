@@ -17,8 +17,11 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('email')->unique();
+            $table->boolean('admin_user')->default(false);
             $table->string('password');
             $table->rememberToken();
+            // null でデフォルト値（now）が入る
+            $table->timestamp('last_access');
             $table->timestamps();
         });
     }
