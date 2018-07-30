@@ -20,4 +20,8 @@ Auth::routes();
 // デフォルトのログイン直後画面 You are logged in!
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/admin_users_edit', 'AdminController@index');
+Route::get('/admin_users_edit', 'AdminUserController@index');
+Route::get('/admin_mac_address_edit', 'AdminMacAddressController@index');
+
+// 外部からのPOST受け取り先 csrf off
+Route::post('/inport_post/mac_address', 'InportPostController@MacAddress');
