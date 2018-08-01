@@ -16,7 +16,7 @@ class CreateMacAddressesTable extends Migration
         Schema::create('mac_addresses', function (Blueprint $table) {
             $table->increments('id');
             $table->string('mac_address');
-            $table->string('bender')->nullable();
+            $table->string('vendor')->nullable();
             $table->string('device_name')->nullable();
             $table->integer('user_id')->nullable();
             $table->boolean('hide')->default(false);

@@ -18,7 +18,7 @@
                             <th>滞在中</th>
                             <th>非表示</th>
                             <th>MAC Address</th>
-                            <th>Bender</th>
+                            <th>vendor</th>
                             <th>デバイス名</th>
                             <th>user_id</th>
                             <th>登録ユーザー</th>
@@ -34,7 +34,7 @@
                             <td>{{$item->current_stay}}</td>
                             <td>{{$item->hide}}</td>
                             <td>{{$item->mac_address}}</td>
-                            <td>{{$item->bender}}</td>
+                            <td>{{$item->vendor}}</td>
                             <td>{{$item->device_name}}</td>
                             <td>{{$item->user_id}}</td>
                             <td></td>
