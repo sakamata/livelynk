@@ -14,6 +14,18 @@ class UsersTableSeeder extends Seeder
         $dateTime = date("Y-m-d H:i:s");
 
         $param = [
+            'name' => '未登録',
+            'email' => 'admin@aaa.com',
+            'admin_user' => 1,
+            'password' => '$2y$10$UVYV.ayVgbkDGDY703mPFu.NKy1ChxgGMDAuzng23JgQsXiQSEfA6',
+            'last_access' => $dateTime,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+
+        $param = [
             'name' => '鈴木　一郎',
             'email' => 'aaa@aaa.com',
             'admin_user' => 1,

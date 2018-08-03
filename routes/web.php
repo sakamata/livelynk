@@ -21,7 +21,8 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/admin_users_edit', 'AdminUserController@index');
-Route::get('/admin_mac_address_edit', 'AdminMacAddressController@index');
+Route::get('/admin_mac_address', 'AdminMacAddressController@index');
+Route::get('/admin_mac_address/edit{id?}', 'AdminMacAddressController@edit');
 
 // 外部からのPOST受け取り先 csrf off
 Route::post('/inport_post/mac_address', 'InportPostController@MacAddress');

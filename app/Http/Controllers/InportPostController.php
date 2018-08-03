@@ -28,8 +28,10 @@ class InportPostController extends Controller
 
             if (!$check) {
                 // 未登録なら、最低限のinsert 滞在中に変更
+                // user_id = 1 は仕様上[ユーザー未登録]のrecord
                 $param = [
                     'mac_address' => $post_mac,
+                    'user_id' => 1,
                     'arraival_at' => $now,
                     'current_stay' => true,
                     'created_at' => $now,
