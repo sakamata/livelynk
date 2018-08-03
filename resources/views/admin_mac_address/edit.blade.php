@@ -50,9 +50,11 @@
                         </div>
                         <hr>
                         <input type="hidden" name="id" value="{{$item->id}}">
+                        @component('components.error')
+                        @endcomponent
                         <div class="form-group">
                             <label for="InputTextarea">デバイス名</label>
-                            <input type="text" class="form-control" name="device_name" value="{{$item->device_name}}">
+                            <input type="text" class="form-control" name="device_name" value="{{old('device_name', $item->device_name)}}">
                         </div>
 
                         <div class="form-group">
