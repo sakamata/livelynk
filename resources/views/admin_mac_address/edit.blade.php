@@ -49,6 +49,7 @@
                             ユーザ名: {{$item->user->name}}
                         </div>
                         <hr>
+                        <input type="hidden" name="id" value="{{$item->id}}">
                         <div class="form-group">
                             <label for="InputTextarea">デバイス名</label>
                             <input type="text" class="form-control" name="device_name" value="{{$item->device_name}}">
@@ -62,16 +63,21 @@
                         <div class="form-group">
                             <label for="InputTextarea">登録ユーザー</label>
                             <select name="user_id" class="form-control">
-                                <option value="">$users->name 1 taro</option>
-                                <option value="">$users->name 2 jiro</option>
-                                <option value="">$users->name 3 saburo</option>
+                                @foreach($users as $user)
+                                <option value="{{$user->id}}">{{$user->id}}&nbsp;:&nbsp;{{$user->name}}</option>
+                                @endforeach
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label for="InputTextarea">表示設定</label>
-                            <input type="radio" name="hide" value="0">表示する
+                            <!-- カッコ悪いけどひとまず速度重視 -->
+                            @if($item->hide == 0)
+                            <input type="radio" name="hide" value="0" checked="checked">表示する
                             <input type="radio" name="hide" value="1">表示しない
+                            @else
+                            <input type="radio" name="hide" value="0">表示する
+                            <input type="radio" name="hide" value="1" checked="checked">表示しない
+                            @endif
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">

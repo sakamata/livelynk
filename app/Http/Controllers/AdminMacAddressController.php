@@ -26,16 +26,25 @@ class AdminMacAddressController extends Controller
         }
 
         $item = 'App\MacAddress'::where('id', $request->id)->first();
+        $users = DB::table('users')->get(['id', 'name']);
 
         Log::debug(print_r($item, 1));
 
         return view('admin_mac_address.edit', [
             'item' => $item,
+            'users' => $users,
         ]);
     }
 
-    public function update($value='')
+    public function update(Request $request)
     {
-        // code...
+        $param = [
+            'device_name' => $request->device_name,
+            'vendor' => $request->vendor,
+            'hide' => $request->hide,
+            'user_id' => $request->user_id,
+        ];
+        'App\MacAddress'::where('id', $request->id)->update($param);
+        return redirect('/admin_mac_address');
     }
 }
