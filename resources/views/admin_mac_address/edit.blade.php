@@ -59,7 +59,7 @@
 
                         <div class="form-group">
                             <label for="InputTextarea">vendor</label>
-                            <input type="text" class="form-control" name="vendor" value="{{$item->vendor}}">
+                            <input type="text" class="form-control" name="vendor" value="{{old('vendor', $item->vendor)}}">
                         </div>
 
                         <div class="form-group">

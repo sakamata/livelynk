@@ -12,7 +12,7 @@ class AdminMacAddressController extends Controller
 {
     public function index(Request $request)
     {
-        $items = DB::table('mac_addresses')->get();
+        $items = 'App\MacAddress'::get();
         return view('admin_mac_address.index', [
             'items' => $items,
         ]);
@@ -28,7 +28,7 @@ class AdminMacAddressController extends Controller
         $item = 'App\MacAddress'::where('id', $request->id)->first();
         $users = DB::table('users')->get(['id', 'name']);
 
-        Log::debug(print_r($item, 1));
+        // Log::debug(print_r($item, 1));
 
         return view('admin_mac_address.edit', [
             'item' => $item,
@@ -39,8 +39,8 @@ class AdminMacAddressController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'device_name' => 'nullable|string|max:10',
-            'vendor' => 'nullable|string|max:10',
+            'device_name' => 'nullable|string|max:100',
+            'vendor' => 'nullable|string|max:100',
             'hide' => 'required|boolean',
             'user_id' => 'required|integer',
         ]);

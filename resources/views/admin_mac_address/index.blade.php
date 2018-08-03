@@ -27,6 +27,7 @@
                             <th>退出日時</th>
                             <th>登録日時</th>
                             <th>更新日時</th>
+                            <th>操作</th>
                         </tr>
                     @foreach ($items as $item)
                         <tr>
@@ -37,12 +38,15 @@
                             <td>{{$item->vendor}}</td>
                             <td>{{$item->device_name}}</td>
                             <td>{{$item->user_id}}</td>
-                            <td></td>
+                            <td>{{$item->user->name}}</td>
                             <td>{{$item->router_id}}</td>
                             <td>{{$item->arraival_at}}</td>
                             <td>{{$item->departure_at}}</td>
                             <td>{{$item->created_at}}</td>
                             <td>{{$item->updated_at}}</td>
+                            <td>
+                                <a href="/admin_mac_address/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
+                            </td>
                         </tr>
                     @endforeach
                     </table>
