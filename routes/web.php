@@ -21,10 +21,13 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 // 管理画面 認証済みuserのみ表示
-Route::get('/admin_users_edit', 'AdminUserController@index')->middleware('auth');
+Route::get('/admin_user', 'AdminUserController@index')->middleware('auth');
+Route::get('/admin_user/edit{id?}', 'AdminUserController@edit')->middleware('auth');
+Route::post('/admin_user/update', 'AdminUserController@update')->middleware('auth');
+
 Route::get('/admin_mac_address', 'AdminMacAddressController@index')->middleware('auth');
-Route::post('/admin_mac_address/update', 'AdminMacAddressController@update')->middleware('auth');
 Route::get('/admin_mac_address/edit{id?}', 'AdminMacAddressController@edit')->middleware('auth');
+Route::post('/admin_mac_address/update', 'AdminMacAddressController@update')->middleware('auth');
 
 // 外部からのPOST受け取り先 csrf off
 Route::post('/inport_post/mac_address', 'InportPostController@MacAddress');
