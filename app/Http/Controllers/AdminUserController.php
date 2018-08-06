@@ -66,11 +66,7 @@ class AdminUserController extends Controller
         $before_ids = json_decode(json_encode($before_ids), true);
 
         // チェックを外したarrayを抽出
-
         $remove_ids = array_diff($before_ids, (array)$request->mac_addres_id);
-
-        Log::debug(print_r($remove_ids, 1));
-        Log::debug(print_r((array)$request->mac_addres_id, 1));
 
         // チェックを外した id を id=1 の未登録（管理ユーザー）扱いに変更する
         if ($remove_ids) {
@@ -82,7 +78,6 @@ class AdminUserController extends Controller
             }
         }
         return redirect('/admin_user');
-
     }
 
 }
