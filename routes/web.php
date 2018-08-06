@@ -11,11 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
+
+// メイン画面 滞在者一覧 or home画面
+Route::get('/', 'IndexController@index');
 
 // デフォルトのログイン直後画面 You are logged in!
 Route::get('/home', 'HomeController@index')->name('home');
