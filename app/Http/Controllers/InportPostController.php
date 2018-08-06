@@ -56,8 +56,8 @@ class InportPostController extends Controller
         $stays_macs = DB::table('mac_addresses')->where('current_stay', 1)->pluck('mac_address');
         // クエリビルダで取得したオブジェクトを配列に変換
         $stays_mac_array = json_decode(json_encode($stays_macs), true);
-        $departures = array_diff($stays_mac_array, $post_mac_array);
-        // Log::debug(print_r($departures, 1));
+        $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
+        Log::debug(print_r($departures, 1));
         if ($departures) {
             foreach ($departures as $departure) {
                 DB::table('mac_addresses')->where('mac_address', $departure)->update([
