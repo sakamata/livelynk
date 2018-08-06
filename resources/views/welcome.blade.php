@@ -79,7 +79,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    {{ config('app.name', 'Laravel') }}<br>@ Geek Office
                 </div>
 
                 <div class="links">
