@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+@component('components.header_menu')
+@endcomponent
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
