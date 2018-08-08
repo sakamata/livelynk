@@ -15,7 +15,7 @@ class IndexController extends Controller
     public function index(Request $request)
     {
         if (Auth::check()) {
-            $items = 'App\UserTable'::get();
+            $items = 'App\UserTable'::orderBy('last_access', 'desc')->get();
             return view('index.index', [
                 'items' => $items,
             ]);

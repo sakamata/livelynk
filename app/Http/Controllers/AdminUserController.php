@@ -35,8 +35,8 @@ class AdminUserController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:32',
-            'email' => 'required|email|max:256',
+            'name' => 'required|string|max:30',
+            'email' => 'required|string|email|max:255',
             'admin_user' => 'required|boolean',
             'mac_addres_id' => 'array',
         ]);
