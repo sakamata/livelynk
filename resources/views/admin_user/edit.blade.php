@@ -14,20 +14,19 @@
                             {{ session('status') }}
                         </div>
                     @endif
-
                     <form action="/admin_user/update" method="post">
                         {{ csrf_field() }}
                         <div>
                             <h3>ID: {{$item->id}}</h3>
                         </div>
                         <div>
-                            最終来訪: {{$item->last_access}}
+                            最終来訪: {{$item->last_access->format('n月j日 G:i:s')}}
                         </div>
                         <div>
-                            登録日時: {{$item->created_at}}
+                            登録日時: {{$item->created_at->format('n月j日 G:i:s')}}
                         </div>
                         <div>
-                            更新日時: {{$item->updated_at}}
+                            更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
                         </div>
                         <hr>
                         <input type="hidden" name="id" value="{{$item->id}}">
@@ -35,12 +34,11 @@
                         @endcomponent
                         <div class="form-group">
                             <label for="InputTextarea">名前</label>
-                            <input type="text" class="form-control" name="name" value="{{old('name', $item->name)}}">
+                            <input type="text" class="form-control form-control-lg" name="name" value="{{old('name', $item->name)}}">
                         </div>
-
                         <div class="form-group">
                             <label for="InputTextarea">Email</label>
-                            <input type="text" class="form-control" name="email" value="{{old('email', $item->email)}}">
+                            <input type="text" class="form-control form-control-lg" name="email" value="{{old('email', $item->email)}}">
                         </div>
                         <div class="form-group">
                             <label for="InputTextarea">管理権限&nbsp;&nbsp;</label>
@@ -56,8 +54,8 @@
                         <hr>
                         <div class="form-group">
                             <label for="InputTextarea">デバイス（所有するデバイスをチェックして登録）</label>
-                            <table class="table table-striped table-hover">
-                                <tr class="info">
+                            <table class="table table-hover">
+                                <tr class="info thead-light">
                                     <th>owner</th>
                                     <th>ID</th>
                                     <th>滞在中</th>
@@ -74,6 +72,11 @@
                                     <td>
                                         <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}" checked="checked">
                                     </td>
+                                @elseif($mac_add->current_stay == 1 && $mac_add->hide == 0)
+                                <tr class="table-warning ">
+                                    <td>
+                                        <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}">
+                                    </td>
                                 @else
                                 <tr>
                                     <td>
@@ -86,21 +89,18 @@
                                     <td>{{$mac_add->vendor}}</td>
                                     <td>{{$mac_add->user_id}}:{{$mac_add->device_name}}</td>
                                     <td>{{$mac_add->router_id}}</td>
-                                    <td>{{$mac_add->arraival_at}}</td>
-                                    <td>{{$mac_add->created_at}}</td>
+                                    <td>{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i:s')}}</td>
+                                    <td>{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i:s')}}</td>
                                 </tr>
                                 @endforeach
                             </table>
                         </div>
-
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">
                                 編集
                             </button>
                         </div>
-
                     </form>
-
                 </div>
             </div>
         </div>

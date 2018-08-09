@@ -18,10 +18,10 @@
                     <form action="/admin_mac_address/update" method="post">
                         {{ csrf_field() }}
                         <div>
-                            ID: {{$item->id}}
+                            <h3>MAC Address:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->mac_address}}</h3>
                         </div>
                         <div>
-                            <h2>MAC Address:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->mac_address}}</h2>
+                            ID: {{$item->id}}
                         </div>
                         <div>
                             滞在中: {{$item->current_stay}}
@@ -29,26 +29,20 @@
                         <div>
                             非表示: {{$item->hide}}
                         </div>
-                        <div>
+                        <!-- <div>
                             ルーターID: {{$item->router_id}}
+                        </div> -->
+                        <div>
+                            来訪日時: {{$item->arraival_at->format('n月j日 G:i:s')}}
                         </div>
                         <div>
-                            来訪日時: {{$item->arraival_at}}
+                            退出日時: {{$item->departure_at->format('n月j日 G:i:s')}}
                         </div>
                         <div>
-                            退出日時: {{$item->departure_at}}
+                            登録日時: {{$item->created_at->format('n月j日 G:i:s')}}
                         </div>
                         <div>
-                            登録日時: {{$item->created_at}}
-                        </div>
-                        <div>
-                            更新日時: {{$item->updated_at}}
-                        </div>
-                        <div>
-                            user ID: {{$item->user->id}}
-                        </div>
-                        <div>
-                            ユーザ名: {{$item->user->name}}
+                            更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
                         </div>
                         <hr>
                         <input type="hidden" name="id" value="{{$item->id}}">
@@ -56,19 +50,24 @@
                         @endcomponent
                         <div class="form-group">
                             <label for="InputTextarea">デバイス名</label>
-                            <input type="text" class="form-control" name="device_name" value="{{old('device_name', $item->device_name)}}">
+                            <input type="text" class="form-control form-control-lg" name="device_name" value="{{old('device_name', $item->device_name)}}">
                         </div>
 
                         <div class="form-group">
                             <label for="InputTextarea">vendor</label>
-                            <input type="text" class="form-control" name="vendor" value="{{old('vendor', $item->vendor)}}">
+                            <input type="text" class="form-control form-control-lg" name="vendor" value="{{old('vendor', $item->vendor)}}">
                         </div>
 
                         <div class="form-group">
                             <label for="InputTextarea">登録ユーザー</label>
-                            <select name="user_id" class="form-control">
+                            <select name="user_id" class="form-control form-control-lg">
                                 @foreach($users as $user)
-                                <option value="{{$user->id}}">{{$user->id}}&nbsp;:&nbsp;{{$user->name}}</option>
+                                    @if($item->user->id == $user->id)
+                                    <?php $selected = 'selected'; ?>
+                                    @else
+                                    <?php $selected = ''; ?>
+                                    @endif
+                                    <option value="{{$user->id}}" {{ $selected }}>{{$user->id}}&nbsp;:&nbsp;{{$user->name}}</option>
                                 @endforeach
                             </select>
                         </div>

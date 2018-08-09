@@ -14,8 +14,8 @@
                             {{ session('status') }}
                         </div>
                     @endif
-                    <table class="table table-striped table-hover">
-                        <tr class="info">
+                    <table class="table table-hover">
+                        <tr class="info thead-light">
                             <th>id</th>
                             <th>管理者</th>
                             <th>名前&nbsp;/&nbsp;Email</th>
@@ -29,18 +29,17 @@
                         <tr>
                             <td>{{$item->id}}</td>
                             <td>{{$item->admin_user}}</td>
-                            <td>{{$item->name}}</br>
-                            {{$item->email}}</td>
+                            <td>{{$item->name}}</br>{{$item->email}}</td>
                             <td>
                             @if($item->mac_addresses != null)
-                                    @foreach($item->mac_addresses as $mac_add)
-                                    <div>ID:{{$mac_add->id}}&nbsp;&nbsp;{{$mac_add->device_name}}</div>
-                                    @endforeach
+                                @foreach($item->mac_addresses as $mac_add)
+                                <div>ID:{{$mac_add->id}}&nbsp;&nbsp;{{$mac_add->device_name}}</div>
+                                @endforeach
                             @endif
                             </td>
-                            <td>{{$item->last_access}}</td>
-                            <td>{{$item->created_at}}</td>
-                            <td>{{$item->updated_at}}</td>
+                            <td>{{$item->last_access->format('n月j日 G:i:s')}}</td>
+                            <td>{{$item->created_at->format('n月j日 G:i:s')}}</td>
+                            <td>{{$item->updated_at->format('n月j日 G:i:s')}}</td>
                             <td>
                                 <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
                             </td>

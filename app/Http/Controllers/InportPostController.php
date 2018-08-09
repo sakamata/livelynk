@@ -47,16 +47,15 @@ class InportPostController extends Controller
             } else {
                 // 登録済みの場合
                 // users tableの last_access を更新
-                $user = DB::table('mac_addresses')->where('mac_address', $post_mac)->where('current_stay', 1)->first();
+                $user = DB::table('mac_addresses')->where('mac_address', $post_mac)->first();
 
-                // 同じuser_id を何度も更新しちゃうのをなんとかする
-                DB::table('users')->where('id', $user->id)->update([
+                // ***ToDo*** デバイス重複で同じ id のレコードを何度も更新しちゃうので foreachの外で処理させる
+                DB::table('users')->where('id', $user->user_id)->update([
                     'last_access' => $now,
                 ]);
 
                 // 到着直後なら 該当レコードを滞在中に変更 arraival_at 更新
                 if (!in_array($post_mac, $stays_mac_array)) {
-                    Log::debug(print_r($post_mac, 1));
                     DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
                         'arraival_at' => $now,
                         'current_stay' => true,
@@ -75,7 +74,6 @@ class InportPostController extends Controller
 
         // 帰宅者をPOST値とBD値の比較で判定する
         $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
-        Log::debug(print_r($departures, 1));
         if ($departures) {
             foreach ($departures as $departure) {
                 DB::table('mac_addresses')->where('mac_address', $departure)->update([

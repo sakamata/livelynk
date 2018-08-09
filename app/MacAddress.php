@@ -13,6 +13,14 @@ class MacAddress extends Model
      */
     protected $table = 'mac_addresses';
 
+    // 日時表記変更の ->format('Y-m-d') を使いたいカラム名を指定する
+    protected $dates = [
+        'arraival_at',
+        'departure_at',
+        'created_at',
+        'updated_at',
+    ];
+
     public function user()
     {
         return $this->belongsTo('App\User', 'user_id');
