@@ -44,7 +44,11 @@
                             <td>{{$item->user->name}}</td>
                             <td>{{$item->router_id}}</td>
                             <td>{{$item->arraival_at->format('n月j日 G:i:s')}}</td>
+                        @if($item->departure_at != null)
                             <td>{{$item->departure_at->format('n月j日 G:i:s')}}</td>
+                        @else
+                            <td></td>
+                        @endif
                             <td>{{$item->created_at->format('n月j日 G:i:s')}}</td>
                             <td>
                                 <a href="/admin_mac_address/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>

@@ -36,7 +36,11 @@
                             来訪日時: {{$item->arraival_at->format('n月j日 G:i:s')}}
                         </div>
                         <div>
+                        @if($item->departure_at != null)
                             退出日時: {{$item->departure_at->format('n月j日 G:i:s')}}
+                        @else
+                            退出日時: 滞在中
+                        @endif
                         </div>
                         <div>
                             登録日時: {{$item->created_at->format('n月j日 G:i:s')}}
