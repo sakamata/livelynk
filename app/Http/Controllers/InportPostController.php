@@ -29,6 +29,12 @@ class InportPostController extends Controller
 
         // 登録済みMACアドレスか個別確認
         foreach ($post_mac_array as $post_mac) {
+            // MACアドレス型で無ければ処理中止
+            if(!preg_match('/^([0-9A-Z][0-9A-Z][:-]){5}[0-9A-Z][0-9A-Z]$/', $post_mac)){
+                Log::debug(print_r('MAC address no mach!!!!', 1));
+                break;
+            }
+
             $check = DB::table('mac_addresses')->where('mac_address', $post_mac)->exists();
             if (!$check) {
                 // 未登録なら、最低限のinsert 滞在中に変更
