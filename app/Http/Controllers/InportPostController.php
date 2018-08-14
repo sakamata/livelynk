@@ -14,13 +14,24 @@ class InportPostController extends Controller
     public function MacAddress(Request $request)
     {
         // ***ToDo*** CSRF対策　独自tokenでバリデート
-        // ***ToDo*** http://php.net/manual/ja/datetime.createfromformat.php
         // PI側から getTime() で渡された日時をミリ秒削ってdatetimeに変換
         // getTime_to_DATETIME(getTime)
 
         $now = Carbon::now();
         $json = $request->mac;
-        $post_mac_array = json_decode($json);
+        $check_mac_array = json_decode($json);
+        Log::debug(print_r($json, 1));
+
+        // MACアドレス形式のみ配列に入れ、それ以外はlog出力
+        $post_mac_array = array();
+        foreach ($check_mac_array as $check_mac) {
+            $pattern = preg_match('/([a-fA-F0-9]{2}[:|\-]?){6}/', $check_mac);
+            if (!$pattern) {
+                Log::debug(print_r('Inport post Not MACaddress!! posted element ==> ' .$check_mac, 1));
+            } else {
+                array_push($post_mac_array, $check_mac);
+            }
+        }
 
         // DBにあるPOST前の滞在者を取得
         $stays_macs = DB::table('mac_addresses')->where('current_stay', 1)->pluck('mac_address');
@@ -28,7 +39,7 @@ class InportPostController extends Controller
         $stays_mac_array = json_decode(json_encode($stays_macs), true);
 
         // 登録済みMACアドレスか個別確認
-        foreach ($post_mac_array as $post_mac) {
+        foreach ((array)$post_mac_array as $post_mac) {
             $check = DB::table('mac_addresses')->where('mac_address', $post_mac)->exists();
             if (!$check) {
                 // 未登録なら、最低限のinsert 滞在中に変更
