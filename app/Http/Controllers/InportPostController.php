@@ -22,14 +22,15 @@ class InportPostController extends Controller
         $check_mac_array = json_decode($json);
         Log::debug(print_r($json, 1));
 
-        // MACアドレス形式のみ配列に入れ、それ以外はlog出力
+        // MACアドレス形式のみ大文字にして配列に入れ、それ以外はlog出力
         $post_mac_array = array();
         foreach ($check_mac_array as $check_mac) {
             $pattern = preg_match('/([a-fA-F0-9]{2}[:|\-]?){6}/', $check_mac);
             if (!$pattern) {
                 Log::debug(print_r('Inport post Not MACaddress!! posted element ==> ' .$check_mac, 1));
             } else {
-                array_push($post_mac_array, $check_mac);
+                $check_MAC = strtoupper($check_mac);
+                array_push($post_mac_array, $check_MAC);
             }
         }
 
