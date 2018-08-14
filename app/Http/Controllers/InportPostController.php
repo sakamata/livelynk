@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-
+// test commit comment
 class InportPostController extends Controller
 {
     // MAC アドレス一覧を受け取って、mac_addresses tableへの登録、更新を行う
