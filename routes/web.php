@@ -30,3 +30,6 @@ Route::post('/admin_mac_address/update', 'AdminMacAddressController@update')->mi
 
 // 外部からのPOST受け取り先 csrf off
 Route::post('/inport_post/mac_address', 'InportPostController@MacAddress');
+
+// 外部へのPOST送信 route必要?
+Route::post('/push_ifttt_arraival', 'ExportPostController@push_ifttt_arraival');

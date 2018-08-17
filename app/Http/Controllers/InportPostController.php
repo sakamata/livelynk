@@ -39,6 +39,7 @@ class InportPostController extends Controller
         // クエリビルダで取得したオブジェクトを配列に変換
         $stays_mac_array = json_decode(json_encode($stays_macs), true);
 
+        $users_names =array();
         // 登録済みMACアドレスか個別確認
         foreach ((array)$post_mac_array as $post_mac) {
             $check = DB::table('mac_addresses')->where('mac_address', $post_mac)->exists();
@@ -54,15 +55,16 @@ class InportPostController extends Controller
                     'updated_at' => $now,
                 ];
                 DB::table('mac_addresses')->insert($param);
-                // ***ToDo*** 新規訪問者通知へのpush
+                // 新規訪問者通知へのpush
+                array_push($users_names, '初来訪者? wi-fi初接続');
 
             } else {
                 // 登録済みの場合
                 // users tableの last_access を更新
-                $user = DB::table('mac_addresses')->where('mac_address', $post_mac)->first();
+                $userID = DB::table('mac_addresses')->where('mac_address', $post_mac)->first();
 
                 // ***ToDo*** デバイス重複で同じ id のレコードを何度も更新しちゃうので foreachの外で処理させる
-                DB::table('users')->where('id', $user->user_id)->update([
+                DB::table('users')->where('id', $userID->user_id)->update([
                     'last_access' => $now,
                 ]);
 
@@ -73,8 +75,9 @@ class InportPostController extends Controller
                         'current_stay' => true,
                         'updated_at' => $now,
                     ]);
-                    // ***ToDo*** 訪問者有りの通知へのpush
-
+                    //  通知の為のuser nameを取得
+                    $user = DB::table('users')->where('id', $userID->user_id)->first();
+                    array_push($users_names, $user->name);
                 } else {
                     // 登録済で前回POSTも滞在している場合 updated_at のみ更新
                     DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
@@ -82,6 +85,46 @@ class InportPostController extends Controller
                     ]);
                 }
             }
+        }
+
+        // 外部機能IFTTTに来訪通知をPOST ***ToDo*** リファクタリングで別処理に
+        // 滞在中のおおよその人数を抽出する
+
+        // 管理user以外の既存user滞在者数
+        $stay_users = DB::table('users')
+            ->join('mac_addresses', function($join){
+                $join->on('users.id', '=', 'mac_addresses.user_id')
+                ->where([
+                    ['current_stay', 1],
+                    ['hide', 0],
+                    ['user_id','<>', 1],
+                ]);
+            })
+            ->get();
+        $stay_count = $stay_users->count();
+
+        // 管理user id=1 に紐づいた滞在中のデバイス一覧
+        $unknown_device = DB::table('users')
+            ->join('mac_addresses', function($join){
+                $join->on('users.id', '=', 'mac_addresses.user_id')
+                ->where([
+                    ['current_stay', 1],
+                    ['hide', 0],
+                    ['user_id', 1],
+                ]);
+            })
+            ->get();
+        $unknown_count = $unknown_device->count();
+
+        $about_count = $stay_count + $unknown_count;
+        if ($about_count > 0) {
+            $users_count_str = $stay_count . "～" . $about_count;
+        } else {
+            $users_count_str = "0";
+        }
+
+        if ($users_names) {
+            $call = (new ExportPostController)->push_ifttt_arraival($users_names, $users_count_str);
         }
 
         // 帰宅者をPOST値とBD値の比較で判定する
@@ -97,12 +140,6 @@ class InportPostController extends Controller
             // ***ToDo*** 帰宅者有りの通知へのpush
 
         }
-    }
-
-    // ***ToDo*** vendorが未登録なら MACアドレスから スクレイピングでメーカー名を自動登録させる処理のみをexportControllerに書く
-    public function FunctionName($value='')
-    {
-        // code...
     }
 
 }
