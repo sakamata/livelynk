@@ -24,7 +24,7 @@ class InportPostController extends Controller
 
         // MACアドレス形式のみ大文字にして配列に入れ、それ以外はlog出力
         $post_mac_array = array();
-        foreach ($check_mac_array as $check_mac) {
+        foreach ((array)$check_mac_array as $check_mac) {
             $pattern = preg_match('/([a-fA-F0-9]{2}[:|\-]?){6}/', $check_mac);
             if (!$pattern) {
                 Log::debug(print_r('Inport post Not MACaddress!! posted element ==> ' .$check_mac, 1));
@@ -130,7 +130,7 @@ class InportPostController extends Controller
         // 帰宅者をPOST値とBD値の比較で判定する
         $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
         if ($departures) {
-            foreach ($departures as $departure) {
+            foreach ((array)$departures as $departure) {
                 DB::table('mac_addresses')->where('mac_address', $departure)->update([
                     'departure_at' => $now,
                     'current_stay' => false,
