@@ -17,7 +17,10 @@ class ExportPostController extends Controller
         foreach ((array)$users_names as $user_name) {
             $value1 .= "『" . $user_name . "』さん ";
         }
-        $url = 'https://maker.ifttt.com/trigger/arraival/with/key/';
+        $url1 = 'https://maker.ifttt.com/trigger/';
+        $event_name = env("IFTTT_WEB_HOOKS_EVENT_ARRAIVAL");
+        $url2 = '/with/key/';
+        $url = $url1 . $event_name . $url2;
         $key = env("IFTTT_WEB_HOOKS_KEY");
         $client = new \GuzzleHttp\Client([
             'base_uri' => $url,
