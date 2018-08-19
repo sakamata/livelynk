@@ -74,21 +74,34 @@ class InportPostController extends Controller
                     'last_access' => $now,
                 ]);
 
-                // 到着直後なら 該当レコードを滞在中に変更 arraival_at 更新
+                // 到着直後なら
                 if (!in_array($post_mac, $stays_mac_array)) {
+                    // 既に他のデバイスの存在があるか?
+                    $stay = DB::table('mac_addresses')
+                        ->where([
+                            ['user_id', $userID->user_id],
+                            ['current_stay', 1],
+                        ])
+                        ->exists();
+                    // 他のデバイスが無かったユーザーのみを push_usersに追加する
+                    if (!$stay) {
+                        //  通知の為のuser nameを取得
+                        $user = DB::table('users')->where('id', $userID->user_id)->first();
+                        $person = array(
+                            "id" => $user->id,
+                            "name" => $user->name,
+                        );
+                        $push_users[$i] =  $person;
+                        $i++;
+                    }
+
+                    //  該当レコードを滞在中に変更 arraival_at 更新
                     DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
                         'arraival_at' => $now,
                         'current_stay' => true,
                         'updated_at' => $now,
                     ]);
-                    //  通知の為のuser nameを取得
-                    $user = DB::table('users')->where('id', $userID->user_id)->first();
-                    $person = array(
-                        "id" => $user->id,
-                        "name" => $user->name,
-                    );
-                    $push_users[$i] =  $person;
-                    $i++;
+
                 } else {
                     // 登録済で前回POSTも滞在している場合 updated_at のみ更新
                     DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
@@ -97,10 +110,9 @@ class InportPostController extends Controller
                 }
             }
         }
-
-        // 滞在者数判断処理へ さらに外部機能IFTTTに来訪通知をPOST
+        // 滞在者数判断処理～外部機能IFTTTに来訪通知をPOST
         if ($push_users) {
-            $this->stay_count_to_ifttt_push($push_users);
+            (new ExportPostController)->push_ifttt_arraival($push_users);
         }
 
         // 帰宅者をPOST値とBD値の比較で判定する
@@ -117,41 +129,4 @@ class InportPostController extends Controller
 
         }
     }
-
-
-    // 滞在中のおおよその人数を抽出
-    // 外部機能IFTTTに来訪通知をPOST
-    public function stay_count_to_ifttt_push($push_users)
-    {
-        // 管理user以外の既存user滞在者数
-        $existing_count = DB::table('mac_addresses')
-            ->distinct()->select('user_id')
-            ->where([
-                ['user_id','<>', 1],
-                ['current_stay', 1],
-                ['hide', 0],
-            ])->get();
-        $existing_count = $existing_count->count();
-        Log::debug(print_r($existing_count, 1));
-
-        // 管理user id=1 に紐づいた滞在中のデバイス一覧
-        $unknown_count = DB::table('mac_addresses')
-            ->where([
-                ['current_stay', 1],
-                ['hide', 0],
-                ['user_id', 1],
-            ])
-            ->count();
-        Log::debug(print_r($unknown_count, 1));
-
-        $about_max = $existing_count + $unknown_count;
-        if ($unknown_count > 0) {
-            $users_count_str = $existing_count . "～" . $about_max;
-        } else {
-            $users_count_str = $existing_count;
-        }
-
-        (new ExportPostController)->push_ifttt_arraival($push_users, $users_count_str);
-    }
-
 }
