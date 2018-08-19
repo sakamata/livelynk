@@ -87,8 +87,29 @@ class InportPostController extends Controller
             }
         }
 
-        // 外部機能IFTTTに来訪通知をPOST ***ToDo*** リファクタリングで別処理に
-        // 滞在中のおおよその人数を抽出する
+        // 滞在者数判断処理へ さらに外部機能IFTTTに来訪通知をPOST
+        $this->stay_count_to_ifttt_push($users_names);
+
+        // 帰宅者をPOST値とBD値の比較で判定する
+        $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
+        if ($departures) {
+            foreach ((array)$departures as $departure) {
+                DB::table('mac_addresses')->where('mac_address', $departure)->update([
+                    'departure_at' => $now,
+                    'current_stay' => false,
+                    'updated_at' => $now,
+                ]);
+            }
+            // ***ToDo*** 帰宅者有りの通知へのpush
+
+        }
+    }
+
+
+    // 滞在中のおおよその人数を抽出する
+    public function stay_count_to_ifttt_push($users_names)
+    {
+        // 外部機能IFTTTに来訪通知をPOST
 
         // 管理user以外の既存user滞在者数
         $stay_users = DB::table('users')
@@ -125,20 +146,6 @@ class InportPostController extends Controller
 
         if ($users_names) {
             $call = (new ExportPostController)->push_ifttt_arraival($users_names, $users_count_str);
-        }
-
-        // 帰宅者をPOST値とBD値の比較で判定する
-        $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
-        if ($departures) {
-            foreach ((array)$departures as $departure) {
-                DB::table('mac_addresses')->where('mac_address', $departure)->update([
-                    'departure_at' => $now,
-                    'current_stay' => false,
-                    'updated_at' => $now,
-                ]);
-            }
-            // ***ToDo*** 帰宅者有りの通知へのpush
-
         }
     }
 
