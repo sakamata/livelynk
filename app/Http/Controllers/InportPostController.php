@@ -39,7 +39,8 @@ class InportPostController extends Controller
         // クエリビルダで取得したオブジェクトを配列に変換
         $stays_mac_array = json_decode(json_encode($stays_macs), true);
 
-        $users_names =array();
+        $push_users =array();
+        $i = 0;
         // 登録済みMACアドレスか個別確認
         foreach ((array)$post_mac_array as $post_mac) {
             $check = DB::table('mac_addresses')->where('mac_address', $post_mac)->exists();
@@ -55,9 +56,14 @@ class InportPostController extends Controller
                     'updated_at' => $now,
                 ];
                 DB::table('mac_addresses')->insert($param);
-                // 新規訪問者通知へのpush
-                array_push($users_names, '初来訪者? wi-fi初接続');
 
+                // 新規訪問者通知へのpush
+                $person = array(
+                    "id" => array("id未定"),
+                    "name" => array("初来訪者? wi-fi初接続"),
+                 );
+                $push_users[$i] = $person;
+                $i++;
             } else {
                 // 登録済みの場合
                 // users tableの last_access を更新
@@ -77,7 +83,12 @@ class InportPostController extends Controller
                     ]);
                     //  通知の為のuser nameを取得
                     $user = DB::table('users')->where('id', $userID->user_id)->first();
-                    array_push($users_names, $user->name);
+                    $person = array(
+                        "id" => $user->id,
+                        "name" => $user->name,
+                    );
+                    $push_users[$i] =  $person;
+                    $i++;
                 } else {
                     // 登録済で前回POSTも滞在している場合 updated_at のみ更新
                     DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
@@ -88,7 +99,9 @@ class InportPostController extends Controller
         }
 
         // 滞在者数判断処理へ さらに外部機能IFTTTに来訪通知をPOST
-        $this->stay_count_to_ifttt_push($users_names);
+        if ($push_users) {
+            $this->stay_count_to_ifttt_push($push_users);
+        }
 
         // 帰宅者をPOST値とBD値の比較で判定する
         $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
@@ -106,47 +119,39 @@ class InportPostController extends Controller
     }
 
 
-    // 滞在中のおおよその人数を抽出する
-    public function stay_count_to_ifttt_push($users_names)
+    // 滞在中のおおよその人数を抽出
+    // 外部機能IFTTTに来訪通知をPOST
+    public function stay_count_to_ifttt_push($push_users)
     {
-        // 外部機能IFTTTに来訪通知をPOST
-
         // 管理user以外の既存user滞在者数
-        $stay_users = DB::table('users')
-            ->join('mac_addresses', function($join){
-                $join->on('users.id', '=', 'mac_addresses.user_id')
-                ->where([
-                    ['current_stay', 1],
-                    ['hide', 0],
-                    ['user_id','<>', 1],
-                ]);
-            })
-            ->get();
-        $stay_count = $stay_users->count();
+        $existing_count = DB::table('mac_addresses')
+            ->distinct()->select('user_id')
+            ->where([
+                ['user_id','<>', 1],
+                ['current_stay', 1],
+                ['hide', 0],
+            ])->get();
+        $existing_count = $existing_count->count();
+        Log::debug(print_r($existing_count, 1));
 
         // 管理user id=1 に紐づいた滞在中のデバイス一覧
-        $unknown_device = DB::table('users')
-            ->join('mac_addresses', function($join){
-                $join->on('users.id', '=', 'mac_addresses.user_id')
-                ->where([
-                    ['current_stay', 1],
-                    ['hide', 0],
-                    ['user_id', 1],
-                ]);
-            })
-            ->get();
-        $unknown_count = $unknown_device->count();
+        $unknown_count = DB::table('mac_addresses')
+            ->where([
+                ['current_stay', 1],
+                ['hide', 0],
+                ['user_id', 1],
+            ])
+            ->count();
+        Log::debug(print_r($unknown_count, 1));
 
-        $about_count = $stay_count + $unknown_count;
-        if ($about_count > 0) {
-            $users_count_str = $stay_count . "～" . $about_count;
+        $about_max = $existing_count + $unknown_count;
+        if ($unknown_count > 0) {
+            $users_count_str = $existing_count . "～" . $about_max;
         } else {
-            $users_count_str = "0";
+            $users_count_str = $existing_count;
         }
 
-        if ($users_names) {
-            $call = (new ExportPostController)->push_ifttt_arraival($users_names, $users_count_str);
-        }
+        (new ExportPostController)->push_ifttt_arraival($push_users, $users_count_str);
     }
 
 }

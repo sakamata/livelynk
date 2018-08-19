@@ -11,11 +11,11 @@ use Carbon\Carbon;
 class ExportPostController extends Controller
 {
     // IFTTTに来訪者通知をPOSTする
-    public function push_ifttt_arraival($users_names, $users_count_str)
+    public function push_ifttt_arraival($push_users, $users_count_str)
     {
         $value1 = "";
-        foreach ((array)$users_names as $user_name) {
-            $value1 .= "『" . $user_name . "』さん ";
+        foreach ((array)$push_users as $user) {
+            $value1 .= "(ID:". $user['id'] . ")『" . $user['name'] . "』さん ";
         }
         $url1 = 'https://maker.ifttt.com/trigger/';
         $event_name = env("IFTTT_WEB_HOOKS_EVENT_ARRAIVAL");
@@ -29,7 +29,7 @@ class ExportPostController extends Controller
             'json' => [
                 'value1' => $value1,
                 'value2' => $users_count_str,
-                'value3' => "hoge3",
+                'value3' => "",
             ]
         ]);
     }
