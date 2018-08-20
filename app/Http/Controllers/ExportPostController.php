@@ -64,6 +64,20 @@ class ExportPostController extends Controller
         ]);
     }
 
+    // 帰宅者の通知 一定時間以上全ての端末が切断されたら帰宅とみなす
+    // ***ToDo*** 同時刻に人感センサー有りなら、帰宅確度を上げる処理を追加
+    // IFTTTに来訪者通知をPOSTする
+    public function push_ifttt_departure($value='')
+    {
+        // code...
+    }
+
+    // 滞在中のおおよその人数を抽出
+    public function about_stay_user_count($value='')
+    {
+        // code...
+    }
+
     // ***ToDo*** vendorが未登録なら MACアドレスから スクレイピングでメーカー名を自動登録させる処理を書く
 
 }
