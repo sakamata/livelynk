@@ -59,8 +59,8 @@ class InportPostController extends Controller
 
                 // 新規訪問者通知へのpush
                 $person = array(
-                    "id" => array("id未定"),
-                    "name" => array("初来訪者? wi-fi初接続"),
+                    "id" => "id未定",
+                    "name" => "初来訪者? wi-fi初接続",
                  );
                 $push_users[$i] = $person;
                 $i++;
