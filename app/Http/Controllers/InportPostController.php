@@ -84,8 +84,16 @@ class InportPostController extends Controller
                             ['current_stay', 1],
                         ])
                         ->exists();
-                    // 他のデバイスが無かったユーザーのみを push_usersに追加する
-                    if (!$stay) {
+
+                    // 前回帰宅時間を抽出、ルーター瞬断や中座に対応した通知処理を行う
+                    $mac_record = DB::table('mac_addresses')
+                        ->where('id', $userID->id)->first();
+                    $departure_at = new Carbon($mac_record->departure_at);
+                    $limit = $departure_at->addHour(1);
+                    // $limit = $departure_at->addSecond(60);
+                    // 他のデバイスが無く、かつ不在から一定時間以上だった
+                    // 場合のみ push_usersに追加する
+                    if (!$stay && $now >= $limit) {
                         //  通知の為のuser nameを取得
                         $user = DB::table('users')->where('id', $userID->user_id)->first();
                         $person = array(
