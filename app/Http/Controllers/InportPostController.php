@@ -17,7 +17,6 @@ class InportPostController extends Controller
         // PI側から getTime() で渡された日時をミリ秒削ってdatetimeに変換
         // getTime_to_DATETIME(getTime)
 
-        $now = Carbon::now();
         $json = $request->mac;
         if (!$json) { exit();};
         $check_mac_array = json_decode($json);
@@ -39,7 +38,7 @@ class InportPostController extends Controller
         $stays_macs = DB::table('mac_addresses')->where('current_stay', 1)->pluck('mac_address');
         // クエリビルダで取得したオブジェクトを配列に変換
         $stays_mac_array = json_decode(json_encode($stays_macs), true);
-
+        $now = Carbon::now();
         $push_users =array();
         $i = 0;
         // 登録済みMACアドレスか個別確認
@@ -103,7 +102,6 @@ class InportPostController extends Controller
                         $push_users[$i] =  $person;
                         $i++;
                     }
-
                     //  該当レコードを滞在中に変更 arraival_at 更新
                     DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
                         'arraival_at' => $now,
@@ -127,6 +125,7 @@ class InportPostController extends Controller
         // 帰宅者をPOST値とDB値の比較で判定する
         $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
         if ($departures) {
+            // ***ToDo*** 帰宅ステータスのディレイ処理、一定時以上で current_stay falseとする処理を追加
             foreach ((array)$departures as $departure) {
                 DB::table('mac_addresses')->where('mac_address', $departure)->update([
                     'departure_at' => $now,
