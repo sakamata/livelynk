@@ -124,7 +124,7 @@ class InportPostController extends Controller
             (new ExportPostController)->push_ifttt_arraival($push_users);
         }
 
-        // 帰宅者をPOST値とBD値の比較で判定する
+        // 帰宅者をPOST値とDB値の比較で判定する
         $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
         if ($departures) {
             foreach ((array)$departures as $departure) {
