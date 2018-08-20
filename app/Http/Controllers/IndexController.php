@@ -14,14 +14,9 @@ class IndexController extends Controller
     // 一般ユーザーのメイン画面、滞在者の一覧を表示する
     public function index(Request $request)
     {
-        if (Auth::check()) {
-            $items = 'App\UserTable'::orderBy('last_access', 'desc')->get();
-            return view('index.index', [
-                'items' => $items,
-            ]);
-        } else {
-            // 非ログイン時は welcome画面表示
-            return view('welcome');
-        }
+        $items = 'App\UserTable'::orderBy('last_access', 'desc')->get();
+        return view('index.index', [
+            'items' => $items,
+        ]);
     }
 }

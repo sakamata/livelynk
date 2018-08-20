@@ -11,13 +11,27 @@
 |
 */
 
-Auth::routes();
+// 基本設定 vendor\laravel\framework\src\Illuminate\Routing\Router.php  ->auth()
+// Auth::routes();
+
+// Authentication Routes...
+Route::get(env("LOGIN_PATH"), 'Auth\LoginController@showLoginForm')->name('login');
+Route::post(env("LOGIN_PATH"), 'Auth\LoginController@login');
+Route::post("logout", 'Auth\LoginController@logout')->name('logout');
+
+// Registration Routes...
+Route::get(env("REGISTER_PATH"), 'Auth\RegisterController@showRegistrationForm')->name('register');
+Route::post(env("REGISTER_PATH"), 'Auth\RegisterController@register');
+
+// Password Reset Routes...
+Route::get(env("PASSWORD_PATH").'/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post(env("PASSWORD_PATH").'/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+Route::get(env("PASSWORD_PATH").'/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+Route::post(env("PASSWORD_PATH").'/reset', 'Auth\ResetPasswordController@reset');
+
 
 // メイン画面 滞在者一覧 or home画面
-Route::get('/', 'IndexController@index');
-
-// デフォルトのログイン直後画面 You are logged in!
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get(env("INDEX_PATH"), 'IndexController@index')->name('index');
 
 // 管理画面 認証済みuserのみ表示
 Route::get('/admin_user', 'AdminUserController@index')->middleware('auth');
