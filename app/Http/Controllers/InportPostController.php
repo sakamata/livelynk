@@ -19,6 +19,7 @@ class InportPostController extends Controller
 
         $now = Carbon::now();
         $json = $request->mac;
+        if (!$json) { exit();};
         $check_mac_array = json_decode($json);
         Log::debug(print_r($json, 1));
 
