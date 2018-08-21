@@ -40,6 +40,7 @@ class InportPostController extends Controller
         $stays_mac_array = json_decode(json_encode($stays_macs), true);
         $now = Carbon::now();
         $push_users =array();
+        $users_ids = array();
         $i = 0;
         // 登録済みMACアドレスか個別確認
         foreach ((array)$post_mac_array as $post_mac) {
@@ -66,27 +67,21 @@ class InportPostController extends Controller
                 $i++;
             } else {
                 // 登録済みの場合
-                // users tableの last_access を更新
-                $userID = DB::table('mac_addresses')->where('mac_address', $post_mac)->first();
-
-                // ***ToDo*** デバイス重複で同じ id のレコードを何度も更新しちゃうので foreachの外で処理させる
-                DB::table('users')->where('id', $userID->user_id)->update([
-                    'last_access' => $now,
-                ]);
+                $mac_record = DB::table('mac_addresses')
+                    ->where('mac_address', $post_mac)->first();
+                // last_accessの更新をするuserのid一覧を取得
+                $users_ids[] = $mac_record->user_id;
 
                 // 到着直後なら
                 if (!in_array($post_mac, $stays_mac_array)) {
                     // 既に他のデバイスの存在があるか?
                     $stay = DB::table('mac_addresses')
                         ->where([
-                            ['user_id', $userID->user_id],
-                            ['current_stay', 1],
-                        ])
-                        ->exists();
+                            ['user_id', $mac_record->user_id],
+                            ['current_stay', true],
+                        ])->exists();
 
-                    // 前回帰宅時間を抽出、ルーター瞬断や中座に対応した通知処理を行う
-                    $mac_record = DB::table('mac_addresses')
-                        ->where('id', $userID->id)->first();
+                    // 前回帰宅時間から、ルーター瞬断や中座に対応した通知処理を行う
                     $departure_at = new Carbon($mac_record->departure_at);
                     $limit = $departure_at->addHour(1);
                     // $limit = $departure_at->addSecond(60);
@@ -94,7 +89,7 @@ class InportPostController extends Controller
                     // 場合のみ push_usersに追加する
                     if (!$stay && $now >= $limit) {
                         //  通知の為のuser nameを取得
-                        $user = DB::table('users')->where('id', $userID->user_id)->first();
+                        $user = DB::table('users')->where('id', $mac_record->user_id)->first();
                         $person = array(
                             "id" => $user->id,
                             "name" => $user->name,
@@ -116,7 +111,13 @@ class InportPostController extends Controller
                     ]);
                 }
             }
-        }
+        } // end foreach
+
+        // 滞在者の id重複削除してからuser table last_accessを更新
+        $users_ids = array_unique($users_ids);
+        $users_ids = array_values($users_ids);
+        $this->user_last_access_update($users_ids, $now);
+
         // 滞在者数判断処理～外部機能IFTTTに来訪通知をPOST
         if ($push_users) {
             (new ExportPostController)->push_ifttt_arraival($push_users);
@@ -124,17 +125,56 @@ class InportPostController extends Controller
 
         // 帰宅者をPOST値とDB値の比較で判定する
         $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
+        // 前回POSTと比較して存在しないMACアドレスに対しての処理
         if ($departures) {
             // ***ToDo*** 帰宅ステータスのディレイ処理、一定時以上で current_stay falseとする処理を追加
             foreach ((array)$departures as $departure) {
+                // 帰宅者デバイスのステータス変更
                 DB::table('mac_addresses')->where('mac_address', $departure)->update([
                     'departure_at' => $now,
-                    'current_stay' => false,
                     'updated_at' => $now,
                 ]);
             }
-            // ***ToDo*** 帰宅者有りの通知へのpush
 
         }
+
+        // 一定時間アクセスの無いmac_address を不在に変更
+        // last_accessが 一定時間以上になった全ての current_stay true を false にする
+        // $d_limit = $now->subHour(1);
+        // $d_limit = $now->subSecond(120);
+        $went_away = DB::table('users')
+            ->join('mac_addresses', function($join){
+                $now = Carbon::now();
+                $d_limit = $now->subHour(1);
+                // $d_limit = $now->subSecond(30);
+                $join->on('users.id', '=', 'mac_addresses.user_id')
+                ->where([
+                    ['hide', false],
+                    ['current_stay', true],
+                    ['last_access', '<=', $d_limit],
+                ]);
+            })->get();
+
+        foreach ($went_away as $went) {
+            Log::debug(print_r("foreach処理 current_stay=>false", 1));
+            Log::debug(print_r($went->id, 1));
+            Log::debug(print_r($went->device_name, 1));
+
+            DB::table('mac_addresses')->where('id', $went->id)
+            ->update(['current_stay' => false,]);
+        }
+
+        // ***ToDo*** current_stay  false になったユーザーを 帰宅者有りの通知pushをする
+
     }
+
+    // users table last_accessの一括更新
+    public function user_last_access_update($users_ids, $now)
+    {
+        foreach ($users_ids as $id) {
+            DB::table('users')->where('id', $id)
+            ->update(['last_access' => $now,]);
+        }
+    }
+
 }
