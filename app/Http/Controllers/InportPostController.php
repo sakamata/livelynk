@@ -83,8 +83,8 @@ class InportPostController extends Controller
 
                     // 前回帰宅時間から、ルーター瞬断や中座に対応した通知処理を行う
                     $departure_at = new Carbon($mac_record->departure_at);
-                    $limit = $departure_at->addHour(1);
-                    // $limit = $departure_at->addSecond(60);
+                    $second = env("JUDGE_TIME_LAG_SECOND");
+                    $limit = $departure_at->addSecond($second);
                     // 他のデバイスが無く、かつ不在から一定時間以上だった
                     // 場合のみ push_usersに追加する
                     if (!$stay && $now >= $limit) {
@@ -120,33 +120,30 @@ class InportPostController extends Controller
 
         // 滞在者数判断処理～外部機能IFTTTに来訪通知をPOST
         if ($push_users) {
-            (new ExportPostController)->push_ifttt_arraival($push_users);
+            (new ExportPostController)->push_ifttt($push_users, $category = "arraival");
         }
 
         // 帰宅者をPOST値とDB値の比較で判定する
         $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
         // 前回POSTと比較して存在しないMACアドレスに対しての処理
         if ($departures) {
-            // ***ToDo*** 帰宅ステータスのディレイ処理、一定時以上で current_stay falseとする処理を追加
             foreach ((array)$departures as $departure) {
                 // 帰宅者デバイスのステータス変更
+                // ***検討*** パラメーターから departure_at $now を削除、要動作検証
                 DB::table('mac_addresses')->where('mac_address', $departure)->update([
-                    'departure_at' => $now,
                     'updated_at' => $now,
                 ]);
             }
-
         }
 
         // 一定時間アクセスの無いmac_address を不在に変更
         // last_accessが 一定時間以上になった全ての current_stay true を false にする
-        // $d_limit = $now->subHour(1);
-        // $d_limit = $now->subSecond(120);
+        // ***ToDo*** 同時刻に人感センサー有りなら、帰宅確度を上げる処理を追加
         $went_away = DB::table('users')
             ->join('mac_addresses', function($join){
                 $now = Carbon::now();
-                $d_limit = $now->subHour(1);
-                // $d_limit = $now->subSecond(30);
+                $second = env("JUDGE_TIME_LAG_SECOND");
+                $d_limit = $now->subSecond($second);
                 $join->on('users.id', '=', 'mac_addresses.user_id')
                 ->where([
                     ['hide', false],
@@ -154,19 +151,29 @@ class InportPostController extends Controller
                     ['last_access', '<=', $d_limit],
                 ]);
             })->get();
-
+        $push_users = array();
+        $i = 0;
         foreach ($went_away as $went) {
-            Log::debug(print_r("foreach処理 current_stay=>false", 1));
-            Log::debug(print_r($went->id, 1));
-            Log::debug(print_r($went->device_name, 1));
-
             DB::table('mac_addresses')->where('id', $went->id)
-            ->update(['current_stay' => false,]);
+                ->update([
+                    'departure_at' => $now,
+                    'current_stay' => false,
+                    'updated_at' => $now,
+                ]);
+            // push通知が必要なuserのidと名前を取得して配列 $push_users に加工
+            $person = array(
+                "id" => $went->user_id,
+                "name" => $went->name,
+            );
+            $push_users[$i] =  $person;
+            $i++;
         }
 
-        // ***ToDo*** current_stay  false になったユーザーを 帰宅者有りの通知pushをする
-
-    }
+        // 滞在者数判断処理～外部機能IFTTTに帰宅通知をPOST
+        if ($push_users) {
+            (new ExportPostController)->push_ifttt($push_users, $category = "departure");
+        }
+    }   // end function
 
     // users table last_accessの一括更新
     public function user_last_access_update($users_ids, $now)

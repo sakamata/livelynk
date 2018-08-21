@@ -10,11 +10,55 @@ use Carbon\Carbon;
 
 class ExportPostController extends Controller
 {
-    // 滞在中のおおよその人数を抽出
     // IFTTTに来訪者通知をPOSTする
     // $push_users = array( "id" => $user->id, "name" => $user->name)
-    public function push_ifttt_arraival($push_users)
+    public function push_ifttt($push_users, $category)
     {
+        // 訪問者の名前と滞在中のおおよその人数を抽出、文字列を作成する
+        $res = $this->stay_users_about_count($push_users);
+        // $res['users_count_str'] => "〇~〇（人）",
+        // $res['users_name_str'] => "Aさん Bさん ...",
+
+        // 通知の種別設定
+        switch ($category) {
+            case 'arraival':
+                $event_name = env("IFTTT_WEB_HOOKS_EVENT_ARRAIVAL");
+                break;
+            case 'departure':
+                $event_name = env("IFTTT_WEB_HOOKS_EVENT_DEPARTURE");
+                break;
+            default:
+                $event_name = "";
+                break;
+        }
+        // urlの生成とIFTTTへPOST(GuzzleHttpを使用)
+        $url1 = 'https://maker.ifttt.com/trigger/';
+        $url2 = '/with/key/';
+        $url = $url1 . $event_name . $url2;
+        $key = env("IFTTT_WEB_HOOKS_KEY");
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => $url,
+        ]);
+        $responce = $client->request('POST', $key, [
+            'json' => [
+                'value1' => $res['users_name_str'],
+                'value2' => $res['users_count_str'],
+                'value3' => "",
+            ]
+        ]);
+    }
+
+
+    // 訪問者の名前と滞在中のおおよその人数を抽出、文字列を作成する
+    // $push_users = array( "id" => $user->id, "name" => $user->name)
+    public function stay_users_about_count($push_users)
+    {
+        // "Aさん Bさん ..."の文字列作成
+        $users_name_str = "";
+        foreach ((array)$push_users as $user) {
+            $users_name_str .= "(ID:". $user['id'] . ")『" . $user['name'] . "』さん ";
+        }
+
         // 管理user以外の既存user滞在者数
         $existing_count = DB::table('mac_addresses')
             ->distinct()->select('user_id')
@@ -41,41 +85,10 @@ class ExportPostController extends Controller
         } else {
             $users_count_str = $existing_count;
         }
-        $value1 = "";
-        foreach ((array)$push_users as $user) {
-            $value1 .= "(ID:". $user['id'] . ")『" . $user['name'] . "』さん ";
-        }
-
-        // IFTTTへPOST処理
-        $url1 = 'https://maker.ifttt.com/trigger/';
-        $event_name = env("IFTTT_WEB_HOOKS_EVENT_ARRAIVAL");
-        $url2 = '/with/key/';
-        $url = $url1 . $event_name . $url2;
-        $key = env("IFTTT_WEB_HOOKS_KEY");
-        $client = new \GuzzleHttp\Client([
-            'base_uri' => $url,
-        ]);
-        $responce = $client->request('POST', $key, [
-            'json' => [
-                'value1' => $value1,
-                'value2' => $users_count_str,
-                'value3' => "",
-            ]
-        ]);
-    }
-
-    // 帰宅者の通知 一定時間以上全ての端末が切断されたら帰宅とみなす
-    // ***ToDo*** 同時刻に人感センサー有りなら、帰宅確度を上げる処理を追加
-    // IFTTTに来訪者通知をPOSTする
-    public function push_ifttt_departure($value='')
-    {
-        // code...
-    }
-
-    // 滞在中のおおよその人数を抽出
-    public function about_stay_user_count($value='')
-    {
-        // code...
+        return array(
+            'users_count_str' => $users_count_str,
+            'users_name_str' => $users_name_str,
+        );
     }
 
     // ***ToDo*** vendorが未登録なら MACアドレスから スクレイピングでメーカー名を自動登録させる処理を書く
