@@ -19,4 +19,26 @@ class IndexController extends Controller
             'items' => $items,
         ]);
     }
+
+    public function index2(Request $request)
+    {
+        $items = DB::table('users')
+        ->join('mac_addresses', function($join){
+            $join->on('users.id', '=', 'mac_addresses.user_id')
+            ->where([
+                ['hide', false],
+                ['current_stay', true],
+            ]);
+
+        })->get();
+
+        Log::debug(print_r($items, 1));
+
+
+        return view('index.index2', [
+            'items' => $items,
+        ]);
+
+    }
+
 }
