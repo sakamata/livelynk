@@ -32,6 +32,8 @@ Route::post(env("PASSWORD_PATH").'/reset', 'Auth\ResetPasswordController@reset')
 
 // メイン画面 滞在者一覧 or home画面
 Route::get(env("INDEX_PATH"), 'IndexController@index')->name('index');
+// test 新画面用
+Route::get("/index2", 'IndexController@index2')->name('index2');
 
 // 管理画面 認証済みuserのみ表示
 Route::get('/admin_user', 'AdminUserController@index')->middleware('auth');
