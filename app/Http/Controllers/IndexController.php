@@ -14,14 +14,6 @@ class IndexController extends Controller
     // 一般ユーザーのメイン画面、滞在者の一覧を表示する
     public function index(Request $request)
     {
-        $items = 'App\UserTable'::orderBy('last_access', 'desc')->get();
-        return view('index.index', [
-            'items' => $items,
-        ]);
-    }
-
-    public function index2(Request $request)
-    {
         // view table 上側のみ 未登録ユーザーで来訪中のmac_address一覧を取得
         $unregistered = DB::table('mac_addresses')
             ->where([
@@ -62,7 +54,7 @@ class IndexController extends Controller
                 $join->on('users.id', '=', 'current_stays.user_id');
             })->where('id', '<>', 1)->get();
 
-        return view('index.index2', [
+        return view('index.index', [
             'items' => $unregistered,
             'items1' => $stays,
             'items2' => $not_stays,
