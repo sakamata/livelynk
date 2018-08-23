@@ -16,26 +16,38 @@
                     @endif
                     <table class="table table-hover">
                         <tr class="info thead-light">
-                            <th>id</th>
+                            <th>ステータス</th>
                             <th>名前</th>
-                            <th>ステータス / デバイス</th>
                             <th>到着日時</th>
                             <th>帰宅日時</th>
-                            <th>更新日時</th>
                         </tr>
                     @foreach ($items as $item)
                         <tr>
-                            <td>{{$item->id}}</td>
+                            <td><b>newcomer!</b></td>
+                            <td>謎の {{$item->vendor}}</td>
+                            <td>
+                                {{date('n/j G:i', strtotime($item->arraival_at))}}
+                            </td>
+                            <td>...</td>
+                        </tr>
+                    @endforeach
+                    @foreach ($items1 as $item)
+                        <tr>
+                            <td><b>I'm here!</b></td>
                             <td>{{$item->name}}</td>
-                            <td>いる / いない :  {{$item->device_name}}</td>
                             <td>
-                                {{$item->arraival_at}}
+                                {{date('n/j G:i', strtotime($item->max_arraival_at))}}
                             </td>
+                            <td>...</td>
+                        </tr>
+                    @endforeach
+                    @foreach ($items2 as $item)
+                        <tr class="table-secondary">
+                            <td></td>
+                            <td>{{$item->name}}</td>
+                            <td>...</td>
                             <td>
-                                {{$item->departure_at}}
-                            </td>
-                            <td>
-                                {{$item->last_access}}
+                                {{date('n/j G:i', strtotime($item->max_departure_at))}}
                             </td>
                         </tr>
                     @endforeach
