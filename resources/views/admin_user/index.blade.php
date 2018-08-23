@@ -3,7 +3,7 @@
 @section('content')
 @component('components.header_menu')
 @endcomponent
-<div class="container">
+<div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
@@ -19,7 +19,17 @@
                             <th>id</th>
                             <th>管理者</th>
                             <th>名前&nbsp;/&nbsp;Email</th>
-                            <th>デバイス一覧</th>
+                            <th>
+                                <table class='table table-borderless table-sm'>
+                                    <tr>
+                                      <th>ID</th>
+                                      <th>滞在中</th>
+                                      <th>非表示</th>
+                                      <th>デバイス名</th>
+                                      <th>vendor</th>
+                                    </tr>
+                                </table>
+                            </th>
                             <th>最終来訪</th>
                             <th>登録日時</th>
                             <th>更新日時</th>
@@ -31,17 +41,35 @@
                             <td>{{$item->admin_user}}</td>
                             <td>{{$item->name}}</br>{{$item->email}}</td>
                             <td>
+                                <table class="table table-hover table-sm table-borderless">
+                                    <tbody>
                             @if($item->mac_addresses != null)
                                 @foreach($item->mac_addresses as $mac_add)
-                                <div>ID:{{$mac_add->id}}&nbsp;&nbsp;{{$mac_add->device_name}}</div>
+                                    @if($mac_add->hide == true)
+                                        <tr class="table-secondary"  onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';">
+                                    @elseif($mac_add->current_stay == true)
+                                        <tr class="table-warning"  onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';">
+                                    @else
+                                        <tr onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';">
+                                    @endif
+                                            <td>ID:{{$mac_add->id}}</td>
+                                            <td>{{$mac_add->current_stay}}</td>
+                                            <td>{{$mac_add->hide}}</td>
+                                            <td>{{$mac_add->device_name}}</td>
+                                            <td>{{$mac_add->vendor}}</td>
+                                            <td class="blockquote text-right"><a href="/admin_mac_address/edit?id={{$mac_add->id}}" class="btn btn-info" role="button">編集</a>
+                                            </td>
+                                        </tr>
                                 @endforeach
                             @endif
+                                    </tbody>
+                                </table>
                             </td>
                             <td>{{$item->last_access->format('n月j日 G:i:s')}}</td>
                             <td>{{$item->created_at->format('n月j日 G:i:s')}}</td>
                             <td>{{$item->updated_at->format('n月j日 G:i:s')}}</td>
                             <td>
-                                <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
+                                <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">ユーザー編集</a>
                             </td>
                         </tr>
                     @endforeach

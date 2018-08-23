@@ -22,6 +22,6 @@ class UserTable extends Model
 
     public function mac_addresses()
     {
-        return $this->hasMany('App\MacAddress', 'user_id')->where('hide', 0)->orderBy('arraival_at', 'desc');
+        return $this->hasMany('App\MacAddress', 'user_id')->orderBy('arraival_at', 'desc');
     }
 }
