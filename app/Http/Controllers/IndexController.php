@@ -17,6 +17,7 @@ class IndexController extends Controller
         // view table 上側のみ 未登録ユーザーで来訪中のmac_address一覧を取得
         $unregistered = DB::table('mac_addresses')
             ->where([
+                ['user_id', 1],
                 ['hide', false],
                 ['current_stay', true],
             ])
