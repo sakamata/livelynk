@@ -44,7 +44,7 @@ class IndexController extends Controller
             ->select(DB::raw("user_id, max(departure_at) as max_departure_at"))
             ->where([
                 ['hide', false],
-                ['current_stay', true],
+                ['current_stay', false],
             ])
             ->orderBy('max_departure_at', 'desc')
             ->groupBy('user_id');
