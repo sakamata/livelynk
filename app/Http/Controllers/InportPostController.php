@@ -85,9 +85,16 @@ class InportPostController extends Controller
                     $departure_at = new Carbon($mac_record->departure_at);
                     $second = env("JUDGE_TIME_LAG_SECOND");
                     $limit = $departure_at->addSecond($second);
-                    // 他のデバイスが無く、かつ不在から一定時間以上だった
-                    // 場合のみ push_usersに追加する
+                    // 他のデバイスが無く、かつ不在から一定時間以上だった場合のみ
+                    // push_usersに追加、DBのステータス滞在中に変更
                     if (!$stay && $now >= $limit) {
+                        //  該当レコードを滞在中に変更 arraival_at 更新
+                        DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
+                            'arraival_at' => $now,
+                            'current_stay' => true,
+                            'updated_at' => $now,
+                        ]);
+
                         //  通知の為のuser nameを取得
                         $user = DB::table('users')->where('id', $mac_record->user_id)->first();
                         $person = array(
@@ -97,12 +104,6 @@ class InportPostController extends Controller
                         $push_users[$i] =  $person;
                         $i++;
                     }
-                    //  該当レコードを滞在中に変更 arraival_at 更新
-                    DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
-                        'arraival_at' => $now,
-                        'current_stay' => true,
-                        'updated_at' => $now,
-                    ]);
 
                 } else {
                     // 登録済で前回POSTも滞在している場合 updated_at のみ更新
@@ -126,6 +127,8 @@ class InportPostController extends Controller
         // 帰宅者をPOST値とDB値の比較で判定する
         $departures = array_diff((array)$stays_mac_array, (array)$post_mac_array);
         // 前回POSTと比較して存在しないMACアドレスに対しての処理
+        // !!!!!特になにもしては駄目なのでは?!!!ひとまずコメントアウト
+/*
         if ($departures) {
             foreach ((array)$departures as $departure) {
                 // 帰宅者デバイスのステータス変更
@@ -135,9 +138,9 @@ class InportPostController extends Controller
                 ]);
             }
         }
-
+*/
         // 一定時間アクセスの無いmac_address を不在に変更
-        // last_accessが 一定時間以上になった全ての current_stay true を false にする
+        // last_access が 一定時間以上になった全ての current_stay true を false にする
         // ***ToDo*** 同時刻に人感センサー有りなら、帰宅確度を上げる処理を追加
         $went_away = DB::table('users')
             ->join('mac_addresses', function($join){
@@ -151,6 +154,7 @@ class InportPostController extends Controller
                     ['last_access', '<=', $d_limit],
                 ]);
             })->get();
+            // Log::debug(print_r($went_away, 1));
         $push_users = array();
         $i = 0;
         foreach ($went_away as $went) {
