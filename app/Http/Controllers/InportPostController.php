@@ -155,7 +155,7 @@ class InportPostController extends Controller
                     ['last_access', '<=', $past_limit],
                 ]);
             })->get();
-            Log::debug(print_r($went_away, 1));
+            // Log::debug(print_r($went_away, 1));
         $push_users = array();
         $i = 0;
         foreach ($went_away as $went) {
