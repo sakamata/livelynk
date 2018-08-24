@@ -68,7 +68,7 @@
                             </td>
                             @auth
                             <td class="blockquote text-center align-middle">
-                                <a href="/admin_mac_address/edit?id={{$item->id}}" class="btn btn-info" role="button">ユーザー編集</a>
+                                <a href="/admin_user/edit?id={{$item->user_id}}" class="btn btn-info" role="button">ユーザー編集</a>
                             </td>
                             @endauth
                         </tr>
