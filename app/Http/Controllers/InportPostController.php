@@ -79,6 +79,7 @@ class InportPostController extends Controller
                         ->where([
                             ['user_id', $mac_record->user_id],
                             ['current_stay', true],
+                            ['hide', false],
                         ])->exists();
 
                     // 前回帰宅時間から、ルーター瞬断や中座に対応した通知処理を行う
@@ -146,15 +147,15 @@ class InportPostController extends Controller
             ->join('mac_addresses', function($join){
                 $now = Carbon::now();
                 $second = env("JUDGE_TIME_LAG_SECOND");
-                $d_limit = $now->subSecond($second);
+                $past_limit = $now->subSecond($second);
                 $join->on('users.id', '=', 'mac_addresses.user_id')
                 ->where([
                     ['hide', false],
                     ['current_stay', true],
-                    ['last_access', '<=', $d_limit],
+                    ['last_access', '<=', $past_limit],
                 ]);
             })->get();
-            // Log::debug(print_r($went_away, 1));
+            Log::debug(print_r($went_away, 1));
         $push_users = array();
         $i = 0;
         foreach ($went_away as $went) {
