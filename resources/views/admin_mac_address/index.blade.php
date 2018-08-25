@@ -61,8 +61,8 @@
                         @else
                             <td></td>
                         @endif
-                        @if($item->update_at != null)
-                            <td>{{$item->update_at->format('n月j日 G:i:s')}}</td>
+                        @if($item->updated_at != null)
+                            <td>{{$item->updated_at->format('n月j日 G:i:s')}}</td>
                         @else
                             <td></td>
                         @endif
