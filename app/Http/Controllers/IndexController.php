@@ -46,14 +46,13 @@ class IndexController extends Controller
                 ['hide', false],
                 ['current_stay', false],
             ])
-            ->orderBy('max_departure_at', 'desc')
             ->groupBy('user_id');
 
         // 親クエリでusers table呼び出し
         $not_stays = DB::table('users')
             ->joinSub($current_not_stays, 'current_stays', function($join) {
                 $join->on('users.id', '=', 'current_stays.user_id');
-            })->where('id', '<>', 1)->get();
+            })->where('id', '<>', 1)->orderBy('current_stays.max_departure_at', 'desc')->get();
 
         return view('index.index', [
             'items' => $unregistered,
