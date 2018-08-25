@@ -38,6 +38,7 @@ class AdminUserController extends Controller
             'name' => 'required|string|max:30',
             'email' => 'required|string|email|max:255',
             'admin_user' => 'required|boolean',
+            'hide' => 'required|boolean',
             'mac_addres_id' => 'array',
         ]);
         $now = Carbon::now();
@@ -46,6 +47,7 @@ class AdminUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'admin_user' => $request->admin_user,
+            'hide' => $request->hide,
             'updated_at' => $now,
         ];
         'App\UserTable'::where('id', $request->id)->update($param_user);

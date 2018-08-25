@@ -19,6 +19,7 @@
                             <th>id</th>
                             <th>管理者</th>
                             <th>名前&nbsp;/&nbsp;Email</th>
+                            <th>非表示</th>
                             <th>
                                 <table class='table table-borderless table-sm'>
                                     <tr>
@@ -36,10 +37,15 @@
                             <th>操作</th>
                         </tr>
                     @foreach ($items as $item)
+                        @if($item->hide == false)
                         <tr>
+                        @else
+                        <tr  class="table-secondary">
+                        @endif
                             <td>{{$item->id}}</td>
                             <td>{{$item->admin_user}}</td>
                             <td>{{$item->name}}</br>{{$item->email}}</td>
+                            <td>{{$item->hide}}</td>
                             <td>
                                 <table class="table table-hover table-sm table-borderless">
                                     <tbody>

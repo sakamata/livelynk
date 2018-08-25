@@ -51,6 +51,17 @@
                             <input type="radio" name="admin_user" value="0">OFF
                             @endif
                         </div>
+                        <div class="form-group">
+                            <label for="InputTextarea">表示設定&nbsp;&nbsp;</label>
+                            <!-- カッコ悪いけどひとまず速度重視 -->
+                            @if($item->hide == 0)
+                            <input type="radio" name="hide" value="0" checked="checked">表示&nbsp;&nbsp;
+                            <input type="radio" name="hide" value="1" >非表示
+                            @else
+                            <input type="radio" name="hide" value="0">表示&nbsp;&nbsp;
+                            <input type="radio" name="hide" value="1" checked="checked">非表示
+                            @endif
+                        </div>
                         <hr>
                         <div class="form-group">
                             <label for="InputTextarea">デバイス（所有するデバイスをチェックして登録）</label>

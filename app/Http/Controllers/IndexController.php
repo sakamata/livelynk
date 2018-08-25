@@ -37,7 +37,10 @@ class IndexController extends Controller
         $stays = DB::table('users')
             ->joinSub($current_stays, 'current_stays', function($join) {
                 $join->on('users.id', '=', 'current_stays.user_id');
-            })->where('id', '<>', 1)->get();
+            })->where([
+                ['id', '<>', 1],
+                ['hide', false],
+            ])->get();
 
         // view tableの下側のみ、サブクエリでmacの帰宅中mac_addressをuser毎に出す
         $current_not_stays = DB::table('mac_addresses')
@@ -52,7 +55,10 @@ class IndexController extends Controller
         $not_stays = DB::table('users')
             ->joinSub($current_not_stays, 'current_stays', function($join) {
                 $join->on('users.id', '=', 'current_stays.user_id');
-            })->where('id', '<>', 1)->orderBy('current_stays.max_departure_at', 'desc')->get();
+            })->where([
+                ['id', '<>', 1],
+                ['hide', false],
+            ])->orderBy('current_stays.max_departure_at', 'desc')->get();
 
         return view('index.index', [
             'items' => $unregistered,
