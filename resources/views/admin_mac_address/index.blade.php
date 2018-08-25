@@ -3,7 +3,7 @@
 @section('content')
 @component('components.header_menu')
 @endcomponent
-<div class="container">
+<div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
@@ -26,7 +26,9 @@
                             <th>ルーターID</th>
                             <th>来訪日時</th>
                             <th>退出日時</th>
+                            <th>posted_at</th>
                             <th>登録日時</th>
+                            <th>更新日時</th>
                             <th>操作</th>
                         </tr>
                     @foreach ($items as $item)
@@ -49,7 +51,21 @@
                         @else
                             <td></td>
                         @endif
+                        @if($item->posted_at != null)
+                            <td>{{$item->posted_at->format('n月j日 G:i:s')}}</td>
+                        @else
+                            <td></td>
+                        @endif
+                        @if($item->created_at != null)
                             <td>{{$item->created_at->format('n月j日 G:i:s')}}</td>
+                        @else
+                            <td></td>
+                        @endif
+                        @if($item->update_at != null)
+                            <td>{{$item->update_at->format('n月j日 G:i:s')}}</td>
+                        @else
+                            <td></td>
+                        @endif
                             <td>
                                 <a href="/admin_mac_address/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
                             </td>

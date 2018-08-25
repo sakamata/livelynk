@@ -17,6 +17,7 @@ class MacAddress extends Model
     protected $dates = [
         'arraival_at',
         'departure_at',
+        'posted_at',
         'created_at',
         'updated_at',
     ];
