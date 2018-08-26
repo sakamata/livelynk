@@ -44,7 +44,9 @@ class ExportPostController extends Controller
                 'value1' => $res['users_name_str'],
                 'value2' => $res['users_count_str'],
                 'value3' => "",
-            ]
+            ],
+            ["timeout" => 10],
+            ["delay" => 2000.0]
         ]);
     }
 
