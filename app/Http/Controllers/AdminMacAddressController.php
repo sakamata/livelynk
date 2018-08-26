@@ -12,7 +12,8 @@ class AdminMacAddressController extends Controller
 {
     public function index(Request $request)
     {
-        $items = 'App\MacAddress'::orderBy('updated_at', 'desc')->get();
+        $items = 'App\MacAddress'::orderBy('hide', 'asc')
+            ->orderBy('arraival_at', 'desc')->get();
         return view('admin_mac_address.index', [
             'items' => $items,
         ]);
