@@ -47,9 +47,19 @@ class IndexController extends Controller
             ->select(DB::raw("user_id, max(departure_at) as max_departure_at"))
             ->where([
                 ['hide', false],
-                ['current_stay', false],
             ])
             ->groupBy('user_id');
+
+        // 在籍中のuser id を配列で取得 除外対象とする
+        $stay_users = DB::table('mac_addresses')->select('user_id')
+            ->distinct('user_id')
+            ->where('current_stay', true)
+            ->orderBy('user_id', 'asc')->get();
+        // オブジェクトから単純配列 $not_in への加工
+        $stay_users = json_decode(json_encode($stay_users), true);
+        foreach ($stay_users as $key => $value) {
+            $not_in[] = $value['user_id'];
+        }
 
         // 親クエリでusers table呼び出し
         $not_stays = DB::table('users')
@@ -58,7 +68,9 @@ class IndexController extends Controller
             })->where([
                 ['id', '<>', 1],
                 ['hide', false],
-            ])->orderBy('current_stays.max_departure_at', 'desc')->get();
+            ])
+            ->whereNotIn('id', $not_in)
+            ->orderBy('current_stays.max_departure_at', 'desc')->get();
 
         return view('index.index', [
             'items' => $unregistered,
