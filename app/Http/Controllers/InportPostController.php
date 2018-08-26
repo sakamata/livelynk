@@ -80,10 +80,8 @@ class InportPostController extends Controller
                 // 前回のPOSTに該当MACaddressがない場合
                 if (!in_array($post_mac, $stays_mac_array)) {
                     // 来訪/継続ステータスの変更、通知の判断、通知の値取得を行う
-                    // 既にこのuserの他のデバイスの存在があるか?
-                    Log::debug(print_r('mac_record>>>', 1));
-                    Log::debug(print_r($mac_record, 1));
 
+                    // 既にこのuserの他のデバイスの存在があるか?
                     $stay = DB::table('mac_addresses')
                         ->where([
                             ['user_id', $mac_record->user_id],
@@ -91,27 +89,29 @@ class InportPostController extends Controller
                             ['hide', false],
                         ])->exists();
 
-                        Log::debug(print_r('stay あれば更新のみ↓↓↓', 1));
-                        Log::debug(print_r($stay, 1));
-
                     // 前回帰宅時間から、ルーター瞬断や中座に対応した通知処理を行う
                     // 初来訪機器で、帰宅時間がない場合は limit は現在となる
                     $departure_at = new Carbon($mac_record->departure_at);
                     $second = env("JUDGE_ARRAIVAL_INTERVAL_SECOND");
                     $limit = $departure_at->addSecond($second);
 
-                    // 他のデバイスが無く、かつ不在から一定時間以上だった場合のみ
-                    // DBのステータス滞在中に変更 push_usersに追加
+                    // 一定時間以上間の空いた場合はDBのステータス滞在中に変更 arraival_at のみ変更
                     // 現在を含むので ">="  が正
-                    if (!$stay && $now >= $limit) {
+                    if ($now >= $limit) {
                         //  該当レコードの来訪時間 arraival_at 更新
                         DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
                             'arraival_at' => $now,
                         ]);
+                    Log::debug(print_r('mac arraival_at update now!!!', 1));
+                    }
+
+                    // 他のデバイスが無く、かつ不在から一定時間以上だった場合のみ
+                    //  push_usersに追加
+                    if (!$stay && $now >= $limit) {
                         //  通知の為のuser nameを取得
                         $user = DB::table('users')->where('id', $mac_record->user_id)->first();
 
-                        Log::debug(print_r("user 来訪者の通知の人>>>>", 1));
+                        Log::debug(print_r("来訪者の通知開始 該当user>>>", 1));
                         Log::debug(print_r($user, 1));
 
                         $person = array(
@@ -137,7 +137,7 @@ class InportPostController extends Controller
         $this->user_last_access_update($users_ids, $now);
         // 外部機能IFTTTに来訪通知をPOST
         if ($push_users) {
-            Log::debug(print_r("!!!push_ifttt arraival>>>>!!!", 1));
+            Log::debug(print_r("!push_ifttt arraival!>>>>", 1));
             Log::debug(print_r($push_users, 1));
 
             (new ExportPostController)->push_ifttt($push_users, $category = "arraival");
@@ -173,8 +173,8 @@ class InportPostController extends Controller
         $users_id = array();
         $i = 0;
         foreach ($went_away as $went) {
-            Log::debug(print_r("went 帰った判定のデバイス>>>>", 1));
-            Log::debug(print_r($went, 1));
+            Log::debug(print_r("帰ったステータス更新 判定デバイス>>>>", 1));
+            Log::debug(print_r($went->id .' '. $went->vendor .' '. $went->device_name, 1));
 
             DB::table('mac_addresses')->where('id', $went->id)
                 ->update([
@@ -186,9 +186,6 @@ class InportPostController extends Controller
             $i++;
         }
         $users_id = array_unique($users_id);
-        Log::debug(print_r("users_id>>>>", 1));
-        Log::debug(print_r($users_id, 1));
-
         $push_users = array();
         $i = 0;
         foreach ((array)$users_id as $id) {
@@ -211,13 +208,11 @@ class InportPostController extends Controller
                 $push_users[$i] =  $person;
                 $i++;
             }
-            Log::debug(print_r("push_users 帰った人通知の人>>>>", 1));
-            Log::debug(print_r($push_users, 1));
         }
 
         // 滞在者数判断処理～外部機能IFTTTに帰宅通知をPOST
         if ($push_users) {
-            Log::debug(print_r("!!!push_ifttt departure>>>>!!!", 1));
+            Log::debug(print_r("!!!push_ifttt departure pushusers >>>>!!!", 1));
             Log::debug(print_r($push_users, 1));
 
             (new ExportPostController)->push_ifttt($push_users, $category = "departure");
