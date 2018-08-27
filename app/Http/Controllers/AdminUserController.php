@@ -24,7 +24,10 @@ class AdminUserController extends Controller
         $item = 'App\UserTable'::where('id', $request->id)->first();
         $mac_addresses = DB::table('mac_addresses')->where('user_id', 1)
             ->orwhere('user_id', $request->id)
-            ->orderBy('user_id','desc')->get();
+            ->orderBy('hide','asc')
+            ->orderBy('user_id', $request->id)
+            ->orderBy('arraival_at','desc')
+            ->get();
 
         return view('admin_user.edit', [
             'item' => $item,

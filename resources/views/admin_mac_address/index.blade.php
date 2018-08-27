@@ -32,7 +32,11 @@
                             <th>操作</th>
                         </tr>
                     @foreach ($items as $item)
-                        @if($item->current_stay == 1)
+                        @if($item->hide == true)
+                        <tr class="table-secondary">
+                        @elseif($item->current_stay == true && $item->user_id == 1)
+                        <tr class="table-warning">
+                        @elseif($item->current_stay == true)
                         <tr class="table-info">
                         @else
                         <tr>

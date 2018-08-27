@@ -43,24 +43,24 @@
                         <div class="form-group">
                             <label for="InputTextarea">管理権限&nbsp;&nbsp;</label>
                             <!-- カッコ悪いけどひとまず速度重視 -->
-                            @if($item->admin_user == 0)
+                        @if($item->admin_user == 0)
                             <input type="radio" name="admin_user" value="1">ON&nbsp;&nbsp;
                             <input type="radio" name="admin_user" value="0" checked="checked">OFF
-                            @else
+                        @else
                             <input type="radio" name="admin_user" value="1" checked="checked">ON&nbsp;&nbsp;
                             <input type="radio" name="admin_user" value="0">OFF
-                            @endif
+                        @endif
                         </div>
                         <div class="form-group">
                             <label for="InputTextarea">表示設定&nbsp;&nbsp;</label>
                             <!-- カッコ悪いけどひとまず速度重視 -->
-                            @if($item->hide == 0)
+                        @if($item->hide == 0)
                             <input type="radio" name="hide" value="0" checked="checked">表示&nbsp;&nbsp;
                             <input type="radio" name="hide" value="1" >非表示
-                            @else
+                        @else
                             <input type="radio" name="hide" value="0">表示&nbsp;&nbsp;
                             <input type="radio" name="hide" value="1" checked="checked">非表示
-                            @endif
+                        @endif
                         </div>
                         <hr>
                         <div class="form-group">
@@ -77,23 +77,27 @@
                                     <th>来訪日時</th>
                                     <th>登録日時</th>
                                 </tr>
-                                @foreach($mac_addresses as $mac_add)
-                                @if($mac_add->user_id == $item->id)
+                        @foreach($mac_addresses as $mac_add)
+                            @if($mac_add->hide == true)
+                                <tr class="table-secondary">
+                            @elseif($mac_add->current_stay == true && $mac_add->user_id == 1)
+                                <tr class="table-warning">
+                            @elseif($mac_add->current_stay == true)
                                 <tr class="table-info">
+                            @elseif($mac_add->user_id == $item->id)
+                                <tr class="table-info">
+                            @else
+                                <tr>
+                            @endif
+                            @if($mac_add->user_id == $item->id)
                                     <td>
                                         <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}" checked="checked">
                                     </td>
-                                @elseif($mac_add->current_stay == 1 && $mac_add->hide == 0)
-                                <tr class="table-warning ">
+                            @else
                                     <td>
                                         <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}">
                                     </td>
-                                @else
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}">
-                                    </td>
-                                @endif
+                            @endif
                                     <td>{{$mac_add->id}}</td>
                                     <td>{{$mac_add->current_stay}}</td>
                                     <td>{{$mac_add->mac_address}}</td>
@@ -103,7 +107,7 @@
                                     <td>{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i:s')}}</td>
                                     <td>{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i:s')}}</td>
                                 </tr>
-                                @endforeach
+                        @endforeach
                             </table>
                         </div>
                         <div class="form-group">
