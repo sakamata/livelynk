@@ -49,24 +49,24 @@
                             <td>{{$item->device_name}}</td>
                             <td>{{$item->user->name}}</td>
                             <td>{{$item->router_id}}</td>
-                            <td>{{$item->arraival_at->format('n月j日 G:i:s')}}</td>
+                            <td>{{$item->arraival_at->format('n月j日 G:i')}}</td>
                         @if($item->departure_at != null)
-                            <td>{{$item->departure_at->format('n月j日 G:i:s')}}</td>
+                            <td>{{$item->departure_at->format('n月j日 G:i')}}</td>
                         @else
                             <td></td>
                         @endif
                         @if($item->posted_at != null)
-                            <td>{{$item->posted_at->format('n月j日 G:i:s')}}</td>
+                            <td>{{$item->posted_at->format('n月j日 G:i')}}</td>
                         @else
                             <td></td>
                         @endif
                         @if($item->created_at != null)
-                            <td>{{$item->created_at->format('n月j日 G:i:s')}}</td>
+                            <td>{{$item->created_at->format('n月j日 G:i')}}</td>
                         @else
                             <td></td>
                         @endif
                         @if($item->updated_at != null)
-                            <td>{{$item->updated_at->format('n月j日 G:i:s')}}</td>
+                            <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
                         @else
                             <td></td>
                         @endif

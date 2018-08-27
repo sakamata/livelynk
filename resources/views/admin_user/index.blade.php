@@ -73,9 +73,9 @@
                                     </tbody>
                                 </table>
                             </td>
-                            <td>{{$item->last_access->format('n月j日 G:i:s')}}</td>
-                            <td>{{$item->created_at->format('n月j日 G:i:s')}}</td>
-                            <td>{{$item->updated_at->format('n月j日 G:i:s')}}</td>
+                            <td>{{$item->last_access->format('n月j日 G:i')}}</td>
+                            <td>{{$item->created_at->format('n月j日 G:i')}}</td>
+                            <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
                             <td>
                                 <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">ユーザー編集</a>
                             </td>

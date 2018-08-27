@@ -3,7 +3,7 @@
 @section('content')
 @component('components.header_menu')
 @endcomponent
-<div class="container">
+<div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
@@ -75,6 +75,7 @@
                                     <th>デバイス名</th>
                                     <th>ルーターID</th>
                                     <th>来訪日時</th>
+                                    <th>posted_at</th>
                                     <th>登録日時</th>
                                 </tr>
                         @foreach($mac_addresses as $mac_add)
@@ -104,8 +105,9 @@
                                     <td>{{$mac_add->vendor}}</td>
                                     <td>{{$mac_add->user_id}}:{{$mac_add->device_name}}</td>
                                     <td>{{$mac_add->router_id}}</td>
-                                    <td>{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i:s')}}</td>
-                                    <td>{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i:s')}}</td>
+                                    <td>{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i')}}</td>
+                                    <td>{{Carbon\Carbon::parse($mac_add->posted_at)->format('n月j日 G:i')}}</td>
+                                    <td>{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}</td>
                                 </tr>
                         @endforeach
                             </table>
