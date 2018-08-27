@@ -8,8 +8,17 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\UserTable;
 
+// app\Http\Controllers\Auth\RegisterController.php にある use を単純に追加したのみ
+use App\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
+
 class AdminUserController extends Controller
 {
+    // app\Http\Controllers\Auth\RegisterController.php にある use を単純に追加したのみ
+    use RegistersUsers;
+
     // view URL は admin_users_edit としている
     public function index(Request $request)
     {
@@ -85,4 +94,26 @@ class AdminUserController extends Controller
         return redirect('/admin_user');
     }
 
+    protected function add(Request $request)
+    {
+        return view('admin_user.add', [
+        ]);
+    }
+
+    // app\Http\Controllers\Auth\RegisterController.php をコピーしたのみ
+    // ***ToDo*** 処理の一本化（バリデートを2か所に書いてしまっている）
+    protected function create(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:30',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+        User::create([
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password']),
+        ]);
+        return redirect('/admin_user');
+    }
 }

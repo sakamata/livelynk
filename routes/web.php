@@ -38,6 +38,9 @@ Route::get('/admin_user', 'AdminUserController@index')->middleware('auth');
 Route::get('/admin_user/edit{id?}', 'AdminUserController@edit')->middleware('auth');
 Route::post('/admin_user/update', 'AdminUserController@update')->middleware('auth');
 
+Route::get('/admin_user/add', 'AdminUserController@add')->middleware('auth');
+Route::post('/admin_user/create', 'AdminUserController@create')->middleware('auth');
+
 Route::get('/admin_mac_address', 'AdminMacAddressController@index')->middleware('auth');
 Route::get('/admin_mac_address/edit{id?}', 'AdminMacAddressController@edit')->middleware('auth');
 Route::post('/admin_mac_address/update', 'AdminMacAddressController@update')->middleware('auth');
