@@ -22,6 +22,7 @@
                                     'firld' => 'ID',
                                     'key' => $key,
                                     'order' => $order,
+                                    'action' => 'admin_mac_address',
                                 ])
                                 @endcomponent
                             </th>
@@ -31,18 +32,65 @@
                                     'firld' => '滞在中',
                                     'key' => $key,
                                     'order' => $order,
+                                    'action' => 'admin_mac_address',
                                 ])
                                 @endcomponent
                             </th>
                             <th>非表示</th>
-                            <th>MAC Address</th>
-                            <th>vendor</th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'mac_address',
+                                    'firld' => 'MAC Address',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_mac_address',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'vendor',
+                                    'firld' => 'vendor',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_mac_address',
+                                ])
+                                @endcomponent
+                            </th>
                             <th>デバイス名</th>
                             <th>登録ユーザー</th>
                             <th>ルーターID</th>
-                            <th>来訪日時</th>
-                            <th>退出日時</th>
-                            <th>posted_at</th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'arraival_at',
+                                    'firld' => '来訪日時',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_mac_address',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'departure_at',
+                                    'firld' => '退出日時',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_mac_address',
+                                ])
+                                @endcomponent
+
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'posted_at',
+                                    'firld' => 'posted_at',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_mac_address',
+                                ])
+                                @endcomponent
+                            </th>
                             <th>登録日時</th>
                             <th>更新日時</th>
                             <th>操作</th>

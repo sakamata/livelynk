@@ -22,9 +22,55 @@ class AdminUserController extends Controller
     // view URL は admin_users_edit としている
     public function index(Request $request)
     {
-        $items = 'App\UserTable'::get();
+        $request->validate([
+            'id' => ['nullable','regex:/asc|desc/'],
+            'admin_user' => ['nullable','regex:/asc|desc/'],
+            'name' => ['nullable','regex:/asc|desc/'],
+            'hide' => ['nullable','regex:/asc|desc/'],
+            'last_access' => ['nullable','regex:/asc|desc/'],
+            'created_at' => ['nullable','regex:/asc|desc/'],
+            'updated_at' => ['nullable','regex:/asc|desc/'],
+        ]);
+
+        // ***ToDo*** もう少しスマートに書けないものか?
+        if ($request->id) {
+            $order = $request->id;
+            $key = 'id';
+        }
+        elseif ($request->admin_user) {
+            $order = $request->admin_user;
+            $key = 'admin_user';
+        }
+        elseif ($request->name) {
+            $order = $request->name;
+            $key = 'name';
+        }
+        elseif ($request->hide) {
+            $order = $request->hide;
+            $key = 'hide';
+        }
+        elseif ($request->last_access) {
+            $order = $request->last_access;
+            $key = 'last_access';
+        }
+        elseif ($request->created_at) {
+            $order = $request->created_at;
+            $key = 'created_at';
+        }
+        elseif ($request->updated_at) {
+            $order = $request->updated_at;
+            $key = 'updated_at';
+        } else {
+            // default order
+            $order = 'desc';
+            $key = 'id';
+        }
+
+        $items = 'App\UserTable'::orderBy($key, $order)->get();
         return view('admin_user.index',[
             'items' => $items,
+            'order' => $order,
+            'key' => $key,
         ]);
     }
 

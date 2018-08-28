@@ -1,4 +1,4 @@
-<form name="{{$name}}" action="admin_mac_address" method="get">
+<form name="{{$name}}_" action="{{$action}}" method="get">
 @if($key != $name || $order == 'desc')
     @php
     $value = 'asc';
@@ -11,5 +11,5 @@
     @endphp
 @endif
     <input type='hidden' name='{{$name}}' value='{{$value}}'>
-    {{$firld}}<a href='javascript:{{$name}}.submit()'>{{$icon}}</a>
+    {{$firld}}<a href='javascript:{{$name}}_.submit()'><span class="lead">{{$icon}}</span></a>
 </form>

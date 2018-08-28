@@ -16,10 +16,46 @@
                     @endif
                     <table class="table table-hover">
                         <tr class="info thead-light">
-                            <th>id</th>
-                            <th>管理者</th>
-                            <th>名前&nbsp;/&nbsp;Email</th>
-                            <th>非表示</th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'id',
+                                    'firld' => 'ID',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'admin_user',
+                                    'firld' => '管理者',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'name',
+                                    'firld' => '名前 / Email',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'hide',
+                                    'firld' => '非表示',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
                             <th>
                                 <table class='table table-borderless table-sm'>
                                     <tr>
@@ -31,9 +67,36 @@
                                     </tr>
                                 </table>
                             </th>
-                            <th>最終来訪</th>
-                            <th>登録日時</th>
-                            <th>更新日時</th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'last_access',
+                                    'firld' => '最終来訪',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'created_at',
+                                    'firld' => '登録日時',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'updated_at',
+                                    'firld' => '更新日時',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
                             <th>操作</th>
                         </tr>
                     @foreach ($items as $item)

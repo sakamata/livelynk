@@ -15,19 +15,44 @@ class AdminMacAddressController extends Controller
         $request->validate([
             'id' => ['nullable','regex:/asc|desc/'],
             'current_stay' => ['nullable','regex:/asc|desc/'],
+            'mac_address' => ['nullable','regex:/asc|desc/'],
+            'vendor' => ['nullable','regex:/asc|desc/'],
+            'arraival_at' => ['nullable','regex:/asc|desc/'],
+            'departure_at' => ['nullable','regex:/asc|desc/'],
+            'posted_at' => ['nullable','regex:/asc|desc/'],
         ]);
 
+        // ***ToDo*** もう少しスマートに書けないものか?
         if ($request->id) {
             $order = $request->id;
             $key = 'id';
+        }
+        elseif ($request->current_stay) {
+            $order = $request->current_stay;
+            $key = 'current_stay';
+        }
+        elseif ($request->mac_address) {
+            $order = $request->mac_address;
+            $key = 'mac_address';
+        }
+        elseif ($request->vendor) {
+            $order = $request->vendor;
+            $key = 'vendor';
+        }
+        elseif ($request->arraival_at) {
+            $order = $request->arraival_at;
+            $key = 'arraival_at';
+        }
+        elseif ($request->departure_at) {
+            $order = $request->departure_at;
+            $key = 'departure_at';
+        }
+        elseif ($request->posted_at) {
+            $order = $request->posted_at;
+            $key = 'posted_at';
         } else {
             // default order
             $order = 'desc';
-            $key = 'id';
-        }
-
-        if ($request->current_stay) {
-            $order = $request->current_stay;
             $key = 'current_stay';
         }
 
@@ -43,12 +68,15 @@ class AdminMacAddressController extends Controller
 
     public function edit(Request $request)
     {
-        // 不正なrequestはひとまず /homeへ飛ばす
+        // 不正なrequestはひとまず /へ飛ばす
         if (!$request->id || !ctype_digit($request->id)) {
-            return redirect('/home');
+            return redirect('/');
         }
 
         $item = 'App\MacAddress'::where('id', $request->id)->first();
+        if (!$item) {
+            return redirect('/');
+        }
         $users = DB::table('users')->get(['id', 'name']);
 
         // Log::debug(print_r($item, 1));
