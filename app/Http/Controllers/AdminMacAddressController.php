@@ -14,17 +14,23 @@ class AdminMacAddressController extends Controller
     {
         $request->validate([
             'id' => ['nullable','regex:/asc|desc/'],
+            'current_stay' => ['nullable','regex:/asc|desc/'],
         ]);
 
         if ($request->id) {
             $order = $request->id;
             $key = 'id';
         } else {
+            // default order
             $order = 'desc';
             $key = 'id';
         }
 
-        // ->orderBy('arraival_at', 'desc')
+        if ($request->current_stay) {
+            $order = $request->current_stay;
+            $key = 'current_stay';
+        }
+
         $items = 'App\MacAddress'::orderBy('hide', 'asc')
             ->orderBy($key, $order)
             ->get();

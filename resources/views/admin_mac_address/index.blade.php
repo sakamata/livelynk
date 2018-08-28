@@ -17,17 +17,23 @@
                     <table class="table table-hover">
                         <tr class="info thead-light">
                             <th>
-                                <form name="id" action="admin_mac_address" method="get">
-                                @if($order == 'desc')
-                                    <input type='hidden' name='id' value='asc'>
-                                    id<a href='javascript:id.submit()'>▲</a>
-                                @else
-                                    <input type='hidden' name='id' value='desc'>
-                                    id<a href='javascript:id.submit()'>▼</a>
-                                @endif
-                            </form>
+                                @component('components.order', [
+                                    'name' => 'id',
+                                    'firld' => 'ID',
+                                    'key' => $key,
+                                    'order' => $order,
+                                ])
+                                @endcomponent
                             </th>
-                            <th>滞在中</th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'current_stay',
+                                    'firld' => '滞在中',
+                                    'key' => $key,
+                                    'order' => $order,
+                                ])
+                                @endcomponent
+                            </th>
                             <th>非表示</th>
                             <th>MAC Address</th>
                             <th>vendor</th>
