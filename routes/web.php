@@ -29,7 +29,8 @@ Route::post(env("PASSWORD_PATH").'/email', 'Auth\ForgotPasswordController@sendRe
 Route::get(env("PASSWORD_PATH").'/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
 Route::post(env("PASSWORD_PATH").'/reset', 'Auth\ResetPasswordController@reset');
 
-
+// ホーム画面タイトル表示のみで非ログインは遷移無し
+Route::get('/', 'IndexController@welcome');
 // メイン画面 滞在者一覧 or home画面
 Route::get(env("INDEX_PATH"), 'IndexController@index')->name('index');
 

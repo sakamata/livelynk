@@ -57,21 +57,17 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}" class="btn btn-info" role="button">Home</a>
-                    @else
-                        <a href="{{ route('login') }}" class="btn btn-info" role="button">ログイン</a>
-                        <a href="{{ route('register') }}" class="btn btn-info" role="button">ユーザー登録</a>
-                    @endauth
-                </div>
-            @endif
-
             <div class="content">
                 <div class="title m-b-md">
                     {{ config('app.name', 'Laravel') }}<br>@ Geek Office
                 </div>
+                @if (Route::has('login'))
+                    @auth
+                        <a href="{{ env("INDEX_PATH") }}" class="btn btn-info btn-lg" role="button">Home</a>
+                    @else
+                        <p class="lead">会員専用のURLより閲覧してください。</p>
+                    @endauth
+               @endif
             </div>
         </div>
     </body>

@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Auth;
 
 class IndexController extends Controller
 {
+    public function welcome()
+    {
+        return view('welcome');
+    }
+
     // 一般ユーザーのメイン画面、滞在者の一覧を表示する
     public function index(Request $request)
     {
