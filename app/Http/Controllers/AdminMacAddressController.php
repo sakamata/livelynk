@@ -12,10 +12,26 @@ class AdminMacAddressController extends Controller
 {
     public function index(Request $request)
     {
+        $request->validate([
+            'id' => ['nullable','regex:/asc|desc/'],
+        ]);
+
+        if ($request->id) {
+            $order = $request->id;
+            $key = 'id';
+        } else {
+            $order = 'desc';
+            $key = 'id';
+        }
+
+        // ->orderBy('arraival_at', 'desc')
         $items = 'App\MacAddress'::orderBy('hide', 'asc')
-            ->orderBy('arraival_at', 'desc')->get();
+            ->orderBy($key, $order)
+            ->get();
         return view('admin_mac_address.index', [
             'items' => $items,
+            'order' => $order,
+            'key' => $key,
         ]);
     }
 

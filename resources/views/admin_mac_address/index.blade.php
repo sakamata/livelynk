@@ -16,7 +16,17 @@
                     @endif
                     <table class="table table-hover">
                         <tr class="info thead-light">
-                            <th>id</th>
+                            <th>
+                                <form name="id" action="admin_mac_address" method="get">
+                                @if($order == 'desc')
+                                    <input type='hidden' name='id' value='asc'>
+                                    id<a href='javascript:id.submit()'>▲</a>
+                                @else
+                                    <input type='hidden' name='id' value='desc'>
+                                    id<a href='javascript:id.submit()'>▼</a>
+                                @endif
+                            </form>
+                            </th>
                             <th>滞在中</th>
                             <th>非表示</th>
                             <th>MAC Address</th>
