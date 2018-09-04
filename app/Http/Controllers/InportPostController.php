@@ -13,23 +13,21 @@ class InportPostController extends Controller
     // MAC アドレス一覧を受け取って、mac_addresses tableへの登録、更新を行う
     public function MacAddress(Request $request)
     {
-        // ***ToDo*** CSRF対策　独自tokenでバリデート
-        // PI側から getTime() で渡された日時をミリ秒削ってdatetimeに変換
-        // getTime_to_DATETIME(getTime)
-
-        $json = $request->mac;
+        $json = $request->json;
         if (!$json) { exit();};
-        $check_mac_array = json_decode($json);
-        Log::debug(print_r($json, 1));
+        $check_array = json_decode($json, true);
+        Log::debug(print_r($check_array, 1));
+        // hash値が異なる場合はexit() で処理停止
+        $this->HashCheck($check_array);
 
         // MACアドレス形式のみ大文字にして配列に入れ、それ以外はlog出力
         $post_mac_array = array();
-        foreach ((array)$check_mac_array as $check_mac) {
-            $pattern = preg_match('/([a-fA-F0-9]{2}[:|\-]?){6}/', $check_mac);
+        foreach ((array)$check_array["mac"] as $check) {
+            $pattern = preg_match('/([a-fA-F0-9]{2}[:|\-]?){6}/', $check);
             if (!$pattern) {
-                Log::debug(print_r('Inport post Not MACaddress!! posted element ==> ' .$check_mac, 1));
+                Log::debug(print_r('Inport post Not MACaddress!! posted element ==> ' .$check, 1));
             } else {
-                $check_MAC = strtoupper($check_mac);
+                $check_MAC = strtoupper($check);
                 array_push($post_mac_array, $check_MAC);
             }
         }
@@ -42,6 +40,7 @@ class InportPostController extends Controller
         $push_users =array();
         $users_ids = array();
         $i = 0;
+        $v = 0;
         // POSTされたMACaddressを個々で精査し来訪判断
         foreach ((array)$post_mac_array as $post_mac) {
             // 登録済みMACアドレスか個別確認
@@ -51,6 +50,7 @@ class InportPostController extends Controller
                 // user_id = 1 は仕様上[ユーザー未登録]のrecord
                 $param = [
                     'mac_address' => $post_mac,
+                    'vendor' => $check_array["vendor"][$v],
                     'user_id' => 1,
                     'arraival_at' => $now,
                     'posted_at' => $now,
@@ -129,6 +129,7 @@ class InportPostController extends Controller
                 'posted_at' => $now,
                 'updated_at' => $now,
             ]);
+            $v++;
         } // end foreach
 
         // 滞在者の id重複削除してからuser table last_accessを更新
@@ -143,6 +144,20 @@ class InportPostController extends Controller
             (new ExportPostController)->push_ifttt($push_users, $category = "arraival");
         }
         $this->DepartureCheck();
+    }
+
+    public function HashCheck($check_array)
+    {
+        // hash確認
+        $secret = env("INPORT_JSON_HASH");
+        $time = $check_array["time"];
+        $this_side_hash = hash('sha256',$time.$secret);
+        $post_hash = $check_array["hash"];
+        if ($this_side_hash != $post_hash) {
+            Log::debug(print_r('Inport json post hash unmatch !! posted hash ==> ' .$post_hash, 1));
+            Log::debug(print_r('Inport json post hash unmatch !! This side hash ==> ' .$this_side_hash, 1));
+            exit();
+        }
     }
 
     // users table last_accessの一括更新
