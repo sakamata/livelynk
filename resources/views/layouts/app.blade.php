@@ -19,6 +19,8 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/x-icon"  href="{{asset("img/icon/favicon_.ico")}}">
 </head>
 <body>
     <div id="app">
@@ -66,6 +68,12 @@
                                 </div>
                             </li>
                         @endguest
+                            <li class="nav-item">
+                                <a class="nav-link" href="http://geekoffice.linkdesign.jp/#/home" target="_blank">ギークオフィスWebサービス</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="https://tumolink.herokuapp.com/home" target="_blank">ツモリンク</a>
+                            </li>
                     </ul>
                 </div>
             </div>
