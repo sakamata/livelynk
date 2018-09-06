@@ -9,11 +9,14 @@
             <div class="card">
                 <div class="card-header"><h2>登録ユーザー一覧</h2></div>
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+            @if (session('status'))
+                <div class="alert alert-success" role="alert">
+                    {{ session('status') }}
+                </div>
+            @endif
+                <div class="blockquote text-left">
+                    <a href="/admin_user/add" class="btn btn-info" role="button">新規ユーザー作成</a>
+                </div>
                     <table class="table table-hover">
                         <tr class="info thead-light">
                             <th>

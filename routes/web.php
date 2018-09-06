@@ -47,6 +47,8 @@ Route::get('/admin_mac_address/edit{id?}', 'AdminMacAddressController@edit')->mi
 Route::post('/admin_mac_address/update', 'AdminMacAddressController@update')->middleware('auth');
 
 Route::get('/admin_router', 'AdminRouterController@index')->middleware('auth');
+Route::get('/admin_router/add', 'AdminRouterController@add')->middleware('auth');
+Route::post('/admin_router/create', 'AdminRouterController@create')->middleware('auth');
 Route::get('/admin_router/edit{id?}', 'AdminRouterController@edit')->middleware('auth');
 Route::post('/admin_router/update', 'AdminRouterController@update')->middleware('auth');
 

@@ -20,14 +20,43 @@ class AdminRouterController extends Controller
         ]);
     }
 
+    public function add(Request $request)
+    {
+        return view('admin_router.add');
+    }
+
     public function create(Request $request)
     {
-        // code...
+        $request->validate([
+            'community_id' => 'required|integer',
+            'name' => 'required|string|max:100',
+            'hash_key' => 'required|alpha_num|max:100',
+        ]);
+        $now = Carbon::now();
+        $param = [
+            'community_id' => $request->community_id,
+            'name' => $request->name,
+            'hash_key' => $request->hash_key,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ];
+        DB::table('routers')->insert($param);
+        return redirect('/admin_router');
     }
 
     public function edit(Request $request)
     {
-        // code...
+        // 不正なrequestはひとまず /へ飛ばす
+        if (!$request->id || !ctype_digit($request->id)) {
+            return redirect('/');
+        }
+        $item = 'App\AdminRouter'::where('id', $request->id)->first();
+        if (!$item) {
+            return redirect('/');
+        }
+        return view('admin_router.edit', [
+            'item' => $item,
+        ]);
     }
 
     public function update(Request $request)

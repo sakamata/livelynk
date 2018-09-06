@@ -9,15 +9,18 @@
             <div class="card">
                 <div class="card-header"><h2>Router一覧</h2></div>
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+            @if (session('status'))
+                <div class="alert alert-success" role="alert">
+                    {{ session('status') }}
+                </div>
+            @endif
+                <div class="blockquote text-left">
+                    <a href="/admin_router/add" class="btn btn-info" role="button">Router新規登録</a>
+                </div>
                     <table class="table table-hover">
                         <tr class="info thead-light">
                             <th>ID</th>
-                            <th>communitiy_id</th>
+                            <th>community_id</th>
                             <th>router名称</th>
                             <th>hash_key</th>
                             <th>created_at</th>
@@ -27,9 +30,9 @@
                     @foreach ($items as $item)
                         <tr>
                             <td>{{$item->id}}</td>
-                            <td>{{$item->communitiy_id}}</td>
+                            <td>{{$item->community_id}}</td>
                             <td>{{$item->name}}</td>
-                            <td>{{$item->hash_key}}</td>
+                            <td>**********</td>
                             <td>{{$item->created_at->format('n月j日 G:i')}}</td>
                             <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
                             <td>
