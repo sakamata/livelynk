@@ -53,11 +53,6 @@
                             <td class="align-middle">
                                 {{date('n/j G:i', strtotime($item->max_departure_at))}}
                             </td>
-                            @auth
-                            <td class="blockquote text-center align-middle">
-                                <a href="/admin_user/edit?id={{$item->user_id}}" class="btn btn-info" role="button">ユーザー編集</a>
-                            </td>
-                            @endauth
                         </tr>
                     @endforeach
                     </table>
