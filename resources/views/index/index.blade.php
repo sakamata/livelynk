@@ -16,10 +16,10 @@
                     @endif
                     <table class="table table-hover">
                         <tr class="info thead-light">
-                            <th>ステータス</th>
-                            <th>名前</th>
-                            <th>到着日時</th>
-                            <th>帰宅日時</th>
+                            <th class="align-middle"></th>
+                            <th class="align-middle">名前</th>
+                            <th class="align-middle">到着日時</th>
+                            <th class="align-middle">帰宅日時</th>
                         </tr>
                     @foreach ($items as $item)
                     @php
@@ -27,7 +27,7 @@
                         $png = $no . '.png';
                     @endphp
                         <tr class="table-warning">
-                            <td class="align-middle"><img src="{{asset("img/icon/newcomer.png")}}" width="46"  alt="Newcomer!"></td>
+                            <td class="align-middle text-right"><img src="{{asset("img/icon/newcomer.png")}}" width="46"  alt="Newcomer!"></td>
                             <td class="align-middle"><span style="display: inline-block;"><img src="{{asset("img/icon/$png")}}" height="50" alt="animal_icon"></span><span style="display: inline-block;">{{$item->vendor}}</span></td>
                             <td class="align-middle">
                                 {{date('n/j G:i', strtotime($item->arraival_at))}}
@@ -37,7 +37,7 @@
                     @endforeach
                     @foreach ($items1 as $item)
                         <tr>
-                            <td class="align-middle"><img src="{{asset("img/icon/im_here.png")}}" width="46"  alt="I'm here!"></td>
+                            <td class="align-middle blockquote text-right"><img src="{{asset("img/icon/im_here.png")}}" width="46"  alt="I'm here!"></td>
                             <td class="align-middle">{{$item->name}}</td>
                             <td class="align-middle">
                                 {{date('n/j G:i', strtotime($item->max_arraival_at))}}
