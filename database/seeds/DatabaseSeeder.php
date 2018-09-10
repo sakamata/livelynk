@@ -13,5 +13,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UsersTableSeeder::class);
         // 以下、追記する
+        $this->call(MacAddressesTableSeeder::class);
     }
 }
