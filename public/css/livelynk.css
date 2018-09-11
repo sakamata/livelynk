@@ -1,3 +1,93 @@
+/* reset */
+img {
+  vertical-align:bottom;
+}
+p {
+  margin: 0;
+}
+ul,dl,dd {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+table {
+  border-spacing: 0;
+  width: 100%;
+}
+/* common */
 body {
-  background-color: red;
+  font-family:-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI","Noto Sans Japanese","ヒラギノ角ゴ ProN W3", Meiryo, sans-serif;
+  font-size: 14px;
+  padding: 60px 1em 0 1em;
+  margin: 0;
+  background-color: #E1F5FE;
+}
+.space-list>li {
+  background-color: white;
+}
+.clearfix::after{
+  content: "";
+  display: block;
+  clear: both;
+}
+.fl-left {
+  float: left;
+}
+.fl-right {
+  float: right;
+}
+.responsive-img {
+  width: 100%;
+  height: auto;
+}
+.profile-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  border: solid 2px white;
+} 
+@media (min-width: 768px) {
+  .pc-none {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .sp-none {
+    display: none !important;
+  }
+}
+/* header */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #01579B;
+  border-bottom: solid 1px #E1F5FE;
+  color: white;
+  height: 59px;
+  z-index: 3;
+  display: table;
+}
+header .menu,
+header .logo,
+header .action {
+  display: table-cell;
+  vertical-align: middle;
+}
+header .menu {
+  text-align: left;
+  width: 40%;
+}
+header .logo {
+  text-align: center;
+  width: 20%;
+}
+header .action {
+  text-align: right;
+  width: 40%;
 }
