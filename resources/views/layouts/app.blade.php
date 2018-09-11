@@ -20,6 +20,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/livelynk.css') }}" rel="stylesheet">
+
     <!-- favicon -->
     <link rel="shortcut icon" type="image/x-icon"  href="{{asset("img/icon/favicon_.ico")}}">
 </head>
@@ -27,6 +28,20 @@
     <div id="app">
         <header>
             <div class="menu">
+                <div id="nav-drawer">
+                    <input id="nav-input" type="checkbox" class="nav-unshown">
+                    <label id="nav-open" for="nav-input"><span></span></label>
+                    <label class="nav-unshown" id="nav-close" for="nav-input"></label>
+                    <div id="nav-content">
+                        <div class="head">
+                            <label class="nav-unshown" for="nav-input">MENU</label>
+                        </div>
+                        <nav>
+                            <a href="http://geekoffice.linkdesign.jp/#/home" target="_blank">ギークオフィスWebサービス</a>
+                            <a href="https://tumolink.herokuapp.com/home" target="_blank">ツモリンク</a>
+                        </nav>
+                    </div>
+                </div>
             </div>
             <div class="logo">
                 <a class="navbar-brand" href="{{ env("INDEX_PATH") }}">
