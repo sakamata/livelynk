@@ -28,13 +28,13 @@
     <div id="app">
         <header>
             <div class="menu">
-                <div id="nav-drawer">
-                    <input id="nav-input" type="checkbox" class="nav-unshown">
-                    <label id="nav-open" for="nav-input"><span></span></label>
-                    <label class="nav-unshown" id="nav-close" for="nav-input"></label>
-                    <div id="nav-content">
+                <div class="nav-drawer">
+                    <input id="nav-input-menu" type="checkbox" class="nav-unshown">
+                    <label class="nav-open" for="nav-input-menu"><span></span></label>
+                    <label class="nav-unshown nav-close" for="nav-input-menu"></label>
+                    <div class="nav-content">
                         <div class="head">
-                            <label class="nav-unshown" for="nav-input">MENU</label>
+                            <label class="nav-unshown" for="nav-input-menu">MENU</label>
                         </div>
                         <nav>
                             <a href="http://geekoffice.linkdesign.jp/#/home" target="_blank">ギークオフィスWebサービス</a>

@@ -104,7 +104,7 @@ header .action a {
   margin-left: .5rem;
 }
 /* nav-drawer */
-#nav-drawer {
+.nav-drawer {
   position: relative;
 }
 /*チェックボックス等は非表示に*/
@@ -112,7 +112,7 @@ header .action a {
   display:none;
 }
 /*アイコンのスペース*/
-#nav-open {
+.nav-open {
   display: inline-block;
   width: 30px;
   height: 22px;
@@ -120,7 +120,7 @@ header .action a {
   margin-left: 1rem;
 }
 /*ハンバーガーアイコンをCSSだけで表現*/
-#nav-open span, #nav-open span:before, #nav-open span:after {
+.nav-open span, .nav-open span:before, .nav-open span:after {
   position: absolute;
   height: 3px;/*線の太さ*/
   width: 25px;/*長さ*/
@@ -130,14 +130,14 @@ header .action a {
   content: '';
   cursor: pointer;
 }
-#nav-open span:before {
+.nav-open span:before {
   bottom: -8px;
 }
-#nav-open span:after {
+.nav-open span:after {
   bottom: -16px;
 }
 /*閉じる用の薄黒カバー*/
-#nav-close {
+.nav-close {
   display: none;/*はじめは隠しておく*/
   position: fixed;
   z-index: 99;
@@ -150,7 +150,7 @@ header .action a {
   transition: .3s ease-in-out;
 }
 /*中身*/
-#nav-content {
+.nav-content {
   overflow: auto;
   position: fixed;
   top: 0;
@@ -165,28 +165,28 @@ header .action a {
   transform: translateX(-105%);/*左に隠しておく*/
 }
 /*チェックが入ったらもろもろ表示*/
-#nav-input:checked ~ #nav-close {
+#nav-input-menu:checked ~ .nav-close {
   display: block;/*カバーを表示*/
   opacity: .5;
 }
-#nav-input:checked ~ #nav-content {
+#nav-input-menu:checked ~ .nav-content {
   -webkit-transform: translateX(0%);
   transform: translateX(0%);/*中身を表示（右へスライド）*/
   box-shadow: 6px 0 25px rgba(0,0,0,.15);
 }
-#nav-content .head {
+.nav-content .head {
   display: table;
   width: 100%;
   background: #01579B;
 }
-#nav-content .head label {
+.nav-content .head label {
   display: table-cell;
   text-align: center;
   vertical-align: middle;
   height: 59px;
   position: relative;
 }
-#nav-content .head label:after {
+.nav-content .head label:after {
   content: '\0d7';
   font-size: 2rem;
   position: absolute;
@@ -194,11 +194,11 @@ header .action a {
   right: 1rem;
   margin-top: -28px;
 }
-#nav-content nav a {
+.nav-content nav a {
   display: block;
   padding: 1rem;
   color: #333;
 }
-#nav-content nav a:hover {
+.nav-content nav a:hover {
   background-color: #ddd;
 }
