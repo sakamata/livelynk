@@ -49,6 +49,14 @@
                 </a>
             </div>
             <div class="action">
+                @guest
+		    <a href="{{ route('login') }}">{{ __('ログイン') }}</a>
+		    <a href="{{ route('register') }}">{{ __('新規登録') }}</a>
+                @else
+		    <span>{{ Auth::user()->name }}</span>
+		    <a  href="{{ env("INDEX_PATH") }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('ログアウト') }}</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
+                @endguest
             </div>
         </header>
         <main class="py-4">
