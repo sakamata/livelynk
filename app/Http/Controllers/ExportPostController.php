@@ -19,16 +19,31 @@ class ExportPostController extends Controller
         // $res['users_count_str'] => "〇~〇（人）",
         // $res['users_name_str'] => "Aさん Bさん ...",
 
+        // 帰宅想定時間（分）
+        $minute = round( env("JUDGE_DEPARTURE_INTERVAL_SECOND") / 60, 0);
+
+        // 仮で $communitiy_name をベタ打ち、複数対応の際は変更の事
+        $communitiy_name = "GeekOffice恵比寿";
+
         // 通知の種別設定
         switch ($category) {
             case 'arraival':
                 $event_name = env("IFTTT_WEB_HOOKS_EVENT_ARRAIVAL");
+                $message = $res['users_name_str'] . "が". $communitiy_name . "に来ました。今たぶん" . $res['users_count_str'] . "名がいます。";
                 break;
+
             case 'departure':
                 $event_name = env("IFTTT_WEB_HOOKS_EVENT_DEPARTURE");
+                if ($res['users_count_str'] == 0) {
+                    $message = $res['users_name_str'] . "が". $minute . "分程前に" . $communitiy_name . "から帰りました。今たぶん誰もいません。";
+                } else {
+                    $message = $res['users_name_str'] . "が". $minute . "分程前に" . $communitiy_name . "から帰りました。今たぶん" . $res['users_count_str'] . "名がいます。";
+                }
                 break;
+
             default:
                 $event_name = "";
+                $message = "";
                 break;
         }
         // urlの生成とIFTTTへPOST(GuzzleHttpを使用)
@@ -41,15 +56,14 @@ class ExportPostController extends Controller
         ]);
         $responce = $client->request('POST', $key, [
             'json' => [
-                'value1' => $res['users_name_str'],
-                'value2' => $res['users_count_str'],
+                'value1' => $message,
+                'value2' => "",
                 'value3' => "",
             ],
             ["timeout" => 10],
             ["delay" => 2000.0]
         ]);
     }
-
 
     // 訪問者の名前と滞在中のおおよその人数を抽出、文字列を作成する
     // $push_users = array( "id" => $user->id, "name" => $user->name)
@@ -58,7 +72,7 @@ class ExportPostController extends Controller
         // "Aさん Bさん ..."の文字列作成
         $users_name_str = "";
         foreach ((array)$push_users as $user) {
-            $users_name_str .= "(ID:". $user['id'] . ")『" . $user['name'] . "』さん ";
+            $users_name_str .= "『" . $user['name'] . "』さん ";
         }
 
         // 管理user以外の既存user滞在者数
@@ -82,7 +96,9 @@ class ExportPostController extends Controller
         // 想定される最大滞在者数
         $about_max = $existing_count + $unknown_count;
         // "〇～〇" 名の文字列作成
-        if ($unknown_count > 0) {
+        if ($about_max == 0) {
+            $users_count_str = 0;
+        } elseif ($unknown_count > 0) {
             $users_count_str = $existing_count . "～" . $about_max;
         } else {
             $users_count_str = $existing_count;
@@ -92,7 +108,4 @@ class ExportPostController extends Controller
             'users_name_str' => $users_name_str,
         );
     }
-
-    // ***ToDo*** vendorが未登録なら MACアドレスから スクレイピングでメーカー名を自動登録させる処理を書く
-
 }
