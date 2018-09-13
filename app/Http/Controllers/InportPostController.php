@@ -151,9 +151,16 @@ class InportPostController extends Controller
 
     public function HashCheck($check_array)
     {
-        // hash確認
-        // *** ToDo *** router hash_key && id と突き合わせて確認させる
-        $secret = env("INPORT_JSON_HASH");
+        // hash確認 touter_id が数値以外なら処理停止
+        if (!is_numeric($check_array["router_id"])) {
+            Log::debug(print_r('Inport json post router_id not is_numeric!! posted router_id ==> ' .$check_array["router_id"], 1));
+            exit();
+        } else {
+            $router_id = $check_array["router_id"];
+        }
+        $secret = 'App\AdminRouter'::where('id', $router_id)->value('hash_key');
+        Log::debug(print_r($secret, 1));
+
         $time = $check_array["time"];
         $this_side_hash = hash('sha256',$time.$secret);
         $post_hash = $check_array["hash"];
