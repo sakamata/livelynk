@@ -61,6 +61,19 @@ class AdminRouterController extends Controller
 
     public function update(Request $request)
     {
-
+        $request->validate([
+            'community_id' => 'required|integer',
+            'name' => 'required|string|max:100',
+            'hash_key' => 'required|alpha_num|max:100',
+        ]);
+        $now = Carbon::now();
+        $param = [
+            'community_id' => $request->community_id,
+            'name' => $request->name,
+            'hash_key' => $request->hash_key,
+            'updated_at' => $now,
+        ];
+        DB::table('routers')->where('id', $request->id)->update($param);
+        return redirect('/admin_router');
     }
 }

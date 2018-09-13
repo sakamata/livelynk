@@ -52,6 +52,7 @@ class InportPostController extends Controller
                     'mac_address' => $post_mac,
                     'vendor' => $check_array["vendor"][$v],
                     'user_id' => 1,
+                    'router_id' => $check_array["router_id"],
                     'arraival_at' => $now,
                     'posted_at' => $now,
                     'current_stay' => true,
@@ -100,6 +101,7 @@ class InportPostController extends Controller
                     if ($now >= $limit) {
                         //  該当レコードの来訪時間 arraival_at 更新
                         DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
+                            'router_id' => $check_array["router_id"],
                             'arraival_at' => $now,
                         ]);
                     Log::debug(print_r('mac arraival_at update now!!!', 1));
@@ -125,6 +127,7 @@ class InportPostController extends Controller
             }
             // 登録済みの場合、通知判定を終えた後、テータスを更新する
             DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
+                'router_id' => $check_array["router_id"],
                 'current_stay' => true,
                 'posted_at' => $now,
                 'updated_at' => $now,
@@ -149,6 +152,7 @@ class InportPostController extends Controller
     public function HashCheck($check_array)
     {
         // hash確認
+        // *** ToDo *** router hash_key && id と突き合わせて確認させる
         $secret = env("INPORT_JSON_HASH");
         $time = $check_array["time"];
         $this_side_hash = hash('sha256',$time.$secret);

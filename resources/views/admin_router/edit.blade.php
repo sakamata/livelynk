@@ -14,7 +14,7 @@
                             {{ session('status') }}
                         </div>
                     @endif
-                    <form action="/admin_router/create" method="post">
+                    <form action="/admin_router/update" method="post">
                         {{ csrf_field() }}
                         <div>
                             <h3>ID: {{$item->id}}</h3>
@@ -26,6 +26,7 @@
                             更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
                         </div>
                         <hr>
+                        <input type="hidden" name="id" value="{{$item->id}}">
                         @component('components.error')
                         @endcomponent
                         <div class="form-group">
