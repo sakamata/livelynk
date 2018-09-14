@@ -20,6 +20,7 @@
                         @component('components.error')
                         @endcomponent
                         <div class="form-group">
+                            <!-- *** ToDo *** 選択フィールドは出さない。コミュニティ画面からルーター登録/追加画面に移動させコミュニティ固定とさせる。 -->
                             <label for="InputTextarea">所属コミュニティ（未実装）</label>
                             <select name="community_id" class="form-control form-control-lg">
                                     <option value="1">GeekOfficeEbisu</option>
@@ -29,13 +30,14 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">ルーター名称</label>
+                            <label for="InputTextarea">ルーター（Wi-Fiのネットワーク名や機種名等）</label>
                             <input type="text" class="form-control form-control-lg" name="name" value="{{old('name')}}">
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">hash_key</label>
-                            <input type="text" class="form-control form-control-lg" name="hash_key" value="{{old('hash_key')}}">
+                            <label for="InputTextarea">secret</label>
+                            <input type="text" class="form-control form-control-lg" name="hash_key" value="{{old('hash_key')}}" placeholder="{{$hash}}">
+                            <p>自動生成されたこの乱数をRaspberryPI本体の環境変数 "secret" に適用させます。</p>
                         </div>
 
                         <div class="form-group">

@@ -38,13 +38,14 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="InputTextarea">ルーター名称</label>
+                            <label for="InputTextarea">ルーター（Wi-Fiのネットワーク名や機種名等）</label>
                             <input type="text" class="form-control form-control-lg" name="name" value="{{old('name', $item->name)}}">
                         </div>
                         <div class="form-group">
-                            <label for="InputTextarea">hash_key</label>
+                            <label for="InputTextarea">secret</label>
                             <input type="text" class="form-control form-control-sm" name="hash_key" value="{{old('hash_key', $item->hash_key)}}">
-                            <span id="passwordHelpBlock" class="help-block">誤った値にするとデータ受信ができなくなります。十分注意してください。</span>
+                            <!-- *** ToDo *** 通常は Readonly 編集ボタンクリック時のみ入力可能とする -->
+                            <span id="passwordHelpBlock" class="help-block">値を変更すると対応するRaspberryPIからデータ受信ができなくなります。十分注意してください。</span>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">
