@@ -159,7 +159,6 @@ class InportPostController extends Controller
             $router_id = $check_array["router_id"];
         }
         $secret = 'App\AdminRouter'::where('id', $router_id)->value('hash_key');
-        Log::debug(print_r($secret, 1));
 
         $time = $check_array["time"];
         $this_side_hash = hash('sha256',$time.$secret);

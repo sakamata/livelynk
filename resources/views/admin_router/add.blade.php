@@ -36,7 +36,7 @@
 
                         <div class="form-group">
                             <label for="InputTextarea">secret</label>
-                            <input type="text" class="form-control form-control-lg" name="hash_key" value="{{old('hash_key')}}" placeholder="{{$hash}}">
+                            <input type="text" class="form-control form-control-lg" name="hash_key" value="{{old('hash_key', $hash)}}">
                             <p>自動生成されたこの乱数をRaspberryPI本体の環境変数 "secret" に適用させます。</p>
                         </div>
 
