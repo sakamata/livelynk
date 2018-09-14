@@ -1,3 +1,284 @@
+/* reset */
+img {
+  vertical-align: bottom;
+}
+p {
+  margin: 0;
+}
+ul,dl,dd {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+table {
+  border-spacing: 0;
+  width: 100%;
+}
+/* app.css 対策 */
+label {
+  margin: 0;
+}
+a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+.container {
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+/* common */
 body {
-  background-color: red;
+  font-family:-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI","Noto Sans Japanese","ヒラギノ角ゴ ProN W3", Meiryo, sans-serif;
+  font-size: 14px;
+  padding: 60px 1em 0 1em;
+  margin: 0;
+  background-color: #E1F5FE;
+}
+.space-list>li {
+  background-color: white;
+}
+.clearfix::after{
+  content: "";
+  display: block;
+  clear: both;
+}
+.fl-left {
+  float: left;
+}
+.fl-right {
+  float: right;
+}
+.responsive-img {
+  width: 100%;
+  height: auto;
+}
+.profile-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  border: solid 2px white;
+} 
+@media (min-width: 768px) {
+  .pc-none {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .sp-none {
+    display: none !important;
+  }
+}
+/* header */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #01579B;
+  border-bottom: solid 1px #E1F5FE;
+  color: white;
+  height: 59px;
+  z-index: 3;
+  display: table;
+}
+header .menu,
+header .logo,
+header .action {
+  display: table-cell;
+  vertical-align: middle;
+}
+header .menu {
+  text-align: left;
+  width: 40%;
+}
+header .logo {
+  text-align: center;
+  width: 20%;
+}
+header .action {
+  text-align: right;
+  width: 40%;
+  padding-right: 1rem;
+}
+header .action a {
+  margin-left: .5rem;
+}
+/* nav-drawer */
+#nav-drawer {
+  position: relative;
+}
+/*チェックボックス等は非表示に*/
+.nav-unshown {
+  display:none;
+}
+/*アイコンのスペース*/
+#nav-open {
+  display: inline-block;
+  width: 30px;
+  height: 22px;
+  vertical-align: middle;
+  margin-left: 1rem;
+}
+/*ハンバーガーアイコンをCSSだけで表現*/
+#nav-open span, #nav-open span:before, #nav-open span:after {
+  position: absolute;
+  height: 3px;/*線の太さ*/
+  width: 25px;/*長さ*/
+  border-radius: 3px;
+  background: white;
+  display: block;
+  content: '';
+  cursor: pointer;
+}
+#nav-open span:before {
+  bottom: -8px;
+}
+#nav-open span:after {
+  bottom: -16px;
+}
+/*閉じる用の薄黒カバー*/
+#nav-close {
+  display: none;/*はじめは隠しておく*/
+  position: fixed;
+  z-index: 99;
+  top: 0;/*全体に広がるように*/
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0;
+  transition: .3s ease-in-out;
+}
+/*中身*/
+#nav-content {
+  overflow: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;/*最前面に*/
+  width: 90%;/*右側に隙間を作る（閉じるカバーを表示）*/
+  max-width: 330px;/*最大幅（調整してください）*/
+  height: 100%;
+  background: #fff;/*背景色*/
+  transition: .3s ease-in-out;/*滑らかに表示*/
+  -webkit-transform: translateX(-105%);
+  transform: translateX(-105%);/*左に隠しておく*/
+}
+/*チェックが入ったらもろもろ表示*/
+#nav-input:checked ~ #nav-close {
+  display: block;/*カバーを表示*/
+  opacity: .5;
+}
+#nav-input:checked ~ #nav-content {
+  -webkit-transform: translateX(0%);
+  transform: translateX(0%);/*中身を表示（右へスライド）*/
+  box-shadow: 6px 0 25px rgba(0,0,0,.15);
+}
+#nav-content .head {
+  display: table;
+  width: 100%;
+  background: #01579B;
+}
+#nav-content .head label {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  height: 59px;
+  position: relative;
+}
+#nav-content .head label:after {
+  content: '\0d7';
+  font-size: 2rem;
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  margin-top: -28px;
+}
+#nav-content nav a {
+  display: block;
+  padding: 1rem;
+  color: #333;
+}
+#nav-content nav a:hover {
+  background-color: #ddd;
+}
+.space-name {
+  font-size: 1.25rem;
+}
+/* comp-box */
+.comp-box {
+  padding: .5rem 1rem 1rem 1rem;
+  background-color: white;
+  border: solid 1px #B3E5FC;
+  margin-bottom: 1rem;
+  position: relative;
+}
+.comp-box.absence {
+  background-color: #E0F7FA;
+}
+.comp-box .name {
+  display: table;
+  width: 100%;
+}
+.comp-box .name .icon,
+.comp-box .name .text {
+  display: table-cell;
+  vertical-align: middle;
+}
+.comp-box .name .icon {
+  font-size: 2rem;
+  color: #0288D1;
+  width: 2.5rem;
+}
+.comp-box .arrival {
+  margin-bottom: .25rem;
+}
+.comp-box .time-head {
+  padding-right: .5rem;
+}
+.comp-box .time-body {
+  font-weight: bold;
+}
+.comp-box .flag {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+}
+@media (min-width: 576px) {
+.comp-box {
+  float: left;
+}
+}
+@media (min-width: 576px) and (max-width: 768px) {
+.comp-box {
+  width: 49%;
+  margin-right: 2%;
+  margin-bottom: 1rem;
+}
+.comp-box:nth-child(2n) {
+  margin-right: 0;
+}
+}
+@media (min-width: 768px) and (max-width: 992px) {
+.comp-box {
+  width: 32%;
+  margin-right: 2%;
+  margin-bottom: 1rem;
+}
+.comp-box:nth-child(3n) {
+  margin-right: 0;
+}
+}
+@media (min-width: 992px) {
+.comp-box {
+  width: 24%;
+  margin-right: 1.25%;
+  margin-bottom: 1rem;
+}
+.comp-box:nth-child(4n) {
+  margin-right: 0;
 }
