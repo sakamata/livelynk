@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-@component('components.header_menu')
-@endcomponent
 
 <h2 class="space-name">ギークオフィス恵比寿</h2>
 <div class="comp-box-container clearfix">
