@@ -238,10 +238,13 @@ header .action a {
   margin-bottom: .25rem;
 }
 .comp-box .time-head {
-  padding-right: .5rem;
+  display: inline-block;
+  width: 1.75rem;
+  text-align: center;
 }
 .comp-box .time-body {
   font-weight: bold;
+  padding-left: 1rem;
 }
 .comp-box .flag {
   position: absolute;

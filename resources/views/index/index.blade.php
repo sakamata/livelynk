@@ -20,11 +20,11 @@
       <div class="text">{{$item->vendor}}</div>
     </div>
     <div class="arrival">
-      <span class="time-head">到着</span>
+      <span class="time-head">IN</span>
       <span class="time-body">{{date('n/j G:i', strtotime($item->arraival_at))}}</span>
     </div>
     <div class="depature"> 
-      <span class="time-head">帰宅</span>
+      <span class="time-head">OUT</span>
       <span class="time-body">...</span>
     </div>
     <div class="flag">
@@ -41,11 +41,11 @@
       <div class="text">{{$item->name}}</div>
     </div>
     <div class="arrival">
-      <span class="time-head">到着</span>
+      <span class="time-head">IN</span>
       <span class="time-body">{{date('n/j G:i', strtotime($item->max_arraival_at))}}</span>
     </div>
     <div class="depature"> 
-      <span class="time-head">帰宅</span>
+      <span class="time-head">OUT</span>
       <span class="time-body">...</span>
     </div>
     <div class="flag">
@@ -62,11 +62,11 @@
       <div class="text">{{$item->name}}</div>
     </div>
     <div class="arrival">
-      <span class="time-head">到着</span>
+      <span class="time-head">IN</span>
       <span class="time-body">...</span>
     </div>
     <div class="depature"> 
-      <span class="time-head">帰宅</span>
+      <span class="time-head">OUT</span>
       <span class="time-body">{{date('n/j G:i', strtotime($item->max_departure_at))}}</span>
     </div>
   </div>
