@@ -103,10 +103,29 @@ header .action {
   text-align: right;
   width: 40%;
   padding-right: 1rem;
+  cursor: pointer;
 }
-header .action a {
-  margin-left: .5rem;
+header .action {
+  position: relative;
 }
+header .action a.register {
+  padding-left: 1rem;
+}
+header .action .logout {
+  position: absolute;
+  right: .75rem;
+  top: 58px;
+  padding: 1rem;
+  background: white;
+  border-left: solid 1px #01579B;
+  border-right: solid 1px #01579B;
+  border-bottom: solid 1px #01579B;
+  display: none;
+}
+header .action .logout a {
+  color: black;
+}
+/* component */
 /* nav-drawer */
 #nav-drawer {
   position: relative;
@@ -202,9 +221,13 @@ header .action a {
   display: block;
   padding: 1rem;
   color: #333;
+  border-bottom: dashed 1px #4FC3F7;
+}
+#nav-content nav a:last-child {
+  border-bottom: none;
 }
 #nav-content nav a:hover {
-  background-color: #ddd;
+  background-color: #E1F5FE;
 }
 .space-name {
   font-size: 1.25rem;
@@ -238,10 +261,13 @@ header .action a {
   margin-bottom: .25rem;
 }
 .comp-box .time-head {
-  padding-right: .5rem;
+  display: inline-block;
+  width: 1.75rem;
+  text-align: center;
 }
 .comp-box .time-body {
   font-weight: bold;
+  padding-left: 1rem;
 }
 .comp-box .flag {
   position: absolute;

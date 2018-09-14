@@ -12,6 +12,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/livelynk.js') }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -38,6 +39,8 @@
                             <label class="nav-unshown" for="nav-input">MENU</label>
                         </div>
                         <nav>
+                            @component('components.header_menu')
+                            @endcomponent
                             <a href="http://geekoffice.linkdesign.jp/#/home" target="_blank">ギークオフィスWebサービス</a>
                             <a href="https://tumolink.herokuapp.com/home" target="_blank">ツモリンク</a>
                         </nav>
@@ -52,11 +55,13 @@
             <div class="action">
                 @guest
 		    <a href="{{ route('login') }}">{{ __('ログイン') }}</a>
-		    <a href="{{ route('register') }}">{{ __('新規登録') }}</a>
+		    <a href="{{ route('register') }}" class="register">{{ __('新規登録') }}</a>
                 @else
 		    <span>{{ Auth::user()->name }}</span>
-		    <a  href="{{ env("INDEX_PATH") }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('ログアウト') }}</a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
+                    <div class="logout">
+		      <a  href="{{ env("INDEX_PATH") }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('ログアウト') }}</a>
+                      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
+                    </div>
                 @endguest
             </div>
         </header>
