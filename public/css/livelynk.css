@@ -103,9 +103,27 @@ header .action {
   text-align: right;
   width: 40%;
   padding-right: 1rem;
+  cursor: pointer;
 }
-header .action a {
-  margin-left: .5rem;
+header .action {
+  position: relative;
+}
+header .action a.register {
+  padding-left: 1rem;
+}
+header .action .logout {
+  position: absolute;
+  right: .75rem;
+  top: 58px;
+  padding: 1rem;
+  background: white;
+  border-left: solid 1px #01579B;
+  border-right: solid 1px #01579B;
+  border-bottom: solid 1px #01579B;
+  display: none;
+}
+header .action .logout a {
+  color: black;
 }
 /* nav-drawer */
 #nav-drawer {
