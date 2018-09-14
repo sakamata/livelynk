@@ -221,9 +221,13 @@ header .action .logout a {
   display: block;
   padding: 1rem;
   color: #333;
+  border-bottom: dashed 1px #4FC3F7;
+}
+#nav-content nav a:last-child {
+  border-bottom: none;
 }
 #nav-content nav a:hover {
-  background-color: #ddd;
+  background-color: #E1F5FE;
 }
 .space-name {
   font-size: 1.25rem;
