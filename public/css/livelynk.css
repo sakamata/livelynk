@@ -232,6 +232,7 @@ header .action a {
 .comp-box .name .icon {
   font-size: 2rem;
   color: #0288D1;
+  width: 2.5rem;
 }
 .comp-box .arrival {
   margin-bottom: .25rem;
@@ -248,9 +249,6 @@ header .action a {
   top: 1rem;
 }
 @media (max-width: 992px) {
-.comp-box .name .icon {
-  width: 15%;
-}
 }
 @media (min-width: 992px) {
 .comp-box {
@@ -261,7 +259,4 @@ header .action a {
 }
 .comp-box:nth-child(4n) {
   margin-right: 0;
-}
-.comp-box .name .icon {
-  width: 2.5rem;
 }
