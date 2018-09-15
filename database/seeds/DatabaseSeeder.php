@@ -14,5 +14,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersTableSeeder::class);
         $this->call(RoutersTableSeeder::class);
         // 以下、追記する
+        $this->call(MacAddressesTableSeeder::class);
     }
 }
