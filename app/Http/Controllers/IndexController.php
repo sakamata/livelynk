@@ -62,7 +62,7 @@ class IndexController extends Controller
             ->orderBy('user_id', 'asc')->get();
         // オブジェクトから単純配列 $not_in への加工
         $stay_users = json_decode(json_encode($stay_users), true);
-        foreach ($stay_users as $key => $value) {
+        foreach ((array)$stay_users as $key => $value) {
             $not_in[] = $value['user_id'];
         }
 
