@@ -1,0 +1,23 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class AdminCommunity extends Model
+{
+    /**
+     * モデルと関連しているテーブル
+     *
+     * @var string
+     */
+    protected $table = 'communities';
+
+    // 日時表記変更の ->format('Y-m-d') を使いたいカラム名を指定する
+    protected $dates = [
+        'created_at',
+        'updated_at',
+    ];
+
+
+}

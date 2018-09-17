@@ -52,6 +52,12 @@ Route::post('/admin_router/create', 'AdminRouterController@create')->middleware(
 Route::get('/admin_router/edit{id?}', 'AdminRouterController@edit')->middleware('auth');
 Route::post('/admin_router/update', 'AdminRouterController@update')->middleware('auth');
 
+Route::get('/admin_community', 'AdminCommunityController@index')->middleware('auth');
+Route::get('/admin_community/add', 'AdminCommunityController@add')->middleware('auth');
+Route::post('/admin_community/create', 'AdminCommunityController@create')->middleware('auth');
+Route::get('/admin_community/edit{id?}', 'AdminCommunityController@edit')->middleware('auth');
+Route::post('/admin_community/update', 'AdminCommunityController@update')->middleware('auth');
+
 
 // 外部からのPOST受け取り先 csrf off
 Route::post('/inport_post/mac_address', 'InportPostController@MacAddress');
