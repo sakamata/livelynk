@@ -33,8 +33,8 @@ class AdminCommunityController extends Controller
         $request->validate([
             'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:6|confirmed',
-            'community_name' => 'required|string|min:3|max:32',
-            'service_name' => 'required|string|min:5|max:32',
+            'name_id' => 'required|string|min:3|max:32',
+            'service_name' => 'required|string|min:3|max:32',
             'url_path' => 'required|string|max:32',
             'ifttt_event_name' => 'string|max:191',
             'ifttt_webhook_key' => 'string|max:191',
@@ -44,7 +44,7 @@ class AdminCommunityController extends Controller
         $param_community = [
             'enable' => true,
             'user_id' => null,
-            'name' => $request['community_name'],
+            'name' => $request['name_id'],
             'service_name' => $request['service_name'],
             'url_path' => $request['url_path'],
             'ifttt_event_name' => $request['ifttt_event_name'],
@@ -81,11 +81,41 @@ class AdminCommunityController extends Controller
 
     public function edit(Request $request)
     {
-        // code...
+        // 不正なrequestはひとまず /へ飛ばす
+        if (!$request->id || !ctype_digit($request->id)) {
+            return redirect('/');
+        }
+        $item = DB::table('communities')->where('id', $request->id)->first();
+        if (!$item) {
+            return redirect('/');
+        }
+        return view('admin_community.edit', [
+            'item' => $item,
+        ]);
+
     }
 
     public function update(Request $request)
     {
-        // code...
+        $request->validate([
+            'name' => 'required|string|min:3|max:32',
+            'service_name' => 'required|string|min:3|max:32',
+            'url_path' => 'required|string|max:32',
+            'ifttt_event_name' => 'string|max:191',
+            'ifttt_webhooks_key' => 'string|max:191',
+        ]);
+        $now = Carbon::now();
+        $param = [
+            'enable' => $request->enable,
+            'name' => $request->name,
+            'service_name' => $request->service_name,
+            'url_path' => $request->url_path,
+            'ifttt_event_name' => $request->ifttt_event_name,
+            'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
+            'updated_at' => $now,
+        ];
+        DB::table('communities')->where('id', $request->id)->update($param);
+        return redirect('/admin_community');
+
     }
 }

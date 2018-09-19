@@ -20,13 +20,13 @@
                         @component('components.error')
                         @endcomponent
                         <div class="form-group">
-                            <label for="InputTextarea">コミュニティ名称（3～32文字まで）</label>
-                            <input type="text" class="form-control form-control-lg" name="community_name" value="{{old('community_name')}}">
+                            <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
+                            <input type="text" class="form-control form-control-lg" name="name_id" value="{{old('name_id')}}">
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">コミュニティID(半角英数字とアンダーバー 5～32文字)</label>
-                            <input type="text" pattern="^\w{5,32}$" class="form-control form-control-lg" name="service_name" value="{{old('service_name')}}">
+                            <label for="InputTextarea">コミュニティ名称(3～32文字)</label>
+                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="service_name" value="{{old('service_name')}}">
                         </div>
 
                         <h2>管理者ユーザー登録</h2>
@@ -88,8 +88,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">ittt_event_name</label>
-                            <input type="text" class="form-control form-control-lg" name="ittt_event_name" value="{{old('ittt_event_name')}}">
+                            <label for="InputTextarea">ifttt_event_name</label>
+                            <input type="text" class="form-control form-control-lg" name="ifttt_event_name" value="{{old('ifttt_event_name')}}">
                             <p>(任意)通知設定の為のIFTTTのEvent Nameを登録します</p>
                         </div>
 
