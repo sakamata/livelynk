@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCommunitiesUsersTable extends Migration
+class EditColumnMacAddressesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateCommunitiesUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('communities_users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('communitiy_id');
-            $table->integer('user_id');
-            $table->timestamps();
+        Schema::table('mac_addresses', function (Blueprint $table) {
+            $table->integer('community_id')->after('id');
         });
     }
 
@@ -28,6 +25,8 @@ class CreateCommunitiesUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('communities_users');
+        Schema::table('mac_addresses', function (Blueprint $table) {
+            $table->dropColumn('community_id');
+        });
     }
 }
