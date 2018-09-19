@@ -15,18 +15,18 @@
                         </div>
                     @endif
 
-                    <form action="/admin_router/create" method="post">
+                    <form action="/admin_community/create" method="post">
                         {{ csrf_field() }}
                         @component('components.error')
                         @endcomponent
                         <div class="form-group">
-                            <label for="InputTextarea">コミュニティ名称</label>
-                            <input type="text" class="form-control form-control-lg" name="name" value="{{old('name')}}">
+                            <label for="InputTextarea">コミュニティ名称（3～32文字まで）</label>
+                            <input type="text" class="form-control form-control-lg" name="community_name" value="{{old('community_name')}}">
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">コミュニティID(半角英数字のみ)</label>
-                            <input type="text" class="form-control form-control-lg" name="service_name" value="{{old('service_name')}}">
+                            <label for="InputTextarea">コミュニティID(半角英数字とアンダーバー 5～32文字)</label>
+                            <input type="text" pattern="^\w{5,32}$" class="form-control form-control-lg" name="service_name" value="{{old('service_name')}}">
                         </div>
 
                         <h2>管理者ユーザー登録</h2>
@@ -34,7 +34,8 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name') }}" required autofocus>
+                                <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="未登録" required autofocus  disabled>
+                                <p>管理者ユーザーには未登録の端末が最初に登録されます。この名前は変更しないでください。</p>
 
                                 @if ($errors->has('name'))
                                     <span class="invalid-feedback" role="alert">
@@ -82,7 +83,7 @@
 
                         <div class="form-group">
                             <label for="InputTextarea">url_path</label>
-                            <input type="text" class="form-control form-control-lg" name="url_path" value="{{old('url_path')}}">
+                            <input type="text" class="form-control form-control-lg" name="url_path" value="{{old('url_path', $hash)}}">
                             <p>自動生成された乱数がURLに使用されます</p>
                         </div>
 

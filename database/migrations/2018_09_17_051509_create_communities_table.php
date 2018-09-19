@@ -16,7 +16,7 @@ class CreateCommunitiesTable extends Migration
         Schema::create('communities', function (Blueprint $table) {
             $table->increments('id');
             $table->boolean('enable')->default(true);
-            $table->integer('user_id')->unique();
+            $table->integer('user_id')->unique()->nullable();
             $table->string('name', 32)->unique();
             $table->string('service_name', 48)->nullable();
             $table->string('url_path')->unique();

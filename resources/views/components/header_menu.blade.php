@@ -3,4 +3,6 @@
 <a href="/admin_mac_address">MAC Address一覧</a>
 <a href="/admin_user">ユーザー一覧</a>
 <a href="/admin_user/add">新規ユーザー作成</a>
+<a href="/admin_community">コミュニティ一覧</a>
+<a href="/admin_router">ルーター一覧</a>
 @endauth
