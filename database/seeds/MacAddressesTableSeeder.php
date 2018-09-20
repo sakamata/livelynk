@@ -19,6 +19,7 @@ class MacAddressesTableSeeder extends Seeder
         $subDay = $now->subDay(5);
 
         $param = [
+            'community_id' => 1,
             'mac_address' => 'AA:BB:CC:DD:EE:FF',
             'vendor' => 'Apple.inc',
             'device_name' => 'i-phoneX',
@@ -34,6 +35,7 @@ class MacAddressesTableSeeder extends Seeder
         DB::table('mac_addresses')->insert($param);
 
         $param = [
+            'community_id' => 1,
             'mac_address' => '00:11:22:33:44:55',
             'vendor' => 'hoge.inc',
             'device_name' => 'すまほ-X',
@@ -49,6 +51,7 @@ class MacAddressesTableSeeder extends Seeder
         DB::table('mac_addresses')->insert($param);
 
         $param = [
+            'community_id' => 2,
             'mac_address' => 'AA:BB:CC:33:44:55',
             'vendor' => 'fuga.inc',
             'device_name' => '非表示プリンタ',
@@ -64,6 +67,7 @@ class MacAddressesTableSeeder extends Seeder
         DB::table('mac_addresses')->insert($param);
 
         $param = [
+            'community_id' => 3,
             'mac_address' => '00:11:22:DD:EE:FF',
             'vendor' => 'piyo.inc',
             'device_name' => 'i-piyo',

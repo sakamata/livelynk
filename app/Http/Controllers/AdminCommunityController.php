@@ -92,7 +92,6 @@ class AdminCommunityController extends Controller
         return view('admin_community.edit', [
             'item' => $item,
         ]);
-
     }
 
     public function update(Request $request)
@@ -116,6 +115,5 @@ class AdminCommunityController extends Controller
         ];
         DB::table('communities')->where('id', $request->id)->update($param);
         return redirect('/admin_community');
-
     }
 }

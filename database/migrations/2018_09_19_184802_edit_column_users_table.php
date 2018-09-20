@@ -35,7 +35,7 @@ class EditColumnUsersTable extends Migration
             $table->dropColumn('community_id');
             $table->dropColumn('facebook_id');
             $table->dropColumn('role');
-            $table->boolean('admin_user')->default(false)->after('email');
+            // $table->boolean('admin_user')->default(false)->after('email');
         });
     }
 }
