@@ -99,6 +99,42 @@ class UsersTableSeeder extends Seeder
         ];
         DB::table('users')->insert($param);
 
+        $param = [
+            'community_id' => 3,
+            'name' => 'ランダム太郎',
+            'email' => 'fff@fff.com',
+            'role' => 'normal',
+            'password' => $password,
+            'last_access' => $dateTime,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'community_id' => 3,
+            'name' => 'ランダム次郎',
+            'email' => 'ggg@ggg.com',
+            'role' => 'normal',
+            'password' => $password,
+            'last_access' => $dateTime,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'community_id' => 3,
+            'name' => 'ランダム三郎',
+            'email' => 'hhh@hhh.com',
+            'role' => 'normal',
+            'password' => $password,
+            'last_access' => $dateTime,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
         for ($i=0; $i < 10; $i++) {
             $rand10 = str_random(10);
             $mail = $rand10 .'@gmail.com';

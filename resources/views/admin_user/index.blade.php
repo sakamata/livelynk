@@ -31,8 +31,18 @@
                             </th>
                             <th>
                                 @component('components.order', [
+                                    'name' => 'community',
+                                    'firld' => 'community_id',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
                                     'name' => 'admin_user',
-                                    'firld' => '管理者',
+                                    'firld' => 'role',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_user',
@@ -109,7 +119,8 @@
                         <tr  class="table-secondary">
                         @endif
                             <td>{{$item->id}}</td>
-                            <td>{{$item->admin_user}}</td>
+                            <td>{{$item->community_id}}</td>
+                            <td>{{$item->role}}</td>
                             <td>{{$item->name}}</br>{{$item->email}}</td>
                             <td>{{$item->hide}}</td>
                             <td>

@@ -28,6 +28,26 @@
                             </th>
                             <th>
                                 @component('components.order', [
+                                    'name' => 'community_id',
+                                    'firld' => 'community_id',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_mac_address',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'router_id',
+                                    'firld' => 'router_id',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_mac_address',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
                                     'name' => 'current_stay',
                                     'firld' => '滞在中',
                                     'key' => $key,
@@ -59,7 +79,6 @@
                             </th>
                             <th>デバイス名</th>
                             <th>登録ユーザー</th>
-                            <th>ルーターID</th>
                             <th>
                                 @component('components.order', [
                                     'name' => 'arraival_at',
@@ -106,13 +125,14 @@
                         <tr>
                         @endif
                             <td>{{$item->id}}</td>
+                            <td>{{$item->community_id}}</td>
+                            <td>{{$item->router_id}}</td>
                             <td>{{$item->current_stay}}</td>
                             <td>{{$item->hide}}</td>
                             <td>{{$item->mac_address}}</td>
                             <td>{{$item->vendor}}</td>
                             <td>{{$item->device_name}}</td>
                             <td>{{$item->user->name}}</td>
-                            <td>{{$item->router_id}}</td>
                             <td>{{$item->arraival_at->format('n月j日 G:i')}}</td>
                         @if($item->departure_at != null)
                             <td>{{$item->departure_at->format('n月j日 G:i')}}</td>
