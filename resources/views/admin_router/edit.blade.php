@@ -30,11 +30,16 @@
                         @component('components.error')
                         @endcomponent
                         <div class="form-group">
-                            <label for="InputTextarea">所属コミュニティ（未実装）</label>
+                            <label for="InputTextarea">登録コミュニティ</label>
                             <select name="community_id" class="form-control form-control-lg">
-                                    <option value="1">GeekOfficeEbisu</option>
-                                    <option value="1">GeekOfficeEbisu</option>
-                                    <option value="1">GeekOfficeEbisu</option>
+                                @foreach($communities as $community)
+                                    @if($item->community->id == $community->id)
+                                    <?php $selected = 'selected'; ?>
+                                    @else
+                                    <?php $selected = ''; ?>
+                                    @endif
+                                    <option value="{{$community->id}}" {{ $selected }}>{{$community->id}}&nbsp;:&nbsp;{{$community->name}}&nbsp;&nbsp;:&nbsp;&nbsp;{{$community->service_name}}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="form-group">

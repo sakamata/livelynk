@@ -29,7 +29,7 @@
                             <th>
                                 @component('components.order', [
                                     'name' => 'community_id',
-                                    'firld' => 'community_id',
+                                    'firld' => 'com id',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_mac_address',
@@ -39,7 +39,7 @@
                             <th>
                                 @component('components.order', [
                                     'name' => 'router_id',
-                                    'firld' => 'router_id',
+                                    'firld' => 'router',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_mac_address',

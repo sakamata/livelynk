@@ -21,12 +21,14 @@
                         @endcomponent
                         <div class="form-group">
                             <!-- *** ToDo *** 選択フィールドは出さない。コミュニティ画面からルーター登録/追加画面に移動させコミュニティ固定とさせる。 -->
-                            <label for="InputTextarea">所属コミュニティ（未実装）</label>
+                            <label for="InputTextarea">登録コミュニティ</label>
+
                             <select name="community_id" class="form-control form-control-lg">
-                                    <option value="1">GeekOfficeEbisu</option>
-                                    <option value="1">GeekOfficeEbisu</option>
-                                    <option value="1">GeekOfficeEbisu</option>
+                                @foreach($communities as $community)
+                                    <option value="{{$community->id}}">{{$community->id}}&nbsp;:&nbsp;{{$community->name}}&nbsp;&nbsp;:&nbsp;&nbsp;{{$community->service_name}}</option>
+                                @endforeach
                             </select>
+
                         </div>
 
                         <div class="form-group">

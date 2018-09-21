@@ -38,7 +38,7 @@
                             <td>{{$item->user_id}}</td>
                             <td>{{$item->name}}</td>
                             <td>{{$item->service_name}}</td>
-                            <td>{{$item->url_path}}</td>
+                            <td>******</td>
                             <td>{{$item->ifttt_event_name}}</td>
                             <td>******</td>
                             <td>{{$item->created_at->format('n月j日 G:i')}}</td>

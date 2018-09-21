@@ -19,4 +19,8 @@ class AdminRouter extends Model
         'updated_at',
     ];
 
+    public function community()
+    {
+        return $this->belongsTo('App\AdminCommunity', 'community_id');
+    }
 }

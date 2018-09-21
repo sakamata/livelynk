@@ -22,8 +22,10 @@ class AdminRouterController extends Controller
 
     public function add(Request $request)
     {
+        $communities = DB::table('communities')->orderBy('id', 'desc')->get();
         $hash = $this->makeRandStr(32);
         return view('admin_router.add', [
+            'communities' => $communities,
             'hash' => $hash,
         ]);
     }
@@ -57,7 +59,10 @@ class AdminRouterController extends Controller
         if (!$item) {
             return redirect('/');
         }
+        $communities = DB::table('communities')->orderBy('id', 'desc')->get();
+
         return view('admin_router.edit', [
+            'communities' => $communities,
             'item' => $item,
         ]);
     }
