@@ -7,7 +7,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header"><h2>MAC Address一覧</h2></div>
+                <div class="card-header"><h2>MAC Address一覧</h2>※情報多過ぎなのでrole毎に整理します</div>
                 <div class="card-body">
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
@@ -28,8 +28,19 @@
                             </th>
                             <th>
                                 @component('components.order', [
+                                    'name' => 'current_stay',
+                                    'firld' => '滞在中',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_mac_address',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>非表示</th>
+                            <th>
+                                @component('components.order', [
                                     'name' => 'community_id',
-                                    'firld' => 'com id',
+                                    'firld' => 'community',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_mac_address',
@@ -46,17 +57,6 @@
                                 ])
                                 @endcomponent
                             </th>
-                            <th>
-                                @component('components.order', [
-                                    'name' => 'current_stay',
-                                    'firld' => '滞在中',
-                                    'key' => $key,
-                                    'order' => $order,
-                                    'action' => 'admin_mac_address',
-                                ])
-                                @endcomponent
-                            </th>
-                            <th>非表示</th>
                             <th>
                                 @component('components.order', [
                                     'name' => 'mac_address',
@@ -125,10 +125,10 @@
                         <tr>
                         @endif
                             <td>{{$item->id}}</td>
-                            <td>{{$item->community_id}}</td>
-                            <td>{{$item->router_id}}</td>
                             <td>{{$item->current_stay}}</td>
                             <td>{{$item->hide}}</td>
+                            <td>{{$item->community_id}} : {{$item->community->name}}<br>{{$item->community->service_name}}</td>
+                            <td>{{$item->router_id}} : {{$item->router->name}}</td>
                             <td>{{$item->mac_address}}</td>
                             <td>{{$item->vendor}}</td>
                             <td>{{$item->device_name}}</td>

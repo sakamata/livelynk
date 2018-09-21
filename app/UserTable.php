@@ -24,4 +24,10 @@ class UserTable extends Model
     {
         return $this->hasMany('App\MacAddress', 'user_id')->orderBy('arraival_at', 'desc');
     }
+
+    public function community()
+    {
+        return $this->belongsTo('App\AdminCommunity', 'community_id');
+    }
+
 }

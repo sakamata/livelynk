@@ -21,9 +21,9 @@
                         <tr class="info thead-light">
                             <th>ID</th>
                             <th>有効/無効</th>
-                            <th>owner user_id</th>
-                            <th>community id</th>
-                            <th>service name</th>
+                            <th>コミュニティID/名称</th>
+                            <th>代表管理者</th>
+                            <th>ルーター</th>
                             <th>url_hash</th>
                             <th>ifttt_event_name</th>
                             <th>ifttt_webhooks_key</th>
@@ -35,9 +35,24 @@
                         <tr>
                             <td>{{$item->id}}</td>
                             <td>{{$item->enable}}</td>
-                            <td>{{$item->user_id}}</td>
-                            <td>{{$item->name}}</td>
-                            <td>{{$item->service_name}}</td>
+                            <td>{{$item->name}}<br>{{$item->service_name}}</td>
+                            <td>{{$item->owner->id}} : {{$item->owner->name}}<br>{{$item->owner->email}}</td>
+                            <td>
+                                <table class="table table-hover table-sm table-borderless">
+                                    <tbody>
+                            @if($item->router != null)
+                                @foreach($item->router as $router)
+                                        <tr class="table">
+                                            <td>ID:{{$router->id}}</td>
+                                            <td>{{$router->name}}</td>
+                                            <td class="blockquote text-right"><a href="/admin_router/edit?id={{$router->id}}" class="btn btn-info" role="button">編集</a>
+                                            </td>
+                                        </tr>
+                                @endforeach
+                            @endif
+                                    </tbody>
+                                </table>
+                            </td>
                             <td>******</td>
                             <td>{{$item->ifttt_event_name}}</td>
                             <td>******</td>

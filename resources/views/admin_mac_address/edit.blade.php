@@ -24,6 +24,21 @@
                             ID: {{$item->id}}
                         </div>
                         <div>
+                            community ID : {{$item->community_id}}
+                        </div>
+                        <div>
+                            service name : {{$item->community->service_name}}
+                        </div>
+                        <div>
+                            community name : {{$item->community->name}}
+                        </div>
+                        <div>
+                            router ID : {{$item->router_id}}
+                        </div>
+                        <div>
+                            router name : {{$item->router->name}}
+                        </div>
+                        <div>
                             滞在中: {{$item->current_stay}}
                         </div>
                         <div>
@@ -76,15 +91,9 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="InputTextarea">表示設定</label>
-                            <!-- カッコ悪いけどひとまず速度重視 -->
-                            @if($item->hide == 0)
-                            <input type="radio" name="hide" value="0" checked="checked">表示する
-                            <input type="radio" name="hide" value="1">表示しない
-                            @else
-                            <input type="radio" name="hide" value="0">表示する
-                            <input type="radio" name="hide" value="1" checked="checked">表示しない
-                            @endif
+                            <label for="InputTextarea">表示設定&nbsp;&nbsp;&nbsp;</label>
+                            <input type="radio" value="0" name="hide" @if (old('hide', $item->hide) == "0") checked @endif>表示&nbsp;&nbsp;&nbsp;
+                            <input type="radio" value="1" name="hide" @if (old('hide', $item->hide) == "1") checked @endif>非表示&nbsp;&nbsp;&nbsp;
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">

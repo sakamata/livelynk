@@ -97,7 +97,7 @@ class AdminUserController extends Controller
             'email' => 'required|string|email|max:255',
             'admin_user' => 'required|boolean',
             'hide' => 'required|boolean',
-            'mac_addres_id' => 'array',
+            'mac_addres_id' => 'nullable|array',
         ]);
         $now = Carbon::now();
         // users tableの更新
@@ -115,10 +115,13 @@ class AdminUserController extends Controller
 
         // チェックの付いたmac_address id を更新
         foreach ((array)$request->mac_addres_id as $mac_id) {
-            DB::table('mac_addresses')->where('id', $mac_id)->update([
-                'user_id' => $request->id,
-                'updated_at' => $now,
-            ]);
+            // 配列要素が整数であるか確認
+            if (ctype_digit(strval($mac_id))) {
+                DB::table('mac_addresses')->where('id', $mac_id)->update([
+                    'user_id' => $request->id,
+                    'updated_at' => $now,
+                ]);
+            }
         }
 
         // 現状オーナーである mac_addresses id のarrayを抽出

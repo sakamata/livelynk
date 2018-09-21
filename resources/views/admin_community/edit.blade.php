@@ -19,19 +19,30 @@
                         @component('components.error')
                         @endcomponent
                         <input type="hidden" name="id" value="{{$item->id}}">
+                        <h2>ID : {{$item->id}} &nbsp;&nbsp; {{$item->service_name}}</h2>
+                        <div>
+                            登録日時: {{$item->created_at->format('n月j日 G:i:s')}}
+                        </div>
+                        <div>
+                            更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
+                        </div>
+                        <div>
+                            代表管理者 : ID : {{$item->owner->id}}
+                        </div>
+                        <div>
+                            代表管理者 : 名前 : {{$item->owner->name}}
+                        </div>
+                        <div>
+                            代表管理者 : Email : {{$item->owner->email}}
+                        </div>
+                        <hr>
                         <p>superAdminのみ表示</p>
                         <div class="form-group">
                             <label for="InputTextarea">有効/無効&nbsp;&nbsp;</label>
-                            <!-- カッコ悪いけどひとまず速度重視 -->
-                        @if($item->enable == 0)
-                            <input type="radio" name="enable" value="1">有効&nbsp;&nbsp;
-                            <input type="radio" name="enable" value="0" checked="checked">無効
-                        @else
-                            <input type="radio" name="enable" value="1" checked="checked">有効&nbsp;&nbsp;
-                            <input type="radio" name="enable" value="0">無効
-                        @endif
+                            <input type="radio" value="1" name="enable" @if (old('enable', $item->enable) == "1") checked @endif>有効&nbsp;&nbsp;&nbsp;
+                            <input type="radio" value="0" name="enable" @if (old('enable', $item->enable) == "0") checked @endif>無効&nbsp;&nbsp;&nbsp;
                         </div>
-
+                        <hr>
                         <div class="form-group">
                             <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
                             <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="name" value="{{old('name', $item->name)}}">

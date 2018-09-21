@@ -32,7 +32,7 @@
                             <th>
                                 @component('components.order', [
                                     'name' => 'community',
-                                    'firld' => 'community_id',
+                                    'firld' => 'community',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_user',
@@ -119,7 +119,7 @@
                         <tr  class="table-secondary">
                         @endif
                             <td>{{$item->id}}</td>
-                            <td>{{$item->community_id}}</td>
+                            <td>{{$item->community_id}} : {{$item->community->name}}<br>{{$item->community->service_name}}</td>
                             <td>{{$item->role}}</td>
                             <td>{{$item->name}}</br>{{$item->email}}</td>
                             <td>{{$item->hide}}</td>
@@ -154,7 +154,7 @@
                             <td>{{$item->created_at->format('n月j日 G:i')}}</td>
                             <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
                             <td>
-                                <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">ユーザー編集</a>
+                                <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
                             </td>
                         </tr>
                     @endforeach

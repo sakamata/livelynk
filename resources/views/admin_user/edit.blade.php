@@ -17,7 +17,13 @@
                     <form action="/admin_user/update" method="post">
                         {{ csrf_field() }}
                         <div>
-                            <h3>ID: {{$item->id}}</h3>
+                            <h3>ID: {{$item->id}}&nbsp;&nbsp;{{$item->name}}</h3>
+                        </div>
+                        <div>
+                            community ID: {{$item->community_id}}&nbsp;&nbsp;{{$item->community->name}}
+                        </div>
+                        <div>
+                            community name: {{$item->community->service_name}}
                         </div>
                         <div>
                             最終来訪: {{$item->last_access->format('n月j日 G:i:s')}}
@@ -28,6 +34,7 @@
                         <div>
                             更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
                         </div>
+                        <a href="/admin_user/password/edit?id={{$item->id}}" class="btn btn-info" role="button">***ToDo***パスワード編集</a>
                         <hr>
                         <input type="hidden" name="id" value="{{$item->id}}">
                         @component('components.error')
@@ -41,26 +48,16 @@
                             <input type="text" class="form-control form-control-lg" name="email" value="{{old('email', $item->email)}}">
                         </div>
                         <div class="form-group">
-                            <label for="InputTextarea">管理権限&nbsp;&nbsp;</label>
-                            <!-- カッコ悪いけどひとまず速度重視 -->
-                        @if($item->admin_user == 0)
-                            <input type="radio" name="admin_user" value="1">ON&nbsp;&nbsp;
-                            <input type="radio" name="admin_user" value="0" checked="checked">OFF
-                        @else
-                            <input type="radio" name="admin_user" value="1" checked="checked">ON&nbsp;&nbsp;
-                            <input type="radio" name="admin_user" value="0">OFF
-                        @endif
+                            <label for="InputTextarea">role&nbsp;&nbsp;&nbsp;</label>
+                            <input type="radio" value="normal" name="role" @if (old('role', $item->role) == "normal") checked @endif>normal&nbsp;&nbsp;&nbsp;
+                            <input type="radio" value="normalAdmin" name="role" @if (old('role', $item->role) == "normalAdmin") checked @endif>normalAdmin&nbsp;&nbsp;&nbsp;
+                            <input type="radio" value="readerAdmin" name="role" @if (old('role', $item->role) == "readerAdmin") checked @endif>readerAdmin&nbsp;&nbsp;&nbsp;
+                            <input type="radio" value="superAdmin" name="role" @if (old('role', $item->role) == "superAdmin") checked @endif>superAdmin&nbsp;&nbsp;&nbsp;
                         </div>
                         <div class="form-group">
                             <label for="InputTextarea">表示設定&nbsp;&nbsp;</label>
-                            <!-- カッコ悪いけどひとまず速度重視 -->
-                        @if($item->hide == 0)
-                            <input type="radio" name="hide" value="0" checked="checked">表示&nbsp;&nbsp;
-                            <input type="radio" name="hide" value="1" >非表示
-                        @else
-                            <input type="radio" name="hide" value="0">表示&nbsp;&nbsp;
-                            <input type="radio" name="hide" value="1" checked="checked">非表示
-                        @endif
+                            <input type="radio" value="0" name="hide" @if (old('hide', $item->hide) == "0") checked @endif>表示&nbsp;&nbsp;&nbsp;
+                            <input type="radio" value="1" name="hide" @if (old('hide', $item->hide) == "1") checked @endif>非表示&nbsp;&nbsp;&nbsp;
                         </div>
                         <hr>
                         <div class="form-group">

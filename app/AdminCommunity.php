@@ -19,5 +19,13 @@ class AdminCommunity extends Model
         'updated_at',
     ];
 
+    public function owner()
+    {
+        return $this->hasOne('App\UserTable', 'community_id');
+    }
 
+    public function router()
+    {
+        return $this->hasMany('App\AdminRouter', 'community_id');
+    }
 }

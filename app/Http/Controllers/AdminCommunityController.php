@@ -36,19 +36,19 @@ class AdminCommunityController extends Controller
             'name_id' => 'required|string|min:3|max:32',
             'service_name' => 'required|string|min:3|max:32',
             'url_path' => 'required|string|max:32',
-            'ifttt_event_name' => 'string|max:191',
-            'ifttt_webhook_key' => 'string|max:191',
+            'ifttt_event_name' => 'nullable|string|max:191',
+            'ifttt_webhook_key' => 'nullable|string|max:191',
         ]);
         $now = Carbon::now();
         // user_id は users tabelにinsert後に再度挿入する
         $param_community = [
             'enable' => true,
             'user_id' => null,
-            'name' => $request['name_id'],
-            'service_name' => $request['service_name'],
-            'url_path' => $request['url_path'],
-            'ifttt_event_name' => $request['ifttt_event_name'],
-            'ifttt_webhooks_key' => $request['ifttt_webhooks_key'],
+            'name' => $request->name_id,
+            'service_name' => $request->service_name,
+            'url_path' => $request->url_path,
+            'ifttt_event_name' => $request->ifttt_event_name,
+            'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
             'created_at' => $now,
             'updated_at' => $now,
         ];
@@ -57,9 +57,9 @@ class AdminCommunityController extends Controller
             $community_id = DB::table('communities')->insertGetId($param_community);
             $param_user = [
                 'name' => '未登録',
-                'email' => $request['email'],
+                'email' => $request->email,
                 'role' => 'readerAdmin',
-                'password' => Hash::make($request['password']),
+                'password' => Hash::make($request->password),
                 'community_id' => $community_id,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -85,7 +85,7 @@ class AdminCommunityController extends Controller
         if (!$request->id || !ctype_digit($request->id)) {
             return redirect('/');
         }
-        $item = DB::table('communities')->where('id', $request->id)->first();
+        $item = 'App\AdminCommunity'::where('id', $request->id)->first();
         if (!$item) {
             return redirect('/');
         }
@@ -100,8 +100,8 @@ class AdminCommunityController extends Controller
             'name' => 'required|string|min:3|max:32',
             'service_name' => 'required|string|min:3|max:32',
             'url_path' => 'required|string|max:32',
-            'ifttt_event_name' => 'string|max:191',
-            'ifttt_webhooks_key' => 'string|max:191',
+            'ifttt_event_name' => 'nullable|string|max:191',
+            'ifttt_webhooks_key' => 'nullable|string|max:191',
         ]);
         $now = Carbon::now();
         $param = [

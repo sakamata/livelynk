@@ -21,21 +21,21 @@
                         @endcomponent
                         <div class="form-group">
                             <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
-                            <input type="text" class="form-control form-control-lg" name="name_id" value="{{old('name_id')}}">
+                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="name_id" value="{{old('name_id')}}">
                         </div>
 
                         <div class="form-group">
                             <label for="InputTextarea">コミュニティ名称(3～32文字)</label>
-                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="service_name" value="{{old('service_name')}}">
+                            <input type="text" class="form-control form-control-lg" name="service_name" value="{{old('service_name')}}">
                         </div>
-
                         <h2>管理者ユーザー登録</h2>
+                        <!-- この辺のレイアウト統一されてないのすみません。取り急ぎ張り付けただけです… -->
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="未登録" required autofocus  disabled>
-                                <p>管理者ユーザーには未登録の端末が最初に登録されます。この名前は変更しないでください。</p>
+                                <p>管理者ユーザーには未登録の端末が最初に登録されます。この名前は変更しないでください。 ***ToDo*** 任意の名前可能にします</p>
 
                                 @if ($errors->has('name'))
                                     <span class="invalid-feedback" role="alert">
