@@ -13,7 +13,7 @@
   <div class="comp-box">
     <div class="name">
       <div class="icon">
-        <i class="fas fa-user-circle"></i> 
+        <i class="fas fa-user-circle"></i>
       </div>
       <div class="text">{{$item->vendor}}</div>
     </div>
@@ -21,7 +21,7 @@
       <span class="time-head">IN</span>
       <span class="time-body">{{date('n/j G:i', strtotime($item->arraival_at))}}</span>
     </div>
-    <div class="depature"> 
+    <div class="depature">
       <span class="time-head">OUT</span>
       <span class="time-body">...</span>
     </div>
@@ -34,7 +34,7 @@
   <div class="comp-box">
     <div class="name">
       <div class="icon">
-        <i class="fas fa-user-circle"></i> 
+        <i class="fas fa-user-circle"></i>
       </div>
       <div class="text">{{$item->name}}</div>
     </div>
@@ -42,7 +42,7 @@
       <span class="time-head">IN</span>
       <span class="time-body">{{date('n/j G:i', strtotime($item->max_arraival_at))}}</span>
     </div>
-    <div class="depature"> 
+    <div class="depature">
       <span class="time-head">OUT</span>
       <span class="time-body">...</span>
     </div>
@@ -55,7 +55,7 @@
   <div class="comp-box absence">
     <div class="name">
       <div class="icon">
-        <i class="fas fa-user-circle"></i> 
+        <i class="fas fa-user-circle"></i>
       </div>
       <div class="text">{{$item->name}}</div>
     </div>
@@ -63,12 +63,14 @@
       <span class="time-head">IN</span>
       <span class="time-body">...</span>
     </div>
-    <div class="depature"> 
+    <div class="depature">
       <span class="time-head">OUT</span>
-      <span class="time-body">{{date('n/j G:i', strtotime($item->max_departure_at))}}</span>
+      <span class="time-body">{{date('n/j G:i', strtotime($item->last_access))}}</span>
     </div>
   </div>
 @endforeach
 </div>
-
+@if(empty($items[0]) && empty($items1[0]) && empty($items2[0]))
+<p>端末と紐づけされたユーザーがまだいません</p>
+@endif
 @endsection
