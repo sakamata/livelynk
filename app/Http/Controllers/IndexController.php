@@ -61,7 +61,7 @@ class IndexController extends Controller
             ->where([
                 ['id', '<>', 1],
                 ['hide', false],
-            ])->get();
+            ])->orderBy('last_access', 'desc')->get();
 
         return view('index.index', [
             'items' => $unregistered,
