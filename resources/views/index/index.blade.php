@@ -63,12 +63,14 @@
       <span class="time-head">IN</span>
       <span class="time-body">...</span>
     </div>
-    <div class="depature"> 
+    <div class="depature">
       <span class="time-head">OUT</span>
       <span class="time-body">{{date('n/j G:i', strtotime($item->max_departure_at))}}</span>
     </div>
   </div>
 @endforeach
 </div>
-
+@if(empty($items[0]) && empty($items1[0]) && empty($items2[0]))
+<p>端末と紐づけされたユーザーがまだいません</p>
+@endif
 @endsection
