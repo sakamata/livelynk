@@ -97,6 +97,7 @@ class AdminCommunityController extends Controller
     public function update(Request $request)
     {
         $request->validate([
+            'enable' => 'required|boolean',
             'name' => 'required|string|min:3|max:32',
             'service_name' => 'required|string|min:3|max:32',
             'url_path' => 'required|string|max:32',

@@ -79,8 +79,6 @@ class AdminMacAddressController extends Controller
         }
         $users = DB::table('users')->get(['id', 'name']);
 
-        // Log::debug(print_r($item, 1));
-
         return view('admin_mac_address.edit', [
             'item' => $item,
             'users' => $users,

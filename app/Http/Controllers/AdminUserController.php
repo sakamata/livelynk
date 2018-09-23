@@ -74,6 +74,29 @@ class AdminUserController extends Controller
         ]);
     }
 
+    protected function add(Request $request)
+    {
+        return view('admin_user.add', [
+        ]);
+    }
+
+    // app\Http\Controllers\Auth\RegisterController.php をコピーしたのみ
+    // ***ToDo*** 処理の一本化（バリデートを2か所に書いてしまっている）
+    protected function create(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:30',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+        User::create([
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password']),
+        ]);
+        return redirect('/admin_user');
+    }
+
     public function edit(Request $request)
     {
         $item = 'App\UserTable'::where('id', $request->id)->first();
@@ -95,7 +118,7 @@ class AdminUserController extends Controller
         $request->validate([
             'name' => 'required|string|max:30',
             'email' => 'required|string|email|max:255',
-            'admin_user' => 'required|boolean',
+            'role' => ['required', 'regex:/normal|normalAdmin|readerAdmin|superAdmin/'],
             'hide' => 'required|boolean',
             'mac_addres_id' => 'nullable|array',
         ]);
@@ -104,7 +127,7 @@ class AdminUserController extends Controller
         $param_user = [
             'name' => $request->name,
             'email' => $request->email,
-            'admin_user' => $request->admin_user,
+            'role' => $request->role,
             'hide' => $request->hide,
             'updated_at' => $now,
         ];
@@ -140,29 +163,6 @@ class AdminUserController extends Controller
                 ]);
             }
         }
-        return redirect('/admin_user');
-    }
-
-    protected function add(Request $request)
-    {
-        return view('admin_user.add', [
-        ]);
-    }
-
-    // app\Http\Controllers\Auth\RegisterController.php をコピーしたのみ
-    // ***ToDo*** 処理の一本化（バリデートを2か所に書いてしまっている）
-    protected function create(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:30',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-        User::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
-        ]);
         return redirect('/admin_user');
     }
 }

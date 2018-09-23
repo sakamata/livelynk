@@ -36,7 +36,6 @@
                                 ])
                                 @endcomponent
                             </th>
-                            <th>非表示</th>
                             <th>
                                 @component('components.order', [
                                     'name' => 'community_id',
@@ -126,7 +125,6 @@
                         @endif
                             <td>{{$item->id}}</td>
                             <td>{{$item->current_stay}}</td>
-                            <td>{{$item->hide}}</td>
                             <td>{{$item->community_id}} : {{$item->community->name}}<br>{{$item->community->service_name}}</td>
                             <td>{{$item->router_id}} : {{$item->router->name}}</td>
                             <td>{{$item->mac_address}}</td>

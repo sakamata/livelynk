@@ -31,18 +31,8 @@
                             </th>
                             <th>
                                 @component('components.order', [
-                                    'name' => 'community',
-                                    'firld' => 'community',
-                                    'key' => $key,
-                                    'order' => $order,
-                                    'action' => 'admin_user',
-                                ])
-                                @endcomponent
-                            </th>
-                            <th>
-                                @component('components.order', [
-                                    'name' => 'admin_user',
-                                    'firld' => 'role',
+                                    'name' => 'hide',
+                                    'firld' => '非表示',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_user',
@@ -60,16 +50,6 @@
                                 @endcomponent
                             </th>
                             <th>
-                                @component('components.order', [
-                                    'name' => 'hide',
-                                    'firld' => '非表示',
-                                    'key' => $key,
-                                    'order' => $order,
-                                    'action' => 'admin_user',
-                                ])
-                                @endcomponent
-                            </th>
-                            <th>
                                 <table class='table table-borderless table-sm'>
                                     <tr>
                                       <th>ID</th>
@@ -79,6 +59,26 @@
                                       <th>vendor</th>
                                     </tr>
                                 </table>
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'admin_user',
+                                    'firld' => 'role',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'community',
+                                    'firld' => 'community',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
                             </th>
                             <th>
                                 @component('components.order', [
@@ -119,10 +119,8 @@
                         <tr  class="table-secondary">
                         @endif
                             <td>{{$item->id}}</td>
-                            <td>{{$item->community_id}} : {{$item->community->name}}<br>{{$item->community->service_name}}</td>
-                            <td>{{$item->role}}</td>
-                            <td>{{$item->name}}</br>{{$item->email}}</td>
                             <td>{{$item->hide}}</td>
+                            <td>{{$item->name}}</br>{{$item->email}}</td>
                             <td>
                                 <table class="table table-hover table-sm table-borderless">
                                     <tbody>
@@ -150,6 +148,8 @@
                                     </tbody>
                                 </table>
                             </td>
+                            <td>{{$item->role}}</td>
+                            <td>{{$item->community_id}} : {{$item->community->name}}<br>{{$item->community->service_name}}</td>
                             <td>{{$item->last_access->format('n月j日 G:i')}}</td>
                             <td>{{$item->created_at->format('n月j日 G:i')}}</td>
                             <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
