@@ -34,7 +34,7 @@
                         <div>
                             更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
                         </div>
-                        <a href="/admin_user/password/edit?id={{$item->id}}" class="btn btn-info" role="button">***ToDo***パスワード編集</a>
+                        <a href="/password/edit?id={{$item->id}}" class="btn btn-info" role="button">パスワード変更</a>
                         <hr>
                         <input type="hidden" name="id" value="{{$item->id}}">
                         @component('components.error')
