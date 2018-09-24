@@ -7,6 +7,9 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
@@ -26,6 +29,17 @@ class Controller extends BaseController
             $r_str .= $str[rand(0, count($str)-1)];
         }
         return $r_str;
+    }
+
+    // superAdmin以外は撥ねる
+    public function superAdminOnly($db_id, $request_id)
+    {
+        $user = Auth::user();
+        if ($user->role != 'superAdmin') {
+            if ($db_id != $request_id) {
+                return view('errors.403');
+            }
+        }
     }
 
 }

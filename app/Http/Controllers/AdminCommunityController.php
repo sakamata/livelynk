@@ -85,6 +85,14 @@ class AdminCommunityController extends Controller
         if (!$request->id || !ctype_digit($request->id)) {
             return redirect('/');
         }
+        $user = Auth::user();
+        // superAdmin以外は自分のコミュニティ以外は撥ねる
+        if ($user->role != 'superAdmin') {
+            if ($user->community_id != $request->id) {
+                return view('errors.403');
+            }
+        }
+
         $item = 'App\AdminCommunity'::where('id', $request->id)->first();
         if (!$item) {
             return redirect('/');
@@ -96,6 +104,14 @@ class AdminCommunityController extends Controller
 
     public function update(Request $request)
     {
+        $user = Auth::user();
+        // superAdmin以外は自分のコミュニティ以外は撥ねる
+        if ($user->role != 'superAdmin') {
+            if ($user->community_id != $request->id) {
+                return view('errors.403');
+            }
+        }
+
         $request->validate([
             'enable' => 'required|boolean',
             'name' => 'required|string|min:3|max:32',
@@ -115,6 +131,11 @@ class AdminCommunityController extends Controller
             'updated_at' => $now,
         ];
         DB::table('communities')->where('id', $request->id)->update($param);
-        return redirect('/admin_community');
+
+        if ($user->role != 'superAdmin') {
+            return redirect('/admin_community/edit?id=' . $user->community_id);
+        } else {
+            return redirect('/admin_community');
+        }
     }
 }

@@ -65,14 +65,14 @@ Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
 
 // superAdmin only
 Route::group(['middleware' => ['auth', 'can:superAdmin']], function () {
-    Route::get('/admin_community', 'AdminCommunityController@index')->middleware('auth');
-    Route::get('/admin_community/add', 'AdminCommunityController@add')->middleware('auth');
-    Route::post('/admin_community/create', 'AdminCommunityController@create')->middleware('auth');
+    Route::get('/admin_community', 'AdminCommunityController@index');
+    Route::get('/admin_community/add', 'AdminCommunityController@add');
+    Route::post('/admin_community/create', 'AdminCommunityController@create');
 });
 // Admin only
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
-    Route::get('/admin_community/edit{id?}', 'AdminCommunityController@edit')->middleware('auth');
-    Route::post('/admin_community/update', 'AdminCommunityController@update')->middleware('auth');
+    Route::get('/admin_community/edit{id?}', 'AdminCommunityController@edit');
+    Route::post('/admin_community/update', 'AdminCommunityController@update');
 });
 
 
