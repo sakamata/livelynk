@@ -65,6 +65,7 @@
                         </div>
                         <hr>
                         <input type="hidden" name="id" value="{{$item->id}}">
+                        <input type="hidden" name="community_id" value="{{$item->community_id}}">
                         @component('components.error')
                         @endcomponent
                         <div class="form-group">

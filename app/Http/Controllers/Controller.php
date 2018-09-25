@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -31,15 +32,11 @@ class Controller extends BaseController
         return $r_str;
     }
 
-    // superAdmin以外は撥ねる
-    public function superAdminOnly($db_id, $request_id)
+    // リーダーのIDを取得
+    public function getReaderID()
     {
         $user = Auth::user();
-        if ($user->role != 'superAdmin') {
-            if ($db_id != $request_id) {
-                return view('errors.403');
-            }
-        }
+        return $reader_id = DB::table('communities')
+            ->where('user_id', $user->community_id)->value('user_id');
     }
-
 }
