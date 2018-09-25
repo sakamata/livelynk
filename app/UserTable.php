@@ -30,4 +30,14 @@ class UserTable extends Model
         return $this->belongsTo('App\AdminCommunity', 'community_id');
     }
 
+    public function scopeSelf($query, $self_id)
+    {
+        return $query->where('id', $self_id);
+    }
+
+    public function scopeMyCommunity($query, $self_community)
+    {
+        return $query->where('community_id', $self_community);
+    }
+
 }

@@ -12,11 +12,26 @@
                 <div class="card-body">
                     <form method="POST" action="/admin_user/create" aria-label="{{ __('Register') }}">
                         @csrf
-
+                        <input type="hidden" name="id" value="{{$item->id}}">
+                        @can('communityAdmin')
+                        <input type="hidden" name="community_id" value="{{$item->community_id}}">
+                        @endcan
+                        @can('superAdmin')
+                        <div class="form-group row">
+                            <label for="community_id" class="col-md-2 col-form-label text-md-right">コミュニティ</label>
+                            <div class="col-md-10">
+                                <select id="community_id" name="community_id" class="form-control form-control-lg">
+                                @foreach($communities as $community)
+                                    <option value="{{$community->id}}">{{$community->id}}&nbsp;:&nbsp;{{$community->name}}&nbsp;:&nbsp;{{$community->service_name}}</option>
+                                @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        @endcan
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name') }}" required autofocus>
 
                                 @if ($errors->has('name'))
@@ -30,7 +45,7 @@
                         <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required>
 
                                 @if ($errors->has('email'))
@@ -44,7 +59,7 @@
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
 
                                 @if ($errors->has('password'))
@@ -58,7 +73,7 @@
                         <div class="form-group row">
                             <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
                             </div>
                         </div>

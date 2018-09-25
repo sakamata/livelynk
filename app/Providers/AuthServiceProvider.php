@@ -59,6 +59,14 @@ class AuthServiceProvider extends ServiceProvider
             );
         });
 
+        // コミュニティ管理者 reader normal に許可
+        Gate::define('communityAdmin', function ($user) {
+            return (
+                $user->role == 'readerAdmin' ||
+                $user->role == 'normalAdmin'
+            );
+        });
+
         // 退会できる権限のあるユーザー
         Gate::define('deactivation', function ($user) {
             return (

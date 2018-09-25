@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\UserTable;
@@ -33,6 +34,8 @@ class AdminUserController extends Controller
         ]);
 
         // ***ToDo*** もう少しスマートに書けないものか?
+        // 何故 $order['column'] 的なキー使うのに気づかなかったのか？
+        // そのうち書き換える
         if ($request->id) {
             $order = $request->id;
             $key = 'id';
@@ -66,7 +69,17 @@ class AdminUserController extends Controller
             $key = 'id';
         }
 
-        $items = 'App\UserTable'::orderBy($key, $order)->get();
+        $user = Auth::user();
+        // normalAdmin,readerAdmin はコミュニティ内のみでソート
+        if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
+            $items = 'App\UserTable'::orderBy($key, $order)
+                ->MyCommunity($user->community_id)->get();
+        }
+        // superAdminは全て表示
+        if ($user->role == 'superAdmin') {
+            $items = 'App\UserTable'::orderBy($key, $order)->get();
+        }
+
         return view('admin_user.index',[
             'items' => $items,
             'order' => $order,
@@ -76,7 +89,11 @@ class AdminUserController extends Controller
 
     protected function add(Request $request)
     {
+        $user = Auth::user();
+        $communities = DB::table('communities')->get();
         return view('admin_user.add', [
+            'item' => $user,
+            'communities' => $communities,
         ]);
     }
 
@@ -85,11 +102,14 @@ class AdminUserController extends Controller
     protected function create(Request $request)
     {
         $request->validate([
+            'id' => 'required|integer',
+            'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
         User::create([
+            'community_id' => $request->community_id,
             'name' => $request['name'],
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
@@ -99,32 +119,77 @@ class AdminUserController extends Controller
 
     public function edit(Request $request)
     {
+        // 不正なrequestは403
+        if (!$request->id || !ctype_digit($request->id)) {
+            return view('errors.403');
+        }
         $item = 'App\UserTable'::where('id', $request->id)->first();
-        $mac_addresses = DB::table('mac_addresses')->where('user_id', 1)
-            ->orwhere('user_id', $request->id)
+        if (!$item) {
+            return view('errors.403');
+        }
+
+        $user = Auth::user();
+        // normal は自分以外は閲覧不可
+        if ($user->role == 'normal' && $user->id != $request->id) {
+            return view('errors.403');
+        }
+        // normalAdmin,readerAdminで自コミュニティ以外は403
+        if (
+            ( $user->role == 'normalAdmin' ||  $user->role == 'readerAdmin' ) &&
+            $item->community_id != $user->community_id
+        ) {
+            return view('errors.403');
+        }
+
+        $reader_id = $this->getReaderID();
+        log::debug(print_r($reader_id, 1));
+        $mac_addresses = DB::table('mac_addresses')->where('user_id', $reader_id)
+            ->orWhere('user_id', $request->id)
             ->orderBy('hide','asc')
             ->orderBy('user_id', $request->id)
             ->orderBy('arraival_at','desc')
             ->get();
 
+        $communities = DB::table('communities')->get();
         return view('admin_user.edit', [
             'item' => $item,
             'mac_addresses' => $mac_addresses,
+            'communities' => $communities,
         ]);
     }
 
     public function update(Request $request)
     {
         $request->validate([
+            'id' => 'required|integer',
+            'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
             'email' => 'required|string|email|max:255',
             'role' => ['required', 'regex:/normal|normalAdmin|readerAdmin|superAdmin/'],
             'hide' => 'required|boolean',
             'mac_addres_id' => 'nullable|array',
         ]);
+
+        $user = Auth::user();
+        // normal userが自分以外のuserを編集しようとした場合は403
+        if ($user->role == 'normal' && $user->id != $request->id) {
+            log::warning(print_r("normalユーザーが異常な値でusersのupdateを試みる>>>", 1));
+            log::warning(print_r($user, 1));
+            return view('errors.403');
+        }
+        // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
+        if (
+            ( $user->role == 'normalAdmin' || $user->role == 'readerAdmin' ) && $request->community_id != $user->community_id
+        ) {
+            log::warning(print_r("Adminユーザーが異常な値でusersのupdateを試みる>>>", 1));
+            log::warning(print_r($user, 1));
+            return view('errors.403');
+        }
+
         $now = Carbon::now();
         // users tableの更新
         $param_user = [
+            'community_id' => $request->community_id,
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
@@ -153,12 +218,12 @@ class AdminUserController extends Controller
 
         // チェックを外したarrayを抽出
         $remove_ids = array_diff($before_ids, (array)$request->mac_addres_id);
-
-        // チェックを外した id を id=1 の未登録（管理ユーザー）扱いに変更する
+        $reader_id = $this->getReaderID();
+        // チェックを外した id を readerAdmin 扱いに変更する
         if ($remove_ids) {
             foreach ($remove_ids as $remove_id) {
                 DB::table('mac_addresses')->where('id', $remove_id)->update([
-                    'user_id' => 1,
+                    'user_id' => $reader_id,
                     'updated_at' => $now,
                 ]);
             }

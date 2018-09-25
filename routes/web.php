@@ -40,12 +40,13 @@ Route::get('/', 'IndexController@welcome');
 Route::get(env("INDEX_PATH"), 'IndexController@index')->name('index');
 
 // 管理画面 認証済みuserのみ表示
-Route::get('/admin_user', 'AdminUserController@index')->middleware('auth');
+Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
+    Route::get('/admin_user', 'AdminUserController@index');
+    Route::get('/admin_user/add', 'AdminUserController@add');
+    Route::post('/admin_user/create', 'AdminUserController@create');
+});
 Route::get('/admin_user/edit{id?}', 'AdminUserController@edit')->middleware('auth');
 Route::post('/admin_user/update', 'AdminUserController@update')->middleware('auth');
-
-Route::get('/admin_user/add', 'AdminUserController@add')->middleware('auth');
-Route::post('/admin_user/create', 'AdminUserController@create')->middleware('auth');
 
 Route::get('/admin_mac_address', 'AdminMacAddressController@index')->middleware('auth');
 Route::get('/admin_mac_address/edit{id?}', 'AdminMacAddressController@edit')->middleware('auth');

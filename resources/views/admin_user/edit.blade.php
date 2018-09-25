@@ -36,6 +36,30 @@
                         </div>
                         <a href="/password/edit?id={{$item->id}}" class="btn btn-info" role="button">パスワード変更</a>
                         <hr>
+                        @can('communityAdmin')
+                        <input type="hidden" name="community_id" value="{{$item->community_id}}">
+                        @endcan
+                        @can('superAdmin')
+                        <!-- 変えたら大変なので、readerAdmin,superAdminの場合はコミュ編集は出さない！ -->
+                        @if($item->role != 'readerAdmin' && $item->role != 'superAdmin')
+                        <div class="form-group">
+                            <label for="community_id">コミュニティ</label>
+                            <div class="">
+                                <select id="community_id" name="community_id" class="form-control form-control-lg">
+                                @foreach($communities as $community)
+                                    @if($item->community_id == $community->id)
+                                    <?php $selected = 'selected'; ?>
+                                    @else
+                                    <?php $selected = ''; ?>
+                                    @endif
+                                    <option value="{{$community->id}}" {{ $selected }}>{{$community->id}}&nbsp;:&nbsp;{{$community->name}}&nbsp;:&nbsp;{{$community->service_name}}</option>
+                                @endforeach
+                                </select>
+                            </div>
+                            <p>注意：ユーザーの所属コミュニティを変更する場合は、デバイスのチェックは全て外してください</p>
+                        </div>
+                        @endif
+                        @endcan
                         <input type="hidden" name="id" value="{{$item->id}}">
                         @component('components.error')
                         @endcomponent
