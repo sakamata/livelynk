@@ -18,15 +18,24 @@
                         {{ csrf_field() }}
                         @component('components.error')
                         @endcomponent
+                        @can('communityAdmin')
+                        <input type="hidden" name="community_id" value="{{$user->community_id}}">
+                        @endcan
+                        @can('superAdmin')
                         <div class="form-group">
-                            <!-- *** ToDo *** 選択フィールドは出さない。コミュニティ画面からルーター登録/追加画面に移動させコミュニティ固定とさせる。 -->
                             <label for="InputTextarea">登録コミュニティ</label>
                             <select name="community_id" class="form-control form-control-lg">
                                 @foreach($communities as $community)
-                                    <option value="{{$community->id}}">{{$community->id}}&nbsp;:&nbsp;{{$community->name}}&nbsp;&nbsp;:&nbsp;&nbsp;{{$community->service_name}}</option>
+                                    @if($user->community_id == $community->id)
+                                    <?php $selected = 'selected'; ?>
+                                    @else
+                                    <?php $selected = ''; ?>
+                                    @endif
+                                    <option value="{{$community->id}}" {{ $selected }}>{{$community->id}}&nbsp;:&nbsp;{{$community->name}}&nbsp;&nbsp;:&nbsp;&nbsp;{{$community->service_name}}</option>
                                 @endforeach
                             </select>
                         </div>
+                        @endcan
                         <div class="form-group">
                             <label for="InputTextarea">ルーター（Wi-Fiのネットワーク名や機種名等）</label>
                             <input type="text" class="form-control form-control-lg" name="name" value="{{old('name')}}">

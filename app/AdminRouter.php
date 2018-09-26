@@ -23,4 +23,9 @@ class AdminRouter extends Model
     {
         return $this->belongsTo('App\AdminCommunity', 'community_id');
     }
+
+    public function scopeMyCommunity($query, $self_community)
+    {
+        return $query->where('community_id', $self_community);
+    }
 }

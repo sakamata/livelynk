@@ -29,6 +29,10 @@
                         <input type="hidden" name="id" value="{{$item->id}}">
                         @component('components.error')
                         @endcomponent
+                        @can('communityAdmin')
+                        <input type="hidden" name="community_id" value="{{$user->community_id}}">
+                        @endcan
+                        @can('superAdmin')
                         <div class="form-group">
                             <label for="InputTextarea">登録コミュニティ</label>
                             <select name="community_id" class="form-control form-control-lg">
@@ -42,6 +46,7 @@
                                 @endforeach
                             </select>
                         </div>
+                        @endcan
                         <div class="form-group">
                             <label for="InputTextarea">ルーター（Wi-Fiのネットワーク名や機種名等）</label>
                             <input type="text" class="form-control form-control-lg" name="name" value="{{old('name', $item->name)}}">

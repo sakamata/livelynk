@@ -12,10 +12,17 @@ use App\AdminRouter;
 // normal userはrouter web.php 設定で閲覧不可となっている
 class AdminRouterController extends Controller
 {
-    // ***ToDo*** communitiesIDでデフォルトフィルタリング
     public function index(Request $request)
     {
-        $items = 'App\AdminRouter'::get();
+        $user = Auth::user();
+        // 一般管理者の場合は自コミュニティの端末のみを表示
+        if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
+            $items = 'App\AdminRouter'::Mycommunity($user->community_id)->get();
+        }
+        // superAdminは全て表示
+        if ($user->role == 'superAdmin') {
+            $items = 'App\AdminRouter'::get();
+        }
         return view('admin_router.index',[
             'items' => $items,
         ]);
@@ -25,14 +32,26 @@ class AdminRouterController extends Controller
     {
         $communities = DB::table('communities')->orderBy('id', 'desc')->get();
         $hash = str_random(32);
+        $user = Auth::user();
         return view('admin_router.add', [
             'communities' => $communities,
+            'user' => $user,
             'hash' => $hash,
         ]);
     }
 
     public function create(Request $request)
     {
+        $user = Auth::user();
+        // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
+        if (
+            ( $user->role == 'normalAdmin' || $user->role == 'readerAdmin' ) && $request->community_id != $user->community_id
+        ) {
+            log::warning(print_r("Adminユーザーが異常な値でrouter addを試みる>>>", 1));
+            log::warning(print_r($user, 1));
+            return view('errors.403');
+        }
+
         $request->validate([
             'community_id' => 'required|integer',
             'name' => 'required|string|max:100',
@@ -52,24 +71,44 @@ class AdminRouterController extends Controller
 
     public function edit(Request $request)
     {
-        // 不正なrequestはひとまず /へ飛ばす
+        // 不正なrequestは403へ飛ばす
         if (!$request->id || !ctype_digit($request->id)) {
-            return redirect('/');
+            return view('errors.403');
         }
         $item = 'App\AdminRouter'::where('id', $request->id)->first();
         if (!$item) {
-            return redirect('/');
+            return view('errors.403');
         }
-        $communities = DB::table('communities')->orderBy('id', 'desc')->get();
 
+        $user = Auth::user();
+        // reader,normal管理者で自分のコミュニティと異なるrouterページ閲覧は撥ねる
+        if (
+            ( $user->role == 'normalAdmin' || $user->role == 'readerAdmin' ) && $item->community_id != $user->community_id
+        ) {
+            return view('errors.403');
+        }
+
+        $communities = DB::table('communities')->orderBy('id', 'desc')->get();
+        $user = Auth::user();
         return view('admin_router.edit', [
-            'communities' => $communities,
             'item' => $item,
+            'user' => $user,
+            'communities' => $communities,
         ]);
     }
 
     public function update(Request $request)
     {
+        $user = Auth::user();
+        // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
+        if (
+            ( $user->role == 'normalAdmin' || $user->role == 'readerAdmin' ) && $request->community_id != $user->community_id
+        ) {
+            log::warning(print_r("Adminユーザーが異常な値でrouter updateを試みる>>>", 1));
+            log::warning(print_r($user, 1));
+            return view('errors.403');
+        }
+
         $request->validate([
             'community_id' => 'required|integer',
             'name' => 'required|string|max:100',
