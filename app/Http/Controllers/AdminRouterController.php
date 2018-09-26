@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\AdminRouter;
 
+// normal userはrouter web.php 設定で閲覧不可となっている
 class AdminRouterController extends Controller
 {
     // ***ToDo*** communitiesIDでデフォルトフィルタリング
@@ -23,7 +24,7 @@ class AdminRouterController extends Controller
     public function add(Request $request)
     {
         $communities = DB::table('communities')->orderBy('id', 'desc')->get();
-        $hash = $this->makeRandStr(32);
+        $hash = str_random(32);
         return view('admin_router.add', [
             'communities' => $communities,
             'hash' => $hash,

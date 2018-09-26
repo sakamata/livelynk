@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\AdminCommunity;
 
+// normal userはrouter web.php 設定で閲覧不可となっている
 class AdminCommunityController extends Controller
 {
     public function index(Request $request)
@@ -22,7 +23,7 @@ class AdminCommunityController extends Controller
 
     public function add(Request $request)
     {
-        $hash = $this->makeRandStr(32);
+        $hash = str_random(32);
         return view('admin_community.add', [
             'hash' => $hash,
         ]);
@@ -81,9 +82,9 @@ class AdminCommunityController extends Controller
 
     public function edit(Request $request)
     {
-        // 不正なrequestはひとまず /へ飛ばす
+        // 不正なrequestは403
         if (!$request->id || !ctype_digit($request->id)) {
-            return redirect('/');
+            return view('errors.403');
         }
         $user = Auth::user();
         // superAdmin以外は自分のコミュニティ以外は撥ねる
