@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DB;
+use App\Rules\UniqueCommunity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -89,6 +90,8 @@ class AdminUserController extends Controller
 
     protected function add(Request $request)
     {
+        // superAdminはコミュニティ選択OK,その他は自コミュニティ固定で作成
+        // user roleは作成時はnormal固定
         $user = Auth::user();
         $communities = DB::table('communities')->get();
         return view('admin_user.add', [
@@ -101,13 +104,15 @@ class AdminUserController extends Controller
     // ***ToDo*** 処理の一本化（バリデートを2か所に書いてしまっている）
     protected function create(Request $request)
     {
+        // *****ToDo***** emailの独自バリデート、コミュニティ内でのユニーク確認（registerも同様）
         $request->validate([
             'id' => 'required|integer',
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => ['required', 'string', 'email', 'max:255', new UniqueCommunity($request->community_id)],
             'password' => 'required|string|min:6|confirmed',
         ]);
+        // user roleは作成時はDBデフォルト値"normal"に固定となる
         User::create([
             'community_id' => $request->community_id,
             'name' => $request['name'],

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
+use App\Rules\UniqueCommunity;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -49,9 +50,11 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        // *****ToDo***** community_id を registerフォームに追加する
         return Validator::make($data, [
             'name' => 'required|string|max:30',
-            'email' => 'required|string|email|max:255|unique:users',
+            'community_id' => 'required|integer',
+            'email' => ['required', 'string', 'email', 'max:255', new UniqueCommunity($request->community_id)],
             'password' => 'required|string|min:6|confirmed',
         ]);
     }
@@ -64,7 +67,9 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // user roleは作成時はDBデフォルト値"normal"に固定となる
         return User::create([
+            'community_id' => $data['community_id'],
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),

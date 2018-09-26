@@ -11,6 +11,6 @@
 @endcan
 @can('superAdmin')
 <!-- 特別管理者メニュー。アイコン等でデザインに差をつけてもらうと嬉しいです。 -->
-<a href="/admin_community">[特管]コミュニティ一覧</a>
+<a href="/admin_community">コミュニティ一覧</a>
 @endcan
 @endauth
