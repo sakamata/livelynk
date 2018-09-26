@@ -54,11 +54,11 @@ Route::post('/admin_mac_address/update', 'AdminMacAddressController@update')->mi
 
 // Admin only
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
-    Route::get('/admin_router', 'AdminRouterController@index')->middleware('auth');
-    Route::get('/admin_router/add', 'AdminRouterController@add')->middleware('auth');
-    Route::post('/admin_router/create', 'AdminRouterController@create')->middleware('auth');
-    Route::get('/admin_router/edit{id?}', 'AdminRouterController@edit')->middleware('auth');
-    Route::post('/admin_router/update', 'AdminRouterController@update')->middleware('auth');
+    Route::get('/admin_router', 'AdminRouterController@index');
+    Route::get('/admin_router/add', 'AdminRouterController@add');
+    Route::post('/admin_router/create', 'AdminRouterController@create');
+    Route::get('/admin_router/edit{id?}', 'AdminRouterController@edit');
+    Route::post('/admin_router/update', 'AdminRouterController@update');
 });
 
 // superAdmin only
