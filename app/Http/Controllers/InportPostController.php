@@ -72,6 +72,7 @@ class InportPostController extends Controller
                 // 登録済みMACaddressの場合
 
                 // last_accessの更新をするuserのid一覧を取得
+                // *****ToDo***** 非表示端末は配列に入れない事にして、OUT時間が非表示端末の時間を拾うバグに対応する
                 $mac_record = DB::table('mac_addresses')
                     ->where([
                         ['mac_address', $post_mac],
@@ -126,6 +127,8 @@ class InportPostController extends Controller
                 }
             }
             // 登録済みの場合、通知判定を終えた後、テータスを更新する
+            // *****ToDo*****【検討】非表示デバイスを撥ねる条件追加しても良いか？
+            // 条件追加で非表示デバイスの情報はMACが飛んでいても更新されなくなる
             DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
                 'router_id' => $check_array["router_id"],
                 'current_stay' => true,
