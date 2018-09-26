@@ -15,8 +15,13 @@ class ChangePasswordController extends Controller
 {
     public function edit(Request $request)
     {
+        // superAdmin以外は他人のパスワード変更はできない
+        $user = Auth::user();
+        if ($user->role != 'superAdmin' && $user->id != $request->id) {
+            return view('errors.403');
+        }
         $item = 'App\UserTable'::where('id', $request->id)->first();
-        return view('password_change.edit', [
+        return view('auth.passwords.edit', [
             'item' => $item,
         ]);
     }
@@ -29,7 +34,11 @@ class ChangePasswordController extends Controller
             'now_password' => ['required', 'string','min:6', new NowPassword($request->id)],
             'password' => 'required|string|min:6|confirmed',
         ]);
-
+        // superAdmin以外は他人のパスワード変更はできない
+        $user = Auth::user();
+        if ($user->role != 'superAdmin' && $user->id != $request->id) {
+            return view('errors.403');
+        }
         $now = Carbon::now();
         // users tableの更新
         $param = [
@@ -38,6 +47,5 @@ class ChangePasswordController extends Controller
         ];
         'App\UserTable'::where('id', $request->id)->update($param);
         return redirect("/admin_user/edit?id=". $request->id);
-
     }
 }
