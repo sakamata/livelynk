@@ -66,7 +66,7 @@ class AdminRouterController extends Controller
             'updated_at' => $now,
         ];
         DB::table('routers')->insert($param);
-        return redirect('/admin_router');
+        return redirect('/admin_router')->with('message', 'ルーター設定を追加しました。');
     }
 
     public function edit(Request $request)
@@ -122,6 +122,6 @@ class AdminRouterController extends Controller
             'updated_at' => $now,
         ];
         DB::table('routers')->where('id', $request->id)->update($param);
-        return redirect('/admin_router');
+        return redirect('/admin_router')->with('message', 'ルーター設定を編集しました。');
     }
 }

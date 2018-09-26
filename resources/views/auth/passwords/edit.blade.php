@@ -8,8 +8,9 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header"><h2>Password変更</h2></div>
-
                 <div class="card-body">
+                @component('components.message')
+                @endcomponent
                     <!-- ステータスはdebug用表示 -->
                     <div>
                         <h3>ID: {{$item->id}}&nbsp;&nbsp;{{$item->name}}</h3>

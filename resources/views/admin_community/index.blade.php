@@ -9,11 +9,8 @@
             <div class="card">
                 <div class="card-header"><h2>Community一覧</h2></div>
                 <div class="card-body">
-            @if (session('status'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('status') }}
-                </div>
-            @endif
+                @component('components.message')
+                @endcomponent
                 <div class="blockquote text-left">
                     <a href="/admin_community/add" class="btn btn-info" role="button">Community新規登録</a>
                 </div>

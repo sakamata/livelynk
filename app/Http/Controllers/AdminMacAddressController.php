@@ -182,6 +182,6 @@ class AdminMacAddressController extends Controller
             'updated_at' => $now,
         ];
         'App\MacAddress'::where('id', $request->id)->update($param);
-        return redirect('/admin_mac_address');
+        return redirect('/admin_mac_address')->with('message', 'デバイスを編集しました。');
     }
 }

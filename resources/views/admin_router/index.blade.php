@@ -7,22 +7,19 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header"><h2>Router一覧</h2></div>
+                <div class="card-header"><h2>ルーター一覧</h2></div>
                 <div class="card-body">
-            @if (session('status'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('status') }}
-                </div>
-            @endif
+                @component('components.message')
+                @endcomponent
                 <div class="blockquote text-left">
-                    <a href="/admin_router/add" class="btn btn-info" role="button">Router新規登録</a>
+                    <a href="/admin_router/add" class="btn btn-info" role="button">ルーター新規登録</a>
                 </div>
                     <table class="table table-hover">
                         <tr class="info thead-light">
                             <th>ID</th>
                             <th>community id</th>
                             <th>community名</th>
-                            <th>router名</th>
+                            <th>ルーター名</th>
                             <th>hash_key</th>
                             <th>created_at</th>
                             <th>updated_at</th>

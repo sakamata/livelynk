@@ -7,13 +7,10 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header"><h2>MAC Address一覧</h2>※情報多過ぎなのでrole毎に整理します</div>
+                <div class="card-header"><h2>デバイス一覧</h2>※情報多過ぎなのでrole毎に整理します</div>
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+                @component('components.message')
+                @endcomponent
                     <table class="table table-hover">
                         <tr class="info thead-light">
                             <th>

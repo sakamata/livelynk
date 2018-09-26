@@ -48,6 +48,6 @@ class ChangePasswordController extends Controller
             'updated_at' => $now,
         ];
         'App\UserTable'::where('id', $request->id)->update($param);
-        return redirect("/admin_user/edit?id=". $request->id);
+        return redirect("/admin_user/edit?id=". $request->id)->with('message', 'パスワードを変更しました。');
     }
 }

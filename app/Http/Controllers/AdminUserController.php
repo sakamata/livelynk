@@ -114,7 +114,7 @@ class AdminUserController extends Controller
             'email' => $request['email'],
             'password' => Hash::make($request['password']),
         ]);
-        return redirect('/admin_user');
+        return redirect('/admin_user')->with('message', '新規ユーザーを作成しました。');
     }
 
     public function edit(Request $request)
@@ -142,7 +142,6 @@ class AdminUserController extends Controller
         }
 
         $reader_id = $this->getReaderID();
-        log::debug(print_r($reader_id, 1));
         $mac_addresses = DB::table('mac_addresses')->where('user_id', $reader_id)
             ->orWhere('user_id', $request->id)
             ->orderBy('hide','asc')
@@ -228,6 +227,6 @@ class AdminUserController extends Controller
                 ]);
             }
         }
-        return redirect('/admin_user');
+        return redirect('/admin_user')->with('message', 'ユーザープロフィールを編集しました。');
     }
 }

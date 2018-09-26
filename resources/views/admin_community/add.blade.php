@@ -9,12 +9,8 @@
             <div class="card">
                 <div class="card-header"><h2>Community新規登録</h2></div>
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
+                @component('components.message')
+                @endcomponent
                     <form action="/admin_community/create" method="post">
                         {{ csrf_field() }}
                         @component('components.error')

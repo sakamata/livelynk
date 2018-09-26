@@ -76,7 +76,7 @@ class AdminCommunityController extends Controller
             DB::rollback();
         }
         if ($success) {
-            return redirect('/admin_community');
+            return redirect('/admin_community')->with('message', 'コミュニティと管理者を作成しました。');
         }
     }
 
@@ -136,7 +136,7 @@ class AdminCommunityController extends Controller
         if ($user->role != 'superAdmin') {
             return redirect('/admin_community/edit?id=' . $user->community_id);
         } else {
-            return redirect('/admin_community');
+            return redirect('/admin_community')->with('message', 'コミュニティを編集しました。');
         }
     }
 }

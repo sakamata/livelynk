@@ -42,7 +42,7 @@ class LoginController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect(env("INDEX_PATH"));
+        return redirect(env("INDEX_PATH"))->with('message', 'ログアウトしました。');
     }
 
 }

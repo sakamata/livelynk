@@ -4,11 +4,8 @@
 
 <h2 class="space-name">ギークオフィス恵比寿</h2>
 <div class="comp-box-container clearfix">
-@if (session('status'))
-  <div class="alert alert-success" role="alert">
-    {{ session('status') }}
-  </div>
-@endif
+@component('components.message')
+@endcomponent
 @foreach ($items as $item)
   <div class="comp-box">
     <div class="name">
