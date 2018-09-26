@@ -37,6 +37,8 @@ class ChangePasswordController extends Controller
         // superAdmin以外は他人のパスワード変更はできない
         $user = Auth::user();
         if ($user->role != 'superAdmin' && $user->id != $request->id) {
+            log::warning(print_r("ユーザーが不正な値でpassword editを試みる>>>", 1));
+            log::warning(print_r($user, 1));
             return view('errors.403');
         }
         $now = Carbon::now();
