@@ -2,7 +2,7 @@
 
 @section('content')
 
-<h2 class="space-name">ギークオフィス恵比寿</h2>
+<h2 class="space-name">{{ $community->service_name }}</h2>
 <div class="comp-box-container clearfix">
 @component('components.message')
 @endcomponent

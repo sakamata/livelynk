@@ -37,7 +37,8 @@ Route::post('/password/update', 'ChangePasswordController@update')->middleware('
 // ホーム画面タイトル表示のみで非ログインは遷移無し
 Route::get('/', 'IndexController@welcome');
 // メイン画面 滞在者一覧 or home画面
-Route::get(env("INDEX_PATH"), 'IndexController@index')->name('index');
+// /index?path=hoge
+Route::get('/index{path?}', 'IndexController@index')->name('index');
 
 // 管理画面 認証済みuserのみ表示
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {

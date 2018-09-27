@@ -19,10 +19,21 @@ class IndexController extends Controller
     // 一般ユーザーのメイン画面、滞在者の一覧を表示する
     public function index(Request $request)
     {
+        // アクセスしてきた際のpathを取得し異常な値は撥ねる
+        if (!preg_match("/^[a-zA-Z0-9]+$/", $request->path)) {
+            return view('errors.403');
+        }
+        // 半角英数の path ならDB見に行って match したコミュニティを描画する
+        $community = DB::table('communities')->where('url_path', $request->path)->first();
+        if (!$community->url_path) {
+            return view('errors.403');
+        }
+
         // newcomer 取得 未登録ユーザーで来訪中のmac_address一覧を取得
         $unregistered = DB::table('mac_addresses')
             ->where([
-                ['user_id', 1],
+                ['community_id', $community->id],
+                ['user_id', $community->user_id],
                 ['hide', false],
                 ['current_stay', true],
             ])
@@ -32,6 +43,7 @@ class IndexController extends Controller
         $current_stays = DB::table('mac_addresses')
             ->select(DB::raw("user_id, max(arraival_at) as max_arraival_at"))
             ->where([
+                ['community_id', $community->id],
                 ['hide', false],
                 ['current_stay', true],
             ])
@@ -39,31 +51,32 @@ class IndexController extends Controller
             ->groupBy('user_id');
 
         // 親クエリでusers table呼び出し
-        $stays = DB::table('users')
-            ->joinSub($current_stays, 'current_stays', function($join) {
+        $stays = 'App\UserTable'::joinSub($current_stays, 'current_stays', function($join) {
                 $join->on('users.id', '=', 'current_stays.user_id');
             })->where([
-                ['id', '<>', 1],
+                ['community_id', $community->id],
+                ['id', '<>', $community->user_id],
                 ['hide', false],
             ])->get();
 
         // 非滞在者取得の為 除外条件の滞在者のIDを上記と同じ条件で取得
-        $stays_ids = DB::table('users')
-            ->joinSub($current_stays, 'current_stays', function($join) {
+        $stays_ids = 'App\UserTable'::joinSub($current_stays, 'current_stays', function($join) {
                 $join->on('users.id', '=', 'current_stays.user_id');
             })->where([
-                ['id', '<>', 1],
+                ['community_id', $community->id],
+                ['id', '<>', $community->user_id],
                 ['hide', false],
             ])->pluck('id');
         // 非滞在者の取得
-        $not_stays = DB::table('users')
-            ->whereNotIn('id', $stays_ids)
+        $not_stays = 'App\UserTable'::whereNotIn('id', $stays_ids)
             ->where([
-                ['id', '<>', 1],
+                ['community_id', $community->id],
+                ['id', '<>', $community->user_id],
                 ['hide', false],
             ])->orderBy('last_access', 'desc')->get();
 
         return view('index.index', [
+            'community' => $community,
             'items' => $unregistered,
             'items1' => $stays,
             'items2' => $not_stays,
