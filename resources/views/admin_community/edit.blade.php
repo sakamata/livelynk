@@ -33,13 +33,17 @@
                             代表管理者 : Email : {{$item->owner->email}}
                         </div>
                         <hr>
-                        <p>superAdminのみ表示</p>
+                        @if(Auth::user()->role == 'superAdmin' && Auth::user()->community_id != $item->id)
+                        <p>Livelynk全体管理者権限</p>
                         <div class="form-group">
                             <label for="InputTextarea">有効/無効&nbsp;&nbsp;</label>
                             <input type="radio" value="1" name="enable" @if (old('enable', $item->enable) == "1") checked @endif>有効&nbsp;&nbsp;&nbsp;
                             <input type="radio" value="0" name="enable" @if (old('enable', $item->enable) == "0") checked @endif>無効&nbsp;&nbsp;&nbsp;
                         </div>
                         <hr>
+                        @elseif
+                        <input type="hidden" name="enable" value="{{$item->enable}}">
+                        @endif
                         <div class="form-group">
                             <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
                             <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="name" value="{{old('name', $item->name)}}">
