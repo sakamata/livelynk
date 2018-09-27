@@ -38,7 +38,7 @@
                         @endcan
                         @can('superAdmin')
                         <!-- 変えたら大変なので、readerAdmin,superAdminの場合はコミュ編集は出さない！ -->
-                        @if($item->role != 'readerAdmin' && $item->role != 'superAdmin')
+                        @if(Auth::user()->role == 'superAdmin')
                         <div class="form-group">
                             <label for="community_id">コミュニティ</label>
                             <div class="">
@@ -68,13 +68,33 @@
                             <label for="InputTextarea">Email</label>
                             <input type="text" class="form-control form-control-lg" name="email" value="{{old('email', $item->email)}}">
                         </div>
+
+                    @if(Auth::user()->role != 'normal')
                         <div class="form-group">
-                            <label for="InputTextarea">role&nbsp;&nbsp;&nbsp;</label>
-                            <input type="radio" value="normal" name="role" @if (old('role', $item->role) == "normal") checked @endif>normal&nbsp;&nbsp;&nbsp;
-                            <input type="radio" value="normalAdmin" name="role" @if (old('role', $item->role) == "normalAdmin") checked @endif>normalAdmin&nbsp;&nbsp;&nbsp;
-                            <input type="radio" value="readerAdmin" name="role" @if (old('role', $item->role) == "readerAdmin") checked @endif>readerAdmin&nbsp;&nbsp;&nbsp;
-                            <input type="radio" value="superAdmin" name="role" @if (old('role', $item->role) == "superAdmin") checked @endif>superAdmin&nbsp;&nbsp;&nbsp;
+                            <label for="InputTextarea">管理権限&nbsp;&nbsp;&nbsp;</label>
+                        @if($item->role != 'superAdmin' && $item->role != 'readerAdmin')
+                            @php
+                                $disabled = "";
+                                // 委託管理者が一般ユーザーを閲覧した際は 権限「無し」を無効に
+                                if (Auth::user()->role == 'normalAdmin') { $disabled ='disabled'; }
+                                // 委託管理者が一般ユーザーを閲覧した際は 権限「無し」を有効に
+                                if (Auth::user()->role == 'normalAdmin' && $item->role == 'normal') { $disabled =''; }
+                            @endphp
+                            <input type="radio" value="normal" name="role" @if (old('role', $item->role) == "normal") checked @endif {{$disabled}}>無し&nbsp;&nbsp;&nbsp;
+                            <input type="radio" value="normalAdmin" name="role" @if (old('role', $item->role) == "normalAdmin") checked @endif>委託管理者&nbsp;&nbsp;&nbsp;
+                        @endif
+
+                        @if($item->role == 'readerAdmin')
+                            <input type="hidden" name="role" value="readerAdmin">
+                            <span>コミュニティ管理者 : このユーザーは権限の変更ができません。</span>
+                        @endif
+                        @if($item->role == 'superAdmin')
+                            <input type="hidden" name="role" value="superAdmin">
+                            <span>Livelynk全体管理者 : このユーザーは権限の変更ができません。</span>
+                        @endif
                         </div>
+                    @endif
+
                         <div class="form-group">
                             <label for="InputTextarea">表示設定&nbsp;&nbsp;</label>
                             <input type="radio" value="0" name="hide" @if (old('hide', $item->hide) == "0") checked @endif>表示&nbsp;&nbsp;&nbsp;
