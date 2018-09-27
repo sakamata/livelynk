@@ -41,7 +41,7 @@
                             <input type="radio" value="0" name="enable" @if (old('enable', $item->enable) == "0") checked @endif>無効&nbsp;&nbsp;&nbsp;
                         </div>
                         <hr>
-                        @elseif
+                        @else
                         <input type="hidden" name="enable" value="{{$item->enable}}">
                         @endif
                         <div class="form-group">
