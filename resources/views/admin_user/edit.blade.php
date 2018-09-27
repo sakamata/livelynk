@@ -31,7 +31,9 @@
                         <div>
                             更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
                         </div>
+                        @if(Auth::user()->id == $item->id || Auth::user()->role == 'superAdmin')
                         <a href="/password/edit?id={{$item->id}}" class="btn btn-info" role="button">パスワード変更</a>
+                        @endif
                         <hr>
                         @can('communityAdmin')
                         <input type="hidden" name="community_id" value="{{$item->community_id}}">
