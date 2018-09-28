@@ -11,22 +11,23 @@ use Illuminate\Support\Facades\Auth;
 
 class IndexController extends Controller
 {
-    public function welcome()
-    {
-        return view('welcome');
-    }
-
     // 一般ユーザーのメイン画面、滞在者の一覧を表示する
     public function index(Request $request)
     {
-        // アクセスしてきた際のpathを取得し異常な値は撥ねる
-        if (!preg_match("/^[a-zA-Z0-9]+$/", $request->path)) {
-            return view('errors.403');
-        }
-        // 半角英数の path ならDB見に行って match したコミュニティを描画する
-        $community = DB::table('communities')->where('url_path', $request->path)->first();
-        if (!$community->url_path) {
-            return view('errors.403');
+        // 非ログイン と ログイン時で対象の community を取得
+        // /index?path=hoge
+        if (!Auth::check()) {
+            if (!$request->path) {
+                return view('welcome');
+            }
+
+            $community = $this->GetCommunityFromPath($request->path);
+            if (!$community) {
+                return redirect('/')->with('message', '存在しないページです');
+            }
+        } else {
+            $user = Auth::user();
+            $community = DB::table('communities')->where('id', $user->community_id)->first();
         }
 
         // newcomer 取得 未登録ユーザーで来訪中のmac_address一覧を取得

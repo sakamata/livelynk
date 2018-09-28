@@ -15,13 +15,13 @@
 // Auth::routes();
 
 // Authentication Routes...
-Route::get(env("LOGIN_PATH"), 'Auth\LoginController@showLoginForm')->name('login');
-Route::post(env("LOGIN_PATH"), 'Auth\LoginController@login');
+Route::get('/login/{path?}', 'Auth\LoginController@show')->name('login');
+Route::post('/login/{path?}', 'Auth\LoginController@login');
 Route::post("logout", 'Auth\LoginController@logout')->name('logout');
 
 // Registration Routes...
-Route::get(env("REGISTER_PATH"), 'Auth\RegisterController@showRegistrationForm')->name('register');
-Route::post(env("REGISTER_PATH"), 'Auth\RegisterController@register');
+Route::get('/register/{path?}', 'Auth\RegisterController@show')->name('register');
+Route::post('/register/{path?}', 'Auth\RegisterController@register');
 
 // Password Reset Routes...
 Route::get(env("PASSWORD_PATH").'/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
@@ -33,12 +33,13 @@ Route::post(env("PASSWORD_PATH").'/reset', 'Auth\ResetPasswordController@reset')
 Route::get('/password/edit{id?}', 'ChangePasswordController@edit')->middleware('auth');
 Route::post('/password/update', 'ChangePasswordController@update')->middleware('auth');
 
+// 未ログイン時 && ログイン後 index画面  [未]welcome を表示  [後]滞在者一覧画面
+// 未ログイン時は滞在者画面への遷移を作ってはいけない（プライバシー的な問題）
+Route::get('/', 'IndexController@index');
 
-// ホーム画面タイトル表示のみで非ログインは遷移無し
-Route::get('/', 'IndexController@welcome');
-// メイン画面 滞在者一覧 or home画面
+// 未ログイン時の 滞在者一覧画面 コミュニティ毎のpathを知っているものだけが閲覧できる
 // /index?path=hoge
-Route::get('/index{path?}', 'IndexController@index')->name('index');
+Route::get('/index/{path?}', 'IndexController@index')->name('index');
 
 // 管理画面 認証済みuserのみ表示
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {

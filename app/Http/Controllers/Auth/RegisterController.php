@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Auth;
 use App\User;
 use App\Http\Controllers\Controller;
 use App\Rules\UniqueCommunity;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Log;
 
 class RegisterController extends Controller
 {
@@ -30,16 +32,36 @@ class RegisterController extends Controller
      * @var string
      */
     protected $redirectTo;
+    protected $community;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Request $request)
     {
         $this->middleware('guest');
-        $this->redirectTo = env("INDEX_PATH");
+        $this->redirectTo = '/';
+
+        $community = $this->GetCommunityFromPath($request->path);
+        log::debug(print_r($community, 1));
+        if (!$community) {
+            $this->community = "";
+        } else {
+            $this->community = $community;
+        }
+    }
+
+    public function show(Request $request)
+    {
+        $community = $this->GetCommunityFromPath($request->path);
+        if (!$community) {
+            return redirect('/')->with('message', '存在しないページです');
+        }
+        return view('auth.register',[
+            'community' => $community,
+        ]);
     }
 
     /**
@@ -50,11 +72,10 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        // *****ToDo***** community_id を registerフォームに追加する
         return Validator::make($data, [
-            'name' => 'required|string|max:30',
             'community_id' => 'required|integer',
-            'email' => ['required', 'string', 'email', 'max:255', new UniqueCommunity($request->community_id)],
+            'name' => 'required|string|max:30',
+            'email' => ['required', 'string', 'email', 'max:255', new UniqueCommunity($data['community_id'])],
             'password' => 'required|string|min:6|confirmed',
         ]);
     }

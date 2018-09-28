@@ -1,6 +1,6 @@
 @auth
 <!-- 一般ログインユーザーメニュー -->
-<a href="{{ env("INDEX_PATH") }}">HOME</a>
+<a href="/">HOME</a>
 <a href="/admin_user/edit?id={{Auth::user()->id}}">プロフィール編集</a>
 <a href="/admin_mac_address">デバイス一覧</a>
 @can('normalAdmin')
