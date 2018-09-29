@@ -20,6 +20,26 @@ class InportPostController extends Controller
         // hash値が異なる場合はexit() で処理停止
         $this->HashCheck($check_array);
 
+        if (
+            !ctype_digit($check_array['time']) &&
+            !ctype_digit($check_array['router_id']) &&
+            !ctype_digit($check_array['community_id'])
+        ) {
+            Log::debug(print_r('json int value not integer!! check json ==> ', 1));
+            Log::debug(print_r($check_array, 1));
+            exit();
+        }
+
+        // POSTされた community_id の半角英数字から communities table の id を導く
+        $community = DB::table('communities')->where('name', $check_array['community_id'])->first();
+        $community_id_int = $community->id;
+
+        if (!$community_id_int) {
+            Log::debug(print_r('community_id_int not found!! check json ==> ', 1));
+            Log::debug(print_r($check_array, 1));
+            exit();
+        }
+
         // MACアドレス形式のみ大文字にして配列に入れ、それ以外はlog出力
         $post_mac_array = array();
         foreach ((array)$check_array["mac"] as $check) {
@@ -44,11 +64,15 @@ class InportPostController extends Controller
         // POSTされたMACaddressを個々で精査し来訪判断
         foreach ((array)$post_mac_array as $post_mac) {
             // 登録済みMACアドレスか個別確認
-            $check = DB::table('mac_addresses')->where('mac_address', $post_mac)->exists();
+            $check = DB::table('mac_addresses')->where([
+                ['community_id', $community_id_int],
+                ['mac_address', $post_mac],
+            ])->exists();
             if (!$check) {
                 // 未登録なら、最低限のinsert 滞在中に変更
                 // user_id = 1 は仕様上[ユーザー未登録]のrecord
                 $param = [
+                    'community_id' => $community_id_int,
                     'mac_address' => $post_mac,
                     'vendor' => $check_array["vendor"][$v],
                     'user_id' => 1,
@@ -75,6 +99,7 @@ class InportPostController extends Controller
                 // *****ToDo***** 非表示端末は配列に入れない事にして、OUT時間が非表示端末の時間を拾うバグに対応する
                 $mac_record = DB::table('mac_addresses')
                     ->where([
+                        ['community_id', $community_id_int],
                         ['mac_address', $post_mac],
                     ])->first();
                 $users_ids[] = $mac_record->user_id;
@@ -86,6 +111,7 @@ class InportPostController extends Controller
                     // 既にこのuserの他のデバイスの存在があるか?
                     $stay = DB::table('mac_addresses')
                         ->where([
+                            ['community_id', $community_id_int],
                             ['user_id', $mac_record->user_id],
                             ['current_stay', true],
                             ['hide', false],
@@ -101,7 +127,10 @@ class InportPostController extends Controller
                     // 現在を含むので ">="  が正
                     if ($now >= $limit) {
                         //  該当レコードの来訪時間 arraival_at 更新
-                        DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
+                        DB::table('mac_addresses')->where([
+                            ['community_id', $community_id_int],
+                            ['mac_address', $post_mac],
+                            ])->update([
                             'router_id' => $check_array["router_id"],
                             'arraival_at' => $now,
                         ]);
@@ -112,7 +141,9 @@ class InportPostController extends Controller
                     //  push_usersに追加
                     if (!$stay && $now >= $limit) {
                         //  通知の為のuser nameを取得
-                        $user = DB::table('users')->where('id', $mac_record->user_id)->first();
+                        $user = DB::table('users')->where([
+                            ['id', $mac_record->user_id],
+                        ])->first();
 
                         Log::debug(print_r("来訪者の通知開始 該当user>>>", 1));
                         Log::debug(print_r($user, 1));
@@ -129,7 +160,10 @@ class InportPostController extends Controller
             // 登録済みの場合、通知判定を終えた後、テータスを更新する
             // *****ToDo*****【検討】非表示デバイスを撥ねる条件追加しても良いか？
             // 条件追加で非表示デバイスの情報はMACが飛んでいても更新されなくなる
-            DB::table('mac_addresses')->where('mac_address', $post_mac)->update([
+            DB::table('mac_addresses')->where([
+                ['community_id', $community_id_int],
+                ['mac_address', $post_mac],
+            ])->update([
                 'router_id' => $check_array["router_id"],
                 'current_stay' => true,
                 'posted_at' => $now,
@@ -147,16 +181,16 @@ class InportPostController extends Controller
             Log::debug(print_r("!push_ifttt arraival!>>>>", 1));
             Log::debug(print_r($push_users, 1));
 
-            (new ExportPostController)->push_ifttt($push_users, $category = "arraival");
+            (new ExportPostController)->push_ifttt($push_users, $category = "arraival", $community);
         }
-        $this->DepartureCheck();
+        $this->DepartureCheck($community);
     }
 
     public function HashCheck($check_array)
     {
         // hash確認 touter_id が数値以外なら処理停止
         if (!is_numeric($check_array["router_id"])) {
-            Log::debug(print_r('Inport json post router_id not is_numeric!! posted router_id ==> ' .$check_array["router_id"], 1));
+            Log::debug(print_r('Inport json post router_id not integer!! posted router_id ==> ' .$check_array["router_id"], 1));
             exit();
         } else {
             $router_id = $check_array["router_id"];
@@ -182,7 +216,7 @@ class InportPostController extends Controller
         }
     }
 
-    public function DepartureCheck()
+    public function DepartureCheck($community)
     {
         // 一定時間アクセスの無いmac_address を不在に変更
         // last_access が 一定時間以上になった全ての current_stay true を false にする
@@ -193,6 +227,7 @@ class InportPostController extends Controller
         $past_limit = $now->subSecond($second);
 
         $went_away = DB::table('mac_addresses')->where([
+            ['community_id', $community->id],
             ['hide', false],
             ['current_stay', true],
             ['posted_at', '<=', $past_limit],
@@ -243,7 +278,7 @@ class InportPostController extends Controller
             Log::debug(print_r("!!!push_ifttt departure pushusers >>>>!!!", 1));
             Log::debug(print_r($push_users, 1));
 
-            (new ExportPostController)->push_ifttt($push_users, $category = "departure");
+            (new ExportPostController)->push_ifttt($push_users, $category = "departure", $community);
         }
     }   // end function
 }
