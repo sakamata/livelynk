@@ -134,7 +134,7 @@ class AdminCommunityController extends Controller
         DB::table('communities')->where('id', $request->id)->update($param);
 
         if ($user->role != 'superAdmin') {
-            return redirect('/admin_community/edit?id=' . $user->community_id);
+            return redirect('/admin_community/edit?id=' . $user->community_id)->with('message', 'コミュニティを編集しました。');
         } else {
             return redirect('/admin_community')->with('message', 'コミュニティを編集しました。');
         }

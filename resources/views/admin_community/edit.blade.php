@@ -45,13 +45,14 @@
                         <input type="hidden" name="enable" value="{{$item->enable}}">
                         @endif
                         <div class="form-group">
-                            <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
-                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="name" value="{{old('name', $item->name)}}">
+                            <label for="InputTextarea">コミュニティ名称(3～32文字)</label>
+                            <input type="text" class="form-control form-control-lg" name="service_name" value="{{old('service_name', $item->service_name)}}">
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">コミュニティ名称(3～32文字)</label>
-                            <input type="text" class="form-control form-control-lg" name="service_name" value="{{old('service_name', $item->service_name)}}">
+                            <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
+                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-sm" name="name" value="{{old('name', $item->name)}}">
+                            <p>注意：編集すると端末情報が受信できなくなります。変更の際はRaspBerryPiの設定も同様の変更が必要です。</p>
                         </div>
 
                         <div class="form-group">

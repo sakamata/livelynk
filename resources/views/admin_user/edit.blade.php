@@ -64,7 +64,14 @@
                         @endcomponent
                         <div class="form-group">
                             <label for="InputTextarea">名前</label>
-                            <input type="text" class="form-control form-control-lg" name="name" value="{{old('name', $item->name)}}">
+                            @php
+                            if ($item->role == 'readerAdmin') { $readonly = 'readonly';}
+                            else { $readonly = '';}
+                            @endphp
+                            <input type="text" class="form-control form-control-lg" name="name" value="{{old('name', $item->name)}}" {{$readonly}}>
+                            @if($item->role == 'readerAdmin')
+                                <span>コミュニティ管理者は、名前の変更ができません。</span>
+                            @endif
                         </div>
                         <div class="form-group">
                             <label for="InputTextarea">Email</label>

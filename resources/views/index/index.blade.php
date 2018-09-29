@@ -3,6 +3,11 @@
 @section('content')
 
 <h2 class="space-name">{{ $community->service_name }}</h2>
+@if(Auth::check())
+@if(Auth::user()->role == 'readerAdmin')
+    <span>あなたは現在コミュニティ管理者でログイン中です。この画面には表示されません。</span>
+@endif
+@endif
 <div class="comp-box-container clearfix">
 @component('components.message')
 @endcomponent
