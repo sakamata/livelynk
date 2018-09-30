@@ -34,8 +34,8 @@ class InportPostController extends Controller
         $community = DB::table('communities')->where('name', $check_array['community_id'])->first();
         $community_id_int = $community->id;
 
-        if (!$community_id_int) {
-            Log::debug(print_r('community_id_int not found!! check json ==> ', 1));
+        if (!$community) {
+            Log::debug(print_r('community name not found!! check json ==> ', 1));
             Log::debug(print_r($check_array, 1));
             exit();
         }
@@ -75,7 +75,7 @@ class InportPostController extends Controller
                     'community_id' => $community_id_int,
                     'mac_address' => $post_mac,
                     'vendor' => $check_array["vendor"][$v],
-                    'user_id' => 1,
+                    'user_id' => $community->user_id,
                     'router_id' => $check_array["router_id"],
                     'arraival_at' => $now,
                     'posted_at' => $now,
