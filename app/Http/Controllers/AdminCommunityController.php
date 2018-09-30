@@ -53,6 +53,8 @@ class AdminCommunityController extends Controller
             'created_at' => $now,
             'updated_at' => $now,
         ];
+        log::debug(print_r('$param_community>>>', 1));
+        log::debug(print_r($param_community, 1));
         DB::beginTransaction();
         try {
             $community_id = DB::table('communities')->insertGetId($param_community);
@@ -70,11 +72,17 @@ class AdminCommunityController extends Controller
             DB::table('communities')->where('id', $community_id)
                 ->update([ 'user_id' => $user_id ]);
             DB::commit();
+            log::debug(print_r('$user_id>>>', 1));
+            log::debug(print_r($user_id, 1));
+
             $success = true;
         } catch (\Exception $e) {
             $success = false;
             DB::rollback();
         }
+        log::debug(print_r('$success>>>', 1));
+        log::debug(print_r($success, 1));
+
         if ($success) {
             return redirect('/admin_community')->with('message', 'コミュニティと管理者を作成しました。');
         }
