@@ -70,7 +70,7 @@ class InportPostController extends Controller
             ])->exists();
             if (!$check) {
                 // 未登録なら、最低限のinsert 滞在中に変更
-                // user_id = 1 は仕様上[ユーザー未登録]のrecord
+                // $community->user_id は [未登録] コミュニティ管理者
                 $param = [
                     'community_id' => $community_id_int,
                     'mac_address' => $post_mac,
@@ -144,10 +144,8 @@ class InportPostController extends Controller
                         $user = DB::table('users')->where([
                             ['id', $mac_record->user_id],
                         ])->first();
-
                         Log::debug(print_r("来訪者の通知開始 該当user>>>", 1));
                         Log::debug(print_r($user, 1));
-
                         $person = array(
                             "id" => $user->id,
                             "name" => $user->name,

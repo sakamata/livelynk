@@ -232,6 +232,10 @@ class AdminUserController extends Controller
                 ]);
             }
         }
-        return redirect('/admin_user')->with('message', 'ユーザープロフィールを編集しました。');
+        if ($user->role == 'normal') {
+            return redirect('/admin_user/edit?id='. $user->id)->with('message', 'ユーザープロフィールを編集しました。');
+        } else {
+            return redirect('/admin_user')->with('message', 'ユーザープロフィールを編集しました。');
+        }
     }
 }

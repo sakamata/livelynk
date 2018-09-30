@@ -35,9 +35,9 @@
                         <a href="/password/edit?id={{$item->id}}" class="btn btn-info" role="button">パスワード変更</a>
                         @endif
                         <hr>
-                        @can('communityAdmin')
+                        @cannot('superAdmin')
                         <input type="hidden" name="community_id" value="{{$item->community_id}}">
-                        @endcan
+                        @endcannot
                         @can('superAdmin')
                         <!-- 変えたら大変なので、readerAdmin,superAdminの場合はコミュ編集は出さない！ -->
                         @if(Auth::user()->role == 'superAdmin')
@@ -103,7 +103,9 @@
                         @endif
                         </div>
                     @endif
-
+                    @if(Auth::user()->role == 'normal')
+                    <input type="hidden" name="role" value="normal">
+                    @endif
                         <div class="form-group">
                             <label for="InputTextarea">表示設定&nbsp;&nbsp;</label>
                             <input type="radio" value="0" name="hide" @if (old('hide', $item->hide) == "0") checked @endif>表示&nbsp;&nbsp;&nbsp;
