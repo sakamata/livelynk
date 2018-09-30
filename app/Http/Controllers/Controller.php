@@ -23,7 +23,7 @@ class Controller extends BaseController
     {
         $user = Auth::user();
         return $reader_id = DB::table('communities')
-            ->where('user_id', $user->community_id)->value('user_id');
+            ->where('id', $user->community_id)->value('user_id');
     }
 
     // getのパラメーター path がDBに存在する communityのpathか判定
