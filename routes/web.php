@@ -16,7 +16,7 @@
 
 // Authentication Routes...
 Route::get('/login/{path?}', 'Auth\LoginController@show')->name('login');
-Route::post('/login/{path?}', 'Auth\LoginController@login');
+Route::post('/login/{path?}', 'Auth\LoginController@authenticate');
 Route::post("logout", 'Auth\LoginController@logout')->name('logout');
 
 // Registration Routes...

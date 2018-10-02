@@ -32,7 +32,7 @@ class AdminCommunityController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'email' => 'required|string|email|max:255',
+            'email' => 'required|string|email|max:170',
             'password' => 'required|string|min:6|confirmed',
             'name_id' => 'required|string|min:3|max:32',
             'service_name' => 'required|string|min:3|max:32',

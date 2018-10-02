@@ -59,6 +59,33 @@ class LoginController extends Controller
         ]);
     }
 
+    // ログイン時に使用するユニークであるカラムを指定
+    public function username()
+    {
+        return 'login_id';
+    }
+
+    public function authenticate(Request $request)
+    {
+        // login_id カラムは email + '@' + community_id(int) で構成されたユニークの文字列として登録時に保存された値、これでログイン認証を行う
+        $login_id = $request->email . '@' . $request->community_id;
+        $credentials  = array(
+            'login_id' => $login_id,
+            'password' => $request->password,
+        );
+
+        $request->validate([
+            'email' => 'required|string|email|max:170',
+            'password' => 'required|string|min:6',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            return redirect('/')->with('message', 'ログインしました');
+        } else {
+            return redirect()->back()->withErrors(array('email' => 'E-mailかPasswordが正しくありません'))->withInput();
+        }
+    }
+
     public function logout()
     {
         $user = Auth::user();

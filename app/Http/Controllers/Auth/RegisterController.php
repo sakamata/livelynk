@@ -75,7 +75,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
-            'email' => ['required', 'string', 'email', 'max:255', new UniqueCommunity($data['community_id'])],
+            'email' => ['required', 'string', 'email', 'max:170', new UniqueCommunity($data['community_id'])],
             'password' => 'required|string|min:6|confirmed',
         ]);
     }
@@ -88,11 +88,15 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $email = $data['email'];
+        $community_id = $data['community_id'];
+        $login_id = $email . '@' . $community_id;
         // user roleは作成時はDBデフォルト値"normal"に固定となる
         return User::create([
             'community_id' => $data['community_id'],
             'name' => $data['name'],
             'email' => $data['email'],
+            'login_id' => $login_id,
             'password' => Hash::make($data['password']),
         ]);
     }
