@@ -56,12 +56,15 @@ class AdminCommunityController extends Controller
         DB::beginTransaction();
         try {
             $community_id = DB::table('communities')->insertGetId($param_community);
+            $email = $request->email;
+            $login_id = $email . '@' . $community_id;
             $param_user = [
+                'community_id' => $community_id,
                 'name' => '未登録',
                 'email' => $request->email,
                 'role' => 'readerAdmin',
+                'login_id' => $login_id,
                 'password' => Hash::make($request->password),
-                'community_id' => $community_id,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
