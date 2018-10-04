@@ -112,11 +112,14 @@ class AdminUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', new UniqueCommunity($request->community_id)],
             'password' => 'required|string|min:6|confirmed',
         ]);
+        $email = $request['email'];
+        $login_id = $email . '@' . $request->$community_id;
         // user roleは作成時はDBデフォルト値"normal"に固定となる
         User::create([
             'community_id' => $request->community_id,
             'name' => $request['name'],
             'email' => $request['email'],
+            'login_id' => $login_id,
             'password' => Hash::make($request['password']),
         ]);
         return redirect('/admin_user')->with('message', '新規ユーザーを作成しました。');
