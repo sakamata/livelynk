@@ -113,7 +113,7 @@ class AdminUserController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
         $email = $request['email'];
-        $login_id = $email . '@' . $request->$community_id;
+        $login_id = $email . '@' . Auth::user()->community_id;
         // user roleは作成時はDBデフォルト値"normal"に固定となる
         User::create([
             'community_id' => $request->community_id,
