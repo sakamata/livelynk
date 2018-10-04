@@ -70,7 +70,6 @@ class ExportPostController extends Controller
         $client = new \GuzzleHttp\Client([
             'base_uri' => $url,
         ]);
-        log::debug(print_r($home_url, 1));
         $responce = $client->request('POST', $key, [
             'json' => [
                 'value1' => $message,
@@ -110,20 +109,26 @@ class ExportPostController extends Controller
                 ['current_stay', 1],
                 ['hide', 0],
                 ['user_id', $community->user_id],
-            ])
-            ->count();
+            ])->count();
+
         // 想定される最大滞在者数
         $about_max = $existing_count + $unknown_count;
-        // "〇～〇" 名の文字列作成
-        if ($about_max == 0) {
-            $users_count_str = 0;
-        } elseif ($unknown_count > 0) {
-            $users_count_str = $existing_count . "～" . $about_max;
+        // 在籍者数の文字列作成 "n名", "n～n+ 名"
+        if ($existing_count  == 0 && $unknown_count == 0 ) {
+            $users_res = 0;
+        } elseif ($existing_count  > 0 && $unknown_count == 0 ) {
+            $users_res = $existing_count;
+        } elseif ($existing_count == 0 && $unknown_count == 1 ) {
+            $users_res = 1;
+        } elseif ($existing_count == 0 && $unknown_count >  1 ) {
+            $users_res = "1～" . $unknown_count;
+        } elseif ($existing_count  > 0 && $unknown_count >  1 ) {
+            $users_res = $existing_count . "～" . $about_max;
         } else {
-            $users_count_str = $existing_count;
+            $users_res = $existing_count . "～" . $about_max;
         }
         return array(
-            'users_count_str' => $users_count_str,
+            'users_count_str' => $users_res,
             'users_name_str' => $users_name_str,
         );
     }
