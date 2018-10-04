@@ -22,7 +22,9 @@ class ExportPostController extends Controller
 
         // 帰宅想定時間（分）
         $minute = round( env("JUDGE_DEPARTURE_INTERVAL_SECOND") / 60, 0);
-
+        $now = Carbon::now();
+        $time = $now->subSecond($minute * 60);
+        $time = $time->format('G:i');
 
         // 通知の種別設定
         switch ($category) {
@@ -34,9 +36,9 @@ class ExportPostController extends Controller
             case 'departure':
                 $title = $community->service_name . 'から帰宅者です';
                 if ($res['users_count_str'] == 0) {
-                    $message = $res['users_name_str'] . "が". $minute . "分程前に" . $community->service_name . "から帰りました。今たぶん誰もいません。";
+                    $message = $res['users_name_str'] . "が". $minute . "分程前(". $time .")に" . $community->service_name . "から帰りました。今たぶん誰もいません。";
                 } else {
-                    $message = $res['users_name_str'] . "が". $minute . "分程前に" . $community->service_name . "から帰りました。今たぶん" . $res['users_count_str'] . "名がいます。";
+                    $message = $res['users_name_str'] . "が". $minute . "分程前(". $time .")に" . $community->service_name . "から帰りました。今たぶん" . $res['users_count_str'] . "名がいます。";
                 }
                 break;
 
