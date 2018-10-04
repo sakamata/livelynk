@@ -144,14 +144,24 @@ class InportPostController extends Controller
                         $user = DB::table('users')->where([
                             ['id', $mac_record->user_id],
                         ])->first();
-                        Log::debug(print_r("来訪者の通知開始 該当user>>>", 1));
-                        Log::debug(print_r($user, 1));
-                        $person = array(
-                            "id" => $user->id,
-                            "name" => $user->name,
-                        );
-                        $push_users[$i] =  $person;
-                        $i++;
+                        // 非表示ユーザーを除外する
+                        $hide = DB::table('users')->where([
+                            ['id', $user->id],
+                            ['hide', true],
+                            ])->exists();
+                        if (!$hide) {
+                            Log::debug(print_r("来訪者の通知開始 該当user>>>", 1));
+                            Log::debug(print_r($user, 1));
+                            $person = array(
+                                "id" => $user->id,
+                                "name" => $user->name,
+                            );
+                            $push_users[$i] =  $person;
+                            $i++;
+                        } else {
+                            Log::debug(print_r("非表示userなので来訪通知しない 該当user>>>", 1));
+                            Log::debug(print_r($user, 1));
+                        }
                     }
                 }
             }
@@ -234,9 +244,6 @@ class InportPostController extends Controller
         $users_id = array();
         $i = 0;
         foreach ($went_away as $went) {
-            Log::debug(print_r("帰ったステータス更新 判定デバイス>>>>", 1));
-            Log::debug(print_r($went->id .' '. $went->vendor .' '. $went->device_name, 1));
-
             DB::table('mac_addresses')->where('id', $went->id)
                 ->update([
                     'departure_at' => $now,
@@ -250,10 +257,16 @@ class InportPostController extends Controller
         $push_users = array();
         $i = 0;
         foreach ((array)$users_id as $id) {
-            // push通知が必要なuserのidと名前を取得して配列 $push_users に加工
+            // push通知が必要な表示userのみ,idと名前を取得して配列 $push_users に加工
             $user = DB::table('users')->where([
                 ['id', $id],
+                ['hide', false],
             ])->first();
+            // 非表示userは処理せず
+            if (!$user) {
+                Log::debug(print_r('非表示userの為、帰宅通知をしないuserのid>>> ' . $id, 1));
+                continue;
+            }
             // 該当userの非表示以外の滞在中mac_addressが無いか確認
             $exist = DB::table('mac_addresses')->where([
                 ['user_id', $id],
@@ -266,6 +279,9 @@ class InportPostController extends Controller
                     "id" => $user->id,
                     "name" => $user->name,
                 );
+                Log::debug(print_r("帰ったステータス更新 判定user>>>>", 1));
+                Log::debug(print_r($user->id .' '. $user->name, 1));
+
                 $push_users[$i] =  $person;
                 $i++;
             }
