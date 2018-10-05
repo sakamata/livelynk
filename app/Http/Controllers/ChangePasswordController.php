@@ -32,7 +32,7 @@ class ChangePasswordController extends Controller
         // app\Rules\NowPassword.php
         $request->validate([
             'now_password' => ['required', 'string','min:6', new NowPassword($request->id)],
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6|max:100|confirmed',
         ]);
         // superAdmin以外は他人のパスワード変更はできない
         $user = Auth::user();

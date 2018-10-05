@@ -76,7 +76,7 @@ class LoginController extends Controller
 
         $request->validate([
             'email' => 'required|string|email|max:170',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|max:100',
         ]);
 
         if (Auth::attempt($credentials)) {

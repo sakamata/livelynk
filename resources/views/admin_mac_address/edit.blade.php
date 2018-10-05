@@ -66,12 +66,12 @@
                         @endcomponent
                         <div class="form-group">
                             <label for="InputTextarea">デバイス名</label>
-                            <input type="text" class="form-control form-control-lg" name="device_name" value="{{old('device_name', $item->device_name)}}">
+                            <input type="text" class="form-control form-control-lg" name="device_name" value="{{old('device_name', $item->device_name)}}" placeholder="40文字まで">
                         </div>
 
                         <div class="form-group">
                             <label for="InputTextarea">vendor</label>
-                            <input type="text" class="form-control form-control-lg" name="vendor" value="{{old('vendor', $item->vendor)}}">
+                            <input type="text" class="form-control form-control-lg" name="vendor" value="{{old('vendor', $item->vendor)}}" placeholder="40文字まで">
                         </div>
 
                         <div class="form-group">

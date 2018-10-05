@@ -146,8 +146,8 @@ class AdminMacAddressController extends Controller
     {
         $request->validate([
             'community_id' => 'required|integer',
-            'device_name' => 'nullable|string|max:100',
-            'vendor' => 'nullable|string|max:100',
+            'device_name' => 'nullable|string|max:40',
+            'vendor' => 'nullable|string|max:40',
             'hide' => 'required|boolean',
             'user_id' => 'required|integer',
         ]);

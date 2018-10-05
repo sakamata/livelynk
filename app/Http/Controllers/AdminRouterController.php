@@ -54,8 +54,8 @@ class AdminRouterController extends Controller
 
         $request->validate([
             'community_id' => 'required|integer',
-            'name' => 'required|string|max:100',
-            'hash_key' => 'required|alpha_num|max:100',
+            'name' => 'required|string|max:32',
+            'hash_key' => 'required|alpha_num|min:4|max:32',
         ]);
         $now = Carbon::now();
         $param = [
@@ -111,8 +111,8 @@ class AdminRouterController extends Controller
 
         $request->validate([
             'community_id' => 'required|integer',
-            'name' => 'required|string|max:100',
-            'hash_key' => 'required|alpha_num|max:100',
+            'name' => 'required|string|max:32',
+            'hash_key' => 'required|alpha_num|min:4|max:32',
         ]);
         $now = Carbon::now();
         $param = [

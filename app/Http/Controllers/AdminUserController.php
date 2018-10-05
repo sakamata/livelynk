@@ -109,8 +109,8 @@ class AdminUserController extends Controller
             'id' => 'required|integer',
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
-            'email' => ['required', 'string', 'email', 'max:255', new UniqueCommunity($request->community_id)],
-            'password' => 'required|string|min:6|confirmed',
+            'email' => ['required', 'string', 'email', 'max:170', new UniqueCommunity($request->community_id)],
+            'password' => 'required|string|min:6|max:100|confirmed',
         ]);
         $email = $request['email'];
         $login_id = $email . '@' . $request->community_id;
@@ -171,7 +171,7 @@ class AdminUserController extends Controller
             'id' => 'required|integer',
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
-            'email' => 'required|string|email|max:255',
+            'email' => 'required|string|email|max:170',
             'role' => ['required', 'regex:/normal|normalAdmin|readerAdmin|superAdmin/'],
             'hide' => 'required|boolean',
             'mac_addres_id' => 'nullable|array',

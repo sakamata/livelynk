@@ -76,7 +76,7 @@ class RegisterController extends Controller
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
             'email' => ['required', 'string', 'email', 'max:170', new UniqueCommunity($data['community_id'])],
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6|max:100|confirmed',
         ]);
     }
 

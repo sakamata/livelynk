@@ -3,6 +3,8 @@
 @section('content')
 @component('components.header_menu')
 @endcomponent
+@component('components.form_js')
+@endcomponent
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
@@ -16,14 +18,15 @@
                         @component('components.error')
                         @endcomponent
                         <div class="form-group">
-                            <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
-                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="name_id" value="{{old('name_id')}}">
-                        </div>
-
-                        <div class="form-group">
                             <label for="InputTextarea">コミュニティ名称(3～32文字)</label>
                             <input type="text" class="form-control form-control-lg" name="service_name" value="{{old('service_name')}}">
                         </div>
+
+                        <div class="form-group">
+                            <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
+                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="name_id" value="{{old('name_id')}}" onInput="checkForm(this)">
+                        </div>
+
                         <h2>管理者ユーザー登録</h2>
                         <!-- この辺のレイアウト統一されてないのすみません。取り急ぎ張り付けただけです… -->
                         <div class="form-group row">
@@ -45,7 +48,7 @@
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required>
+                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required style=”ime-mode:disabled;”>
 
                                 @if ($errors->has('email'))
                                     <span class="invalid-feedback" role="alert">
@@ -79,19 +82,19 @@
 
                         <div class="form-group">
                             <label for="InputTextarea">url_path</label>
-                            <input type="text" class="form-control form-control-lg" name="url_path" value="{{old('url_path', $hash)}}">
+                            <input type="text" class="form-control form-control-lg" name="url_path" value="{{old('url_path', $hash)}}" onInput="checkForm(this)">
                             <p>自動生成された乱数がURLに使用されます</p>
                         </div>
 
                         <div class="form-group">
                             <label for="InputTextarea">ifttt_event_name</label>
-                            <input type="text" class="form-control form-control-lg" name="ifttt_event_name" value="{{old('ifttt_event_name')}}">
+                            <input type="text" class="form-control form-control-lg" name="ifttt_event_name" value="{{old('ifttt_event_name')}}"  onInput="checkForm(this)">
                             <p>(任意)通知設定の為のIFTTTのEvent Nameを登録します</p>
                         </div>
 
                         <div class="form-group">
                             <label for="InputTextarea">ifttt_webhooks_key</label>
-                            <input type="text" class="form-control form-control-lg" name="ifttt_webhooks_key" value="{{old('ifttt_webhooks_key')}}">
+                            <input type="text" class="form-control form-control-lg" name="ifttt_webhooks_key" value="{{old('ifttt_webhooks_key')}}"  onInput="checkForm(this)">
                             <p>(任意)通知設定の為のIFTTTのWebhooks keyを入力します</p>
                         </div>
 

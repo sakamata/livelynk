@@ -33,8 +33,8 @@ class AdminCommunityController extends Controller
     {
         $request->validate([
             'email' => 'required|string|email|max:170',
-            'password' => 'required|string|min:6|confirmed',
-            'name_id' => 'required|string|min:3|max:32',
+            'password' => 'required|string|min:6|max:100|confirmed',
+            'name_id' => 'required|string|alpha_num|min:3|max:32',
             'service_name' => 'required|string|min:3|max:32',
             'url_path' => 'required|string|max:32',
             'ifttt_event_name' => 'nullable|string|max:191',
@@ -118,7 +118,7 @@ class AdminCommunityController extends Controller
 
         $request->validate([
             'enable' => 'required|boolean',
-            'name' => 'required|string|min:3|max:32',
+            'name' => 'required|string|alpha_num|min:3|max:32',
             'service_name' => 'required|string|min:3|max:32',
             'url_path' => 'required|string|max:32',
             'ifttt_event_name' => 'nullable|string|max:191',

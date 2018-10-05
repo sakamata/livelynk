@@ -51,13 +51,13 @@
 
                         <div class="form-group">
                             <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
-                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-sm" name="name" value="{{old('name', $item->name)}}">
+                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-sm" name="name" value="{{old('name', $item->name)}}"  onInput="checkForm(this)">
                             <p>注意：編集すると端末情報が受信できなくなります。変更の際はRaspBerryPiの設定も同様の変更が必要です。</p>
                         </div>
 
                         <div class="form-group">
                             <label for="InputTextarea">url_path</label>
-                            <input type="text" class="form-control form-control-sm" name="url_path" value="{{old('url_path', $item->url_path)}}">
+                            <input type="text" class="form-control form-control-sm" name="url_path" value="{{old('url_path', $item->url_path)}}" onInput="checkForm(this)">
                             <p>注意：編集すると在席確認ページやログインのページのリンク等が変更され再度周知が必要となります。</p>
                         </div>
 
