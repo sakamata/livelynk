@@ -53,6 +53,8 @@ Route::post('/admin_user/update', 'AdminUserController@update')->middleware('aut
 Route::get('/admin_mac_address', 'AdminMacAddressController@index')->middleware('auth');
 Route::get('/admin_mac_address/edit{id?}', 'AdminMacAddressController@edit')->middleware('auth');
 Route::post('/admin_mac_address/update', 'AdminMacAddressController@update')->middleware('auth');
+Route::get('/admin_mac_address/delete{id?}', 'AdminMacAddressController@delete')->middleware('auth');
+Route::post('/admin_mac_address/remove', 'AdminMacAddressController@remove')->middleware('auth');
 
 // Admin only
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {

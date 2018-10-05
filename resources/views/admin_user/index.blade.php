@@ -137,7 +137,9 @@
                                             <td>{{$mac_add->hide}}</td>
                                             <td>{{$mac_add->device_name}}</td>
                                             <td>{{$mac_add->vendor}}</td>
-                                            <td class="blockquote text-right"><a href="/admin_mac_address/edit?id={{$mac_add->id}}" class="btn btn-info" role="button">編集</a>
+                                            <td class="blockquote text-right">
+                                                <a href="/admin_mac_address/edit?id={{$mac_add->id}}" class="btn btn-info" role="button">編集</a>
+                                                <a href="/admin_mac_address/delete?id={{$mac_add->id}}" class="btn btn-danger" role="button">削除</a>
                                             </td>
                                         </tr>
                                 @endforeach

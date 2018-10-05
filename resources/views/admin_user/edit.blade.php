@@ -152,11 +152,16 @@
                                     <td>{{$mac_add->current_stay}}</td>
                                     <td>{{$mac_add->mac_address}}</td>
                                     <td>{{$mac_add->vendor}}</td>
-                                    <td>{{$mac_add->user_id}}:{{$mac_add->device_name}}</td>
+                                    <td>{{$mac_add->device_name}}</td>
                                     <td>{{$mac_add->router_id}}</td>
                                     <td>{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i')}}</td>
                                     <td>{{Carbon\Carbon::parse($mac_add->posted_at)->format('n月j日 G:i')}}</td>
-                                    <td>{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}</td>
+                                    <td>
+                                        {{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}
+                                        @if($mac_add->user_id == $item->id)
+                                        <a href="/admin_mac_address/delete?id={{$item->id}}" class="btn btn-danger" role="button">削除</a>
+                                        @endif
+                                    </td>
                                 </tr>
                         @endforeach
                             </table>

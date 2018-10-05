@@ -151,6 +151,13 @@
                         @endif
                             <td>
                                 <a href="/admin_mac_address/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
+                                @if(Auth::user()->role != 'normal')
+                                <a href="/admin_mac_address/delete?id={{$item->id}}" class="btn btn-danger" role="button">削除</a>
+                                @endif
+
+                                @if(Auth::user()->role == 'normal' && Auth::user()->id == $item->user_id)
+                                <a href="/admin_mac_address/delete?id={{$item->id}}" class="btn btn-danger" role="button">削除</a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
