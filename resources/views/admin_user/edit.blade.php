@@ -34,6 +34,9 @@
                         @if(Auth::user()->id == $item->id || Auth::user()->role == 'superAdmin')
                         <a href="/password/edit?id={{$item->id}}" class="btn btn-info" role="button">パスワード変更</a>
                         @endif
+                        @if($item->role != 'readerAdmin' && $item->role != 'superAdmin')
+                        <a href="/admin_user/delete?id={{$item->id}}" class="btn btn-info" role="button">退会</a>
+                        @endif
                         <hr>
                         @cannot('superAdmin')
                         <input type="hidden" name="community_id" value="{{$item->community_id}}">

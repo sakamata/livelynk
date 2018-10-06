@@ -49,6 +49,9 @@ Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
 });
 Route::get('/admin_user/edit{id?}', 'AdminUserController@edit')->middleware('auth');
 Route::post('/admin_user/update', 'AdminUserController@update')->middleware('auth');
+Route::get('/admin_user/delete{id?}', 'AdminUserController@delete')->middleware('auth');
+Route::post('/admin_user/remove', 'AdminUserController@remove')->middleware('auth');
+
 
 Route::get('/admin_mac_address', 'AdminMacAddressController@index')->middleware('auth');
 Route::get('/admin_mac_address/edit{id?}', 'AdminMacAddressController@edit')->middleware('auth');

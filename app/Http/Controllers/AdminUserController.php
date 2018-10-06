@@ -241,4 +241,101 @@ class AdminUserController extends Controller
             return redirect('/admin_user')->with('message', 'ユーザープロフィールを編集しました。');
         }
     }
+
+    public function delete(Request $request)
+    {
+        // 不正なrequestは403
+        if (!$request->id || !ctype_digit($request->id)) {
+            return view('errors.403');
+        }
+        $item = 'App\UserTable'::where('id', $request->id)->first();
+        if (!$item) {
+            return view('errors.403');
+        }
+
+        $user = Auth::user();
+        // normal は自分以外は閲覧不可
+        if ($user->role == 'normal' && $user->id != $request->id) {
+            return view('errors.403');
+        }
+        // normalAdmin,readerAdminで自コミュニティ以外は403
+        if (
+            ( $user->role == 'normalAdmin' ||  $user->role == 'readerAdmin' ) &&
+            $item->community_id != $user->community_id
+        ) {
+            return view('errors.403');
+        }
+        // readerAdmin, superAdmin は削除不可
+        if ( $item->role == 'readerAdmin' || $item->role == 'superAdmin' ) {
+            return view('errors.403');
+        }
+
+        $mac_addresses = DB::table('mac_addresses')
+            ->where('user_id', $request->id)
+            ->orderBy('hide','asc')
+            ->orderBy('user_id', $request->id)
+            ->orderBy('arraival_at','desc')
+            ->get();
+
+        return view('admin_user.delete', [
+            'item' => $item,
+            'mac_addresses' => $mac_addresses,
+        ]);
+    }
+
+    public function remove(Request $request)
+    {
+        // 不正なrequestは403
+        if (!$request->id || !ctype_digit($request->id)) {
+            return view('errors.403');
+        }
+
+        $user = DB::table('users')->where('id', $request->id)->first();
+
+        // normal userが自分以外のuserを編集しようとした場合は403
+        if ($user->role == 'normal' && $user->id != $request->id) {
+            log::warning(print_r("normalユーザーが異常な値でuserのdeleteを試みる>>>", 1));
+            log::warning(print_r($user, 1));
+            return view('errors.403');
+        }
+        // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
+        if (
+            ( $user->role == 'normalAdmin' || $user->role == 'readerAdmin' ) && $request->community_id != $user->community_id
+        ) {
+            log::warning(print_r("Adminユーザーが異常な値でuserのdeleteを試みる>>>", 1));
+            log::warning(print_r($user, 1));
+            return view('errors.403');
+        }
+        // readerAdmin, superAdmin は削除不可
+        if ( $user->role == 'readerAdmin' || $user->role == 'superAdmin' ) {
+            log::warning(print_r("Adminユーザーが異常な値でAdmin userのdeleteを試みる>>>", 1));
+            log::warning(print_r($user, 1));
+            return view('errors.403');
+        }
+
+        DB::beginTransaction();
+        try {
+            'App\UserTable'::find($request->id)->delete();
+            $remove_ids =  (array)$request->mac_addres_id;
+            // チェックを外した id を readerAdmin 扱いに変更する
+            if ($remove_ids) {
+                foreach ($remove_ids as $remove_id) {
+                    DB::table('mac_addresses')->where('id', $remove_id)->delete();
+                }
+            }
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            DB::rollback();
+        }
+        if ($success) {
+            if (Auth::user()->id == $request->id) {
+                Auth::logout();
+                return redirect('/')->with('message', '退会が完了しました。ご利用ありがとうございました');
+            } else {
+                return redirect('/admin_user')->with('message', 'ユーザー ' . $user->name . ' さんをを退会させました');
+            }
+        }
+    }
 }
