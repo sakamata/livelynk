@@ -33,12 +33,8 @@ $i = 0;
     <div class="arrival">
       <span class="time-head">IN</span>
       <span class="time-body">{{date('n/j G:i', strtotime($item->arraival_at))}}</span>
-    </div>
-    <div class="depature">
-      <span class="time-head">OUT</span>
-      <span class="time-body">...</span>
       <!-- 帰宅の可能性をパーセンテージで表す値 $res[$i] -->
-      <span class="#">{{ $res[$i] }}%</span>
+      <span class="time-body">{{ $res[$i] }}%</span>
     </div>
     <div class="flag">
       <img src="{{asset("img/icon/newcomer.png")}}" width="46"  alt="Newcomer!">
@@ -62,12 +58,8 @@ $i = 0;
     <div class="arrival">
       <span class="time-head">IN</span>
       <span class="time-body">{{date('n/j G:i', strtotime($item->max_arraival_at))}}</span>
-    </div>
-    <div class="depature">
-      <span class="time-head">OUT</span>
-      <span class="time-body">...</span>
       <!-- 帰宅の可能性をパーセンテージで表す値 $res[$i] -->
-      <span class="#">{{ $res[$i] }}%</span>
+      <span class="time-body">{{ $res[$i] }}%</span>
     </div>
     <div class="flag">
       <img src="{{asset("img/icon/im_here.png")}}" width="46"  alt="I'm here!">
@@ -81,10 +73,6 @@ $i = 0;
         <i class="fas fa-user-circle"></i>
       </div>
       <div class="text">{{$item->name}}</div>
-    </div>
-    <div class="arrival">
-      <span class="time-head">IN</span>
-      <span class="time-body">...</span>
     </div>
     <div class="depature">
       <span class="time-head">OUT</span>

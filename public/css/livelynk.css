@@ -62,15 +62,18 @@ body {
   border-radius: 30px;
   border: solid 2px white;
 }
-@media (min-width: 768px) {
-  .pc-none {
-    display: none !important;
-  }
-}
 @media (max-width: 768px) {
-  .sp-none {
-    display: none !important;
-  }
+body {
+  font-size: 16px;
+}
+.sp-none {
+  display: none !important;
+}
+}
+@media (min-width: 768px) {
+.pc-none {
+  display: none !important;
+}
 }
 /* header */
 header {
