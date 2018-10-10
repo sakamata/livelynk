@@ -231,12 +231,21 @@ header .action .logout a {
 }
 .space-name {
   font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 768px) {
+.space-name {
+  text-align: center;
+}
+}
+@media (max-width: 768px) {
 }
 /* comp-box */
 .comp-box {
   padding: .5rem 1rem 1rem 1rem;
   background-color: white;
   border: solid 1px #DCEDC8;
+  border-radius: 2rem;
   margin-bottom: 1rem;
   position: relative;
 }
