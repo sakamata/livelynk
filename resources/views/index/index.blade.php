@@ -1,16 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-
+@component('components.message')
+@endcomponent
 <h2 class="space-name">{{ $community->service_name }}</h2>
 @if(Auth::check())
 @if(Auth::user()->role == 'readerAdmin')
     <span>あなたは現在コミュニティ管理者でログイン中です。この画面には表示されません。</span>
 @endif
 @endif
-<div class="comp-box-container clearfix">
-@component('components.message')
+@component('components.GOE_calendar', ['community' => $community])
 @endcomponent
+<div class="comp-box-container clearfix">
 @php $i = 0; @endphp
 @foreach ($items as $item)
   <div class="comp-box">

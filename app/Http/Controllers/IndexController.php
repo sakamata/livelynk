@@ -97,7 +97,6 @@ class IndexController extends Controller
         $i = 0;
         $res = array();
         foreach ($items as $item) {
-            log::debug(print_r($item, 1));
             $n[$i] = $now - Carbon::parse($item->$column)->timestamp;
             if($n[$i] >= $limit) {
                 $res[$i] = 0;
@@ -108,5 +107,10 @@ class IndexController extends Controller
         $i++;
         }
         return $res;
+    }
+
+    public function Test()
+    {
+        return view('index.index0');
     }
 }
