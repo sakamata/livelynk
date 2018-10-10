@@ -13,4 +13,5 @@ $events_escaped = str_replace($esc_tags, $tags, htmlspecialchars( $events ,ENT_Q
     @else
     <div>本日予定されているイベントはありません</div>
     @endif
+<div>&nbsp;</div>
 @endif
