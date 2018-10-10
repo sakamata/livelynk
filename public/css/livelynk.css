@@ -36,7 +36,7 @@ body {
   font-size: 14px;
   padding: 60px 1em 0 1em;
   margin: 0;
-  background-color: #E1F5FE;
+  background-color: #F1F8E9;
 }
 .space-list>li {
   background-color: white;
@@ -78,8 +78,8 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  background: #01579B;
-  border-bottom: solid 1px #E1F5FE;
+  background: #558B2F;
+  border-bottom: solid 1px #F1F8E9;
   color: white;
   height: 59px;
   z-index: 3;
@@ -117,9 +117,9 @@ header .action .logout {
   top: 58px;
   padding: 1rem;
   background: white;
-  border-left: solid 1px #01579B;
-  border-right: solid 1px #01579B;
-  border-bottom: solid 1px #01579B;
+  border-left: solid 1px #558B2F;
+  border-right: solid 1px #558B2F;
+  border-bottom: solid 1px #558B2F;
   display: none;
 }
 header .action .logout a {
@@ -200,7 +200,7 @@ header .action .logout a {
 #nav-content .head {
   display: table;
   width: 100%;
-  background: #01579B;
+  background: #558B2F;
 }
 #nav-content .head label {
   display: table-cell;
@@ -214,20 +214,20 @@ header .action .logout a {
   font-size: 2rem;
   position: absolute;
   top: 50%;
-  right: 1rem;
+  left: 1rem;
   margin-top: -28px;
 }
 #nav-content nav a {
   display: block;
   padding: 1rem;
   color: #333;
-  border-bottom: dashed 1px #4FC3F7;
+  border-bottom: dashed 1px #AED581;
 }
 #nav-content nav a:last-child {
   border-bottom: none;
 }
 #nav-content nav a:hover {
-  background-color: #E1F5FE;
+  background-color: #F1F8E9;
 }
 .space-name {
   font-size: 1.25rem;
@@ -236,12 +236,12 @@ header .action .logout a {
 .comp-box {
   padding: .5rem 1rem 1rem 1rem;
   background-color: white;
-  border: solid 1px #B3E5FC;
+  border: solid 1px #DCEDC8;
   margin-bottom: 1rem;
   position: relative;
 }
 .comp-box.absence {
-  background-color: #E0F7FA;
+  background-color: #E8F5E9;
 }
 .comp-box .name {
   display: table;
@@ -254,7 +254,7 @@ header .action .logout a {
 }
 .comp-box .name .icon {
   font-size: 2rem;
-  color: #0288D1;
+  color: #689F38;
   width: 2.5rem;
 }
 .comp-box .arrival {
