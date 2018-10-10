@@ -9,8 +9,6 @@
 @endif
 @endif
 <div class="comp-box-container clearfix">
-@component('components.message')
-@endcomponent
 @php
 $judge = env('JUDGE_DEPARTURE_INTERVAL_SECOND');
 $now = Carbon\Carbon::now()->timestamp;

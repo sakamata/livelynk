@@ -125,6 +125,19 @@ header .action .logout {
 header .action .logout a {
   color: black;
 }
+/* alert */
+.alert {
+  z-index: 4;
+  position: fixed;
+  top: 58px;
+  left: 0;
+  width: 100%;
+  background-color: #C5E1A5;
+  padding: 1rem;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
 /* component */
 /* nav-drawer */
 #nav-drawer {
