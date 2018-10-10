@@ -86,3 +86,10 @@ Route::post('/inport_post/mac_address', 'InportPostController@MacAddress');
 
 // 外部へのPOST送信 route必要?
 Route::post('/push_ifttt_arraival', 'ExportPostController@push_ifttt_arraival');
+
+// 送信メール本文のプレビュー
+Route::get('sample/mailable/preview', function () {
+    return new App\Mail\SampleNotification();
+});
+
+Route::get('sample/mailable/send', 'SampleController@SampleNotification');
