@@ -33,7 +33,7 @@ a:hover {
 /* common */
 body {
   font-family:-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI","Noto Sans Japanese","ヒラギノ角ゴ ProN W3", Meiryo, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   padding: 60px 1em 0 1em;
   margin: 0;
   background-color: #F1F8E9;
@@ -63,9 +63,6 @@ body {
   border: solid 2px white;
 }
 @media (max-width: 768px) {
-body {
-  font-size: 16px;
-}
 .sp-none {
   display: none !important;
 }
@@ -241,11 +238,11 @@ header .action .logout a {
   text-align: center;
 }
 }
-@media (max-width: 768px) {
+@media (min-width: 768px) {
 }
 /* comp-box */
 .comp-box {
-  padding: .5rem 1rem 1rem 1rem;
+  padding: .5rem 1rem .75rem 1rem;
   background-color: white;
   border: solid 1px #DCEDC8;
   border-radius: 2rem;
@@ -254,6 +251,7 @@ header .action .logout a {
 }
 .comp-box.absence {
   background-color: #E8F5E9;
+  border-color: #C8E6C9;
 }
 .comp-box .name {
   display: table;
@@ -279,7 +277,7 @@ header .action .logout a {
 }
 .comp-box .time-body {
   font-weight: bold;
-  padding-left: 1rem;
+  padding-left: .5rem;
 }
 .comp-box .flag {
   position: absolute;
