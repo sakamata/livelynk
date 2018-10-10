@@ -294,8 +294,8 @@ header .action .logout a {
 }
 .comp-box .flag {
   position: absolute;
-  right: 1rem;
-  top: 1rem;
+  right: .5rem;
+  top: .5rem;
 }
 @media (min-width: 576px) {
 .comp-box {
