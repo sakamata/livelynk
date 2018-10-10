@@ -27,7 +27,7 @@
     <div class="depature">
       <span class="time-head">OUT</span>
       <span class="time-body">...</span>
-      <!-- 帰宅の可能性をパーセンテージで表す値 $res[$i] -->
+      <!-- 在席の可能性をパーセンテージで表す値 -->
       <span class="#">{{ $rate[$i] }}%</span>
     </div>
     <div class="flag">
@@ -52,7 +52,7 @@
     <div class="depature">
       <span class="time-head">OUT</span>
       <span class="time-body">...</span>
-      <!-- 帰宅の可能性をパーセンテージで表す値 $res[$i] -->
+      <!-- 在席の可能性をパーセンテージで表す値 -->
       <span class="#">{{ $rate1[$i] }}%</span>
     </div>
     <div class="flag">
