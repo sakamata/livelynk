@@ -7,13 +7,10 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header"><h2>MAC Address一覧</h2></div>
+                <div class="card-header"><h2>デバイス一覧</h2>※情報多過ぎなのでrole毎に整理します</div>
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+                @component('components.message')
+                @endcomponent
                     <table class="table table-hover">
                         <tr class="info thead-light">
                             <th>
@@ -36,7 +33,26 @@
                                 ])
                                 @endcomponent
                             </th>
-                            <th>非表示</th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'community_id',
+                                    'firld' => 'community',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_mac_address',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'router_id',
+                                    'firld' => 'router',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_mac_address',
+                                ])
+                                @endcomponent
+                            </th>
                             <th>
                                 @component('components.order', [
                                     'name' => 'mac_address',
@@ -59,7 +75,6 @@
                             </th>
                             <th>デバイス名</th>
                             <th>登録ユーザー</th>
-                            <th>ルーターID</th>
                             <th>
                                 @component('components.order', [
                                     'name' => 'arraival_at',
@@ -107,12 +122,12 @@
                         @endif
                             <td>{{$item->id}}</td>
                             <td>{{$item->current_stay}}</td>
-                            <td>{{$item->hide}}</td>
+                            <td>{{$item->community_id}} : {{$item->community->name}}<br>{{$item->community->service_name}}</td>
+                            <td>{{$item->router_id}} : {{$item->router->name}}</td>
                             <td>{{$item->mac_address}}</td>
                             <td>{{$item->vendor}}</td>
                             <td>{{$item->device_name}}</td>
                             <td>{{$item->user->name}}</td>
-                            <td>{{$item->router_id}}</td>
                             <td>{{$item->arraival_at->format('n月j日 G:i')}}</td>
                         @if($item->departure_at != null)
                             <td>{{$item->departure_at->format('n月j日 G:i')}}</td>
@@ -136,6 +151,13 @@
                         @endif
                             <td>
                                 <a href="/admin_mac_address/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
+                                @if(Auth::user()->role != 'normal')
+                                <a href="/admin_mac_address/delete?id={{$item->id}}" class="btn btn-danger" role="button">削除</a>
+                                @endif
+
+                                @if(Auth::user()->role == 'normal' && Auth::user()->id == $item->user_id)
+                                <a href="/admin_mac_address/delete?id={{$item->id}}" class="btn btn-danger" role="button">削除</a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

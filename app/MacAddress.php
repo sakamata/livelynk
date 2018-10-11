@@ -26,4 +26,24 @@ class MacAddress extends Model
     {
         return $this->belongsTo('App\User', 'user_id');
     }
+
+    public function community()
+    {
+        return $this->belongsTo('App\AdminCommunity', 'community_id');
+    }
+
+    public function router()
+    {
+        return $this->belongsTo('App\AdminRouter', 'router_id');
+    }
+
+    public function scopeSelf($query, $self_id)
+    {
+        return $query->where('user_id', $self_id);
+    }
+
+    public function scopeMyCommunity($query, $self_community)
+    {
+        return $query->where('community_id', $self_community);
+    }
 }

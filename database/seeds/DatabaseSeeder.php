@@ -12,7 +12,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(UsersTableSeeder::class);
-        // 以下、追記する
+        $this->call(RoutersTableSeeder::class);
         $this->call(MacAddressesTableSeeder::class);
+        $this->call(CommunitiesTableSeeder::class);
     }
 }

@@ -6,6 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
+        <!-- Scripts -->
+        <script src="{{ asset('js/app.js') }}" defer></script>
+        <script src="{{ asset('js/livelynk.js') }}" defer></script>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -53,21 +56,23 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+            .message {
+                width: 100%;
+                font-size: 14px;
+            }
         </style>
     </head>
     <body>
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
+                    <div class="message">
+                        @component('components.message')
+                        @endcomponent
+                    </div>
                     {{ config('app.name', 'Laravel') }}<br>@ Geek Office
                 </div>
-                @if (Route::has('login'))
-                    @auth
-                        <a href="{{ env("INDEX_PATH") }}" class="btn btn-info btn-lg" role="button">Home</a>
-                    @else
-                        <p class="lead">会員専用のURLより閲覧してください。</p>
-                    @endauth
-               @endif
+                <p class="lead">会員専用のURLより閲覧してください。</p>
             </div>
         </div>
     </body>

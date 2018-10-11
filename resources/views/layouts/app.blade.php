@@ -41,30 +41,36 @@
                         <nav>
                             @component('components.header_menu')
                             @endcomponent
-                            <a href="http://geekoffice.linkdesign.jp/#/home" target="_blank">ギークオフィスWebサービス</a>
-                            <a href="https://tumolink.herokuapp.com/home" target="_blank">ツモリンク</a>
+                            @component('components.header_menu_extra')
+                            @endcomponent
                         </nav>
                     </div>
                 </div>
             </div>
             <div class="logo">
-                <a class="navbar-brand" href="{{ env("INDEX_PATH") }}">
+                @guest
+                <a class="navbar-brand" href="/index/?path={{$url_path}}">
+                @else
+                <a class="navbar-brand" href="/">
+                @endguest
                     {{ config('app.name', 'Laravel') }}
                 </a>
             </div>
             <div class="action">
                 @guest
-		    <a href="{{ route('login') }}">{{ __('ログイン') }}</a>
-		    <a href="{{ route('register') }}" class="register">{{ __('新規登録') }}</a>
+		    <a href="/login/?path={{$url_path}}">{{ __('ログイン') }}</a>
+		    <a href="/register/?path={{$url_path}}" class="register">{{ __('新規登録') }}</a>
                 @else
 		    <span>{{ Auth::user()->name }}</span>
                     <div class="logout">
-		      <a  href="{{ env("INDEX_PATH") }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('ログアウト') }}</a>
+		      <a  href="/index/?path={{$url_path}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('ログアウト') }}</a>
                       <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
                     </div>
                 @endguest
             </div>
         </header>
+        @component('components.message')
+        @endcomponent
         <main class="py-4">
             @yield('content')
         </main>

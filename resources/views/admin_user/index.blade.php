@@ -7,39 +7,19 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header"><h2>登録ユーザー一覧</h2></div>
+                <div class="card-header"><h2>ユーザー一覧</h2></div>
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+                @component('components.message')
+                @endcomponent
+                <div class="blockquote text-left">
+                    <a href="/admin_user/add" class="btn btn-info" role="button">新規ユーザー作成</a>
+                </div>
                     <table class="table table-hover">
                         <tr class="info thead-light">
                             <th>
                                 @component('components.order', [
                                     'name' => 'id',
                                     'firld' => 'ID',
-                                    'key' => $key,
-                                    'order' => $order,
-                                    'action' => 'admin_user',
-                                ])
-                                @endcomponent
-                            </th>
-                            <th>
-                                @component('components.order', [
-                                    'name' => 'admin_user',
-                                    'firld' => '管理者',
-                                    'key' => $key,
-                                    'order' => $order,
-                                    'action' => 'admin_user',
-                                ])
-                                @endcomponent
-                            </th>
-                            <th>
-                                @component('components.order', [
-                                    'name' => 'name',
-                                    'firld' => '名前 / Email',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_user',
@@ -57,6 +37,16 @@
                                 @endcomponent
                             </th>
                             <th>
+                                @component('components.order', [
+                                    'name' => 'name',
+                                    'firld' => '名前 / Email',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
                                 <table class='table table-borderless table-sm'>
                                     <tr>
                                       <th>ID</th>
@@ -66,6 +56,26 @@
                                       <th>vendor</th>
                                     </tr>
                                 </table>
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'admin_user',
+                                    'firld' => 'role',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
+                            </th>
+                            <th>
+                                @component('components.order', [
+                                    'name' => 'community',
+                                    'firld' => 'community',
+                                    'key' => $key,
+                                    'order' => $order,
+                                    'action' => 'admin_user',
+                                ])
+                                @endcomponent
                             </th>
                             <th>
                                 @component('components.order', [
@@ -106,9 +116,8 @@
                         <tr  class="table-secondary">
                         @endif
                             <td>{{$item->id}}</td>
-                            <td>{{$item->admin_user}}</td>
-                            <td>{{$item->name}}</br>{{$item->email}}</td>
                             <td>{{$item->hide}}</td>
+                            <td>{{$item->name}}</br>{{$item->email}}</td>
                             <td>
                                 <table class="table table-hover table-sm table-borderless">
                                     <tbody>
@@ -128,7 +137,9 @@
                                             <td>{{$mac_add->hide}}</td>
                                             <td>{{$mac_add->device_name}}</td>
                                             <td>{{$mac_add->vendor}}</td>
-                                            <td class="blockquote text-right"><a href="/admin_mac_address/edit?id={{$mac_add->id}}" class="btn btn-info" role="button">編集</a>
+                                            <td class="blockquote text-right">
+                                                <a href="/admin_mac_address/edit?id={{$mac_add->id}}" class="btn btn-info" role="button">編集</a>
+                                                <a href="/admin_mac_address/delete?id={{$mac_add->id}}" class="btn btn-danger" role="button">削除</a>
                                             </td>
                                         </tr>
                                 @endforeach
@@ -136,11 +147,13 @@
                                     </tbody>
                                 </table>
                             </td>
+                            <td>{{$item->role}}</td>
+                            <td>{{$item->community_id}} : {{$item->community->name}}<br>{{$item->community->service_name}}</td>
                             <td>{{$item->last_access->format('n月j日 G:i')}}</td>
                             <td>{{$item->created_at->format('n月j日 G:i')}}</td>
                             <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
                             <td>
-                                <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">ユーザー編集</a>
+                                <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
                             </td>
                         </tr>
                     @endforeach

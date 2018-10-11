@@ -26,7 +26,7 @@ class AddColumnUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $this->dropColumn('hide');
+            $table->dropColumn('hide');
         });
     }
 }

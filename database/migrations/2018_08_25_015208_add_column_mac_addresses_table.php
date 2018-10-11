@@ -26,7 +26,7 @@ class AddColumnMacAddressesTable extends Migration
     public function down()
     {
         Schema::table('mac_addresses', function (Blueprint $table) {
-            $this->dropColumn('posted_at');
+            $table->dropColumn('posted_at');
         });
     }
 }
