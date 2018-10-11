@@ -4,8 +4,7 @@
 <h2 class="comp-title">プロフィール編集</h2>
 @component('components.message')
 @endcomponent
-<form action="/admin_user/update" method="post">
-  {{ csrf_field() }}
+<div class="user-edit">
   <div class="comp-information">
     <div class="elem">
       <span class="head">ID</span>
@@ -47,93 +46,96 @@
     @endif
   </div>
   <div class="comp-edit">
-    @cannot('superAdmin')
-    <input type="hidden" name="community_id" value="{{$item->community_id}}">
-    @endcannot
-    @can('superAdmin')
-    <!-- 変えたら大変なので、readerAdmin,superAdminの場合はコミュ編集は出さない！ -->
-    @if(Auth::user()->role == 'superAdmin')
-    <div class="form-elem">
-      <label for="community_id" class="comp-ui">コミュニティ</label>
-      <select id="community_id" name="community_id" class="comp-ui">
-      @foreach($communities as $community)
-        @if($item->community_id == $community->id)
-        <?php $selected = 'selected'; ?>
-        @else
-        <?php $selected = ''; ?>
+    <form action="/admin_user/update" method="post">
+      {{ csrf_field() }}
+      @cannot('superAdmin')
+      <input type="hidden" name="community_id" value="{{$item->community_id}}">
+      @endcannot
+      @can('superAdmin')
+      <!-- 変えたら大変なので、readerAdmin,superAdminの場合はコミュ編集は出さない！ -->
+      @if(Auth::user()->role == 'superAdmin')
+      <div class="form-elem">
+        <label for="community_id" class="comp-ui">コミュニティ</label>
+        <select id="community_id" name="community_id" class="comp-ui">
+        @foreach($communities as $community)
+          @if($item->community_id == $community->id)
+          <?php $selected = 'selected'; ?>
+          @else
+          <?php $selected = ''; ?>
+          @endif
+          <option value="{{$community->id}}" {{ $selected }}>{{$community->id}}&nbsp;:&nbsp;{{$community->name}}&nbsp;:&nbsp;{{$community->service_name}}</option>
+        @endforeach
+        </select>
+        <p class="caution"><i class="fas fa-exclamation-circle"></i>ユーザーの所属コミュニティを変更する場合は、デバイスのチェックは全て外してください</p>
+      </div>
+      @endif
+      @endcan
+      <input type="hidden" name="id" value="{{$item->id}}">
+      @component('components.error')
+      @endcomponent
+      <div class="form-elem">
+        <label for="user_name" class="comp-ui">名前</label>
+        @php
+        if ($item->role == 'readerAdmin') { $readonly = 'readonly';}
+        else { $readonly = '';}
+        @endphp
+        <input type="text" class="comp-ui" name="name" value="{{old('name', $item->name)}}" {{$readonly}} id="user_name">
+        @if($item->role == 'readerAdmin')
+        <span>コミュニティ管理者は、名前の変更ができません。</span>
         @endif
-        <option value="{{$community->id}}" {{ $selected }}>{{$community->id}}&nbsp;:&nbsp;{{$community->name}}&nbsp;:&nbsp;{{$community->service_name}}</option>
-      @endforeach
-      </select>
-      <p class="caution"><i class="fas fa-exclamation-circle"></i>ユーザーの所属コミュニティを変更する場合は、デバイスのチェックは全て外してください</p>
-    </div>
-    @endif
-    @endcan
-    <input type="hidden" name="id" value="{{$item->id}}">
-    @component('components.error')
-    @endcomponent
-    <div class="form-elem">
-      <label for="user_name" class="comp-ui">名前</label>
-      @php
-      if ($item->role == 'readerAdmin') { $readonly = 'readonly';}
-      else { $readonly = '';}
-      @endphp
-      <input type="text" class="comp-ui" name="name" value="{{old('name', $item->name)}}" {{$readonly}} id="user_name">
-      @if($item->role == 'readerAdmin')
-      <span>コミュニティ管理者は、名前の変更ができません。</span>
+      </div>
+      <div class="form-elem">
+        <label for="email" class="comp-ui">Email</label>
+        <input type="text" class="comp-ui" name="email" value="{{old('email', $item->email)}}" id="email">
+      </div>
+      @if(Auth::user()->role != 'normal')
+      <div class="form-elem">
+        <label for="administrator" class="comp-ui">管理権限</label>
+        @if($item->role != 'superAdmin' && $item->role != 'readerAdmin')
+        @php
+          $disabled = "";
+          // 委託管理者が一般ユーザーを閲覧した際は 権限「無し」を無効に
+          if (Auth::user()->role == 'normalAdmin') { $disabled ='disabled'; }
+          // 委託管理者が一般ユーザーを閲覧した際は 権限「無し」を有効に
+          if (Auth::user()->role == 'normalAdmin' && $item->role == 'normal') { $disabled =''; }
+        @endphp
+        <input type="radio" value="normal" name="role" @if (old('role', $item->role) == "normal") checked @endif {{$disabled}}>無し&nbsp;&nbsp;&nbsp;
+        <input type="radio" value="normalAdmin" name="role" @if (old('role', $item->role) == "normalAdmin") checked @endif>委託管理者&nbsp;&nbsp;&nbsp;
+        @endif
+        @if($item->role == 'readerAdmin')
+        <input type="hidden" name="role" value="readerAdmin">
+        <p>コミュニティ管理者</p>
+        <p class="caution"><i class="fas fa-exclamation-circle"></i>このユーザーは権限の変更ができません。</p>
+        @endif
+        @if($item->role == 'superAdmin')
+        <input type="hidden" name="role" value="superAdmin">
+        <p>Livelynk全体管理者</p>
+        <p class="caution"><i class="fas fa-exclamation-circle"></i>このユーザーは権限の変更ができません。</p>
+        @endif
+      </div>
       @endif
-    </div>
-    <div class="form-elem">
-      <label for="email" class="comp-ui">Email</label>
-      <input type="text" class="comp-ui" name="email" value="{{old('email', $item->email)}}" id="email">
-    </div>
-    @if(Auth::user()->role != 'normal')
-    <div class="form-elem">
-      <label for="administrator" class="comp-ui">管理権限</label>
-      @if($item->role != 'superAdmin' && $item->role != 'readerAdmin')
-      @php
-        $disabled = "";
-        // 委託管理者が一般ユーザーを閲覧した際は 権限「無し」を無効に
-        if (Auth::user()->role == 'normalAdmin') { $disabled ='disabled'; }
-        // 委託管理者が一般ユーザーを閲覧した際は 権限「無し」を有効に
-        if (Auth::user()->role == 'normalAdmin' && $item->role == 'normal') { $disabled =''; }
-      @endphp
-      <input type="radio" value="normal" name="role" @if (old('role', $item->role) == "normal") checked @endif {{$disabled}}>無し&nbsp;&nbsp;&nbsp;
-      <input type="radio" value="normalAdmin" name="role" @if (old('role', $item->role) == "normalAdmin") checked @endif>委託管理者&nbsp;&nbsp;&nbsp;
+      @if(Auth::user()->role == 'normal')
+      <input type="hidden" name="role" value="normal">
       @endif
-      @if($item->role == 'readerAdmin')
-      <input type="hidden" name="role" value="readerAdmin">
-      <p>コミュニティ管理者</p>
-      <p class="caution"><i class="fas fa-exclamation-circle"></i>このユーザーは権限の変更ができません。</p>
-      @endif
-      @if($item->role == 'superAdmin')
-      <input type="hidden" name="role" value="superAdmin">
-      <p>Livelynk全体管理者</p>
-      <p class="caution"><i class="fas fa-exclamation-circle"></i>このユーザーは権限の変更ができません。</p>
-      @endif
-    </div>
-    @endif
-    @if(Auth::user()->role == 'normal')
-    <input type="hidden" name="role" value="normal">
-    @endif
-    <div class="form-elem">
-      <label for="configuration" class="comp-ui">表示設定</label>
-      <div class="form-line">
-        <div class="form-block">
-          <input id="configuration_show" type="radio" value="0" name="hide" @if (old('hide', $item->hide) == "0") checked @endif>
-          <label for="configuration_show">表示</label>
-        </div>
-        <div class="form-block">
-          <input id="configuration_hide" type="radio" value="1" name="hide" @if (old('hide', $item->hide) == "1") checked @endif>
-          <label for="configuration_hide">非表示</label>
+      <div class="form-elem">
+        <label for="configuration" class="comp-ui">表示設定</label>
+        <div class="form-line">
+          <div class="form-block">
+            <input id="configuration_show" type="radio" value="0" name="hide" @if (old('hide', $item->hide) == "0") checked @endif>
+            <label for="configuration_show">表示</label>
+          </div>
+          <div class="form-block">
+            <input id="configuration_hide" type="radio" value="1" name="hide" @if (old('hide', $item->hide) == "1") checked @endif>
+            <label for="configuration_hide">非表示</label>
+          </div>
         </div>
       </div>
-    </div>
+      <div class="form-elem">
+        <button type="submit" class="comp-ui">ユーザー情報を更新</button>
+      </div>
+    </form>
   </div>
-  <div class="form-elem">
-    <button type="submit" class="comp-ui">ユーザー情報を更新</button>
-  </div>
-</form>
+</div>
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-12">

@@ -337,6 +337,22 @@ textarea.comp-ui {
   width: 50%;
   font-weight: bold;
 }
+@media (min-width: 992px) {
+.user-edit {
+  display: table;
+  width: 100%;
+}
+.comp-information,
+.comp-edit {
+  display: table-cell;
+}
+.comp-information {
+  width: 300px;
+}
+.comp-edit {
+  padding-left: 1rem;
+}
+}
 /* caution */
 .caution {
   font-size: .8rem;
