@@ -253,14 +253,11 @@ header .action .logout a {
   text-align: center;
 }
 }
-@media (min-width: 768px) {
-}
 /* comp-box */
 .comp-box {
   background-color: white;
   border: solid 1px #DCEDC8;
   border-radius: 2rem;
-  margin-bottom: 1rem;
   position: relative;
 }
 .comp-box.absence {
@@ -317,6 +314,7 @@ header .action .logout a {
 @media (max-width: 576px) {
 .comp-box {
   padding: 0 .5rem;
+  margin-bottom: .5rem;
 }
 .comp-box .name {
   float: left;
@@ -332,6 +330,7 @@ header .action .logout a {
 .comp-box {
   float: left;
   padding: .5rem .5rem .75rem 1rem;
+  margin-bottom: 1rem;
 }
 }
 @media (min-width: 576px) and (max-width: 768px) {
