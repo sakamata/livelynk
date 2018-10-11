@@ -40,6 +40,8 @@ class IndexController extends Controller
             ])
             ->orderBy('arraival_at', 'desc')->get();
 
+        $unregistered_rate_array = $this->DepartureRateMake($unregistered, $column='posted_at');
+
         // I'm here 取得 サブクエリでmacの来訪中mac_addressをuser毎に出す
         $current_stays = DB::table('mac_addresses')
             ->select(DB::raw("user_id, max(arraival_at) as max_arraival_at"))
@@ -59,6 +61,7 @@ class IndexController extends Controller
                 ['id', '<>', $community->user_id],
                 ['hide', false],
             ])->get();
+        $stays_rate_array = $this->DepartureRateMake($stays, $column='last_access');
 
         // 非滞在者取得の為 除外条件の滞在者のIDを上記と同じ条件で取得
         $stays_ids = 'App\UserTable'::joinSub($current_stays, 'current_stays', function($join) {
@@ -81,6 +84,33 @@ class IndexController extends Controller
             'items' => $unregistered,
             'items1' => $stays,
             'items2' => $not_stays,
+            'rate' => $unregistered_rate_array,
+            'rate1' => $stays_rate_array,
         ]);
+    }
+
+    public function DepartureRateMake($items, $column)
+    {
+        $judge = env('JUDGE_DEPARTURE_INTERVAL_SECOND');
+        $now = Carbon::now()->timestamp;
+        $limit = $now - Carbon::now()->subSecond($judge)->timestamp;
+        $i = 0;
+        $res = array();
+        foreach ($items as $item) {
+            $n[$i] = $now - Carbon::parse($item->$column)->timestamp;
+            if($n[$i] >= $limit) {
+                $res[$i] = 0;
+            } else {
+                $res[$i] = 100 - ($n[$i] / $limit) * 100;
+                $res[$i] = round($res[$i], 0);
+            }
+        $i++;
+        }
+        return $res;
+    }
+
+    public function Test()
+    {
+        return view('index.index0');
     }
 }
