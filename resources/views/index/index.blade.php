@@ -3,7 +3,7 @@
 @section('content')
 @component('components.message')
 @endcomponent
-<h2 class="space-name">{{ $community->service_name }}</h2>
+<h2 class="comp-title">{{ $community->service_name }}</h2>
 @if(Auth::check())
 @if(Auth::user()->role == 'readerAdmin')
     <span>あなたは現在コミュニティ管理者でログイン中です。この画面には表示されません。</span>
