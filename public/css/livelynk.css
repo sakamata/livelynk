@@ -268,7 +268,7 @@ header .action .logout a {
 }
 .comp-box .name {
   display: table;
-  width: 100%;
+  width: 80%;
 }
 .comp-box .name .icon,
 .comp-box .name .text {
@@ -282,6 +282,7 @@ header .action .logout a {
 }
 .comp-box .arrival {
   margin-bottom: .25rem;
+  position: relative;
 }
 .comp-box .time-head {
   display: inline-block;
@@ -291,6 +292,18 @@ header .action .logout a {
 .comp-box .time-body {
   font-weight: bold;
   padding-left: .5rem;
+}
+.comp-box .time-accuracy {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: solid 2px #FDD835;
+  border-radius: 2.5rem;
+  background-color: #FFF176;
+  text-align: center;
+  line-height: 2.25rem;
 }
 .comp-box .flag {
   position: absolute;

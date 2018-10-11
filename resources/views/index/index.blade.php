@@ -25,7 +25,7 @@
       <span class="time-head">IN</span>
       <span class="time-body">{{date('n/j G:i', strtotime($item->arraival_at))}}</span>
       <!-- 在席の可能性をパーセンテージで表す値 -->
-      <span class="time-body">{{ $rate[$i] }}%</span>
+      <span class="time-accuracy">{{ $rate[$i] }}</span>
     </div>
     <div class="flag">
       <img src="{{asset("img/icon/newcomer.png")}}" width="46"  alt="Newcomer!">
@@ -46,7 +46,7 @@
       <span class="time-head">IN</span>
       <span class="time-body">{{date('n/j G:i', strtotime($item->max_arraival_at))}}</span>
       <!-- 在席の可能性をパーセンテージで表す値 -->
-      <span class="time-body">{{ $rate1[$i] }}%</span>
+      <span class="time-accuracy">{{ $rate1[$i] }}</span>
     </div>
     <div class="flag">
       <img src="{{asset("img/icon/im_here.png")}}" width="46"  alt="I'm here!">
