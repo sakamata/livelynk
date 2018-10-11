@@ -9,7 +9,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
-
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/livelynk.js') }}" defer></script>
@@ -20,8 +19,8 @@
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/livelynk.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}?q={{$file_date}}" rel="stylesheet">
+    <link href="{{ asset('css/livelynk.css') }}?q={{$file_date}}" rel="stylesheet">
 
     <!-- favicon -->
     <link rel="shortcut icon" type="image/x-icon"  href="{{asset("img/icon/favicon_.ico")}}">
