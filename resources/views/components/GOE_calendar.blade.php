@@ -7,11 +7,11 @@ $events_escaped = str_replace($esc_tags, $tags, htmlspecialchars( $events ,ENT_Q
 @endphp
 
 @if($community->id == 1)
-<p>Today's Event</p>
+<p>今日のイベント</p>
     @if( strlen($events_escaped) > 11 )
     <div>{!! $events_escaped !!}</div>
     @else
-    <div>本日予定されているイベントはありません</div>
+    <div>予定はありません</div>
     @endif
 <div>&nbsp;</div>
 @endif
