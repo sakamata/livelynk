@@ -65,12 +65,12 @@ body {
   border-radius: 30px;
   border: solid 2px white;
 }
-@media (max-width: 768px) {
+@media (max-width: 576px) {
 .sp-none {
   display: none !important;
 }
 }
-@media (min-width: 768px) {
+@media (min-width: 576px) {
 .pc-none {
   display: none !important;
 }
