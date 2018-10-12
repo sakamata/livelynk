@@ -278,6 +278,7 @@ button.comp-ui {
   padding: .5rem 0;
   text-align: center;
   background-color: #64DD17;
+  border: solid 1px #A5D6A7;
   border-radius: 2rem;
   cursor: pointer;
 }
@@ -387,6 +388,9 @@ textarea.comp-ui {
   font-size: 2rem;
   color: #689F38;
   width: 2.5rem;
+}
+.comp-box .name .text {
+  visibility: hidden;
 }
 .comp-box .arrival {
   display: table;
