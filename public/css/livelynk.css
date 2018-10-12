@@ -494,7 +494,7 @@ textarea.comp-ui {
   border: solid 1px #DCEDC8;
   border-radius: 3px;
   margin-bottom: 1rem;
-  padding-bottom: .5rem;
+  padding-bottom: 1rem;
 }
 .admin-box .line {
   display: table;
@@ -504,9 +504,6 @@ textarea.comp-ui {
 .admin-box .line.check {
   background-color: #DCEDC8;
   padding: .5rem 1rem;
-}
-.admin-box .line-ui {
-  margin: .5rem 0;
 }
 .admin-box .line .head,
 .admin-box .line .body {
