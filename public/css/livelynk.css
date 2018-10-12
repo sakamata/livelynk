@@ -401,7 +401,6 @@ textarea.comp-ui {
   width: 2.5rem;
 }
 .comp-box .name .text {
-  visibility: hidden;
 }
 .comp-box .arrival {
   display: table;
