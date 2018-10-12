@@ -130,7 +130,6 @@ header .action .logout a {
 }
 /* alert */
 .alert {
-  z-index: 4;
   position: fixed;
   top: 58px;
   left: 0;
@@ -249,6 +248,9 @@ header .action .logout a {
 .form-elem {
   margin-bottom: 1rem;
 }
+.form-elem.admin-box-holder {
+  margin-bottom: 0;
+}
 .form-line {
   display: table;
   width: 100%;
@@ -260,6 +262,9 @@ label.comp-ui {
   display: block;
   font-weight: bold;
   margin-bottom: .25rem;
+}
+.form-elem.admin-box-holder label.comp-ui {
+  margin-bottom: .5rem;
 }
 select.comp-ui {
   -moz-appearance: none;
@@ -278,8 +283,15 @@ button.comp-ui {
   padding: .5rem 0;
   text-align: center;
   background-color: #64DD17;
+  border: solid 1px #A5D6A7;
   border-radius: 2rem;
   cursor: pointer;
+}
+a.comp-ui.danger,
+button.comp-ui.danger {
+  color: white;
+  border-color: #B71C1C;
+  background-color: #F44336;
 }
 input.comp-ui,
 select.comp-ui,
@@ -388,6 +400,9 @@ textarea.comp-ui {
   color: #689F38;
   width: 2.5rem;
 }
+.comp-box .name .text {
+  visibility: hidden;
+}
 .comp-box .arrival {
   display: table;
   width: 100%;
@@ -471,4 +486,44 @@ textarea.comp-ui {
 }
 .comp-box:nth-child(4n) {
   margin-right: 0;
+}
+}
+/* admin-box */
+.admin-box {
+  background-color: white;
+  border: solid 1px #DCEDC8;
+  border-radius: 3px;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+.admin-box .line {
+  display: table;
+  width: 100%;
+  padding: .5rem 1rem 0 1rem;
+}
+.admin-box .line.check {
+  background-color: #DCEDC8;
+  padding: .5rem 1rem;
+}
+.admin-box .line .head,
+.admin-box .line .body {
+  display: table-cell;
+}
+.admin-box .line .head {
+  width: 50%;
+}
+.admin-box .line.check .head {
+  font-weight: bold;
+}
+.admin-box .line .body {
+  text-align: right;
+}
+@media (min-width: 768px) {
+.admin-box {
+  width: 49%;
+  float: left;
+}
+div.admin-box:nth-of-type(even) {
+  margin-left: 2%;
+}
 }
