@@ -130,7 +130,6 @@ header .action .logout a {
 }
 /* alert */
 .alert {
-  z-index: 4;
   position: fixed;
   top: 58px;
   left: 0;
