@@ -13,6 +13,5 @@ $(function(){
     if (nameText.length > textMax) {
       elem.html(trimText + afterText);
     }
-    elem.css({visibility:'visible'});
   });
 });
