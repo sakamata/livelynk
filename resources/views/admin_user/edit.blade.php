@@ -130,7 +130,7 @@
           </div>
         </div>
       </div>
-      <div class="form-elem comp-list-box-holder clearfix">
+      <div class="form-elem admin-box-holder clearfix">
         <label class="comp-ui">デバイス（所有するデバイスをチェックして登録）</label>
         @foreach($mac_addresses as $mac_add)
         @if($mac_add->hide == true)
@@ -139,7 +139,7 @@
         @elseif($mac_add->user_id == $item->id)
         @else
         @endif
-        <div class="comp-list-box">
+        <div class="admin-box">
           <div class="line check">
             <div class="head"><label for="devise-check-{{$mac_add->id}}">チェック</label></div>
             <div class="body">

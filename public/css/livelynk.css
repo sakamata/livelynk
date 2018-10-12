@@ -248,7 +248,7 @@ header .action .logout a {
 .form-elem {
   margin-bottom: 1rem;
 }
-.form-elem.comp-list-box-holder {
+.form-elem.admin-box-holder {
   margin-bottom: 0;
 }
 .form-line {
@@ -263,7 +263,7 @@ label.comp-ui {
   font-weight: bold;
   margin-bottom: .25rem;
 }
-.form-elem.comp-list-box-holder label.comp-ui {
+.form-elem.admin-box-holder label.comp-ui {
   margin-bottom: .5rem;
 }
 select.comp-ui {
@@ -488,41 +488,45 @@ textarea.comp-ui {
   margin-right: 0;
 }
 }
-/* comp-list-box */
-.comp-list-box {
+/* admin-box */
+.admin-box {
   background-color: white;
   border: solid 1px #DCEDC8;
   border-radius: 3px;
   margin-bottom: 1rem;
+  padding-bottom: .5rem;
 }
-.comp-list-box .line {
+.admin-box .line {
   display: table;
   width: 100%;
-  padding: .25rem 1rem;
+  padding: .5rem 1rem 0 1rem;
 }
-.comp-list-box .line.check {
+.admin-box .line.check {
   background-color: #DCEDC8;
-  margin-bottom: .25rem;
+  padding: .5rem 1rem;
 }
-.comp-list-box .line-ui {
+.admin-box .line-ui {
   margin: .5rem 0;
 }
-.comp-list-box .line .head,
-.comp-list-box .line .body {
+.admin-box .line .head,
+.admin-box .line .body {
   display: table-cell;
 }
-.comp-list-box .line .head {
+.admin-box .line .head {
   width: 50%;
+}
+.admin-box .line.check .head {
   font-weight: bold;
 }
-.comp-list-box .line .body {
+.admin-box .line .body {
   text-align: right;
 }
 @media (min-width: 768px) {
-.comp-list-box {
+.admin-box {
   width: 49%;
   float: left;
 }
-.comp-list-box:nth-child(odd) {
+div.admin-box:nth-of-type(even) {
   margin-left: 2%;
+}
 }
