@@ -248,6 +248,9 @@ header .action .logout a {
 .form-elem {
   margin-bottom: 1rem;
 }
+.form-elem.comp-list-box-holder {
+  margin-bottom: 0;
+}
 .form-line {
   display: table;
   width: 100%;
@@ -259,6 +262,9 @@ label.comp-ui {
   display: block;
   font-weight: bold;
   margin-bottom: .25rem;
+}
+.form-elem.comp-list-box-holder label.comp-ui {
+  margin-bottom: .5rem;
 }
 select.comp-ui {
   -moz-appearance: none;
@@ -487,7 +493,7 @@ textarea.comp-ui {
   background-color: white;
   border: solid 1px #DCEDC8;
   border-radius: 3px;
-  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 .comp-list-box .line {
   display: table;
@@ -512,7 +518,7 @@ textarea.comp-ui {
 .comp-list-box .line .body {
   text-align: right;
 }
-@media (min-width: 992px) {
+@media (min-width: 768px) {
 .comp-list-box {
   width: 49%;
   float: left;

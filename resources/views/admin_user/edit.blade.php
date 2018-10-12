@@ -130,8 +130,8 @@
           </div>
         </div>
       </div>
-      <div class="form-elem clearfix">
-        <label for="devises" class="comp-ui">デバイス（所有するデバイスをチェックして登録）</label>
+      <div class="form-elem comp-list-box-holder clearfix">
+        <label class="comp-ui">デバイス（所有するデバイスをチェックして登録）</label>
         @foreach($mac_addresses as $mac_add)
         @if($mac_add->hide == true)
         @elseif($mac_add->current_stay == true && $mac_add->user_id == 1)
