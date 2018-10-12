@@ -281,6 +281,12 @@ button.comp-ui {
   border-radius: 2rem;
   cursor: pointer;
 }
+a.comp-ui.danger,
+button.comp-ui.danger {
+  color: white;
+  border-color: #B71C1C;
+  background-color: #F44336;
+}
 input.comp-ui,
 select.comp-ui,
 textarea.comp-ui {
@@ -474,4 +480,43 @@ textarea.comp-ui {
 }
 .comp-box:nth-child(4n) {
   margin-right: 0;
+}
+}
+/* comp-list-box */
+.comp-list-box {
+  background-color: white;
+  border: solid 1px #DCEDC8;
+  border-radius: 3px;
+  margin-top: 1rem;
+}
+.comp-list-box .line {
+  display: table;
+  width: 100%;
+  padding: .25rem 1rem;
+}
+.comp-list-box .line.check {
+  background-color: #DCEDC8;
+  margin-bottom: .25rem;
+}
+.comp-list-box .line-ui {
+  margin: .5rem 0;
+}
+.comp-list-box .line .head,
+.comp-list-box .line .body {
+  display: table-cell;
+}
+.comp-list-box .line .head {
+  width: 50%;
+  font-weight: bold;
+}
+.comp-list-box .line .body {
+  text-align: right;
+}
+@media (min-width: 992px) {
+.comp-list-box {
+  width: 49%;
+  float: left;
+}
+.comp-list-box:nth-child(odd) {
+  margin-left: 2%;
 }

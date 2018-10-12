@@ -130,84 +130,76 @@
           </div>
         </div>
       </div>
+      <div class="form-elem clearfix">
+        <label for="devises" class="comp-ui">デバイス（所有するデバイスをチェックして登録）</label>
+        @foreach($mac_addresses as $mac_add)
+        @if($mac_add->hide == true)
+        @elseif($mac_add->current_stay == true && $mac_add->user_id == 1)
+        @elseif($mac_add->current_stay == true)
+        @elseif($mac_add->user_id == $item->id)
+        @else
+        @endif
+        <div class="comp-list-box">
+          <div class="line check">
+            <div class="head"><label for="devise-check-{{$mac_add->id}}">チェック</label></div>
+            <div class="body">
+              @if($mac_add->user_id == $item->id)
+              <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}" checked="checked" id="devise-check-{{$mac_add->id}}">
+              @else
+              <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}" id="devise-check-{{$mac_add->id}}">
+              @endif
+            </div>
+          </div>
+          <div class="line">
+            <div class="head">ID</div>
+            <div class="body">{{$mac_add->id}}</div>
+          </div>
+          <div class="line">
+            <div class="head">滞在中</div>
+            <div class="body">{{$mac_add->current_stay}}</div>
+          </div>
+          <div class="line">
+            <div class="head">MAC Address</div>
+            <div class="body">{{$mac_add->mac_address}}</div>
+          </div>
+          <div class="line">
+            <div class="head">Vendor</div>
+            <div class="body">{{$mac_add->vendor}}</div>
+          </div>
+          <div class="line">
+            <div class="head">デバイス名</div>
+            <div class="body">{{$mac_add->device_name}}</div>
+          </div>
+          <div class="line">
+            <div class="head">ルーターID</div>
+            <div class="body">{{$mac_add->router_id}}</div>
+          </div>
+          <div class="line">
+            <div class="head">来訪日時</div>
+            <div class="body">{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i')}}</div>
+          </div>
+          <div class="line">
+            <div class="head">posted_at</div>
+            <div class="body">{{Carbon\Carbon::parse($mac_add->posted_at)->format('n月j日 G:i')}}</div>
+          </div>
+          <div class="line">
+            <div class="head">登録日時</div>
+	    <div class="body">{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}</div>
+          </div>
+          <div class="line line-ui">
+	    <div class="body">
+              @if($mac_add->user_id == $item->id)
+              <a href="/admin_mac_address/delete?id={{$item->id}}" class="comp-ui danger">削除</a>
+              @endif
+            </div>
+          </div>
+        </div>
+        @endforeach
+      </div>
       <div class="form-elem">
         <button type="submit" class="comp-ui">ユーザー情報を更新</button>
       </div>
     </form>
   </div>
-</div>
-<div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                @component('components.message')
-                @endcomponent
-                    <form action="/admin_user/update" method="post">
-                        {{ csrf_field() }}
-
-                        
-
-                    
-
-                        <div class="form-group">
-                            <label for="InputTextarea">デバイス（所有するデバイスをチェックして登録）</label>
-                            <table class="table table-hover">
-                                <tr class="info thead-light">
-                                    <th>owner</th>
-                                    <th>ID</th>
-                                    <th>滞在中</th>
-                                    <th>MAC Address</th>
-                                    <th>Vendor</th>
-                                    <th>デバイス名</th>
-                                    <th>ルーターID</th>
-                                    <th>来訪日時</th>
-                                    <th>posted_at</th>
-                                    <th>登録日時</th>
-                                </tr>
-                        @foreach($mac_addresses as $mac_add)
-                            @if($mac_add->hide == true)
-                                <tr class="table-secondary">
-                            @elseif($mac_add->current_stay == true && $mac_add->user_id == 1)
-                                <tr class="table-warning">
-                            @elseif($mac_add->current_stay == true)
-                                <tr class="table-info">
-                            @elseif($mac_add->user_id == $item->id)
-                                <tr class="table-info">
-                            @else
-                                <tr>
-                            @endif
-                            @if($mac_add->user_id == $item->id)
-                                    <td>
-                                        <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}" checked="checked">
-                                    </td>
-                            @else
-                                    <td>
-                                        <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}">
-                                    </td>
-                            @endif
-                                    <td>{{$mac_add->id}}</td>
-                                    <td>{{$mac_add->current_stay}}</td>
-                                    <td>{{$mac_add->mac_address}}</td>
-                                    <td>{{$mac_add->vendor}}</td>
-                                    <td>{{$mac_add->device_name}}</td>
-                                    <td>{{$mac_add->router_id}}</td>
-                                    <td>{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i')}}</td>
-                                    <td>{{Carbon\Carbon::parse($mac_add->posted_at)->format('n月j日 G:i')}}</td>
-                                    <td>
-                                        {{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}
-                                        @if($mac_add->user_id == $item->id)
-                                        <a href="/admin_mac_address/delete?id={{$item->id}}" class="btn btn-danger" role="button">削除</a>
-                                        @endif
-                                    </td>
-                                </tr>
-                        @endforeach
-                            </table>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 @endsection
