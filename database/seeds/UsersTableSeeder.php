@@ -14,150 +14,233 @@ class UsersTableSeeder extends Seeder
         $dateTime = date("Y-m-d H:i:s");
         $password = bcrypt('aaaaaa');
 
+        // tikara waza
         $param = [
-            'community_id' => 1,
-            'name' => '未登録',
+            'name' => '未登録 comm1 super',
             'email' => 'admin@aaa.com',
-            'login_id' => 'admin@aaa.com@1',
-            'role' => 'superAdmin',
             'password' => $password,
-            'last_access' => $dateTime,
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
 
         $param = [
-            'community_id' => 2,
-            'name' => '未登録',
+            'name' => '未登録 comm2',
+            'email' => 'admin2@aaa.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => '未登録 comm3',
+            'email' => 'admin3@aaa.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => 'AAA AAA 委託管理者',
             'email' => 'aaa@aaa.com',
-            'login_id' => 'aaa@aaa.com@2',
-            'role' => 'readerAdmin',
             'password' => $password,
-            'last_access' => $dateTime,
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
 
+        // community 1 2～10
         $param = [
-            'community_id' => 3,
-            'name' => '未登録',
-            'email' => 'zzz@zzz.com',
-            'login_id' => 'zzz@zzz.com@3',
-            'role' => 'readerAdmin',
-            'password' => $password,
-            'last_access' => $dateTime,
-            'created_at' => $dateTime,
-            'updated_at' => $dateTime,
-        ];
-        DB::table('users')->insert($param);
-
-        $param = [
-            'community_id' => 2,
-            'name' => '藤本　太郎喜左衛門将時能 委託管理者',
+            'name' => 'BBB BBB',
             'email' => 'bbb@bbb.com',
-            'login_id' => 'bbb@bbb.com@2',
-            'role' => 'normalAdmin',
             'password' => $password,
-            'last_access' => $dateTime,
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
 
         $param = [
-            'community_id' => 1,
-            'name' => '鈴木　一郎 委託管理者',
+            'name' => 'CCC CCC',
             'email' => 'ccc@ccc.com',
-            'login_id' => 'ccc@ccc.com@1',
-            'role' => 'normalAdmin',
             'password' => $password,
-            'last_access' => $dateTime,
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
 
         $param = [
-            'community_id' => 1,
-            'name' => '佐藤　ふたば　非表示さん',
+            'name' => 'DDD DDD',
             'email' => 'ddd@ddd.com',
-            'login_id' => 'ddd@ddd.com@1',
-            'role' => 'normal',
             'password' => $password,
-            'hide' => 1,
-            'last_access' => $dateTime,
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
 
         $param = [
-            'community_id' => 2,
-            'name' => '田中　寿限無寿限無一郎　委託管理者',
+            'name' => 'EEE EEE',
             'email' => 'eee@eee.com',
-            'login_id' => 'eee@eee.com@2',
-            'role' => 'normalAdmin',
             'password' => $password,
-            'last_access' => $dateTime,
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
 
         $param = [
-            'community_id' => 3,
-            'name' => 'ランダム太郎',
+            'name' => 'FFF FFF',
             'email' => 'fff@fff.com',
-            'login_id' => 'fff@fff.com@3',
-            'role' => 'normal',
             'password' => $password,
-            'last_access' => $dateTime,
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
 
         $param = [
-            'community_id' => 3,
-            'name' => 'ランダム次郎',
+            'name' => 'GGG GGG',
             'email' => 'ggg@ggg.com',
-            'login_id' => 'ggg@ggg.com@3',
-            'role' => 'normal',
             'password' => $password,
-            'last_access' => $dateTime,
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
 
         $param = [
-            'community_id' => 3,
-            'name' => 'ランダム三郎',
+            'name' => 'HHH HHH',
             'email' => 'hhh@hhh.com',
-            'login_id' => 'hhh@hhh.com@3',
-            'role' => 'normal',
             'password' => $password,
-            'last_access' => $dateTime,
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
 
-        for ($i=0; $i < 10; $i++) {
+        $param = [
+            'name' => 'III III',
+            'email' => 'iii@iii.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        // community 2 2～10
+        $param = [
+            'name' => '委託管理者 藤本　太郎喜左衛門将時能',
+            'email' => 'aaa2@aaa.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => '田中　寿限無寿限無一郎',
+            'email' => 'bbb2@bbb.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => '燕　東海林太郎兵衛宗清',
+            'email' => 'ccc2@ccc.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => '根本　寝坊之助食左衛門',
+            'email' => 'ddd2@ddd.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => '野田　江川富士一二三四五左衛門助太郎',
+            'email' => 'eee2@eee.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => '沢井　麻呂女鬼久壽老八重千代子さん',
+            'email' => 'fff2@fff.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => '古屋敷　後部屋新九郎左衛門介之亟',
+            'email' => 'ggg2@ggg.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => '一二三　 四五六七八九十郎',
+            'email' => 'hhh2@hhh.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => '渡辺　七五三吉五郎次郎三郎衛門',
+            'email' => 'iii2@iii.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        // community 3 2～10
+        $param = [
+            'name' => 'ランダム太郎 委託管理者',
+            'email' => 'aaa3@aaa.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => 'ランダム次郎',
+            'email' => 'bbb3@bbb.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        $param = [
+            'name' => 'ランダム三郎',
+            'email' => 'ccc3@ccc.com',
+            'password' => $password,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('users')->insert($param);
+
+        for ($i=1; $i <= 6; $i++) {
             $rand10 = str_random(10);
             $mail = $rand10 .'@gmail.com';
-            $rand_num = rand(1,3);
-            $login_id = $mail . '@' . $rand_num;
             $param = [
-                'community_id' => $rand_num,
                 'name' => $rand10,
                 'email' => $mail,
-                'login_id' => $login_id,
-                'role' => 'normal',
                 'password' => $password,
-                'last_access' => $dateTime,
                 'created_at' => $dateTime,
                 'updated_at' => $dateTime,
             ];
