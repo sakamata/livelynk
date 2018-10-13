@@ -400,16 +400,14 @@ textarea.comp-ui {
   color: #689F38;
   width: 2.5rem;
 }
-.comp-box .name .text {
-}
 .comp-box .arrival {
   display: table;
   width: 100%;
   line-height: 2rem;
+  position: relative;
 }
 .comp-box .arrival .head,
-.comp-box .arrival .time,
-.comp-box .arrival .accuracy {
+.comp-box .arrival .time {
   display: table-cell;
 }
 .comp-box .arrival .head {
@@ -421,13 +419,15 @@ textarea.comp-ui {
   padding-left: .5rem;
 }
 .comp-box .arrival .accuracy {
-  width: 2rem;
-  height: 2rem;
+  position: absolute;
+  right: 0;
+  width: 2.1rem;
+  height: 2.1rem;
   border: solid 2px #FDD835;
   border-radius: 2.5rem;
   background-color: #FFF176;
   text-align: center;
-  line-height: 1.75rem;
+  line-height: 1.9rem;
   font-size: .75rem;
 }
 .comp-box .flag {
