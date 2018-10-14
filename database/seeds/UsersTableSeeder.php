@@ -15,6 +15,7 @@ class UsersTableSeeder extends Seeder
         $password = bcrypt('aaaaaa');
 
         // tikara waza
+        // user1
         $param = [
             'name' => '未登録 comm1 super',
             'email' => 'admin@aaa.com',
@@ -24,6 +25,7 @@ class UsersTableSeeder extends Seeder
         ];
         DB::table('users')->insert($param);
 
+        // user2
         $param = [
             'name' => '未登録 comm2',
             'email' => 'admin2@aaa.com',
@@ -33,6 +35,7 @@ class UsersTableSeeder extends Seeder
         ];
         DB::table('users')->insert($param);
 
+        // user3
         $param = [
             'name' => '未登録 comm3',
             'email' => 'admin3@aaa.com',
@@ -42,8 +45,9 @@ class UsersTableSeeder extends Seeder
         ];
         DB::table('users')->insert($param);
 
+        // user4
         $param = [
-            'name' => 'AAA AAA 委託管理者',
+            'name' => 'AAA comm1 委託管理者',
             'email' => 'aaa@aaa.com',
             'password' => $password,
             'created_at' => $dateTime,
@@ -52,6 +56,7 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->insert($param);
 
         // community 1 2～10
+        // user5
         $param = [
             'name' => 'BBB BBB',
             'email' => 'bbb@bbb.com',
@@ -96,7 +101,7 @@ class UsersTableSeeder extends Seeder
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
-
+        //user10
         $param = [
             'name' => 'GGG GGG',
             'email' => 'ggg@ggg.com',
@@ -114,7 +119,7 @@ class UsersTableSeeder extends Seeder
             'updated_at' => $dateTime,
         ];
         DB::table('users')->insert($param);
-
+        //user12
         $param = [
             'name' => 'III III',
             'email' => 'iii@iii.com',
