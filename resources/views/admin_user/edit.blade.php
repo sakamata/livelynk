@@ -189,7 +189,7 @@
           <div class="line line-ui">
 	    <div class="body">
               @if($mac_add->user_id == $item->id)
-              <a href="/admin_mac_address/delete?id={{$item->id}}" class="comp-ui danger">削除</a>
+              <a href="/admin_mac_address/delete?id={{$mac_add->id}}" class="comp-ui danger">削除</a>
               @endif
             </div>
           </div>
