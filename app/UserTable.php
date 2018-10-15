@@ -15,20 +15,21 @@ class UserTable extends Model
 
     // 日時表記変更の ->format('Y-m-d') を使いたいカラム名を指定する
     protected $dates = [
-        'last_access',
         'created_at',
         'updated_at',
     ];
+
+    public function community()
+    {
+        return $this->belongsToMany('App\AdminCommunity');
+    }
+
 
     public function mac_addresses()
     {
         return $this->hasMany('App\MacAddress', 'user_id')->orderBy('arraival_at', 'desc');
     }
 
-    public function community()
-    {
-        return $this->belongsTo('App\AdminCommunity', 'community_id');
-    }
 
     public function scopeSelf($query, $self_id)
     {

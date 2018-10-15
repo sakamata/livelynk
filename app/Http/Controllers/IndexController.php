@@ -30,11 +30,11 @@ class IndexController extends Controller
             $community = DB::table('communities')->where('id', $user->community_id)->first();
         }
 
+
         // newcomer 取得 未登録ユーザーで来訪中のmac_address一覧を取得
         $unregistered = DB::table('mac_addresses')
             ->where([
-                ['community_id', $community->id],
-                ['user_id', $community->user_id],
+                ['community_user_id', $community->user_id],
                 ['hide', false],
                 ['current_stay', true],
             ])
@@ -42,16 +42,40 @@ class IndexController extends Controller
 
         $unregistered_rate_array = $this->DepartureRateMake($unregistered, $column='posted_at');
 
+        // log::debug(print_r($unregistered, 1));
+
+        // OLD I'm here 取得 サブクエリでmacの来訪中mac_addressをuser毎に出す
+        // $current_stays = 'App\MacAddress'::select(
+        //     DB::raw("community_user_id, max(arraival_at) as max_arraival_at"))
+        //     ->where([
+        //         ['community_id', $community->user_id],
+        //         ['hide', false],
+        //         ['current_stay', true],
+        //     ])
+        //     ->orderBy('max_arraival_at', 'desc')
+        //     ->groupBy('community_user_id');
+
+        $hoge = 'App\MacAddress'::where([
+            ['community_user_id', $community->user_id],
+            ['hide', false],
+            ['current_stay', true],
+        ])->first();
+
+        log::debug(print_r($hoge, 1));
+
+
         // I'm here 取得 サブクエリでmacの来訪中mac_addressをuser毎に出す
-        $current_stays = DB::table('mac_addresses')
-            ->select(DB::raw("user_id, max(arraival_at) as max_arraival_at"))
+        $current_stays = 'App\MacAddress'::select(
+            DB::raw("community_user_id, max(arraival_at) as max_arraival_at"))
             ->where([
-                ['community_id', $community->id],
+                ['community_id', $community->user_id],
                 ['hide', false],
                 ['current_stay', true],
             ])
-            ->orderBy('max_arraival_at', 'desc')
-            ->groupBy('user_id');
+            ->orderBy('max_arraival_at', 'desc');
+
+
+        // log::debug(print_r($current_stays, 1));
 
         // 親クエリでusers table呼び出し
         $stays = 'App\UserTable'::joinSub($current_stays, 'current_stays', function($join) {

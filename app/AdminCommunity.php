@@ -19,6 +19,13 @@ class AdminCommunity extends Model
         'updated_at',
     ];
 
+    public function mac_addresses()
+    {
+        return $this->belongsToMany('App\MacAddress');
+    }
+
+
+
     public function owner()
     {
         return $this->hasOne('App\UserTable', 'community_id');

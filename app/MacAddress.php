@@ -22,20 +22,20 @@ class MacAddress extends Model
         'updated_at',
     ];
 
-    public function user()
+    public function community_user()
     {
-        return $this->belongsTo('App\User', 'user_id');
+        return $this->belongsTo('App\CommunityUser', 'id');
     }
 
     public function community()
     {
-        return $this->belongsTo('App\AdminCommunity', 'community_id');
+        return $this->belongsToMany('App\AdminCommunity');
     }
 
-    public function router()
-    {
-        return $this->belongsTo('App\AdminRouter', 'router_id');
-    }
+    // public function router()
+    // {
+    //     return $this->belongsTo('App\AdminRouter', 'router_id');
+    // }
 
     public function scopeSelf($query, $self_id)
     {
