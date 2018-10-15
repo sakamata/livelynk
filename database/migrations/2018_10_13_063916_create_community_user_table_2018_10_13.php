@@ -17,6 +17,7 @@ class CreateCommunityUserTable20181013 extends Migration
             $table->increments('id');
             $table->integer('community_id');
             $table->integer('user_id');
+            $table->unique(['community_id', 'user_id']);
         });
     }
 
