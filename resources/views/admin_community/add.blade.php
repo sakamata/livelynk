@@ -87,13 +87,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">ifttt_event_name</label>
+                            <label for="InputTextarea">IFTTT Event Name</label>
                             <input type="text" class="form-control form-control-lg" name="ifttt_event_name" value="{{old('ifttt_event_name')}}"  onInput="checkForm(this)">
                             <p>(任意)通知設定の為のIFTTTのEvent Nameを登録します</p>
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">ifttt_webhooks_key</label>
+                            <label for="InputTextarea">IFTTT Webhooks key</label>
                             <input type="text" class="form-control form-control-lg" name="ifttt_webhooks_key" value="{{old('ifttt_webhooks_key')}}"  onInput="checkForm(this)">
                             <p>(任意)通知設定の為のIFTTTのWebhooks keyを入力します</p>
                         </div>

@@ -28,7 +28,7 @@
                             <h3>デバイス名:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->device_name}}</h3>
                         </div>
                         <div>
-                            <h3>vendor:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->vendor}}</h3>
+                            <h3>端末メーカー:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->vendor}}</h3>
                         </div>
                         <div>
                             <h3>MAC Address:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->mac_address}}</h3>

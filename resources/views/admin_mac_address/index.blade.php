@@ -79,7 +79,7 @@
       <div class="head">
         @component('components.order', [
           'name' => 'vendor',
-          'firld' => 'vendor',
+          'firld' => '端末メーカー',
           'key' => $key,
           'order' => $order,
           'action' => 'admin_mac_address',

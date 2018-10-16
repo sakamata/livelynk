@@ -70,7 +70,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">vendor</label>
+                            <label for="InputTextarea">端末メーカー</label>
                             <input type="text" class="form-control form-control-lg" name="vendor" value="{{old('vendor', $item->vendor)}}" placeholder="40文字まで">
                         </div>
 

@@ -141,6 +141,16 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'email' => 'メールアドレス',
+        'password' => 'パスワード',
+        'name' => '名前',
+        'vendor' => '端末メーカー',
+        'device_name' => 'デバイス名',
+        'service_name' => 'コミュニティ名称',
+        'hash_key' => 'secret',
+        'ifttt_event_name' => 'IFTTT Event Name',
+        'ifttt_webhooks_key' => 'IFTTT Webhooks key',
+    ],
 
 ];
