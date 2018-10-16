@@ -21,5 +21,8 @@ return [
     'Reset Password' => 'パスワードリセット',
     'E-Mail Address' => 'E-mail',
     'Send Password Reset Link' => 'パスワードリセットのメール送信',
+    'New Password' => '新しいパスワード',
+    'Confirm New Password' => '（確認）新しいパスワード',
+    'Reset Password and Login' => 'パスワード登録/ログイン',
 
 ];
