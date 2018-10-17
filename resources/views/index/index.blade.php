@@ -42,7 +42,7 @@
     </div>
     <div class="arrival">
       <span class="time-head">IN</span>
-      <span class="time-body">{{date('n/j G:i', strtotime($item->max_arraival_at))}}</span>
+      <span class="time-body">{{date('n/j G:i', strtotime($item->min_arraival_at))}}</span>
       <!-- 在席の可能性をパーセンテージで表す値 -->
       <span class="time-accuracy">{{ $rate1[$i] }}</span>
     </div>

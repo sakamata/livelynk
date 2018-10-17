@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\UserTable;
+use App\MacAddress;
+use App\CommunityUser;
 use Illuminate\Support\Facades\Auth;
 
 class IndexController extends Controller
@@ -27,81 +29,84 @@ class IndexController extends Controller
             }
         } else {
             $user = Auth::user();
-            $community = DB::table('communities')->where('id', $user->community_id)->first();
+            $community_id = DB::table('community_user')
+                ->where('user_id', $user->id)->pluck('community_id');
+            $community = DB::table('communities')
+                ->where('id', $community_id)->first();
         }
 
+        // newcomer! 未登録端末 object 取得処理開始--------------
 
-        // newcomer 取得 未登録ユーザーで来訪中のmac_address一覧を取得
-        $unregistered = DB::table('mac_addresses')
-            ->where([
-                ['community_user_id', $community->user_id],
+        // community owner の user_id を取得
+        $owner_id = DB::table('communities')
+            ->where('id', $community->id)
+            ->pluck('user_id');
+
+        // 未登録ユーザーで来訪中のmac_address一覧を取得
+        $unregistered = 'App\MacAddress'::where([
+                ['community_user_id', $owner_id],
                 ['hide', false],
                 ['current_stay', true],
-            ])
-            ->orderBy('arraival_at', 'desc')->get();
-
+        ])->orderBy('arraival_at', 'desc')->get();
+        // 未登録端末、滞在率の取得
         $unregistered_rate_array = $this->DepartureRateMake($unregistered, $column='posted_at');
 
-        // log::debug(print_r($unregistered, 1));
+        // I'm here! 滞在者object取得処理開始------------------
 
-        // OLD I'm here 取得 サブクエリでmacの来訪中mac_addressをuser毎に出す
-        // $current_stays = 'App\MacAddress'::select(
-        //     DB::raw("community_user_id, max(arraival_at) as max_arraival_at"))
-        //     ->where([
-        //         ['community_id', $community->user_id],
-        //         ['hide', false],
-        //         ['current_stay', true],
-        //     ])
-        //     ->orderBy('max_arraival_at', 'desc')
-        //     ->groupBy('community_user_id');
-
-        $hoge = 'App\MacAddress'::where([
-            ['community_user_id', $community->user_id],
-            ['hide', false],
-            ['current_stay', true],
-        ])->first();
-
-        log::debug(print_r($hoge, 1));
-
-
-        // I'm here 取得 サブクエリでmacの来訪中mac_addressをuser毎に出す
-        $current_stays = 'App\MacAddress'::select(
-            DB::raw("community_user_id, max(arraival_at) as max_arraival_at"))
+        // I'm here 取得の為サブクエリ用の滞在中端末を取得
+        $mac_addresses = DB::table('mac_addresses')
+            ->select(
+                DB::raw("community_user_id, min(arraival_at) as min_arraival_at"))
             ->where([
-                ['community_id', $community->user_id],
                 ['hide', false],
                 ['current_stay', true],
             ])
-            ->orderBy('max_arraival_at', 'desc');
+            ->orderBy('min_arraival_at', 'desc')
+            ->groupBy('community_user_id');
 
-
-        // log::debug(print_r($current_stays, 1));
-
-        // 親クエリでusers table呼び出し
-        $stays = 'App\UserTable'::joinSub($current_stays, 'current_stays', function($join) {
-                $join->on('users.id', '=', 'current_stays.user_id');
-            })->where([
-                ['community_id', $community->id],
-                ['id', '<>', $community->user_id],
-                ['hide', false],
-            ])->get();
+        // I'm here! 滞在者object取得
+        // user_id, name, min_arraival_at, last_access
+        $stays = DB::table('community_user')
+            ->select('user_id', 'name', 'min_arraival_at', 'last_access')
+            ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
+            ->Join('communities_users_statuses', 'communities_users_statuses.id', '=', 'community_user.id')
+            ->JoinSub($mac_addresses, 'mac_addresses', function($join) {
+                $join->on('community_user.id', '=', 'mac_addresses.community_user_id');
+            })
+            ->where([
+                ['user_id', '<>', $owner_id],
+                ['community_id', $community_id],
+            ])
+            ->get();
+        // 既存滞在者、滞在率の取得
         $stays_rate_array = $this->DepartureRateMake($stays, $column='last_access');
 
-        // 非滞在者取得の為 除外条件の滞在者のIDを上記と同じ条件で取得
-        $stays_ids = 'App\UserTable'::joinSub($current_stays, 'current_stays', function($join) {
-                $join->on('users.id', '=', 'current_stays.user_id');
-            })->where([
-                ['community_id', $community->id],
-                ['id', '<>', $community->user_id],
-                ['hide', false],
-            ])->pluck('id');
-        // 非滞在者の取得
-        $not_stays = 'App\UserTable'::whereNotIn('id', $stays_ids)
+        // 非滞在者の取得処理開始----------------------
+
+        // 該当コミュニティのuser id を配列で取得 （readerAdmin除外）
+        $users_id_obj = DB::table('community_user')
+            ->where([
+                ['user_id', '<>', $owner_id],
+                ['community_id', $community_id],
+            ])->pluck('user_id');
+
+        // コミュ内ユーザーと滞在中ユーザーから
+        // 不在ユーザーの user_id をarrayで取得
+        $users_id = $this->ChangeObjectToArray($users_id_obj, $column = null);
+        $stays_users_id = $this->ChangeObjectToArray($stays, $column = 'user_id');
+        // 不在中のuser_id array
+        $not_stay_users_id = array_diff($users_id, $stays_users_id);
+
+        // 非滞在者objctの取得 last_access name
+        $not_stays = DB::table('community_user')
+            ->select('user_id', 'name', 'last_access')
+            ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
+            ->Join('communities_users_statuses', 'communities_users_statuses.id', '=', 'community_user.id')
             ->where([
                 ['community_id', $community->id],
-                ['id', '<>', $community->user_id],
-                ['hide', false],
-            ])->orderBy('last_access', 'desc')->get();
+            ])
+            ->whereIn('community_user.user_id', $not_stay_users_id)
+            ->get();
 
         return view('index.index', [
             'community' => $community,
@@ -131,6 +136,20 @@ class IndexController extends Controller
         $i++;
         }
         return $res;
+    }
+
+    public function ChangeObjectToArray($object, $column = null)
+    {
+        $i = 0;
+        foreach ($object as $value) {
+            if ($column) {
+                $value = $value->$column;
+            }
+            // クエリビルダで取得したオブジェクトを配列に変換
+            $array[$i] = json_decode(json_encode($value), true);
+            $i++;
+        }
+        return $array;
     }
 
     public function Test()
