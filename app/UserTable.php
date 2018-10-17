@@ -21,7 +21,7 @@ class UserTable extends Model
 
     public function community()
     {
-        return $this->belongsToMany('App\AdminCommunity');
+        return $this->belongsToMany('App\AdminCommunity', 'community_user');
     }
 
 

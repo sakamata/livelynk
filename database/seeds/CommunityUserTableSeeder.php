@@ -63,7 +63,7 @@ class CommunityUserTableSeeder extends Seeder
 
         // 複数コミュニティに登録しているuser 10単位追加
         // userid  1～6 community 2
-        $user_id = 1;
+        $user_id = 5;
         for ($u=1; $u <= 6; $u++) {
             $param = [
                 'community_id' => 2,
@@ -73,7 +73,7 @@ class CommunityUserTableSeeder extends Seeder
             $user_id++;
         }
         // userid  1～4 community 3
-        $user_id = 1;
+        $user_id = 5;
         for ($u=1; $u <= 4; $u++) {
             $param = [
                 'community_id' => 3,
