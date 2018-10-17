@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use App\AdminRouter;
+use App\Router;
 
 // normal userはrouter web.php 設定で閲覧不可となっている
 class AdminRouterController extends Controller
@@ -17,11 +17,11 @@ class AdminRouterController extends Controller
         $user = Auth::user();
         // 一般管理者の場合は自コミュニティの端末のみを表示
         if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
-            $items = 'App\AdminRouter'::Mycommunity($user->community_id)->get();
+            $items = 'App\Router'::Mycommunity($user->community_id)->get();
         }
         // superAdminは全て表示
         if ($user->role == 'superAdmin') {
-            $items = 'App\AdminRouter'::get();
+            $items = 'App\Router'::get();
         }
         return view('admin_router.index',[
             'items' => $items,
@@ -75,7 +75,7 @@ class AdminRouterController extends Controller
         if (!$request->id || !ctype_digit($request->id)) {
             return view('errors.403');
         }
-        $item = 'App\AdminRouter'::where('id', $request->id)->first();
+        $item = 'App\Router'::where('id', $request->id)->first();
         if (!$item) {
             return view('errors.403');
         }

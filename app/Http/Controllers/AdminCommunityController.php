@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\AdminCommunity;
+use App\Community;
 
 // normal userはrouter web.php 設定で閲覧不可となっている
 class AdminCommunityController extends Controller
 {
     public function index(Request $request)
     {
-        $items = 'App\AdminCommunity'::get();
+        $items = 'App\Community'::get();
         return view('admin_community.index', [
             'items' => $items,
         ]);
@@ -97,7 +97,7 @@ class AdminCommunityController extends Controller
             }
         }
 
-        $item = 'App\AdminCommunity'::where('id', $request->id)->first();
+        $item = 'App\Community'::where('id', $request->id)->first();
         if (!$item) {
             return redirect('/');
         }

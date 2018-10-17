@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AdminRouter extends Model
+class Router extends Model
 {
     /**
      * モデルと関連しているテーブル
@@ -21,7 +21,7 @@ class AdminRouter extends Model
 
     public function community()
     {
-        return $this->belongsTo('App\AdminCommunity', 'community_id');
+        return $this->belongsTo('App\Community');
     }
 
     public function scopeMyCommunity($query, $self_community)

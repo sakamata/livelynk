@@ -21,13 +21,13 @@ class UserTable extends Model
 
     public function community()
     {
-        return $this->belongsToMany('App\AdminCommunity', 'community_user');
+        return $this->belongsToMany('App\Community', 'community_user');
     }
 
 
     public function mac_addresses()
     {
-        return $this->hasMany('App\MacAddress', 'user_id')->orderBy('arraival_at', 'desc');
+        return $this->belongsToMany('App\MacAddress', 'community_user')->orderBy('arraival_at', 'desc');
     }
 
 
