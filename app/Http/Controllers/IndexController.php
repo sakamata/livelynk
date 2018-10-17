@@ -6,9 +6,7 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-use App\UserTable;
 use App\MacAddress;
-use App\CommunityUser;
 use Illuminate\Support\Facades\Auth;
 
 class IndexController extends Controller
@@ -76,8 +74,7 @@ class IndexController extends Controller
             ->where([
                 ['user_id', '<>', $owner_id],
                 ['community_id', $community_id],
-            ])
-            ->get();
+            ])->get();
         // 既存滞在者、滞在率の取得
         $stays_rate_array = $this->DepartureRateMake($stays, $column='last_access');
 
@@ -150,10 +147,5 @@ class IndexController extends Controller
             $i++;
         }
         return $array;
-    }
-
-    public function Test()
-    {
-        return view('index.index0');
     }
 }
