@@ -174,6 +174,8 @@ class AdminMacAddressController extends Controller
             return view('errors.403');
         }
 
+        // ***ToDo*** hide が true の場合、 current_stay を false にする
+
         $now = Carbon::now();
         $param = [
             'device_name' => $request->device_name,
