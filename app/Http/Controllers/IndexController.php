@@ -17,11 +17,9 @@ class IndexController extends Controller
         // 非ログイン と ログイン時で対象の community を取得
         // /index?path=hoge
         if (!Auth::check()) {
-            if (!$request->path) {
-                return view('welcome');
-            }
-
+            if (!$request->path) { return view('welcome'); }
             $community = $this->GetCommunityFromPath($request->path);
+            $community_id = $community->id;
             if (!$community) {
                 return redirect('/')->with('message', '存在しないページです');
             }
@@ -38,7 +36,7 @@ class IndexController extends Controller
         // community owner の user_id を取得
         $owner_id = DB::table('communities')
             ->where('id', $community->id)
-            ->pluck('user_id');
+        ->pluck('user_id');
 
         // 未登録ユーザーで来訪中のmac_address一覧を取得
         $unregistered = 'App\MacAddress'::where([
@@ -85,15 +83,15 @@ class IndexController extends Controller
             ->where([
                 ['user_id', '<>', $owner_id],
                 ['community_id', $community_id],
-            ])->pluck('user_id');
+        ])->pluck('user_id');
 
         // コミュ内ユーザーと滞在中ユーザーから
         // 不在ユーザーの user_id をarrayで取得
         $users_id = $this->ChangeObjectToArray($users_id_obj, $column = null);
         $stays_users_id = $this->ChangeObjectToArray($stays, $column = 'user_id');
+
         // 不在中のuser_id array
         $not_stay_users_id = array_diff($users_id, $stays_users_id);
-
         // 非滞在者objctの取得 last_access name
         $not_stays = DB::table('community_user')
             ->select('user_id', 'name', 'last_access')
@@ -103,7 +101,7 @@ class IndexController extends Controller
                 ['community_id', $community->id],
             ])
             ->whereIn('community_user.user_id', $not_stay_users_id)
-            ->get();
+        ->get();
 
         return view('index.index', [
             'community' => $community,
@@ -138,6 +136,7 @@ class IndexController extends Controller
     public function ChangeObjectToArray($object, $column = null)
     {
         $i = 0;
+        $array = array();
         foreach ($object as $value) {
             if ($column) {
                 $value = $value->$column;

@@ -84,10 +84,6 @@ Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
 // 外部からのPOST受け取り先 csrf off
 Route::post('/inport_post/mac_address', 'InportPostController@MacAddress');
 
-// test用
-Route::post('/inport_post/test', 'InportPostController@DepartureCheck');
-
-
 // 外部へのPOST送信 route必要?
 Route::post('/push_ifttt_arraival', 'ExportPostController@push_ifttt_arraival');
 

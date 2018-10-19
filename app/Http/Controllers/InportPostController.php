@@ -32,7 +32,9 @@ class InportPostController extends Controller
         }
 
         // POSTされた community_id の半角英数字から communities table の id を導く
-        $community = DB::table('communities')->where('name', $check_array['community_id'])->first();
+        $community = DB::table('communities')
+            ->where('name', $check_array['community_id'])
+        ->first();
         $community_id_int = $community->id;
 
         if (!$community) {
@@ -128,7 +130,7 @@ class InportPostController extends Controller
                             ['community_user_id', $community_user_id],
                             ['current_stay', true],
                             ['hide', false],
-                        ])->exists();
+                    ])->exists();
 
                     // 前回帰宅時間から、ルーター瞬断や中座に対応した通知処理を行う
                     // 初来訪機器で、帰宅時間がない場合は limit は現在となる
@@ -164,13 +166,14 @@ class InportPostController extends Controller
                             ->where([
                                 ['community_user.id', $community_user_id],
                                 ['hide', false],
-                            ])->first();
+                        ])->first();
 
                         if ($user) {
                             Log::debug(print_r("来訪者の通知開始 該当user>>>", 1));
                             Log::debug(print_r($user, 1));
+                            // ***ToDo*** 重複削除をする処理を追加する 1ユーザーの複数端末が同時到着の際、重複して名前が飛ぶ。
                             $person = array(
-                                "id" => $user->id,
+                                "id" => $user->user_id,
                                 "name" => $user->name,
                             );
                             $push_users[$i] =  $person;
@@ -204,14 +207,14 @@ class InportPostController extends Controller
             Log::debug(print_r("!push_ifttt arraival!>>>>", 1));
             Log::debug(print_r($push_users, 1));
 
-            // (new ExportPostController)->push_ifttt($push_users, $category = "arraival", $community);
+            (new ExportPostController)->push_ifttt($push_users, $category = "arraival", $community->id);
         }
-        // $this->DepartureCheck($community);
+        $this->DepartureCheck($community->id);
     }
 
     public function HashCheck($check_array)
     {
-        // hash確認 touter_id が数値以外なら処理停止
+        // hash確認 router_id が数値以外なら処理停止
         if (!is_numeric($check_array["router_id"])) {
             Log::debug(print_r('Inport json post router_id not integer!! posted router_id ==> ' .$check_array["router_id"], 1));
             exit();
@@ -239,8 +242,9 @@ class InportPostController extends Controller
         }
     }
 
+    // ***ToDo*** $community 引数を排除、中で別メソッドから $community を取得させ独立した処理にさせる。さらにタイマー、またはPOSTの止まったコミュニティを探して呼び出し、コミュニティ毎に定期的に確認する処理に変更
     // public function DepartureCheck()
-    public function DepartureCheck($community)
+    public function DepartureCheck($community_id)
     {
         // 一定時間アクセスの無いmac_address を不在に変更
         // last_access が 一定時間以上になった全ての current_stay true を false にする
@@ -250,20 +254,21 @@ class InportPostController extends Controller
         $second = env("JUDGE_DEPARTURE_INTERVAL_SECOND");
         $past_limit = $now->subSecond($second);
 
+        // 帰宅処理が必要なIDを抽出
+            // 端末の current_stay => false
+            // user を特定、名前を取得して通知にpush
         // ['community_id', 1],
         $went_away = DB::table('mac_addresses')
         ->select('mac_addresses.id', 'community_user_id', 'user_id')
         ->leftJoin('community_user', 'community_user.id', '=', 'mac_addresses.community_user_id')
         ->where([
-            ['community_id', $community->id],
+            ['community_id', $community_id],
             ['hide', false],
             ['current_stay', true],
             ['posted_at', '<=', $past_limit],
         ])->get();
 
-        Log::debug(print_r($went_away, 1));
-        // exit();
-
+        // 帰宅判断以上の時間が経過した端末の current_stay やステータスを変更
         $users_id = array();
         $i = 0;
         foreach ($went_away as $went) {
@@ -272,46 +277,67 @@ class InportPostController extends Controller
                     'departure_at' => $now,
                     'current_stay' => false,
                     'updated_at' => $now,
-                ]);
+            ]);
             $users_id[$i] = $went->user_id;
             $i++;
         }
-        Log::debug(print_r($users_id, 1));
 
         $users_id = array_unique($users_id);
         $push_users = array();
         $i = 0;
-        foreach ((array)$users_id as $id) {
+        foreach ((array)$users_id as $user_id) {
             // push通知が必要な表示userのみ,idと名前を取得して配列 $push_users に加工
-            $user = DB::table('users')->where([
-                ['id', $id],
-                ['hide', false],
+            $user = DB::table('community_user')
+                ->Join('communities_users_statuses', 'communities_users_statuses.id', '=', 'community_user.id')
+                ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
+                ->where([
+                    ['community_id', $community_id],
+                    ['user_id', $user_id],
+                    ['hide', false],
             ])->first();
+
             // 非表示userは処理せず
             if (!$user) {
-                Log::debug(print_r('非表示userの為、帰宅通知をしないuserのid>>> ' . $id, 1));
+                Log::debug(print_r('非表示userの為、帰宅通知をしないuserのid>>> ' . $user_id, 1));
                 continue;
             }
+        }
 
-            // ########ここから#########
-            // 該当userの非表示以外の滞在中mac_addressが無いか確認
+        // 該当userの非表示以外の滞在中mac_addressが無いか確認
+        $community_user_id = array();
+        $i = 0;
+        foreach ($went_away as $went) {
             $exist = DB::table('mac_addresses')->where([
-                ['user_id', $id],
+                ['community_user_id', $went->community_user_id],
                 ['hide', false],
                 ['posted_at', '>', $past_limit],
             ])->exists();
-            // 無ければ通知へのデータ加工
-            if (!$exist) {
-                $person = array(
-                    "id" => $user->id,
-                    "name" => $user->name,
-                );
-                Log::debug(print_r("帰ったステータス更新 判定user>>>>", 1));
-                Log::debug(print_r($user->id .' '. $user->name, 1));
 
-                $push_users[$i] =  $person;
+            if ($exist) {
+                $community_user_id[$i] = $went->community_user_id;
                 $i++;
             }
+        }
+        $community_user_id = array_unique($community_user_id);
+
+        $users = DB::table('community_user')
+            ->select('user_id', 'name')
+            ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
+            ->whereIn('user_id', $community_user_id)
+        ->get();
+
+        // 通知へのデータ加工
+        $push_users = array();
+        $i = 0;
+        foreach ($users as $user) {
+            $person = array(
+                "id" => $user->user_id,
+                "name" => $user->name,
+            );
+            Log::debug(print_r("帰ったステータス更新 判定user>>>>", 1));
+            Log::debug(print_r($user->user_id .' '. $user->name, 1));
+            $push_users[$i] =  $person;
+            $i++;
         }
 
         // 滞在者数判断処理～外部機能IFTTTに帰宅通知をPOST
@@ -319,7 +345,7 @@ class InportPostController extends Controller
             Log::debug(print_r("!!!push_ifttt departure pushusers >>>>!!!", 1));
             Log::debug(print_r($push_users, 1));
 
-            // (new ExportPostController)->push_ifttt($push_users, $category = "departure", $community);
+            (new ExportPostController)->push_ifttt($push_users, $category = "departure", $community_id);
         }
     }   // end function
 }
