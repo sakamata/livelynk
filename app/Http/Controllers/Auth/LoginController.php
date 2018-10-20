@@ -62,35 +62,47 @@ class LoginController extends Controller
     // ログイン時に使用するユニークであるカラムを指定
     public function username()
     {
-        return 'login_id';
+        return 'email';
     }
 
     public function authenticate(Request $request)
     {
-        // login_id カラムは email + '@' + community_id(int) で構成されたユニークの文字列として登録時に保存された値、これでログイン認証を行う
-        $login_id = $request->email . '@' . $request->community_id;
         $credentials  = array(
-            'login_id' => $login_id,
+            'email' => $request->email,
             'password' => $request->password,
         );
-
         $request->validate([
             'email' => 'required|string|email|max:170',
             'password' => 'required|string|min:6|max:100',
         ]);
 
         if (Auth::attempt($credentials)) {
+            $community_user = DB::table('community_user')
+                ->select('community_user.id')
+                ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
+                ->where([
+                    ['email', $request->email],
+                    ['community_id', $request->community_id],
+            ])->first();
+            // session にcommunity値保存
+            $request->session()->put('community_id', $request->community_id);
+            $request->session()->put('community_user_id', $community_user->id);
             return redirect('/')->with('message', 'ログインしました');
         } else {
             return redirect()->back()->withErrors(array('email' => 'E-mailかPasswordが正しくありません'))->withInput();
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         $user = Auth::user();
-        $community = DB::table('communities')->where('id', $user->community_id)->first();
+        $community_id = session('community_id');
+        $community = DB::table('communities')
+            ->where('id', $community_id)->first();
         $path = '/index/?path=' . $community->url_path;
+        // session のcommunity値削除
+        $request->session()->forget('community_id');
+        $request->session()->forget('community_user_id');
         Auth::logout();
         return redirect($path)->with('message', 'ログアウトしました。');
     }

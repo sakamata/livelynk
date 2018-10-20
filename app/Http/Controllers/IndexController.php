@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\MacAddress;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
-use App\MacAddress;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class IndexController extends Controller
 {
@@ -24,9 +24,7 @@ class IndexController extends Controller
                 return redirect('/')->with('message', '存在しないページです');
             }
         } else {
-            $user = Auth::user();
-            $community_id = DB::table('community_user')
-                ->where('user_id', $user->id)->pluck('community_id');
+            $community_id = session('community_id');
             $community = DB::table('communities')
                 ->where('id', $community_id)->first();
         }
