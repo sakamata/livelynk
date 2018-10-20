@@ -101,6 +101,7 @@ class IndexController extends Controller
                 ['community_id', $community->id],
             ])
             ->whereIn('community_user.user_id', $not_stay_users_id)
+            ->orderBy('last_access', 'desc')
         ->get();
 
         return view('index.index', [

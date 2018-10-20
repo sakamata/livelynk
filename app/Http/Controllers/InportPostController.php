@@ -249,7 +249,6 @@ class InportPostController extends Controller
         // 一定時間アクセスの無いmac_address を不在に変更
         // last_access が 一定時間以上になった全ての current_stay true を false にする
         // ***ToDo*** 同時刻に人感センサー有りなら、帰宅確度を上げる処理を追加
-
         $now = Carbon::now();
         $second = env("JUDGE_DEPARTURE_INTERVAL_SECOND");
         $past_limit = $now->subSecond($second);
@@ -267,11 +266,16 @@ class InportPostController extends Controller
             ['current_stay', true],
             ['posted_at', '<=', $past_limit],
         ])->get();
+        if (!$went_away) {
+            log::debug(print_r('$went_away 帰宅判断対象無し、処理停止',1));
+            exit();
+        }
 
         // 帰宅判断以上の時間が経過した端末の current_stay やステータスを変更
         $users_id = array();
         $i = 0;
         foreach ($went_away as $went) {
+            // $went->id == mac_addresses id
             DB::table('mac_addresses')->where('id', $went->id)
                 ->update([
                     'departure_at' => $now,
@@ -282,12 +286,15 @@ class InportPostController extends Controller
             $i++;
         }
 
+        // $users_id == 帰宅可能性のある user_id (users の id カラム)
         $users_id = array_unique($users_id);
-        $push_users = array();
+        $near_push_users_id = array();
         $i = 0;
         foreach ((array)$users_id as $user_id) {
-            // push通知が必要な表示userのみ,idと名前を取得して配列 $push_users に加工
+            // push通知が必要な user 選定処理、非表示 user を除外
+            // $near_push_users_id に user_id の配列として加工
             $user = DB::table('community_user')
+                ->select('community_user.id')
                 ->Join('communities_users_statuses', 'communities_users_statuses.id', '=', 'community_user.id')
                 ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
                 ->where([
@@ -295,6 +302,8 @@ class InportPostController extends Controller
                     ['user_id', $user_id],
                     ['hide', false],
             ])->first();
+            $near_push_users_id[$i] = $user->id;
+            $i++;
 
             // 非表示userは処理せず
             if (!$user) {
@@ -303,33 +312,43 @@ class InportPostController extends Controller
             }
         }
 
+        if (!$near_push_users_id) {
+            log::debug(print_r('$near_push_users_id 帰宅判断対象無し、処理停止',1));
+            exit();
+        }
+
         // 該当userの非表示以外の滞在中mac_addressが無いか確認
-        $community_user_id = array();
+        $no_push_user_id = array();
         $i = 0;
-        foreach ($went_away as $went) {
+        foreach ($near_push_users_id as $id) {
             $exist = DB::table('mac_addresses')->where([
-                ['community_user_id', $went->community_user_id],
+                ['community_user_id', $id],
                 ['hide', false],
                 ['posted_at', '>', $past_limit],
             ])->exists();
-
             if ($exist) {
-                $community_user_id[$i] = $went->community_user_id;
+                $no_push_user_id[$i] = $went->community_user_id;
                 $i++;
             }
         }
-        $community_user_id = array_unique($community_user_id);
 
-        $users = DB::table('community_user')
+        // $no_push_user_id を通知から外す
+        $push_users_id = array_diff($near_push_users_id, $no_push_user_id);
+        if (!$push_users_id) {
+            log::debug(print_r('$push_users_id 帰宅判断対象無し、処理停止',1));
+            exit();
+        }
+
+        $push_users_obj = DB::table('community_user')
             ->select('user_id', 'name')
             ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
-            ->whereIn('user_id', $community_user_id)
+            ->whereIn('community_user.id', $push_users_id)
         ->get();
 
         // 通知へのデータ加工
         $push_users = array();
         $i = 0;
-        foreach ($users as $user) {
+        foreach ($push_users_obj as $user) {
             $person = array(
                 "id" => $user->user_id,
                 "name" => $user->name,

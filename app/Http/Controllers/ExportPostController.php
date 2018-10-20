@@ -115,7 +115,6 @@ class ExportPostController extends Controller
         }
         // 既存 user 滞在者数
         $existing_count = count(array_unique($existing));
-        log::debug(print_r($existing, 1));
 
         // 未登録 newcomer! の滞在数（コミュニティの管理 user_id に紐づいた滞在中のデバイス）
         $unknown_count = DB::table('community_user')
