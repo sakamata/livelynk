@@ -30,6 +30,9 @@ a:hover {
   max-width: 100% !important;
   padding: 0 !important;
 }
+.py-4 {
+  padding-top: 1rem !important;
+}
 /* common */
 body {
   font-family:-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI","Noto Sans Japanese","ヒラギノ角ゴ ProN W3", Meiryo, sans-serif;
@@ -62,12 +65,12 @@ body {
   border-radius: 30px;
   border: solid 2px white;
 }
-@media (max-width: 768px) {
+@media (max-width: 576px) {
 .sp-none {
   display: none !important;
 }
 }
-@media (min-width: 768px) {
+@media (min-width: 576px) {
 .pc-none {
   display: none !important;
 }
@@ -127,7 +130,6 @@ header .action .logout a {
 }
 /* alert */
 .alert {
-  z-index: 4;
   position: fixed;
   top: 58px;
   left: 0;
@@ -242,24 +244,142 @@ header .action .logout a {
 #nav-content nav a:hover {
   background-color: #F1F8E9;
 }
-.space-name {
+/* comp-ui */
+.form-elem {
+  margin-bottom: 1rem;
+}
+.form-elem.admin-box-holder {
+  margin-bottom: 0;
+}
+.form-line {
+  display: table;
+  width: 100%;
+}
+.form-block {
+  display: table-cell;
+}
+label.comp-ui {
+  display: block;
+  font-weight: bold;
+  margin-bottom: .25rem;
+}
+.form-elem.admin-box-holder label.comp-ui {
+  margin-bottom: .5rem;
+}
+select.comp-ui {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  background-color: white;
+  vertical-align: middle;
+  font-size: inherit;
+  box-sizing: content-box;
+}
+a.comp-ui,
+button.comp-ui {
+  width: 100%;
+  display: block;
+  padding: .5rem 0;
+  text-align: center;
+  background-color: #64DD17;
+  border: solid 1px #A5D6A7;
+  border-radius: 2rem;
+  cursor: pointer;
+}
+a.comp-ui.danger,
+button.comp-ui.danger {
+  color: white;
+  border-color: #B71C1C;
+  background-color: #F44336;
+}
+input.comp-ui,
+select.comp-ui,
+textarea.comp-ui {
+  width: 100%;
+  padding: .5em;
+  box-sizing: border-box;
+  border: solid 1px #DCEDC8;
+  border-radius: 3px;
+}
+.comp-btn-navigate {
+  margin-bottom: 1rem;
+}
+@media (max-width: 576px) {
+a.comp-ui,
+button.comp-ui,
+input.comp-ui,
+select.comp-ui,
+textarea.comp-ui {
+  font-size: 16px;
+}
+}
+@media (min-width: 576px) {
+a.comp-ui,
+button.comp-ui,
+input.comp-ui,
+select.comp-ui,
+textarea.comp-ui {
+  font-size: .9rem;
+}
+}
+/* comp-title */
+.comp-title {
   font-size: 1.25rem;
-  margin-bottom: 1.5rem;
 }
 @media (max-width: 768px) {
-.space-name {
+.comp-title {
   text-align: center;
 }
 }
-@media (min-width: 768px) {
+/* comp-information */
+.comp-information {
+  margin-bottom: 1rem;
+}
+.comp-information .elem {
+  display: table;
+  width: 100%;
+  margin-bottom: .5rem;
+}
+.comp-information .elem .head,
+.comp-information .elem .body {
+  display: table-cell;
+}
+.comp-information .elem .head {
+  width: 50%;
+  font-weight: bold;
+}
+@media (min-width: 992px) {
+.user-edit {
+  display: table;
+  width: 100%;
+}
+.comp-information,
+.comp-edit {
+  display: table-cell;
+}
+.comp-information {
+  width: 300px;
+}
+.comp-edit {
+  padding-left: 1rem;
+}
+}
+/* caution */
+.caution {
+  font-size: .8rem;
+  padding: .5rem 0 0 1rem;
+  text-indent: -0.5rem;
+}
+.caution i {
+  color: #E65100;
+  padding-right: .25rem;
 }
 /* comp-box */
 .comp-box {
-  padding: .5rem 1rem .75rem 1rem;
   background-color: white;
   border: solid 1px #DCEDC8;
   border-radius: 2rem;
-  margin-bottom: 1rem;
   position: relative;
 }
 .comp-box.absence {
@@ -281,38 +401,60 @@ header .action .logout a {
   width: 2.5rem;
 }
 .comp-box .arrival {
-  margin-bottom: .25rem;
+  display: table;
+  width: 100%;
+  line-height: 2rem;
   position: relative;
 }
-.comp-box .time-head {
-  display: inline-block;
-  width: 1.75rem;
+.comp-box .arrival .head,
+.comp-box .arrival .time {
+  display: table-cell;
+}
+.comp-box .arrival .head {
+  width: 2rem;
   text-align: center;
 }
-.comp-box .time-body {
+.comp-box .arrival .time {
   font-weight: bold;
   padding-left: .5rem;
 }
-.comp-box .time-accuracy {
+.comp-box .arrival .accuracy {
   position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  width: 2.5rem;
-  height: 2.5rem;
+  right: 0;
+  width: 2.1rem;
+  height: 2.1rem;
   border: solid 2px #FDD835;
   border-radius: 2.5rem;
   background-color: #FFF176;
   text-align: center;
-  line-height: 2.25rem;
+  line-height: 1.9rem;
+  font-size: .75rem;
 }
 .comp-box .flag {
   position: absolute;
   right: .5rem;
   top: .5rem;
 }
+@media (max-width: 576px) {
+.comp-box {
+  padding: 0 .5rem;
+  margin-bottom: .5rem;
+}
+.comp-box .name {
+  float: left;
+  width: 45%;
+}
+.comp-box .arrival {
+  float: right;
+  width: 55%;
+  margin-top: 9px;
+}
+}
 @media (min-width: 576px) {
 .comp-box {
   float: left;
+  padding: .5rem .5rem .75rem 1rem;
+  margin-bottom: 1rem;
 }
 }
 @media (min-width: 576px) and (max-width: 768px) {
@@ -343,4 +485,44 @@ header .action .logout a {
 }
 .comp-box:nth-child(4n) {
   margin-right: 0;
+}
+}
+/* admin-box */
+.admin-box {
+  background-color: white;
+  border: solid 1px #DCEDC8;
+  border-radius: 3px;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+.admin-box .line {
+  display: table;
+  width: 100%;
+  padding: .5rem 1rem 0 1rem;
+}
+.admin-box .line.check {
+  background-color: #DCEDC8;
+  padding: .5rem 1rem;
+}
+.admin-box .line .head,
+.admin-box .line .body {
+  display: table-cell;
+}
+.admin-box .line .head {
+  width: 50%;
+}
+.admin-box .line.check .head {
+  font-weight: bold;
+}
+.admin-box .line .body {
+  text-align: right;
+}
+@media (min-width: 768px) {
+.admin-box {
+  width: 49%;
+  float: left;
+}
+div.admin-box:nth-of-type(even) {
+  margin-left: 2%;
+}
 }

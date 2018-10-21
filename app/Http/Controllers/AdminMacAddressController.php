@@ -244,15 +244,18 @@ class AdminMacAddressController extends Controller
         if (!$request->id || !ctype_digit($request->id)) {
             return view('errors.403');
         }
-
         $user = Auth::user();
         $reader_id = $this->getReaderID();
+        $owner = DB::table('mac_addresses')
+            ->where('id', $request->id)->value('user_id');
 
         // normal userが自分のID以外を編集しようとした場合は403
-        if ( !($user->role == 'normal' && $item->user_id == $user->id )) {
-            log::warning(print_r("normalユーザーが異常な値でmac_addressをdeleteを試みる>>>", 1));
-            log::warning(print_r($user, 1));
-            return view('errors.403');
+        if ($user->role == 'normal') {
+            if ($owner != $user->id ) {
+                log::warning(print_r("normalユーザーが異常な値でmac_addressをdeleteを試みる>>>", 1));
+                log::warning(print_r($user, 1));
+                return view('errors.403');
+            }
         }
         // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
         if (

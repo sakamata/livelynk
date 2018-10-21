@@ -22,8 +22,8 @@
                             <th>代表管理者</th>
                             <th>ルーター</th>
                             <th>url_hash</th>
-                            <th>ifttt_event_name</th>
-                            <th>ifttt_webhooks_key</th>
+                            <th>IFTTT Event Name</th>
+                            <th>IFTTT Webhooks key</th>
                             <th>created_at</th>
                             <th>updated_at</th>
                             <th>操作</th>
