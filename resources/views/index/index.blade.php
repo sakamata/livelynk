@@ -41,7 +41,7 @@
     </div>
     <div class="arrival">
       <div class="head">IN</div>
-      <div class="time">{{date('n/j G:i', strtotime($item->max_arraival_at))}}</div>
+      <div class="time">{{date('n/j G:i', strtotime($item->min_arraival_at))}}</div>
       <div class="accuracy">{{ $rate1[$i] }}</div>
     </div>
     <div class="flag sp-none">
