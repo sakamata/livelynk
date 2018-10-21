@@ -77,6 +77,7 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            // 認証された場合は community_user で必要な値を取得 session に入れる
             $community_user = DB::table('community_user')
                 ->select('community_user.id')
                 ->leftJoin('users', 'users.id', '=', 'community_user.user_id')

@@ -23,6 +23,7 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
 
         // user1 comm1 super管理者
         $param = [
+            'id' => 1,
             'role_id' => 4,
             'hide' => 0,
             'last_access' => $subSecond,
@@ -33,6 +34,7 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
 
         // user2 comm2管理者
         $param = [
+            'id' => 2,
             'role_id' => 3,
             'hide' => 0,
             'last_access' => $subSecond,
@@ -43,6 +45,7 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
 
         // user3 comm3管理者
         $param = [
+            'id' => 3,
             'role_id' => 3,
             'hide' => 0,
             'last_access' => $subSecond,
@@ -53,6 +56,7 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
 
         // user4 AAA
         $param = [
+            'id' => 4,
             'role_id' => 2,
             'hide' => 0,
             'last_access' => $subSecond,
@@ -73,6 +77,7 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
             $subDay2 = Carbon::now();
             $subDay2 = $subDay2->subDay(rand(1,30));
             $param = [
+                'id' => $i,
                 'role_id' => 1,
                 'hide' => 0,
                 'last_access' => $subSecond,
@@ -93,6 +98,7 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
             $subDay2 = Carbon::now();
             $subDay2 = $subDay2->subDay(rand(1,30));
             $param = [
+                'id' => $i,
                 'role_id' => 1,
                 'hide' => 0,
                 'last_access' => $subHour,
@@ -113,6 +119,7 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
             $subDay2 = Carbon::now();
             $subDay2 = $subDay2->subDay(rand(1,30));
             $param = [
+                'id' => $i,
                 'role_id' => 1,
                 'hide' => 0,
                 'last_access' => $subSecond,

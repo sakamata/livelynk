@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
-use App\Rules\UniqueCommunity;
+use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -45,7 +46,6 @@ class RegisterController extends Controller
         $this->redirectTo = '/';
 
         $community = $this->GetCommunityFromPath($request->path);
-        log::debug(print_r($community, 1));
         if (!$community) {
             $this->community = "";
         } else {
@@ -75,7 +75,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
-            'email' => ['required', 'string', 'email', 'max:170', new UniqueCommunity($data['community_id'])],
+            'email' => 'required|string|email|max:170|unique:users',
             'password' => 'required|string|min:6|max:100|confirmed',
         ]);
     }
@@ -88,16 +88,46 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $email = $data['email'];
-        $community_id = $data['community_id'];
-        $login_id = $email . '@' . $community_id;
-        // user roleは作成時はDBデフォルト値"normal"に固定となる
-        return User::create([
-            'community_id' => $data['community_id'],
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'login_id' => $login_id,
-            'password' => Hash::make($data['password']),
-        ]);
+        DB::beginTransaction();
+        try{
+            // Laravel のregisterは User::create の返り値 $user を
+            // 最後に return で渡せば登録完了となるらしい。
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+            // 連携したtableに必要な値をinsertする
+            $community_id = $data['community_id'];
+            // 中間tableに値を入れる
+            $community_user_id = DB::table('community_user')->insertGetId([
+                'community_id' => $community_id,
+                'user_id' => $user->id,
+            ]);
+            $now = Carbon::now();
+            // user status管理のtableに値を入れる
+            // role_id デフォルト値 "normal" = 1 に固定
+            DB::table('communities_users_statuses')->insert([
+                'id' => $community_user_id,
+                'role_id' => 1,
+                'hide' => 0,
+                'last_access' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            DB::rollback();
+        }
+        if ($success) {
+            // session にcommunity値保存
+            session([
+                'community_id' => $community_id,
+                'community_user_id' => $community_user_id
+            ]);
+            return $user;
+        }
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use DB;
-use App\Rules\UniqueCommunity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -109,7 +108,7 @@ class AdminUserController extends Controller
             'id' => 'required|integer',
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
-            'email' => ['required', 'string', 'email', 'max:170', new UniqueCommunity($request->community_id)],
+            'email' => 'required|string|email|max:170|unique:users',
             'password' => 'required|string|min:6|max:100|confirmed',
         ]);
         $email = $request['email'];

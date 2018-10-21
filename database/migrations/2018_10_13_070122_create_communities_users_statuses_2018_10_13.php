@@ -14,7 +14,7 @@ class CreateCommunitiesUsersStatuses20181013 extends Migration
     public function up()
     {
         Schema::create('communities_users_statuses', function (Blueprint $table) {
-            $table->increments('id');
+            $table->integer('id')->unique()->primary();
             $table->integer('role_id');
             $table->boolean('hide')->default(false);
             $table->timestamp('last_access');
