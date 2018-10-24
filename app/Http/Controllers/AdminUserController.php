@@ -28,9 +28,9 @@ class AdminUserController extends Controller
             'admin_user' => ['nullable','regex:/asc|desc/'],
             'name' => ['nullable','regex:/asc|desc/'],
             'hide' => ['nullable','regex:/asc|desc/'],
-            'last_access' => ['nullable','regex:/asc|desc/'],
-            'created_at' => ['nullable','regex:/asc|desc/'],
-            'updated_at' => ['nullable','regex:/asc|desc/'],
+            's_last_access' => ['nullable','regex:/asc|desc/'],
+            's_created_at' => ['nullable','regex:/asc|desc/'],
+            's_updated_at' => ['nullable','regex:/asc|desc/'],
         ]);
 
         // ***ToDo*** もう少しスマートに書けないものか?
@@ -52,17 +52,17 @@ class AdminUserController extends Controller
             $order = $request->hide;
             $key = 'hide';
         }
-        elseif ($request->last_access) {
-            $order = $request->last_access;
-            $key = 'last_access';
+        elseif ($request->s_last_access) {
+            $order = $request->s_last_access;
+            $key = 's_last_access';
         }
-        elseif ($request->created_at) {
-            $order = $request->created_at;
-            $key = 'created_at';
+        elseif ($request->s_created_at) {
+            $order = $request->s_created_at;
+            $key = 's_created_at';
         }
-        elseif ($request->updated_at) {
-            $order = $request->updated_at;
-            $key = 'updated_at';
+        elseif ($request->s_updated_at) {
+            $order = $request->s_updated_at;
+            $key = 's_updated_at';
         } else {
             // default order
             $order = 'desc';
@@ -72,15 +72,13 @@ class AdminUserController extends Controller
         $user = Auth::user();
         // normalAdmin,readerAdmin はコミュニティ内のみでソート
         if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
-            $items = 'App\UserTable'::UsersGet()
-                ->orderBy($key, $order)
+            $items = 'App\UserTable'::UsersGet($key, $order)
                 ->MyCommunity($user->community_id)
                 ->get();
         }
         // superAdminは全て表示
         if ($user->role == 'superAdmin') {
-            $items = 'App\UserTable'::UsersGet()
-                ->orderBy($key, $order)
+            $items = 'App\UserTable'::UsersGet($key, $order)
                 ->get();
         }
 

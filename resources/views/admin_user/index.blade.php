@@ -79,7 +79,7 @@
                             </th>
                             <th>
                                 @component('components.order', [
-                                    'name' => 'last_access',
+                                    'name' => 's_last_access',
                                     'firld' => '最終来訪',
                                     'key' => $key,
                                     'order' => $order,
@@ -89,7 +89,7 @@
                             </th>
                             <th>
                                 @component('components.order', [
-                                    'name' => 'created_at',
+                                    'name' => 's_created_at',
                                     'firld' => '登録日時',
                                     'key' => $key,
                                     'order' => $order,
@@ -99,7 +99,7 @@
                             </th>
                             <th>
                                 @component('components.order', [
-                                    'name' => 'updated_at',
+                                    'name' => 's_updated_at',
                                     'firld' => '更新日時',
                                     'key' => $key,
                                     'order' => $order,

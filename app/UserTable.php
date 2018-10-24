@@ -40,7 +40,7 @@ class UserTable extends Model
     }
 
 
-    public function scopeUsersGet($query)
+    public function scopeUsersGet($query, $key, $order)
     {
         // 'mac_addresses.*',
         return $query->select([
@@ -59,7 +59,8 @@ class UserTable extends Model
         ->Join('communities_users_statuses', 'community_user.id', '=', 'communities_users_statuses.id')
         ->Join('roles', 'communities_users_statuses.role_id', '=', 'roles.id')
         // ->leftJoin('mac_addresses', 'mac_addresses.community_user_id', '=', 'community_user.id')
-        ->leftJoin('communities', 'community_user.community_id', '=', 'communities.id');
+        ->leftJoin('communities', 'community_user.community_id', '=', 'communities.id')
+        ->orderBy($key, $order);
     }
 
     public function scopeSelf($query, $self_id)
