@@ -1,9 +1,11 @@
 <?php
-
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+
+use App\Providers\AuthUserProvider;
+use Auth;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -15,6 +17,17 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
     ];
+
+    // Thanks!! https://blog.regrex.jp/2016/06/23/post-627/
+    public function register() {
+        Auth::provider('auth_ex', function($app) {
+            // スタックオーバーフロー先生はこれで取れると書いてあるんだけど、モデルが取れない…
+            // $model = $this->app['config']['auth.model'];
+            $model = $app['config']['auth.providers.users.model'];
+            return new AuthUserProvider($app['hash'], $model);
+        });
+    }
+
 
     /**
      * Register any authentication / authorization services.

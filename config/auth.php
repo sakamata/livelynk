@@ -64,9 +64,10 @@ return [
     |
     */
 
+    // *auth_ex* Thanks!! https://blog.regrex.jp/2016/06/23/post-627/
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
+            'driver' => 'auth_ex',
             'model' => App\User::class,
         ],
 
