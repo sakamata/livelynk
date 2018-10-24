@@ -59,7 +59,7 @@
                             </th>
                             <th>
                                 @component('components.order', [
-                                    'name' => 'admin_user',
+                                    'name' => 'role',
                                     'firld' => 'role',
                                     'key' => $key,
                                     'order' => $order,

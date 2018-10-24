@@ -25,7 +25,7 @@ class AdminUserController extends Controller
     {
         $request->validate([
             'id' => ['nullable','regex:/asc|desc/'],
-            'admin_user' => ['nullable','regex:/asc|desc/'],
+            'role' => ['nullable','regex:/asc|desc/'],
             'name' => ['nullable','regex:/asc|desc/'],
             'hide' => ['nullable','regex:/asc|desc/'],
             's_last_access' => ['nullable','regex:/asc|desc/'],
@@ -40,9 +40,9 @@ class AdminUserController extends Controller
             $order = $request->id;
             $key = 'id';
         }
-        elseif ($request->admin_user) {
-            $order = $request->admin_user;
-            $key = 'admin_user';
+        elseif ($request->role) {
+            $order = $request->role;
+            $key = 'role';
         }
         elseif ($request->name) {
             $order = $request->name;
