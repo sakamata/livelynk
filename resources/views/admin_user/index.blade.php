@@ -67,6 +67,7 @@
                                 ])
                                 @endcomponent
                             </th>
+                            @can('superAdmin')
                             <th>
                                 @component('components.order', [
                                     'name' => 'community',
@@ -77,6 +78,7 @@
                                 ])
                                 @endcomponent
                             </th>
+                            @endcan
                             <th>
                                 @component('components.order', [
                                     'name' => 's_last_access',
@@ -150,7 +152,9 @@
                                 </table>
                             </td>
                             <td>{{$item->role}}</td>
+                            @can('superAdmin')
                             <td>{{$item->community_id}} : {{$item->community_name}}<br>{{$item->community_service_name}}</td>
+                            @endcan
                             <td>{{$item->s_last_access->format('n月j日 G:i')}}</td>
                             <td>{{$item->s_created_at->format('n月j日 G:i')}}</td>
                             <td>{{$item->s_updated_at->format('n月j日 G:i')}}</td>
