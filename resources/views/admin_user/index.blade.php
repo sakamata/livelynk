@@ -121,6 +121,7 @@
                             <td>
                                 <table class="table table-hover table-sm table-borderless">
                                     <tbody>
+                            {{--
                             @if($item->mac_addresses != null)
                                 @foreach($item->mac_addresses as $mac_add)
                                     @if($mac_add->hide == true)
@@ -144,14 +145,15 @@
                                         </tr>
                                 @endforeach
                             @endif
+                            --}}
                                     </tbody>
                                 </table>
                             </td>
                             <td>{{$item->role}}</td>
-                            <td>{{$item->community_id}} : {{$item->community->name}}<br>{{$item->community->service_name}}</td>
-                            <td>{{$item->last_access->format('n月j日 G:i')}}</td>
-                            <td>{{$item->created_at->format('n月j日 G:i')}}</td>
-                            <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
+                            <td>{{$item->community_id}} : {{$item->community_name}}<br>{{$item->community_service_name}}</td>
+                            <td>{{$item->s_last_access->format('n月j日 G:i')}}</td>
+                            <td>{{$item->s_created_at->format('n月j日 G:i')}}</td>
+                            <td>{{$item->s_updated_at->format('n月j日 G:i')}}</td>
                             <td>
                                 <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
                             </td>

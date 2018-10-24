@@ -72,12 +72,16 @@ class AdminUserController extends Controller
         $user = Auth::user();
         // normalAdmin,readerAdmin はコミュニティ内のみでソート
         if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
-            $items = 'App\UserTable'::orderBy($key, $order)
-                ->MyCommunity($user->community_id)->get();
+            $items = 'App\UserTable'::UsersGet()
+                ->orderBy($key, $order)
+                ->MyCommunity($user->community_id)
+                ->get();
         }
         // superAdminは全て表示
         if ($user->role == 'superAdmin') {
-            $items = 'App\UserTable'::orderBy($key, $order)->get();
+            $items = 'App\UserTable'::UsersGet()
+                ->orderBy($key, $order)
+                ->get();
         }
 
         return view('admin_user.index',[

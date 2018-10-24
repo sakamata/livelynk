@@ -26,6 +26,18 @@ class Controller extends BaseController
             ->where('id', $user->community_id)->value('user_id');
     }
 
+    // user のroleを取得 roleの文字列で返す
+    // Auth::user()->role で取得可能なので、未使用
+    // 他のuser で取得が必要な場合に使えるが基本いらない
+    public function getUserRole($community_user_id)
+    {
+        return DB::table('communities_users_statuses')
+            ->leftJoin('roles', 'communities_users_statuses.role_id', '=', 'roles.id')
+            ->where([
+                ['communities_users_statuses.id', $community_user_id],
+        ])->pluck('role')->first();
+    }
+
     // getのパラメーター path がDBに存在する communityのpathか判定
     // true なら該当する commyunity のtable record を返す
     public function GetCommunityFromPath($request_path)
