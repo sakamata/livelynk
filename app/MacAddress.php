@@ -18,8 +18,8 @@ class MacAddress extends Model
         'arraival_at',
         'departure_at',
         'posted_at',
-        'created_at',
-        'updated_at',
+        'm_created_at',
+        'm_updated_at',
     ];
 
     public function community_user()
@@ -36,4 +36,16 @@ class MacAddress extends Model
     {
         return $query->where('community_id', $self_community);
     }
+
+    public function scopeUserHaving($query, $user_id)
+    {
+        return $query->select([
+            'mac_addresses.*',
+            'community_user.user_id',
+            'community_user.community_id',
+        ])
+            ->Join('community_user', 'community_user.id', '=', 'mac_addresses.community_user_id')
+            ->where('community_user.user_id', $user_id);
+    }
+
 }

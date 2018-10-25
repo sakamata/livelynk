@@ -53,4 +53,12 @@ class Controller extends BaseController
         }
         return $community;
     }
+
+    public function roleNameToIdChange($role_name)
+    {
+        return DB::table('roles')
+            ->where('role', $role_name)
+        ->pluck('id')->first();
+    }
+
 }

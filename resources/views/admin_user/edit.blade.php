@@ -7,36 +7,34 @@
 <div class="user-edit">
   <div class="comp-information">
     <div class="elem">
-      <span class="head">ID</span>
-      <span class="body">{{$item->id}}</span>
-    </div>
-    <div class="elem">
       <span class="head">名前</span>
       <span class="body">{{$item->name}}</span>
     </div>
+    @can('superAdmin')
     <div class="elem">
       <span class="head">コミュニティID</span>
       <span class="body">{{$item->community_id}}</span>
     </div>
     <div class="elem">
       <span class="head">コミュニティコード</span>
-      <span class="body">{{$item->community->name}}</span>
+      <span class="body">{{$item->community_name}}</span>
     </div>
     <div class="elem">
       <span class="head">コミュニティ名</span>
-      <span class="body">{{$item->community->service_name}}</span>
+      <span class="body">{{$item->community_service_name}}</span>
     </div>
+    @endcan
     <div class="elem">
       <span class="head">登録日時</span>
-      <span class="body">{{$item->created_at->format('n月j日 G:i:s')}}</span>
+      <span class="body">{{$item->s_created_at->format('n月j日 G:i:s')}}</span>
     </div>
     <div class="elem">
       <span class="head">更新日時</span>
-      <span class="body">{{$item->updated_at->format('n月j日 G:i:s')}}</span>
+      <span class="body">{{$item->s_updated_at->format('n月j日 G:i:s')}}</span>
     </div>
     <div class="elem">
       <span class="head">最終来訪</span>
-      <span class="body">{{$item->last_access->format('n月j日 G:i:s')}}</span>
+      <span class="body">{{$item->s_last_access->format('n月j日 G:i:s')}}</span>
     </div>
     @if(Auth::user()->id == $item->id || Auth::user()->role == 'superAdmin')
     <a href="/password/edit?id={{$item->id}}" class="comp-ui">パスワード変更</a>
@@ -131,31 +129,24 @@
         </div>
       </div>
       <div class="form-elem admin-box-holder clearfix">
-        <label class="comp-ui">デバイス（所有するデバイスをチェックして登録）</label>
-        @foreach($mac_addresses as $mac_add)
+        <label class="comp-ui">デバイス</label>
+        @forelse($mac_addresses as $mac_add)
         @if($mac_add->hide == true)
-        @elseif($mac_add->current_stay == true && $mac_add->user_id == 1)
+        <!-- 非表示デバイスの際の表示設定 -->
         @elseif($mac_add->current_stay == true)
-        @elseif($mac_add->user_id == $item->id)
+        <!-- 滞在中デバイスの際の表示設定 -->
         @else
+        <!-- その他通常デバイスの際の表示設定 -->
         @endif
         <div class="admin-box">
           <div class="line check">
-            <div class="head"><label for="devise-check-{{$mac_add->id}}">チェック</label></div>
+            <div class="head"><label for="devise-check-{{$mac_add->id}}"><!-- チェックで端末登録を廃止 --></label></div>
             <div class="body">
-              @if($mac_add->user_id == $item->id)
-              <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}" checked="checked" id="devise-check-{{$mac_add->id}}">
-              @else
-              <input type="checkbox" name="mac_addres_id[]" value="{{$mac_add->id}}" id="devise-check-{{$mac_add->id}}">
-              @endif
+                <!-- チェックボックス削除しました -->
             </div>
           </div>
           <div class="line">
-            <div class="head">ID</div>
-            <div class="body">{{$mac_add->id}}</div>
-          </div>
-          <div class="line">
-            <div class="head">滞在中</div>
+            <div class="head">滞在中: mac_sdd_ID:{{$mac_add->id}}</div>
             <div class="body">{{$mac_add->current_stay}}</div>
           </div>
           <div class="line">
@@ -163,38 +154,55 @@
             <div class="body">{{$mac_add->mac_address}}</div>
           </div>
           <div class="line">
-            <div class="head">Vendor</div>
-            <div class="body">{{$mac_add->vendor}}</div>
+            <div class="head">メーカー（自動）</div>
+            <div class="body">
+              <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}]['vendor']" value="{{old('vendor', $mac_add->vendor)}}" placeholder="40文字まで">
+            </div>
           </div>
           <div class="line">
-            <div class="head">デバイス名</div>
-            <div class="body">{{$mac_add->device_name}}</div>
+            <div class="head">デバイスメモ</div>
+            <div class="body">
+              <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}]['device_name']" value="{{old('device_name', $mac_add->device_name)}}" placeholder="40文字まで">
+            </div>
           </div>
           <div class="line">
-            <div class="head">ルーターID</div>
-            <div class="body">{{$mac_add->router_id}}</div>
+            <div class="head">もっとも最近</div>
+            <div class="body">{{Carbon\Carbon::parse($mac_add->posted_at)->format('n月j日 G:i')}}</div>
           </div>
           <div class="line">
             <div class="head">来訪日時</div>
             <div class="body">{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i')}}</div>
           </div>
           <div class="line">
-            <div class="head">posted_at</div>
-            <div class="body">{{Carbon\Carbon::parse($mac_add->posted_at)->format('n月j日 G:i')}}</div>
+            <div class="head">登録日時</div>
+            <div class="body">{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}</div>
           </div>
           <div class="line">
-            <div class="head">登録日時</div>
-	    <div class="body">{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}</div>
+            <div class="head">非表示にする</div>
+              <div class="body">
+                  <!-- チェックされていない場合は0を送信 -->
+                  <input type="hidden" name="mac_address_hide[{{$mac_add->id}}]" value="0">
+                  @if($mac_add->hide == true)
+                  <input type="checkbox" name="mac_address_hide[{{$mac_add->id}}]" value="1" checked="checked" id="devise-check-{{$mac_add->id}}">
+                  @else
+                  <input type="checkbox" name="mac_address_hide[{{$mac_add->id}}]" value="1" id="devise-check-{{$mac_add->id}}">
+                  @endif
+            </div>
           </div>
+
           <div class="line line-ui">
-	    <div class="body">
+            <div class="body">
               @if($mac_add->user_id == $item->id)
+              <!-- 現状遷移ボタンですが、いずれチェック方式で削除可能に -->
               <a href="/admin_mac_address/delete?id={{$mac_add->id}}" class="comp-ui danger">削除</a>
               @endif
             </div>
           </div>
         </div>
-        @endforeach
+        @empty
+        <!-- デバイス無しの状態の際のメッセージ、余白等デザインお願いします。 -->
+        <p>保持しているデバイスはありません。</p>
+        @endforelse
       </div>
       <div class="form-elem">
         <button type="submit" class="comp-ui">ユーザー情報を更新</button>
