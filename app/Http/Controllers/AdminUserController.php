@@ -159,7 +159,6 @@ class AdminUserController extends Controller
             ->get();
 
         $communities = DB::table('communities')->get();
-        // return view('admin_user.test', [
         return view('admin_user.edit', [
             'item' => $item,
             'mac_addresses' => $mac_addresses,
@@ -176,7 +175,7 @@ class AdminUserController extends Controller
             'email' => 'required|string|email|max:170',
             'role' => ['required', 'regex:/normal|normalAdmin|readerAdmin|superAdmin/'],
             'hide' => 'required|boolean',
-            'mac_address_hide.*' => 'required|boolean',
+            'mac_address.*.hide' => 'boolean',
             'mac_address.*.vendor' => 'nullable|string|max:40',
             'mac_address.*.device_name' => 'nullable|string|max:40',
         ]);
@@ -216,30 +215,16 @@ class AdminUserController extends Controller
         ];
         'App\CommunityUserStatus'::where('id', $request->id)->update($param_status);
 
-        // 非表示デバイスの変更
-        // 該当 mac_addresses id を配列で受け取りDBを更新
-        // checkbox から受けたデータ形式 => mac_address_hide['$mac_add->id']
-        foreach ((array)$request->mac_address_hide as $mac_id => $value) {
-            DB::table('mac_addresses')->where('id', $mac_id)->update([
-                'hide' => $value,
-                'updated_at' => $now,
+        // mac_address 編集項目の変更
+        foreach ((array)$request->mac_address as $no_use => $mac_id) {
+            DB::table('mac_addresses')->where('id', $mac_id)
+                ->update([
+                    'vendor'      => $mac_id['vendor'],
+                    'device_name' => $mac_id['device_name'],
+                    'hide'        => $mac_id['hide'],
+                    'updated_at'  => $now,
             ]);
         }
-
-
-
-        log::debug(print_r($request->mac_address,1));
-        // mac_address の文字列欄変更
-        foreach ((array)$request->mac_address as $fuga) {
-            log::debug(print_r($fuga,1));
-            log::debug(print_r($fuga['vendor'],1));
-            // DB::table('mac_addresses')->where('id', $mac_id)->update([
-            //     'hide' => $value,
-            //     'updated_at' => $now,
-            // ]);
-        }
-
-
 
         if ($user->role == 'normal') {
             return redirect('/admin_user/edit?id='. $user->id)->with('message', 'ユーザープロフィールを編集しました。');

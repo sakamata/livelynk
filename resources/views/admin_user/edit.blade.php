@@ -156,13 +156,13 @@
           <div class="line">
             <div class="head">メーカー（自動）</div>
             <div class="body">
-              <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}]['vendor']" value="{{old('vendor', $mac_add->vendor)}}" placeholder="40文字まで">
+              <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}][vendor]" value="{{old('vendor', $mac_add->vendor)}}" placeholder="40文字まで">
             </div>
           </div>
           <div class="line">
             <div class="head">デバイスメモ</div>
             <div class="body">
-              <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}]['device_name']" value="{{old('device_name', $mac_add->device_name)}}" placeholder="40文字まで">
+              <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}][device_name]" value="{{old('device_name', $mac_add->device_name)}}" placeholder="40文字まで">
             </div>
           </div>
           <div class="line">
@@ -181,11 +181,11 @@
             <div class="head">非表示にする</div>
               <div class="body">
                   <!-- チェックされていない場合は0を送信 -->
-                  <input type="hidden" name="mac_address_hide[{{$mac_add->id}}]" value="0">
+                  <input type="hidden" name="mac_address[{{$mac_add->id}}][hide]" value="0">
                   @if($mac_add->hide == true)
-                  <input type="checkbox" name="mac_address_hide[{{$mac_add->id}}]" value="1" checked="checked" id="devise-check-{{$mac_add->id}}">
+                  <input type="checkbox" name="mac_address[{{$mac_add->id}}][hide]" value="1" checked="checked" id="devise-check-{{$mac_add->id}}">
                   @else
-                  <input type="checkbox" name="mac_address_hide[{{$mac_add->id}}]" value="1" id="devise-check-{{$mac_add->id}}">
+                  <input type="checkbox" name="mac_address[{{$mac_add->id}}][hide]" value="1" id="devise-check-{{$mac_add->id}}">
                   @endif
             </div>
           </div>
