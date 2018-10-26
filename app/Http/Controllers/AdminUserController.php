@@ -216,12 +216,12 @@ class AdminUserController extends Controller
         'App\CommunityUserStatus'::where('id', $request->id)->update($param_status);
 
         // mac_address 編集項目の変更
-        foreach ((array)$request->mac_address as $no_use => $mac_id) {
+        foreach ((array)$request->mac_address as $mac_id => $value) {
             DB::table('mac_addresses')->where('id', $mac_id)
                 ->update([
-                    'vendor'      => $mac_id['vendor'],
-                    'device_name' => $mac_id['device_name'],
-                    'hide'        => $mac_id['hide'],
+                    'vendor'      => $value['vendor'],
+                    'device_name' => $value['device_name'],
+                    'hide'        => $value['hide'],
                     'updated_at'  => $now,
             ]);
         }

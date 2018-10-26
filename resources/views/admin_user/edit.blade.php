@@ -146,7 +146,7 @@
             </div>
           </div>
           <div class="line">
-            <div class="head">滞在中: mac_sdd_ID:{{$mac_add->id}}</div>
+            <div class="head">滞在中</div>
             <div class="body">{{$mac_add->current_stay}}</div>
           </div>
           <div class="line">

@@ -125,8 +125,11 @@ return [
     */
 
     'custom' => [
-        '属性名' => [
-            'ルール名' => 'カスタムメッセージ',
+        'mac_address.*.vendor' => [
+            'max' => ':attributeには、:max以下の数字を指定してください。',
+        ],
+        'mac_address.*.device_name' => [
+            'max' => ':attributeには、:max以下の数字を指定してください。',
         ],
     ],
 
@@ -146,7 +149,9 @@ return [
         'password' => 'パスワード',
         'name' => '名前',
         'vendor' => '端末メーカー',
-        'device_name' => 'デバイス名',
+        'mac_address.*.vendor' => '端末メーカー',
+        'device_name' => 'デバイスメモ',
+        'mac_address.*.device_name' => 'デバイスメモ',
         'service_name' => 'コミュニティ名称',
         'hash_key' => 'secret',
         'ifttt_event_name' => 'IFTTT Event Name',
