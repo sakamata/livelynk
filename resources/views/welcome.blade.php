@@ -21,37 +21,30 @@
                 background-color: #f1f8e9;
                 color: #636b6f;
                 font-weight: 100;
-                height: 100vh;
                 margin: 0;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
             }
-
             .flex-center {
                 align-items: center;
                 display: flex;
                 justify-content: center;
             }
-
             .position-ref {
                 position: relative;
             }
-
             .top-right {
                 position: absolute;
                 right: 10px;
                 top: 18px;
             }
-
             .content {
-                text-align: center;
-            }
 
+            }
             .title {
-                margin-top: 200px;
-                font-family: 'Raleway', sans-serif;
-                font-size: 84px;
-            }
-
-            .m-b-md {
+                font-size: 9vw;
+                margin-top: 50px;
                 margin-bottom: 30px;
             }
             .message {
@@ -62,12 +55,12 @@
                 background-color: #ffffff;
                 margin-top: 50px;
                 margin-bottom: 50px;
-                margin-left: auto;
-                margin-right: auto;
                 padding-top: 20px;
                 padding-bottom: 40px;
                 width: 95%;
                 border-radius: 30px;
+                margin-left: auto;
+                margin-right: auto;
             }
             .summary {
                 text-align: left;
@@ -106,12 +99,12 @@
     <body>
         <div class="flex-center position-ref">
             <div class="content">
-                <div class="title m-b-md">
-                    <div class="message">
-                        @component('components.message')
-                        @endcomponent
-                    </div>
+                <div class="title">
                     {{ config('app.name', 'Laravel') }}<br>@ Geek Office
+                </div>
+                <div class="message">
+                    @component('components.message')
+                    @endcomponent
                 </div>
                 <p class="lead">会員の方は専用のURLより閲覧してください。</p>
                 <div class="summary-wp">
@@ -119,7 +112,7 @@
                         <h1>Livelynkとは?</h1>
                         <h2>今その『場』に『誰』がいるか？　がわかるウェブサービスです</h2>
                         <figure>
-                            <img src="{{asset("img/welcome/sample_shot.png")}}" alt="sample画像">
+                            <img src="{{asset("img/welcome/sample_shot.png")}}" width="50%" alt="sample画像">
                             <figcaption>※画面は開発中のものです</figcaption>
                         </figure>
                         <h3>『場』の持つ力</h3>
@@ -137,13 +130,13 @@
                         <h3>しくみ</h3>
                         <p>小さくて安価なコンピュータ”RaspberryPi”で『場』のwi-fiネットワークに繋がったスマホやパソコンの固有ID（MACアドレス）を調べて、持ち主である『誰』が居るかをウェブページやスマホアプリ等でお知らせする仕組みです。</p>
                         <figure>
-                            <img src="{{asset("img/welcome/plan_image.png")}}" width="600" alt="slack sample画像">
+                            <img src="{{asset("img/welcome/plan_image.png")}}" width="100%" alt="slack sample画像">
                             <figcaption>※開発資料より</figcaption>
                         </figure>
 
                         <p>『場』のメンバーだけが知っている非公開ウェブサイトで『今誰がいる』かを閲覧したり、SlackやLINE等のチャットアプリと連携して、来訪者や帰宅者の通知をスマホやパソコンでリアルタイムに知る事が出来ます。もちろん非通知にして存在を隠すことも可能です。</p>
                         <figure>
-                            <img src="{{asset("img/welcome/sample_slack.png")}}" width="400" alt="slack sample画像">
+                            <img src="{{asset("img/welcome/sample_slack.png")}}" width="100%" alt="slack sample画像">
                             <figcaption>※Slack等でリアルタイムな通知が受け取れます</figcaption>
                         </figure>
                         <p>webカメラを設置して監視社会的になったり、プライバシーを侵害したりすることなく、コミュニティのメンバーだけが、その『場』の人の存在を伺い知る事ができます。</p>
