@@ -92,7 +92,14 @@
             p {
                 font-size: 18px;
                 padding-left: 5%;
-
+            }
+            figure {
+                margin: 50px;
+                text-align: center;
+            }
+            img {
+                border: 1px solid #ccc;
+                border-radius: 6px;
             }
         </style>
     </head>
@@ -111,7 +118,10 @@
                     <div class="summary">
                         <h1>Livelynkとは?</h1>
                         <h2>今その『場』に『誰』がいるか？　がわかるウェブサービスです</h2>
-
+                        <figure>
+                            <img src="{{asset("img/welcome/sample_shot.png")}}" alt="sample画像">
+                            <figcaption>※画面は開発中のものです</figcaption>
+                        </figure>
                         <h3>『場』の持つ力</h3>
                         <p>シェアオフィスやコワーキングスペース、趣味のコミュニティ等、シェアリングエコノミーやコミュニティが価値を持つ時代になりました。昔と比べて、好きな時間に好きな場所で好きな人同士で好きな事をできる時代になりつつある事を実感する人は多いのではないでしょうか？</p>
                         <p>『場』が盛り上がる事で単に楽しいだけでなく、新しい繋がりや、関係、モノが生まれる可能性を秘めた時代に来ていると思いませんか？</p>
@@ -126,7 +136,16 @@
 
                         <h3>しくみ</h3>
                         <p>小さくて安価なコンピュータ”RaspberryPi”で『場』のwi-fiネットワークに繋がったスマホやパソコンの固有ID（MACアドレス）を調べて、持ち主である『誰』が居るかをウェブページやスマホアプリ等でお知らせする仕組みです。</p>
+                        <figure>
+                            <img src="{{asset("img/welcome/plan_image.png")}}" width="600" alt="slack sample画像">
+                            <figcaption>※開発資料より</figcaption>
+                        </figure>
+
                         <p>『場』のメンバーだけが知っている非公開ウェブサイトで『今誰がいる』かを閲覧したり、SlackやLINE等のチャットアプリと連携して、来訪者や帰宅者の通知をスマホやパソコンでリアルタイムに知る事が出来ます。もちろん非通知にして存在を隠すことも可能です。</p>
+                        <figure>
+                            <img src="{{asset("img/welcome/sample_slack.png")}}" width="400" alt="slack sample画像">
+                            <figcaption>※Slack等でリアルタイムな通知が受け取れます</figcaption>
+                        </figure>
                         <p>webカメラを設置して監視社会的になったり、プライバシーを侵害したりすることなく、コミュニティのメンバーだけが、その『場』の人の存在を伺い知る事ができます。</p>
 
                         <h3>作ったのは？</h3>
