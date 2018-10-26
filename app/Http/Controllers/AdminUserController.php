@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-use App\UserTable;
+use App\Service\UserService;
+use App\UserTable; //これを消す位の勢いでリファクタリング
 
 // app\Http\Controllers\Auth\RegisterController.php にある use を単純に追加したのみ
 use App\User;
@@ -19,6 +20,13 @@ class AdminUserController extends Controller
 {
     // app\Http\Controllers\Auth\RegisterController.php にある use を単純に追加したのみ
     use RegistersUsers;
+
+    private $call_user;
+
+    public function __construct(UserService $call_user)
+    {
+        $this->call_user = $call_user;
+    }
 
     // view URL は admin_users_edit としている
     public function index(Request $request)
@@ -133,6 +141,7 @@ class AdminUserController extends Controller
             return view('errors.403');
         }
         $item = 'App\UserTable'::UsersGet('community_user.id', 'asc')->where('community_user.id', $request->id)->first();
+
         if (!$item) {
             return view('errors.403');
         }
@@ -149,6 +158,8 @@ class AdminUserController extends Controller
         ) {
             return view('errors.403');
         }
+
+var_dump($this->call_user->UserGet('a','b','c'));
 
         $reader_id = $this->getReaderID();
         $mac_addresses = 'App\MacAddress'::UserHaving($request->id)
@@ -239,7 +250,11 @@ class AdminUserController extends Controller
         if (!$request->id || !ctype_digit($request->id)) {
             return view('errors.403');
         }
-        $item = 'App\UserTable'::where('id', $request->id)->first();
+        // $item = 'App\UserTable'::where('id', $request->id)->first();
+
+        $item = 'App\UserTable'::UsersGet('community_user.id', 'asc')->where('community_user.id', $request->id)->first();
+
+
         if (!$item) {
             return view('errors.403');
         }

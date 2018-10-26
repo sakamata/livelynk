@@ -65,7 +65,7 @@ class UserTable extends Model
 
     public function scopeSelf($query, $self_id)
     {
-        return $query->where('id', $self_id);
+        return $query->where('community_user.id', $self_id);
     }
 
     public function scopeMyCommunity($query, $self_community)

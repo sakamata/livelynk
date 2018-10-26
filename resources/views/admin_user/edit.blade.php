@@ -140,7 +140,7 @@
         @endif
         <div class="admin-box">
           <div class="line check">
-            <div class="head"><label for="devise-check-{{$mac_add->id}}"><!-- チェックで端末登録を廃止 --></label></div>
+            <div class="head"><label for="devise-check-{{$mac_add->id}}"><!-- チェックで端末登録を廃止 デザイン対応が必要な場合はお願いします。--></label></div>
             <div class="body">
                 <!-- チェックボックス削除しました -->
             </div>
