@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Service\UserService;
+use App\Service\MacAddressService;
 use App\UserTable; //これを消す位の勢いでリファクタリング
 
 // app\Http\Controllers\Auth\RegisterController.php にある use を単純に追加したのみ
@@ -22,13 +23,19 @@ class AdminUserController extends Controller
     use RegistersUsers;
 
     private $call_user;
+    private $call_mac;
 
-    public function __construct(UserService $call_user)
+    public function __construct(
+        UserService $call_user,
+        MacAddressService $call_mac
+        )
     {
         $this->call_user = $call_user;
+        $this->call_mac = $call_mac;
     }
 
     // view URL は admin_users_edit としている
+    // normal user は閲覧できない
     public function index(Request $request)
     {
         $request->validate([
@@ -78,16 +85,20 @@ class AdminUserController extends Controller
         }
 
         $user = Auth::user();
-        // normalAdmin,readerAdmin はコミュニティ内のみでソート
+        // normalAdmin,readerAdmin は同コミュニティ内のみを抽出
         if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
-            $items = 'App\UserTable'::UsersGet($key, $order)
-                ->MyCommunity($user->community_id)
-                ->get();
+            $items = $this->call_user->SelfCommunityUsersGet(
+                (string)$key,
+                (string)$order,
+                (int)$user->community_id
+            );
         }
         // superAdminは全て表示
         if ($user->role == 'superAdmin') {
-            $items = 'App\UserTable'::UsersGet($key, $order)
-                ->get();
+            $items = $this->call_user->AllCommunityUsersGet(
+                (string)$key,
+                (string)$order
+            );
         }
 
         return view('admin_user.index',[
@@ -110,10 +121,9 @@ class AdminUserController extends Controller
     }
 
     // app\Http\Controllers\Auth\RegisterController.php をコピーしたのみ
-    // ***ToDo*** 処理の一本化（バリデートを2か所に書いてしまっている）
+    // ***ToDo*** 処理の一本化（同じを2か所に書いてしまっている）
     protected function create(Request $request)
     {
-        // *****ToDo***** emailの独自バリデート、コミュニティ内でのユニーク確認（registerも同様）
         $request->validate([
             'id' => 'required|integer',
             'community_id' => 'required|integer',
@@ -121,17 +131,43 @@ class AdminUserController extends Controller
             'email' => 'required|string|email|max:170|unique:users',
             'password' => 'required|string|min:6|max:100|confirmed',
         ]);
-        $email = $request['email'];
-        $login_id = $email . '@' . $request->community_id;
         // user roleは作成時はDBデフォルト値"normal"に固定となる
-        User::create([
-            'community_id' => $request->community_id,
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'login_id' => $login_id,
-            'password' => Hash::make($request['password']),
-        ]);
-        return redirect('/admin_user')->with('message', '新規ユーザーを作成しました。');
+        DB::beginTransaction();
+        try{
+            // Laravel のregisterは User::create の返り値 $user を
+            // 最後に return で渡せば登録完了となるらしい。
+            $user = User::create([
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+            ]);
+            // 連携したtableに必要な値をinsertする
+            $community_id = $request['community_id'];
+            // 中間tableに値を入れる
+            $community_user_id = DB::table('community_user')->insertGetId([
+                'community_id' => $community_id,
+                'user_id' => $user->id,
+            ]);
+            $now = Carbon::now();
+            // user status管理のtableに値を入れる
+            // role_id デフォルト値 "normal" = 1 に固定
+            DB::table('communities_users_statuses')->insert([
+                'id' => $community_user_id,
+                'role_id' => 1,
+                'hide' => 0,
+                'last_access' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            DB::rollback();
+        }
+        if ($success) {
+            return redirect('/admin_user')->with('message', '新規ユーザーを作成しました。');
+        }
     }
 
     public function edit(Request $request)
@@ -140,11 +176,8 @@ class AdminUserController extends Controller
         if (!$request->id || !ctype_digit($request->id)) {
             return view('errors.403');
         }
-        $item = 'App\UserTable'::UsersGet('community_user.id', 'asc')->where('community_user.id', $request->id)->first();
-
-        if (!$item) {
-            return view('errors.403');
-        }
+        $item = $this->call_user->PersonGet($request->id);
+        if (!$item) { return view('errors.403');}
 
         $user = Auth::user();
         // normal は自分以外は閲覧不可
@@ -158,17 +191,10 @@ class AdminUserController extends Controller
         ) {
             return view('errors.403');
         }
-
-var_dump($this->call_user->UserGet('a','b','c'));
-
-        $reader_id = $this->getReaderID();
-        $mac_addresses = 'App\MacAddress'::UserHaving($request->id)
-            ->MyCommunity($user->community_id)
-            ->orderBy('hide','asc')
-            ->orderBy('user_id', 'desc')
-            ->orderBy('arraival_at','desc')
-            ->get();
-
+        $mac_addresses = $this->call_mac->PersonHavingGet(
+            (int)$request->id,
+            (int)$user->community_id
+        );
         $communities = DB::table('communities')->get();
         return view('admin_user.edit', [
             'item' => $item,
@@ -228,13 +254,7 @@ var_dump($this->call_user->UserGet('a','b','c'));
 
         // mac_address 編集項目の変更
         foreach ((array)$request->mac_address as $mac_id => $value) {
-            DB::table('mac_addresses')->where('id', $mac_id)
-                ->update([
-                    'vendor'      => $value['vendor'],
-                    'device_name' => $value['device_name'],
-                    'hide'        => $value['hide'],
-                    'updated_at'  => $now,
-            ]);
+            $this->call_mac->Update($mac_id, $value['vendor'], $value['device_name'], $value['hide'], $now);
         }
 
         if ($user->role == 'normal') {
@@ -250,14 +270,9 @@ var_dump($this->call_user->UserGet('a','b','c'));
         if (!$request->id || !ctype_digit($request->id)) {
             return view('errors.403');
         }
-        // $item = 'App\UserTable'::where('id', $request->id)->first();
 
-        $item = 'App\UserTable'::UsersGet('community_user.id', 'asc')->where('community_user.id', $request->id)->first();
-
-
-        if (!$item) {
-            return view('errors.403');
-        }
+        $item = $this->call_user->PersonGet($request->id);
+        if (!$item) { return view('errors.403');}
 
         $user = Auth::user();
         // normal は自分以外は閲覧不可
@@ -276,12 +291,10 @@ var_dump($this->call_user->UserGet('a','b','c'));
             return view('errors.403');
         }
 
-        $mac_addresses = DB::table('mac_addresses')
-            ->where('user_id', $request->id)
-            ->orderBy('hide','asc')
-            ->orderBy('user_id', $request->id)
-            ->orderBy('arraival_at','desc')
-            ->get();
+        $mac_addresses = $this->call_mac->PersonHavingGet(
+            (int)$request->id,
+            (int)$user->community_id
+        );
 
         return view('admin_user.delete', [
             'item' => $item,
@@ -295,9 +308,8 @@ var_dump($this->call_user->UserGet('a','b','c'));
         if (!$request->id || !ctype_digit($request->id)) {
             return view('errors.403');
         }
-
-        $user = DB::table('users')->where('id', $request->id)->first();
-
+        $user = Auth::user();
+        $taget = $this->call_user->PersonGet($request->id);
         // normal userが自分以外のuserを編集しようとした場合は403
         if ($user->role == 'normal' && $user->id != $request->id) {
             log::warning(print_r("normalユーザーが異常な値でuserのdeleteを試みる>>>", 1));
@@ -313,7 +325,7 @@ var_dump($this->call_user->UserGet('a','b','c'));
             return view('errors.403');
         }
         // readerAdmin, superAdmin は削除不可
-        if ( $user->role == 'readerAdmin' || $user->role == 'superAdmin' ) {
+        if ( $taget->role == 'readerAdmin' || $taget->role == 'superAdmin' ) {
             log::warning(print_r("Adminユーザーが異常な値でAdmin userのdeleteを試みる>>>", 1));
             log::warning(print_r($user, 1));
             return view('errors.403');
@@ -321,9 +333,22 @@ var_dump($this->call_user->UserGet('a','b','c'));
 
         DB::beginTransaction();
         try {
-            'App\UserTable'::find($request->id)->delete();
-            $remove_ids =  (array)$request->mac_addres_id;
-            // チェックを外した id を readerAdmin 扱いに変更する
+            // 他のコミュニティに該当ユーザーの登録があるか確認。
+            // 他の登録が無ければ、 users table のrecordも削除
+            $user_id = DB::table('community_user')
+                ->where('id', $request->id)->pluck('user_id')
+                ->first();
+            $count = DB::table('community_user')
+                ->where('user_id', $user_id)->count();
+            // 他のコミュニティにアカウントが無い場合はuserTableの該当アカウント削除
+            log::debug(print_r('$count>>>'.$count,1));
+            if ($count <= 1) {
+                log::debug(print_r('user delete start!!!',1));
+                DB::table('users')->where('id', $request->id)->delete();
+            }
+            DB::table('community_user')->where('id', $request->id)->delete();
+            DB::table('communities_users_statuses')->where('id', $request->id)->delete();
+            $remove_ids =  (array)$request->mac_address_id;
             if ($remove_ids) {
                 foreach ($remove_ids as $remove_id) {
                     DB::table('mac_addresses')->where('id', $remove_id)->delete();

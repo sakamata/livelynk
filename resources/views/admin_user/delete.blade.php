@@ -18,81 +18,49 @@
 
                         <p>&nbsp;</p>
                         @if($item->id == Auth::user()->id)
-                        <p>本当に退会してもよろしいですか？画面下の退会実行ボタンを押すと、登録情報は全て削除されます。</p>
+                        <p>このコミュニティから退会してもよろしいですか？画面下の『退会する』ボタンを押すと、登録情報が削除されます。</p>
                         @else
-                        <p>このユーザーを退会させてもよろしいですか？画面下の退会実行ボタンを押すと、登録情報は全て削除されます。</p>
+                        <p>このユーザーを退会させてもよろしいですか？画面下の『退会する』ボタンを押すと、登録情報が削除されます。</p>
                         @endif
                         <p>&nbsp;</p>
                         <div>
-                            <h3>ID: {{$item->id}}&nbsp;&nbsp;{{$item->name}}</h3>
+                            <h3>名前: {{$item->name}}</h3>
                         </div>
                         <div>
                             <h3>Email: {{$item->email}}</h3>
                         </div>
-
                         <div>
-                            community ID: {{$item->community_id}}&nbsp;&nbsp;{{$item->community->name}}
+                            登録日時: {{$item->s_created_at->format('n月j日 G:i:s')}}
                         </div>
                         <div>
-                            community name: {{$item->community->service_name}}
+                            更新日時: {{$item->s_updated_at->format('n月j日 G:i:s')}}
                         </div>
-                        <div>
-                            最終来訪: {{$item->last_access->format('n月j日 G:i:s')}}
-                        </div>
-                        <div>
-                            登録日時: {{$item->created_at->format('n月j日 G:i:s')}}
-                        </div>
-                        <div>
-                            更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
-                        </div>
-
-
                         <hr>
                         <div class="form-group">
-                            <label for="InputTextarea">デバイス（退会すると所有するデバイスもすべて削除されます）</label>
+                            <label for="InputTextarea">デバイス（退会するとデバイス情報も削除されます）</label>
                             <table class="table table-hover">
                                 <tr class="info thead-light">
-                                    <th>ID</th>
-                                    <th>滞在中</th>
-                                    <th>MAC Address</th>
-                                    <th>Vendor</th>
                                     <th>デバイス名</th>
-                                    <th>ルーターID</th>
+                                    <th>Vendor</th>
+                                    <th>MAC Address</th>
                                     <th>来訪日時</th>
-                                    <th>posted_at</th>
                                     <th>登録日時</th>
                                 </tr>
                         @foreach($mac_addresses as $mac_add)
-                            <input type="hidden" name="mac_addres_id[]" value="{{$mac_add->id}}">
-                            @if($mac_add->hide == true)
-                                <tr class="table-secondary">
-                            @elseif($mac_add->current_stay == true && $mac_add->user_id == 1)
-                                <tr class="table-warning">
-                            @elseif($mac_add->current_stay == true)
-                                <tr class="table-info">
-                            @elseif($mac_add->user_id == $item->id)
-                                <tr class="table-info">
-                            @else
+                            <input type="hidden" name="mac_address_id[]" value="{{$mac_add->id}}">
                                 <tr>
-                            @endif
-                                    <td>{{$mac_add->id}}</td>
-                                    <td>{{$mac_add->current_stay}}</td>
-                                    <td>{{$mac_add->mac_address}}</td>
-                                    <td>{{$mac_add->vendor}}</td>
                                     <td>{{$mac_add->device_name}}</td>
-                                    <td>{{$mac_add->router_id}}</td>
+                                    <td>{{$mac_add->vendor}}</td>
+                                    <td>{{$mac_add->mac_address}}</td>
                                     <td>{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i')}}</td>
-                                    <td>{{Carbon\Carbon::parse($mac_add->posted_at)->format('n月j日 G:i')}}</td>
-                                    <td>
-                                        {{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}
-                                    </td>
+                                    <td>{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}</td>
                                 </tr>
                         @endforeach
                             </table>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-danger">
-                                退会実行
+                                退会する
                             </button>
                         </div>
                     </form>

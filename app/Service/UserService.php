@@ -9,18 +9,23 @@ use App\UserTable;
  */
 class UserService
 {
-
-
-    public function PersonsGet($orderkey, $order, $community_id)
+    public function PersonGet(int $community_user_id)
     {
-        // code...
-        return 'hoge';
+        return 'App\UserTable'::UsersGet('community_user.id', 'asc')
+            ->where('community_user.id', $community_user_id)
+            ->first();
     }
 
-    public function UsersGet($orderkey, $order, $community_id)
+    public function SelfCommunityUsersGet(string $orderkey, string $order, int $community_id)
     {
-        // code...
-        return 'hoge';
+        return 'App\UserTable'::UsersGet($orderkey, $order)
+            ->MyCommunity($community_id)
+            ->get();
     }
 
+    public function AllCommunityUsersGet(string $orderkey, string $order)
+    {
+        return 'App\UserTable'::UsersGet($orderkey, $order)
+            ->get();
+    }
 }

@@ -88,6 +88,8 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // ***ToDo*** 処理の一本化（同じを2か所に書いてしまっている）
+        // app\Http\Controllers\Auth\RegisterController.php にコピーあり
         DB::beginTransaction();
         try{
             // Laravel のregisterは User::create の返り値 $user を
