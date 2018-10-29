@@ -359,6 +359,7 @@ class AdminUserController extends Controller
         } catch (\Exception $e) {
             $success = false;
             DB::rollback();
+            return redirect('admin_user/delete?id='. $request->id)->with('message', '処理が行われませんでした。再度お試しください。');
         }
         if ($success) {
             if (Auth::user()->id == $request->id) {

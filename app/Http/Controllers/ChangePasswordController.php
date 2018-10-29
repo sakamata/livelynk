@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use App\Rules\NowPassword;
+use App\Service\UserService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,13 @@ use Illuminate\Support\Facades\Validator;
 
 class ChangePasswordController extends Controller
 {
+    private $call_user;
+
+    public function __construct(UserService $call_user)
+    {
+        $this->call_user = $call_user;
+    }
+
     public function edit(Request $request)
     {
         // superAdmin以外は他人のパスワード変更はできない
@@ -20,7 +28,8 @@ class ChangePasswordController extends Controller
         if ($user->role != 'superAdmin' && $user->id != $request->id) {
             return view('errors.403');
         }
-        $item = 'App\UserTable'::where('id', $request->id)->first();
+        $item = $this->call_user->PersonGet($request->id);
+
         return view('auth.passwords.edit', [
             'item' => $item,
         ]);

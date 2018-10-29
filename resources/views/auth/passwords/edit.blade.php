@@ -11,20 +11,6 @@
                 <div class="card-body">
                 @component('components.message')
                 @endcomponent
-                    <!-- ステータスはdebug用表示 -->
-                    <div>
-                        <h3>ID: {{$item->id}}&nbsp;&nbsp;{{$item->name}}</h3>
-                    </div>
-                    <div>
-                        community ID: {{$item->community_id}}&nbsp;&nbsp;{{$item->community->name}}
-                    </div>
-                    <div>
-                        community name: {{$item->community->service_name}}
-                    </div>
-                    <div>
-                        role: {{$item->role}}
-                    </div>
-                    <!-- debug用表示 ここまで -->
 
                     <form method="POST" action="/password/update" aria-label="{{ __('Register') }}">
                         @csrf
