@@ -52,20 +52,22 @@ Route::post('/admin_user/update', 'AdminUserController@update')->middleware('aut
 Route::get('/admin_user/delete{id?}', 'AdminUserController@delete')->middleware('auth');
 Route::post('/admin_user/remove', 'AdminUserController@remove')->middleware('auth');
 
-
-Route::get('/admin_mac_address', 'AdminMacAddressController@index')->middleware('auth');
-Route::get('/admin_mac_address/edit{id?}', 'AdminMacAddressController@edit')->middleware('auth');
-Route::post('/admin_mac_address/update', 'AdminMacAddressController@update')->middleware('auth');
-Route::get('/admin_mac_address/delete{id?}', 'AdminMacAddressController@delete')->middleware('auth');
-Route::post('/admin_mac_address/remove', 'AdminMacAddressController@remove')->middleware('auth');
-
 // Admin only
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
+    Route::get('/admin_mac_address', 'AdminMacAddressController@index');
+    Route::get('/admin_mac_address/edit{id?}', 'AdminMacAddressController@edit');
+    Route::post('/admin_mac_address/update', 'AdminMacAddressController@update');
+    Route::get('/admin_mac_address/delete{id?}', 'AdminMacAddressController@delete');
+    Route::post('/admin_mac_address/remove', 'AdminMacAddressController@remove');
+
     Route::get('/admin_router', 'AdminRouterController@index');
     Route::get('/admin_router/add', 'AdminRouterController@add');
     Route::post('/admin_router/create', 'AdminRouterController@create');
     Route::get('/admin_router/edit{id?}', 'AdminRouterController@edit');
     Route::post('/admin_router/update', 'AdminRouterController@update');
+
+    Route::get('/admin_community/edit{id?}', 'AdminCommunityController@edit');
+    Route::post('/admin_community/update', 'AdminCommunityController@update');
 });
 
 // superAdmin only
@@ -73,11 +75,6 @@ Route::group(['middleware' => ['auth', 'can:superAdmin']], function () {
     Route::get('/admin_community', 'AdminCommunityController@index');
     Route::get('/admin_community/add', 'AdminCommunityController@add');
     Route::post('/admin_community/create', 'AdminCommunityController@create');
-});
-// Admin only
-Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
-    Route::get('/admin_community/edit{id?}', 'AdminCommunityController@edit');
-    Route::post('/admin_community/update', 'AdminCommunityController@update');
 });
 
 

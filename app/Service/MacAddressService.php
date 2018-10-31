@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\CommunityUser;
 use App\MacAddress;
 
 /**
@@ -17,6 +18,16 @@ class MacAddressService
             ->orderBy('user_id', 'desc')
             ->orderBy('arraival_at','desc')
             ->get();
+    }
+
+    public function CommunityHavingMac(int $community_id, int $reader_id, string $order, string $key)
+    {
+        return 'App\CommunityUser'::CommunityHavingMac($community_id, $reader_id, $order, $key)->get();
+    }
+
+    public function SuperHavingMac()
+    {
+        return 'App\CommunityUser'::SuperHavingMac()->get();
     }
 
     public function Update(int $mac_id, string $vendor, string $device_name, bool $hide, string $now)

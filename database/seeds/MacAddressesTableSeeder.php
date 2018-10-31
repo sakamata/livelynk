@@ -73,7 +73,7 @@ class MacAddressesTableSeeder extends Seeder
 
         $param = [
             'community_user_id' => 5,
-            'router_id' => 5,
+            'router_id' => 2,
             'mac_address' => '00:11:22:DD:EE:FF',
             'vendor' => 'piyo.inc',
             'device_name' => 'i-piyo',
