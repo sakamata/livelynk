@@ -24,7 +24,7 @@
 
                         <div class="form-group">
                             <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
-                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="name_id" value="{{old('name_id')}}" onInput="checkForm(this)">
+                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="name" value="{{old('name')}}" onInput="checkForm(this)">
                         </div>
 
                         <h2>管理者ユーザー登録</h2>
@@ -34,7 +34,8 @@
 
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="未登録" required autofocus  disabled>
-                                <p>管理者ユーザーには未登録の端末が最初に登録されます。この名前は変更しないでください。 ***ToDo*** 任意の名前可能にします</p>
+                                <p>管理者ユーザーには未登録端末用のアカウントが最初に登録されます。この名前は変更できません。</p>
+                                <!-- ***ToDo*** 任意の名前可能にします -->
 
                                 @if ($errors->has('name'))
                                     <span class="invalid-feedback" role="alert">
@@ -81,7 +82,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">url_path</label>
+                            <label for="InputTextarea">アクセス用URL</label>
+                            <p>{{url("/index?path={$hash}")}}</p>
                             <input type="text" class="form-control form-control-lg" name="url_path" value="{{old('url_path', $hash)}}" onInput="checkForm(this)">
                             <p>自動生成された乱数がURLに使用されます</p>
                         </div>

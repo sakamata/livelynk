@@ -32,11 +32,11 @@ class AdminCommunityController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'email' => 'required|string|email|max:170',
+            'email' => 'required|string|email|max:170|unique:users',
             'password' => 'required|string|min:6|max:100|confirmed',
-            'name_id' => 'required|string|alpha_num|min:3|max:32',
+            'name' => 'required|string|alpha_num|min:3|max:32|unique:communities',
             'service_name' => 'required|string|min:3|max:32',
-            'url_path' => 'required|string|max:32',
+            'url_path' => 'required|string|max:32|unique:communities',
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhook_key' => 'nullable|string|max:191',
         ]);
@@ -45,7 +45,7 @@ class AdminCommunityController extends Controller
         $param_community = [
             'enable' => true,
             'user_id' => null,
-            'name' => $request->name_id,
+            'name' => $request->name,
             'service_name' => $request->service_name,
             'url_path' => $request->url_path,
             'ifttt_event_name' => $request->ifttt_event_name,
@@ -53,17 +53,12 @@ class AdminCommunityController extends Controller
             'created_at' => $now,
             'updated_at' => $now,
         ];
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             $community_id = DB::table('communities')->insertGetId($param_community);
-            $email = $request->email;
-            $login_id = $email . '@' . $community_id;
             $param_user = [
-                'community_id' => $community_id,
                 'name' => '未登録',
                 'email' => $request->email,
-                'role' => 'readerAdmin',
-                'login_id' => $login_id,
                 'password' => Hash::make($request->password),
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -72,15 +67,31 @@ class AdminCommunityController extends Controller
             $user_id = DB::table('users')->insertGetId($param_user);
             DB::table('communities')->where('id', $community_id)
                 ->update([ 'user_id' => $user_id ]);
-            DB::commit();
-            $success = true;
-        } catch (\Exception $e) {
-            $success = false;
-            DB::rollback();
-        }
-        if ($success) {
+            // 中間tableに値を入れる
+            $community_user_id = DB::table('community_user')->insertGetId([
+                'community_id' => $community_id,
+                'user_id' => $user_id,
+            ]);
+            // user status管理のtableに値を入れる
+            // role_id デフォルト値 "readerAdmin" = 3 に固定
+            DB::table('communities_users_statuses')->insert([
+                'id' => $community_user_id,
+                'role_id' => 3,
+                'hide' => 0,
+                'last_access' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        //     DB::commit();
+        //     $success = true;
+        // } catch (\Exception $e) {
+        //     $success = false;
+        //     DB::rollback();
+            // return redirect('/admin_community/add')->with('message', 'コミュニティを作成できませんでした。もう一度試してみてください。');
+        // }
+        // if ($success) {
             return redirect('/admin_community')->with('message', 'コミュニティと管理者を作成しました。');
-        }
+        // }
     }
 
     public function edit(Request $request)
