@@ -30,6 +30,11 @@ class MacAddressService
         return 'App\CommunityUser'::SuperHavingMac()->get();
     }
 
+    public function MacIDtoGetCommunityID(int $mac_address_id)
+    {
+        return 'App\CommunityUser'::MacIDtoGetCommunityID($mac_address_id);
+    }
+
     public function Update(int $mac_id, string $vendor, string $device_name, bool $hide, string $now)
     {
         return 'App\MacAddress'::where('id', $mac_id)

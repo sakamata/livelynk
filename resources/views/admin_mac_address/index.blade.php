@@ -79,7 +79,7 @@
                         @else
                         <tr>
                         @endif
-                            <td class="align-middle">{{$item->current_stay}}</td>
+                            <td class="align-middle">{{$item->current_stay}}:ID{{$item->id}}</td>
                             @can('superAdmin')
                             <td class="align-middle">{{$item->community_id}} : {{$item->community_name}}<br>{{$item->service_name}}</td>
                             @endcan

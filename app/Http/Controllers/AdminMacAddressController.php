@@ -160,8 +160,7 @@ class AdminMacAddressController extends Controller
         $reader_id = $this->getReaderID();
         // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
         if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin' ) {
-            $device_community_id = DB::table('community_user')
-                ->where('id', $request->id)->pluck('community_id')->first();
+            $device_community_id = $this->call_mac->MacIDtoGetCommunityID($request->id);
             if($user->community_id != $device_community_id) {
                 log::warning(print_r("Adminユーザーが異常な値でmac_addressをupdateを試みる>>>", 1));
                 log::warning(print_r($user, 1));
@@ -199,43 +198,24 @@ class AdminMacAddressController extends Controller
         if (!$item) {
             return view('errors.403');
         }
-
         $user = Auth::user();
         $reader_id = $this->getReaderID();
-
-        // normal userが自分以外の端末を編集しようとした場合は403
-        if ($user->role == 'normal'){
-            if ($user->id != $item->user_id) {
-                return view('errors.403');
-            }
-        }
+        // post id から端末のcommunityのIDを特定
+        $device_community_id = $this->call_mac->MacIDtoGetCommunityID($request->id);
         // normalAdmin,readerAdminで自コミュニティ以外は403
         if (
             ( $user->role == 'normalAdmin' ||  $user->role == 'readerAdmin' ) &&
-            $item->community_id != $user->community_id
+            $device_community_id != $user->community_id
         ) {
             return view('errors.403');
         }
+        log::debug(print_r('hoge',1));
 
-        // normal は自分の端末のみをリストアップ
-        if ($user->role == 'normal') {
-            $users = DB::table('users')
-                ->where('id', $user->id)->get(['id', 'name']);
-        }
-        // 自分のコミュニティに紐づいたものをリストアップ
-        if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
-            $users = DB::table('users')
-                ->where('community_id', $user->community_id)
-                ->get(['id', 'name']);
-        }
-        // 全部リストアップ
-        if ($user->role == 'superAdmin') {
-            $users = DB::table('users')->get(['id', 'name']);
-        }
+        $user = $this->call_user->PersonGet($item->community_user_id);
 
         return view('admin_mac_address.delete', [
             'item' => $item,
-            'users' => $users,
+            'user' => $user,
         ]);
     }
 

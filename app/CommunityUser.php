@@ -43,6 +43,11 @@ class CommunityUser extends Model
         return $this->hasMany('App\MacAddress');
     }
 
+    public function scopeMacIDtoGetCommunityID($query, $mac_address_id)
+    {
+        return $this->where('id', $mac_address_id)->pluck('community_id')->first();
+    }
+
     public function scopeCommunityHavingMac($query, $community_id, $reader_id, $order, $key)
     {
         return $query->select([

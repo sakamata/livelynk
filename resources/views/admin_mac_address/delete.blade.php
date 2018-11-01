@@ -20,60 +20,50 @@
                             <h3>このデバイスを削除しても良いですか？</h3>
                             <p>&nbsp;</p>
                         </div>
-
-                        <div>
-                            <h3>登録ユーザー:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->user->name}}</h3>
-                        </div>
-                        <div>
-                            <h3>デバイス名:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->device_name}}</h3>
-                        </div>
-                        <div>
-                            <h3>端末メーカー:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->vendor}}</h3>
-                        </div>
                         <div>
                             <h3>MAC Address:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->mac_address}}</h3>
                         </div>
+                        <div>
+                            <h3>メーカー:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->vendor}}</h3>
+                        </div>
+                        <div>
+                            <h3>デバイスメモ:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->device_name}}</h3>
+                        </div>
 
                         <div>
-                            ID: {{$item->id}}
+                            <h3>登録ユーザー:&nbsp;&nbsp;&nbsp;&nbsp; {{$user->name}}</h3>
                         </div>
+                        @if($item->current_stay == 1)
                         <div>
-                            community ID : {{$item->community_id}}
+                            <h3>滞在中のデバイス</h3>
                         </div>
-                        <div>
-                            service name : {{$item->community->service_name}}
-                        </div>
-                        <div>
-                            community name : {{$item->community->name}}
-                        </div>
-                        <div>
-                            router ID : {{$item->router_id}}
-                        </div>
-                        <div>
-                            router name : {{$item->router->name}}
-                        </div>
-                        <div>
-                            滞在中: {{$item->current_stay}}
-                        </div>
-                        <div>
-                            非表示: {{$item->hide}}
-                        </div>
-                        <div>
-                            来訪日時: {{$item->arraival_at->format('n月j日 G:i:s')}}
-                        </div>
-                        <div>
-                        @if($item->departure_at != null)
-                            退出日時: {{$item->departure_at->format('n月j日 G:i:s')}}
-                        @else
-                            退出日時: 滞在中
                         @endif
-                        </div>
+                        @if($item->hide == 1)
                         <div>
-                            登録日時: {{$item->created_at->format('n月j日 G:i:s')}}
+                            <h3>非表示中のデバイス</h3>
+                        </div>
+                        @endif
+
+                        <div>
+                            もっとも最近: {{$item->posted_at->format('n月j日 G:i:s')}}
                         </div>
                         <div>
                             更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
                         </div>
+                        <div>
+                            登録日時: {{$item->created_at->format('n月j日 G:i:s')}}
+                        </div>
+                        @can('superAdmin')
+                        <div>
+                            community_user_id : {{$item->community_user_id}}
+                        </div>
+                        <div>
+                            service name : {{$item->service_name}}
+                        </div>
+                        <div>
+                            community name :
+                        </div>
+                        @endcan
                         <hr>
                         <div class="form-group">
                             <button type="submit" class="btn btn-danger">
