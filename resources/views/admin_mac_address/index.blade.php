@@ -9,8 +9,6 @@
             <div class="card">
                 <div class="card-header"><h2>デバイス一覧</h2></div>
                 <div class="card-body">
-                @component('components.message')
-                @endcomponent
                 @component('components.error')
                 @endcomponent
                     <table class="table table-hover">
@@ -112,8 +110,8 @@
                                             @endif
                                         </div>
                                         <div class="form-group col-md-7">
-                                            端末id:{{$item->id}}<br>
-                                            community_user_id:{{$item->community_user_id}}<br>
+                                            <!-- 端末id:{{$item->id}}<br> -->
+                                            <!-- community_user_id:{{$item->community_user_id}}<br> -->
                                             <label>ユーザー</label>
                                             <select name="community_user_id" class="form-control">
                                                 @foreach($users as $user)
