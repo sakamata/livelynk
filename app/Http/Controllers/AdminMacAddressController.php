@@ -209,13 +209,10 @@ class AdminMacAddressController extends Controller
         ) {
             return view('errors.403');
         }
-        log::debug(print_r('hoge',1));
-
-        $user = $this->call_user->PersonGet($item->community_user_id);
-
+        $person = $this->call_user->PersonGet($item->community_user_id);
         return view('admin_mac_address.delete', [
             'item' => $item,
-            'user' => $user,
+            'person' => $person,
         ]);
     }
 
@@ -227,26 +224,15 @@ class AdminMacAddressController extends Controller
         }
         $user = Auth::user();
         $reader_id = $this->getReaderID();
-        $owner = DB::table('mac_addresses')
-            ->where('id', $request->id)->value('user_id');
-
-        // normal userが自分のID以外を編集しようとした場合は403
-        if ($user->role == 'normal') {
-            if ($owner != $user->id ) {
-                log::warning(print_r("normalユーザーが異常な値でmac_addressをdeleteを試みる>>>", 1));
+        // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
+        if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
+            $device_community_id = $this->call_mac->MacIDtoGetCommunityID($request->id);
+            if($user->community_id != $device_community_id) {
+                log::warning(print_r("Adminユーザーが異常な値でmac_addressのdeleteを試みる>>>", 1));
                 log::warning(print_r($user, 1));
                 return view('errors.403');
             }
         }
-        // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
-        if (
-            ( $user->role == 'normalAdmin' || $user->role == 'readerAdmin' ) && $request->community_id != $user->community_id
-        ) {
-            log::warning(print_r("Adminユーザーが異常な値でmac_addressのdeleteを試みる>>>", 1));
-            log::warning(print_r($user, 1));
-            return view('errors.403');
-        }
-
         'App\MacAddress'::find($request->id)->delete();
         return redirect('/admin_mac_address')->with('message', 'デバイスを削除しました。');
     }

@@ -14,7 +14,6 @@
                     <form action="/admin_mac_address/remove" method="post">
                         {{ csrf_field() }}
                         <input type="hidden" name="id" value="{{$item->id}}">
-
                         <div>
                             <p>&nbsp;</p>
                             <h3>このデバイスを削除しても良いですか？</h3>
@@ -31,7 +30,10 @@
                         </div>
 
                         <div>
-                            <h3>登録ユーザー:&nbsp;&nbsp;&nbsp;&nbsp; {{$user->name}}</h3>
+                            <h3>登録ユーザー:&nbsp;&nbsp;&nbsp;&nbsp; {{$person->name}}</h3>
+                        </div>
+                        <div>
+                            <h3>Email:&nbsp;&nbsp;&nbsp;&nbsp; {{$person->email}}</h3>
                         </div>
                         @if($item->current_stay == 1)
                         <div>
