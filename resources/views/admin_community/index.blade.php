@@ -33,7 +33,7 @@
                             <td>{{$item->id}}</td>
                             <td>{{$item->enable}}</td>
                             <td>{{$item->name}}<br>{{$item->service_name}}</td>
-                            <td>{{$item->owner->id}} : {{$item->owner->name}}<br>{{$item->owner->email}}</td>
+                            <td>{{$item->user_id}} : {{$item->owner->name}}<br>{{$item->owner->email}}</td>
                             <td>
                                 <table class="table table-hover table-sm table-borderless">
                                     <tbody>

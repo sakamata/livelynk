@@ -29,4 +29,8 @@ class Community extends Model
         return $this->hasMany('App\Router', 'community_id');
     }
 
+    public function owner()
+    {
+        return $this->hasOne('App\UserTable', 'id', 'user_id');
+    }
 }
