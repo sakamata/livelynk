@@ -53,8 +53,8 @@ class AdminCommunityController extends Controller
             'created_at' => $now,
             'updated_at' => $now,
         ];
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
             $community_id = DB::table('communities')->insertGetId($param_community);
             $param_user = [
                 'name' => '未登録',
@@ -82,16 +82,16 @@ class AdminCommunityController extends Controller
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
-        //     DB::commit();
-        //     $success = true;
-        // } catch (\Exception $e) {
-        //     $success = false;
-        //     DB::rollback();
-            // return redirect('/admin_community/add')->with('message', 'コミュニティを作成できませんでした。もう一度試してみてください。');
-        // }
-        // if ($success) {
+            DB::commit();
+            $success = true;
+        } catch (\Exception $e) {
+            $success = false;
+            DB::rollback();
+            return redirect()->back()->with('message', 'コミュニティを作成できませんでした。もう一度試してみてください。');
+        }
+        if ($success) {
             return redirect('/admin_community')->with('message', 'コミュニティと管理者を作成しました。');
-        // }
+        }
     }
 
     public function edit(Request $request)

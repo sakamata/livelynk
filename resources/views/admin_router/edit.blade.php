@@ -52,7 +52,7 @@
                             <label for="InputTextarea">secret</label>
                             <input type="text" class="form-control form-control-sm" name="hash_key" value="{{old('hash_key', $item->hash_key)}}">
                             <!-- *** ToDo *** 通常は Readonly 編集ボタンクリック時のみ入力可能とする -->
-                            <span id="passwordHelpBlock" class="help-block">値を変更すると対応するRaspberryPIからデータ受信ができなくなります。十分注意してください。</span>
+                            <span id="passwordHelpBlock" class="help-block">注意：値を変更すると対応するRaspberryPIからデータ受信ができなくなります。十分注意してください。</span>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">

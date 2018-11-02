@@ -123,12 +123,11 @@
                             <td>
                                 <table class="table table-hover table-sm table-borderless">
                                     <tbody>
-                            {{--
                             @if($item->mac_addresses != null)
                                 @foreach($item->mac_addresses as $mac_add)
                                     @if($mac_add->hide == true)
                                         <tr class="table-secondary"  onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';">
-                                    @elseif($mac_add->current_stay == true && $mac_add->user_id == 1)
+                                    @elseif($mac_add->current_stay == true && $mac_add->community_user_id == 1)
                                         <tr class="table-warning"  onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';">
                                     @elseif($mac_add->current_stay == true)
                                         <tr class="table-info"  onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';">
@@ -141,13 +140,11 @@
                                             <td>{{$mac_add->device_name}}</td>
                                             <td>{{$mac_add->vendor}}</td>
                                             <td class="blockquote text-right">
-                                                <a href="/admin_mac_address/edit?id={{$mac_add->id}}" class="btn btn-info" role="button">編集</a>
                                                 <a href="/admin_mac_address/delete?id={{$mac_add->id}}" class="btn btn-danger" role="button">削除</a>
                                             </td>
                                         </tr>
                                 @endforeach
                             @endif
-                            --}}
                                     </tbody>
                                 </table>
                             </td>

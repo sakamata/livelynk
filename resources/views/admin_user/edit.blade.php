@@ -145,6 +145,13 @@
                 <!-- チェックボックス削除しました -->
             </div>
           </div>
+          @can('normalAdmin')
+          <!-- デバッグ用 -->
+          <div class="line">
+            <div class="head">ID</div>
+            <div class="body">{{$mac_add->id}}</div>
+          </div>
+          @endcan
           <div class="line">
             <div class="head">滞在中</div>
             <div class="body">{{$mac_add->current_stay}}</div>

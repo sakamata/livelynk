@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class UserTable extends Model
 {
@@ -36,9 +37,16 @@ class UserTable extends Model
 
     public function mac_addresses()
     {
-        return $this->belongsToMany('App\MacAddress')->orderBy('arraival_at', 'desc');
+        // superAdmin以外は自分のcommunity_idの範囲のみ端末を取得
+        if (Auth::user()->role == 'superAdmin') {
+            return $this->hasManyThrough('App\MacAddress', 'App\CommunityUser', 'user_id', 'community_user_id')
+                ->orderBy('arraival_at', 'desc');
+        } else {
+            $community_id = Auth::user()->community_id;
+            return $this->hasManyThrough('App\MacAddress', 'App\CommunityUser', 'user_id', 'community_user_id')
+                ->where('community_user.community_id', $community_id)->orderBy('arraival_at', 'desc');
+        }
     }
-
 
     public function scopeUsersGet($query, $key, $order)
     {
