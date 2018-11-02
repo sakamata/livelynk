@@ -170,6 +170,7 @@ class AdminUserController extends Controller
         }
     }
 
+    // 廃止予定 現在はDB再構築前のcodeのままで403となる
     public function edit(Request $request)
     {
         // 不正なrequestは403
