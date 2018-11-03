@@ -25,6 +25,10 @@ class IndexController extends Controller
             }
         } else {
             $community_id = session('community_id');
+            if (!$community_id) {
+                Auth::logout();
+                return redirect('/')->with('message', '再度ログインしなおしてください');
+            }
             $community = DB::table('communities')
                 ->where('id', $community_id)->first();
         }
