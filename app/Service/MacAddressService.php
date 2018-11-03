@@ -20,9 +20,9 @@ class MacAddressService
             ->get();
     }
 
-    public function CommunityHavingMac(int $community_id, int $reader_id, string $order, string $key)
+    public function CommunityHavingMac(int $community_id, int $reader_id, string $order, string $key, string $case)
     {
-        return 'App\CommunityUser'::CommunityHavingMac($community_id, $reader_id, $order, $key)->get();
+        return 'App\CommunityUser'::CommunityHavingMac($community_id, $reader_id, $order, $key, $case)->get();
     }
 
     public function SuperHavingMac()
@@ -45,5 +45,18 @@ class MacAddressService
                 'updated_at'  => $now,
         ]);
     }
+
+    public function UpdateChangeOwner(int $mac_id, string $vendor, string $device_name, bool $hide, string $now, int $community_user_id)
+    {
+        return 'App\MacAddress'::where('id', $mac_id)
+            ->update([
+                'vendor'      => $vendor,
+                'device_name' => $device_name,
+                'hide'        => $hide,
+                'updated_at'  => $now,
+                'community_user_id'  => $community_user_id,
+        ]);
+    }
+
 
 }

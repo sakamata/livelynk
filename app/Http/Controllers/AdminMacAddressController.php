@@ -12,6 +12,8 @@ use App\Service\UserService;
 use App\Service\MacAddressService;
 
 // normal user は閲覧、操作権限無し
+// ***ToDo*** Request パラメーターを利用して AdminMacRegistController::index を
+// こちらに集約して共通化 現状ほとんど一緒のコード
 class AdminMacAddressController extends Controller
 {
     private $call_user;
@@ -69,30 +71,29 @@ class AdminMacAddressController extends Controller
         $user = Auth::user();
         $reader_id = $this->getReaderID();
         // ユーザーロールで表示範囲を変える
-        switch ($user->role) {
+        if ($user->role == 'superAdmin') {
+            // ***ToDo*** 表示物と仕様の精査
+            // コミュニティをプルダウンで切り替え 等が必要
             // サービス全管理者は全て表示
-            case 'superAdmin':
-                $items = $this->call_mac->SuperHavingMac();
-                $users = $this->call_user
-                    ->AllCommunityUsersGet('user_id', 'desc', (int)$user->community_id);
-            break;
-
-            default:
-                // normalAdmin & readerAdmin はcommunityの範囲で表示、未登録端末を除外
-                $reader_id = $this->getReaderID();
-                $items = $this->call_mac->CommunityHavingMac($user->community_id, $reader_id, $order, $key);
-                // communityのユーザーlistを取得
-                $users = $this->call_user
-                    ->SelfCommunityUsersGet('user_id', 'desc', (int)$user->community_id);
-            break;
+            $items = $this->call_mac->SuperHavingMac();
+            $users = $this->call_user
+                ->AllCommunityUsersGet('user_id', 'desc', (int)$user->community_id);
+        } else {
+            // normalAdmin & readerAdmin はcommunityの範囲で表示
+            // 未登録端末のみ呼び出す
+            $reader_id = $this->getReaderID();
+            $items = $this->call_mac->CommunityHavingMac($user->community_id, $reader_id, $order, $key, $case = 'index');
+            // communityのユーザーlistを取得
+            $users = $this->call_user
+                ->SelfCommunityUsersGet('user_id', 'desc', (int)$user->community_id);
         }
-
         return view('admin_mac_address.index', [
             'items' => $items,
             'order' => $order,
             'key' => $key,
             'user' => $user,
             'users' => $users,
+            'view' => 'index',
         ]);
     }
 

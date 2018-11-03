@@ -60,6 +60,8 @@ Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
     Route::get('/admin_mac_address/delete{id?}', 'AdminMacAddressController@delete');
     Route::post('/admin_mac_address/remove', 'AdminMacAddressController@remove');
 
+    Route::get('/admin_mac_regist', 'AdminMacRegistController@index');
+
     Route::get('/admin_router', 'AdminRouterController@index');
     Route::get('/admin_router/add', 'AdminRouterController@add');
     Route::post('/admin_router/create', 'AdminRouterController@create');

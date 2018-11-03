@@ -13,9 +13,8 @@
                 @endcomponent
                     <form method="POST" action="/admin_user/create" aria-label="{{ __('Register') }}">
                         @csrf
-                        <input type="hidden" name="id" value="{{$item->id}}">
                         @can('communityAdmin')
-                        <input type="hidden" name="community_id" value="{{$item->community_id}}">
+                        <input type="hidden" name="community_id" value="{{$community_id}}">
                         @endcan
                         @can('superAdmin')
                         <div class="form-group row">
@@ -78,13 +77,24 @@
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
                             </div>
                         </div>
-
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    {{ __('Register') }}
+                                    {{ __('ユーザー作成') }}
                                 </button>
                             </div>
+                        </div>
+                        <hr>
+                        <div class="form-elem admin-box-holder clearfix">
+                          <label class="comp-ui">未登録デバイス一覧</label>
+                          <p>（チェックでユーザーと紐づけできます）</p>
+                          <hr>
+                          @component('components.device_edit', [
+                            'mac_addresses' => $mac_addresses,
+                            'item' => $item,
+                            'view' => $view,
+                          ])
+                          @endcomponent
                         </div>
                     </form>
                 </div>

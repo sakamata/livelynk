@@ -7,10 +7,19 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
+                @if($view == 'regist')
+                <div class="card-header"><h2>新規デバイス登録</h2></div>
+                @else
                 <div class="card-header"><h2>デバイス一覧</h2></div>
+                @endif
                 <div class="card-body">
                 @component('components.error')
                 @endcomponent
+                @if($view == 'regist')
+                <div class="blockquote text-left">
+                    <a href="/admin_user/add" class="btn btn-info" role="button">新規ユーザー作成</a>
+                </div>
+                @endif
                     <table class="table table-hover">
                         <tr class="info thead-light">
                             <th>

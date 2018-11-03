@@ -48,8 +48,15 @@ class CommunityUser extends Model
         return $this->where('id', $mac_address_id)->pluck('community_id')->first();
     }
 
-    public function scopeCommunityHavingMac($query, $community_id, $reader_id, $order, $key)
+    public function scopeCommunityHavingMac($query, $community_id, $reader_id, $order, $key, $case)
     {
+        // user_id の where条件を切り替え
+        // reader_id を除外か、それのみかで未登録一覧と登録済み一覧に分ける
+        if ($case == 'index') {
+            $cmp = '<>';
+        } else {
+            $cmp = '=';
+        }
         return $query->select([
             'mac_addresses.*',
             'community_user.user_id',
@@ -67,7 +74,7 @@ class CommunityUser extends Model
             ->Join('routers', 'routers.id', '=', 'mac_addresses.router_id')
             ->where([
                 ['community_user.community_id', $community_id],
-                ['community_user.user_id', '<>', $reader_id],
+                ['community_user.user_id', $cmp, $reader_id],
             ])
             ->orderBy($key, $order);
     }

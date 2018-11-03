@@ -111,12 +111,28 @@ class AdminUserController extends Controller
     protected function add(Request $request)
     {
         // superAdminはコミュニティ選択OK,その他は自コミュニティ固定で作成
-        // user roleは作成時はnormal固定
+        // superAdminの場合、コミュニティのプルダウンを別フォームにして、選択で、POSTして未登録端末リストを呼び出す。
+
         $user = Auth::user();
+
+
+        if ($user->role == 'normalAdmin' ||  $user->role == 'readerAdmin') {
+            $reader_id = $this->getReaderID();
+            $mac_addresses = $this->call_mac->PersonHavingGet(
+                (int)$reader_id,
+                (int)$user->community_id
+            );
+            $item = $this->call_user->PersonGet($reader_id);
+        }
+
+        // user roleは作成時はnormal固定
         $communities = DB::table('communities')->get();
         return view('admin_user.add', [
-            'item' => $user,
+            'community_id' => $user->community_id,
+            'mac_addresses' => $mac_addresses,
+            'item' => $item,
             'communities' => $communities,
+            'view' => 'add',
         ]);
     }
 
@@ -124,12 +140,16 @@ class AdminUserController extends Controller
     // ***ToDo*** 処理の一本化（同じを2か所に書いてしまっている）
     protected function create(Request $request)
     {
+        log::debug(print_r($request->mac_address,1));
         $request->validate([
-            'id' => 'required|integer',
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
             'email' => 'required|string|email|max:170|unique:users',
             'password' => 'required|string|min:6|max:100|confirmed',
+            'mac_address.*.check' => 'boolean',
+            'mac_address.*.hide' => 'boolean',
+            'mac_address.*.vendor' => 'nullable|string|max:40',
+            'mac_address.*.device_name' => 'nullable|string|max:40',
         ]);
         // user roleは作成時はDBデフォルト値"normal"に固定となる
         DB::beginTransaction();
@@ -159,6 +179,30 @@ class AdminUserController extends Controller
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
+
+            // mac_address 編集項目の変更
+            foreach ((array)$request->mac_address as $mac_id => $value) {
+                if ($value['check'] == 1) {
+                    // 作成された userの community_user_id に変更してupdate
+                    $this->call_mac->UpdateChangeOwner(
+                        $mac_id,
+                        $value['vendor'],
+                        $value['device_name'],
+                        $value['hide'],
+                        $now,
+                        $community_user_id
+                    );
+                } else {
+                    // チェック無しでも更新内容を反映する
+                    $this->call_mac->Update(
+                        $mac_id,
+                        $value['vendor'],
+                        $value['device_name'],
+                        $value['hide'],
+                        $now
+                    );
+                }
+            }
             DB::commit();
             $success = true;
         } catch (\Exception $e) {
@@ -201,6 +245,7 @@ class AdminUserController extends Controller
             'item' => $item,
             'mac_addresses' => $mac_addresses,
             'communities' => $communities,
+            'view' => 'edit',
         ]);
     }
 

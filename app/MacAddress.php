@@ -37,7 +37,7 @@ class MacAddress extends Model
         return $query->where('community_id', $self_community);
     }
 
-    public function scopeUserHaving($query, $user_id)
+    public function scopeUserHaving($query, $community_user_id)
     {
         return $query->select([
             'mac_addresses.*',
@@ -45,7 +45,7 @@ class MacAddress extends Model
             'community_user.community_id',
         ])
             ->Join('community_user', 'community_user.id', '=', 'mac_addresses.community_user_id')
-            ->where('community_user.user_id', $user_id);
+            ->where('community_user.id', $community_user_id);
     }
 
 }
