@@ -44,7 +44,7 @@ Route::get('/index/{path?}', 'IndexController@index')->name('index');
 // 管理画面 認証済みuserのみ表示
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
     Route::get('/admin_user', 'AdminUserController@index');
-    Route::get('/admin_user/add', 'AdminUserController@add');
+    Route::get('/admin_user/add{community_id?}', 'AdminUserController@add');
     Route::post('/admin_user/create', 'AdminUserController@create');
 });
 Route::get('/admin_user/edit{id?}', 'AdminUserController@edit')->middleware('auth');

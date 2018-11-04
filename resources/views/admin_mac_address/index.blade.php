@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <div class="card">
                 @if($view == 'regist')
-                <div class="card-header"><h2>新規デバイス登録</h2></div>
+                <div class="card-header"><h2>未登録デバイス一覧</h2></div>
                 @else
                 <div class="card-header"><h2>デバイス一覧</h2></div>
                 @endif
@@ -17,7 +17,7 @@
                 @endcomponent
                 @if($view == 'regist')
                 <div class="blockquote text-left">
-                    <a href="/admin_user/add" class="btn btn-info" role="button">新規ユーザー作成</a>
+                    <a href="/admin_user/add" class="btn btn-info" role="button">新規ユーザー登録</a>
                 </div>
                 @endif
                     <table class="table table-hover">
@@ -149,12 +149,12 @@
                         @else
                             <td class="align-middle"></td>
                         @endif
-                        @if($item->created_at != null)
-                            <td class="align-middle">{{$item->departure_at->format('n月j日 G:i')}}</td>
+                        @if($item->arraival_at != null)
+                            <td class="align-middle">{{$item->arraival_at->format('n月j日 G:i')}}</td>
                         @else
                             <td class="align-middle"></td>
                         @endif
-                        @if($item->updated_at != null)
+                        @if($item->created_at != null)
                             <td class="align-middle">{{$item->created_at->format('n月j日 G:i')}}</td>
                         @else
                             <td class="align-middle"></td>

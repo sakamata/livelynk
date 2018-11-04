@@ -267,7 +267,7 @@ class InportPostController extends Controller
             ['posted_at', '<=', $past_limit],
         ])->get();
         if (!$went_away) {
-            log::debug(print_r('$went_away 帰宅判断対象無し、処理停止',1));
+            // log::debug(print_r('$went_away 帰宅判断対象無し、処理停止',1));
             exit();
         }
 
@@ -313,7 +313,7 @@ class InportPostController extends Controller
         }
 
         if (!$near_push_users_id) {
-            log::debug(print_r('$near_push_users_id 帰宅判断対象無し、処理停止',1));
+            // log::debug(print_r('$near_push_users_id 帰宅判断対象無し、処理停止',1));
             exit();
         }
 
@@ -335,7 +335,7 @@ class InportPostController extends Controller
         // $no_push_user_id を通知から外す
         $push_users_id = array_diff($near_push_users_id, $no_push_user_id);
         if (!$push_users_id) {
-            log::debug(print_r('$push_users_id 帰宅判断対象無し、処理停止',1));
+            // log::debug(print_r('$push_users_id 帰宅判断対象無し、処理停止',1));
             exit();
         }
 

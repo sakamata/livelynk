@@ -26,6 +26,14 @@ class Controller extends BaseController
             ->where('id', $user->community_id)->value('user_id');
     }
 
+    public function getReaderIDParam($community_id)
+    {
+        $user = Auth::user();
+        return $reader_id = DB::table('communities')
+            ->where('id', $community_id)->value('user_id');
+    }
+
+
     // user のroleを取得 roleの文字列で返す
     // Auth::user()->role で取得可能なので、未使用
     // 他のuser で取得が必要な場合に使えるが基本いらない

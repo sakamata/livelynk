@@ -110,25 +110,32 @@ class AdminUserController extends Controller
 
     protected function add(Request $request)
     {
-        // superAdminはコミュニティ選択OK,その他は自コミュニティ固定で作成
-        // superAdminの場合、コミュニティのプルダウンを別フォームにして、選択で、POSTして未登録端末リストを呼び出す。
-
+        $request->validate([
+            'community_id' => 'integer',
+        ]);
         $user = Auth::user();
-
-
+        // superAdminはコミュニティをプルダウン選択
+        if ($user->role == 'superAdmin') {
+            $community_id = $request->community_id;
+            if (!$community_id) { $community_id = 1;}
+            $reader_id = $this->getReaderIDParam($community_id);
+        }
+        // 通常管理者は自コミュニティ固定
         if ($user->role == 'normalAdmin' ||  $user->role == 'readerAdmin') {
+            $community_id = $user->community_id;
             $reader_id = $this->getReaderID();
-            $mac_addresses = $this->call_mac->PersonHavingGet(
-                (int)$reader_id,
-                (int)$user->community_id
-            );
-            $item = $this->call_user->PersonGet($reader_id);
         }
 
-        // user roleは作成時はnormal固定
+        $mac_addresses = $this->call_mac->PersonHavingGet(
+            (int)$reader_id,
+            (int)$community_id
+        );
+        $item = $this->call_user->PersonGet($reader_id);
+
+        // ***ToDo*** user role 非表示のフォーム追加
         $communities = DB::table('communities')->get();
         return view('admin_user.add', [
-            'community_id' => $user->community_id,
+            'community_id' => $community_id,
             'mac_addresses' => $mac_addresses,
             'item' => $item,
             'communities' => $communities,
@@ -140,7 +147,6 @@ class AdminUserController extends Controller
     // ***ToDo*** 処理の一本化（同じを2か所に書いてしまっている）
     protected function create(Request $request)
     {
-        log::debug(print_r($request->mac_address,1));
         $request->validate([
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',

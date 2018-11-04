@@ -35,7 +35,7 @@ class MacAddressService
         return 'App\CommunityUser'::MacIDtoGetCommunityID($mac_address_id);
     }
 
-    public function Update(int $mac_id, string $vendor, string $device_name, bool $hide, string $now)
+    public function Update(int $mac_id, $vendor,  $device_name, bool $hide, string $now)
     {
         return 'App\MacAddress'::where('id', $mac_id)
             ->update([
@@ -46,7 +46,7 @@ class MacAddressService
         ]);
     }
 
-    public function UpdateChangeOwner(int $mac_id, string $vendor, string $device_name, bool $hide, string $now, int $community_user_id)
+    public function UpdateChangeOwner(int $mac_id, $vendor, $device_name, bool $hide, string $now, int $community_user_id)
     {
         return 'App\MacAddress'::where('id', $mac_id)
             ->update([

@@ -14,7 +14,7 @@
                     <form action="/admin_router/update" method="post">
                         {{ csrf_field() }}
                         <div>
-                            <h3>ID: {{$item->id}}</h3>
+                            <h3>ROUTER ID&nbsp;:&nbsp;&nbsp;{{$item->id}}</h3>
                         </div>
                         <div>
                             登録日時: {{$item->created_at->format('n月j日 G:i:s')}}

@@ -8,14 +8,20 @@
   @endif
   <div class="admin-box">
     <div class="line check">
-      <div class="head"><label for="devise-check-{{$mac_add->id}}">チェック</label></div>
+      <div class="head">
+          <label for="devise-check-{{$mac_add->id}}">
+            @if($view == 'add')
+            チェック
+            @endif
+          </label>
+      </div>
       <div class="body">
-          <!-- チェックボックスは新規ユーザー作成画面でのみ使用 -->
-          @if($view == 'add')
-          <!-- チェックされていない場合は 0 を送信 -->
-          <input type="hidden" name="mac_address[{{$mac_add->id}}][check]" value="0">
-          <input type="checkbox" name="mac_address[{{$mac_add->id}}][check]" value="1">
-          @endif
+        @if($view == 'add')
+        <!-- チェックボックスは新規ユーザー作成画面でのみ使用 -->
+        <!-- チェックされていない場合は 0 を送信 -->
+        <input type="hidden" name="mac_address[{{$mac_add->id}}][check]" value="0">
+        <input type="checkbox" name="mac_address[{{$mac_add->id}}][check]" value="1">
+        @endif
       </div>
     </div>
     @can('normalAdmin')
