@@ -14,8 +14,8 @@ class EditMacAddressesTable20181013 extends Migration
     public function up()
     {
         Schema::table('mac_addresses', function (Blueprint $table) {
-            $table->renameColumn('community_id', 'community_user_id');
-            $table->dropColumn('user_id');
+            $table->renameColumn('user_id', 'community_user_id');
+            $table->dropColumn('community_id');
         });
     }
 
@@ -27,8 +27,8 @@ class EditMacAddressesTable20181013 extends Migration
     public function down()
     {
         Schema::table('mac_addresses', function (Blueprint $table) {
-            $table->renameColumn('community_user_id', 'community_id');
-            $table->integer('user_id')->nullable();
+            $table->renameColumn('community_user_id', 'user_id');
+            $table->integer('community_id')->nullable();
         });
     }
 }
