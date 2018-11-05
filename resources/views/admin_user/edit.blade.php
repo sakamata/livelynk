@@ -115,6 +115,9 @@
       @if(Auth::user()->role == 'normal')
       <input type="hidden" name="role" value="normal">
       @endif
+      @if(Auth::user()->role =='readerAdmin')
+      <input type="hidden" name="hide" value="0">
+      @else
       <div class="form-elem">
         <label for="configuration" class="comp-ui">表示設定</label>
         <div class="form-line">
@@ -128,6 +131,7 @@
           </div>
         </div>
       </div>
+      @endif
       <div class="form-elem admin-box-holder clearfix">
         <label class="comp-ui">デバイス</label>
         @component('components.device_edit', [
