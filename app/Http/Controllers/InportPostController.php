@@ -115,8 +115,10 @@ class InportPostController extends Controller
                     ->leftJoin('mac_addresses', 'mac_addresses.community_user_id', '=', 'community_user.id')
                 ->where([
                     ['community_user.community_id', $community->id],
+                    ['mac_addresses.hide', false],
                     ['mac_addresses.mac_address', $post_mac],
                 ])->first();
+                if (!$mac_record) { continue; }
                 $community_user_id = $mac_record->id;
                 $users_ids[] = $community_user_id;
 
