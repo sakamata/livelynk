@@ -9,8 +9,6 @@
             <div class="card">
                 <div class="card-header"><h2>ルーター編集</h2></div>
                 <div class="card-body">
-                @component('components.message')
-                @endcomponent
                     <form action="/admin_router/update" method="post">
                         {{ csrf_field() }}
                         <div>

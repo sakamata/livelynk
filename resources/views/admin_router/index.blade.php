@@ -9,8 +9,6 @@
             <div class="card">
                 <div class="card-header"><h2>ルーター一覧</h2></div>
                 <div class="card-body">
-                @component('components.message')
-                @endcomponent
                 <div class="blockquote text-left">
                     <a href="/admin_router/add" class="btn btn-info" role="button">ルーター新規登録</a>
                 </div>

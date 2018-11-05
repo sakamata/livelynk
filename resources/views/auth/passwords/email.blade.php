@@ -7,8 +7,6 @@
             <div class="card">
                 <div class="card-header">{{ __('passwords.Reset Password') }}</div>
                 <div class="card-body">
-                @component('components.message')
-                @endcomponent
                     <form method="POST" action="{{ route('password.email') }}" aria-label="{{ __('Reset Password') }}">
                         @csrf
 

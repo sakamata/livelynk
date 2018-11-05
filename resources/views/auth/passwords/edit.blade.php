@@ -9,9 +9,6 @@
             <div class="card">
                 <div class="card-header"><h2>Password変更</h2></div>
                 <div class="card-body">
-                @component('components.message')
-                @endcomponent
-
                     <form method="POST" action="/password/update" aria-label="{{ __('Register') }}">
                         @csrf
                         <input type="hidden" name="id" value="{{$item->id}}">

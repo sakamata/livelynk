@@ -9,9 +9,6 @@
             <div class="card">
                 <div class="card-header"><h2>新規ユーザー登録</h2></div>
                 <div class="card-body">
-                    @component('components.message')
-                    @endcomponent
-
                     @can('superAdmin')
                     <form method="GET" action="/admin_user/add" aria-label="{{ __('コミュニティ切替') }}">
                         <div class="form-group row">

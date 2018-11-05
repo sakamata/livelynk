@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use DB;
-use Illuminate\Http\Request;
 use App\CommunityUser;
 use App\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class InportPostController extends Controller
 {

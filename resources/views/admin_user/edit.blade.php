@@ -2,8 +2,6 @@
 
 @section('content')
 <h2 class="comp-title">プロフィール編集</h2>
-@component('components.message')
-@endcomponent
 <div class="user-edit">
   <div class="comp-information">
     <div class="elem">

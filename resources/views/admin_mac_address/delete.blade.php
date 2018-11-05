@@ -9,8 +9,6 @@
             <div class="card">
                 <div class="card-header"><h2>デバイス削除</h2></div>
                 <div class="card-body">
-                @component('components.message')
-                @endcomponent
                     <form action="/admin_mac_address/remove" method="post">
                         {{ csrf_field() }}
                         <input type="hidden" name="id" value="{{$item->id}}">

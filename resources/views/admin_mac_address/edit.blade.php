@@ -9,8 +9,6 @@
             <div class="card">
                 <div class="card-header"><h2>デバイス編集</h2></div>
                 <div class="card-body">
-                @component('components.message')
-                @endcomponent
                     <form action="/admin_mac_address/update" method="post">
                         {{ csrf_field() }}
                         <div>
