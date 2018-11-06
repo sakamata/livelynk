@@ -19,10 +19,10 @@ class IndexController extends Controller
         if (!Auth::check()) {
             if (!$request->path) { return view('welcome'); }
             $community = $this->GetCommunityFromPath($request->path);
-            $community_id = $community->id;
             if (!$community) {
                 return redirect('/')->with('message', '存在しないページです');
             }
+            $community_id = $community->id;
         } else {
             $community_id = session('community_id');
             if (!$community_id) {
