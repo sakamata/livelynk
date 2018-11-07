@@ -52,13 +52,14 @@ Route::post('/admin_user/update', 'AdminUserController@update')->middleware('aut
 Route::get('/admin_user/delete{id?}', 'AdminUserController@delete')->middleware('auth');
 Route::post('/admin_user/remove', 'AdminUserController@remove')->middleware('auth');
 
+// 端末削除は一般ユーザーでも可
+Route::get('/admin_mac_address/delete{id?}', 'AdminMacAddressController@delete')->middleware('auth');
+Route::post('/admin_mac_address/remove', 'AdminMacAddressController@remove')->middleware('auth');
 // Admin only
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
     Route::get('/admin_mac_address', 'AdminMacAddressController@index');
     Route::get('/admin_mac_address/edit{id?}', 'AdminMacAddressController@edit');
     Route::post('/admin_mac_address/update', 'AdminMacAddressController@update');
-    Route::get('/admin_mac_address/delete{id?}', 'AdminMacAddressController@delete');
-    Route::post('/admin_mac_address/remove', 'AdminMacAddressController@remove');
 
     Route::get('/admin_mac_regist', 'AdminMacRegistController@index');
 

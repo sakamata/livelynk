@@ -45,13 +45,25 @@
                         @endif
 
                         <div>
+                            @if($item->posted_at != null)
                             もっとも最近: {{$item->posted_at->format('n月j日 G:i:s')}}
+                            @else
+                            もっとも最近 : なし
+                            @endif
                         </div>
                         <div>
+                            @if($item->updated_at != null)
                             更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
+                            @else
+                            更新日時 : なし
+                            @endif
                         </div>
                         <div>
+                            @if($item->created_at != null)
                             登録日時: {{$item->created_at->format('n月j日 G:i:s')}}
+                            @else
+                            登録日時 : なし
+                            @endif
                         </div>
                         @can('superAdmin')
                         <div>

@@ -42,20 +42,32 @@
                             ルーターID: {{$item->router_id}}
                         </div> -->
                         <div>
-                            来訪日時: {{$item->arraival_at->format('n月j日 G:i:s')}}
+                            @if($item->arraival_at != null)
+                            来訪日時 : {{$item->arraival_at->format('n月j日 G:i:s')}}
+                            @else
+                            来訪日時 : なし
+                            @endif
                         </div>
                         <div>
-                        @if($item->departure_at != null)
+                            @if($item->departure_at != null)
                             退出日時: {{$item->departure_at->format('n月j日 G:i:s')}}
-                        @else
+                            @else
                             退出日時: 滞在中
-                        @endif
+                            @endif
                         </div>
                         <div>
+                            @if($item->created_at != null)
                             登録日時: {{$item->created_at->format('n月j日 G:i:s')}}
+                            @else
+                            登録日時 : なし
+                            @endif
                         </div>
                         <div>
+                            @if($item->updated_at != null)
                             更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
+                            @else
+                            更新日時 : なし
+                            @endif
                         </div>
                         <hr>
                         <input type="hidden" name="id" value="{{$item->id}}">

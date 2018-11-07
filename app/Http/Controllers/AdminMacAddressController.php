@@ -235,6 +235,10 @@ class AdminMacAddressController extends Controller
             }
         }
         'App\MacAddress'::find($request->id)->delete();
-        return redirect('/admin_mac_address')->with('message', 'デバイスを削除しました。');
+        if ($user->role == 'normal') {
+            return redirect('admin_user/edit?id=' . $user->id)->with('message', 'デバイスを削除しました。');
+        } else {
+            return redirect('/admin_mac_address')->with('message', 'デバイスを削除しました。');
+        }
     }
 }

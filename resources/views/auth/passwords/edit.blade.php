@@ -10,7 +10,7 @@
                 <div class="card-header"><h2>Password変更</h2></div>
                 <div class="card-body">
                     <p>名前 : {{$item->name}}さん</p>
-                    <p>Email : {{$item->email}}さん</p>
+                    <p>Email : {{$item->email}}</p>
                     <form method="POST" action="/password/update" aria-label="{{ __('Register') }}">
                         @csrf
                         <input type="hidden" name="id" value="{{$item->id}}">
