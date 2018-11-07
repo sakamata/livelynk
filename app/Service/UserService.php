@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\UserTable;
+use App\CommunityUserStatus;
 
 /**
  *
@@ -27,5 +28,10 @@ class UserService
     {
         return 'App\UserTable'::UsersGet($orderkey, $order)
             ->get();
+    }
+
+    public function IDtoRoleGet(int $community_user_id)
+    {
+        return 'App\CommunityUserStatus'::IDtoRoleGet($community_user_id);
     }
 }

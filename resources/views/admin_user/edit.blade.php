@@ -34,7 +34,7 @@
       <span class="head">最終来訪</span>
       <span class="body">{{$item->s_last_access->format('n月j日 G:i:s')}}</span>
     </div>
-    @if(Auth::user()->id == $item->id || Auth::user()->role == 'superAdmin')
+    @if(Auth::user()->id == $item->id || $taget_role_int <= $user_role_int)
     <a href="/password/edit?id={{$item->id}}" class="comp-ui">パスワード変更</a>
     @endif
     @if($item->role != 'readerAdmin' && $item->role != 'superAdmin')

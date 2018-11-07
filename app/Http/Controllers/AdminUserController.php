@@ -247,11 +247,17 @@ class AdminUserController extends Controller
             (int)$user->community_id
         );
         $communities = DB::table('communities')->get();
+        $taget_role = $this->call_user->IDtoRoleGet($request->id);
+        $taget_role_int = 'App\Role'::where('role', $taget_role)->pluck('id')->first();
+        $user_role_int = 'App\Role'::where('role', $user->role)->pluck('id')->first();
+
         return view('admin_user.edit', [
             'item' => $item,
             'mac_addresses' => $mac_addresses,
             'communities' => $communities,
             'view' => 'edit',
+            'taget_role_int' => $taget_role_int,
+            'user_role_int' => $user_role_int,
         ]);
     }
 

@@ -43,6 +43,12 @@ class CommunityUser extends Model
         return $this->hasMany('App\MacAddress');
     }
 
+    public function scopeGetCommunityID($query, $community_user_id)
+    {
+        return $query->where('id',$community_user_id)
+            ->pluck('community_id')->first();
+    }
+
     public function scopeMacIDtoGetCommunityID($query, $mac_address_id)
     {
         return $query->Join('mac_addresses', 'community_user.id', '=', 'mac_addresses.community_user_id')
@@ -100,5 +106,4 @@ class CommunityUser extends Model
             ->Join('communities', 'communities.id', '=', 'community_user.community_id')
             ->Join('routers', 'routers.id', '=', 'mac_addresses.router_id');
     }
-
 }

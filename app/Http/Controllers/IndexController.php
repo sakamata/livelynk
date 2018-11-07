@@ -80,8 +80,7 @@ class IndexController extends Controller
 
         // 非滞在者の取得処理開始----------------------
 
-        // 該当コミュニティのuser id を配列で取得 （readerAdmin除外）
-        // ****** ここに非表示userを除外する処理を追加
+        // 該当コミュニティのuser id を配列で取得 （非表示user,readerAdmin除外）
         $users_id_obj = DB::table('community_user')
             ->join('communities_users_statuses' , 'community_user.id', '=', 'communities_users_statuses.id')
             ->where([
