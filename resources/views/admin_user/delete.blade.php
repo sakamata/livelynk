@@ -38,8 +38,8 @@
                             <label for="InputTextarea">デバイス（退会するとデバイス情報も削除されます）</label>
                             <table class="table table-hover">
                                 <tr class="info thead-light">
-                                    <th>デバイス名</th>
-                                    <th>Vendor</th>
+                                    <th>メーカー</th>
+                                    <th>デバイスメモ</th>
                                     <th>MAC Address</th>
                                     <th>来訪日時</th>
                                     <th>登録日時</th>
@@ -47,8 +47,8 @@
                         @foreach($mac_addresses as $mac_add)
                             <input type="hidden" name="mac_address_id[]" value="{{$mac_add->id}}">
                                 <tr>
-                                    <td>{{$mac_add->device_name}}</td>
                                     <td>{{$mac_add->vendor}}</td>
+                                    <td>{{$mac_add->device_name}}</td>
                                     <td>{{$mac_add->mac_address}}</td>
                                     <td>{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i')}}</td>
                                     <td>{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}</td>

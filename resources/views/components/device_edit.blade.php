@@ -42,13 +42,13 @@
     <div class="line">
       <div class="head">メーカー（自動）</div>
       <div class="body">
-        <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}][vendor]" value="{{old('vendor', $mac_add->vendor)}}" placeholder="40文字まで">
+        <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}][vendor]" value="{{old('mac_address.'.$mac_add->id.'.vendor', $mac_add->vendor)}}" placeholder="40文字まで">
       </div>
     </div>
     <div class="line">
       <div class="head">デバイスメモ</div>
       <div class="body">
-        <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}][device_name]" value="{{old('device_name', $mac_add->device_name)}}" placeholder="40文字まで">
+        <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}][device_name]" value="{{old('mac_address.'.$mac_add->id.'.device_name', $mac_add->device_name)}}" placeholder="40文字まで">
       </div>
     </div>
     <div class="line">
@@ -66,13 +66,29 @@
     <div class="line">
       <div class="head">非表示にする</div>
         <div class="body">
+            @php
+            
+            old('mac_address.'.$mac_add->id.'.hide') ? $check = "checked='checked'" : $check = '';
+            @endphp
+            {{$check}}
+            {{--old('mac_address.'.$mac_add->id.'.hide') ? "checked" : ''--}}
             <!-- チェックされていない場合は0を送信 -->
             <input type="hidden" name="mac_address[{{$mac_add->id}}][hide]" value="0">
-            @if($mac_add->hide == true)
+            @if($mac_add->hide == true || $check)
+            hide true
             <input type="checkbox" name="mac_address[{{$mac_add->id}}][hide]" value="1" checked="checked" id="devise-check-{{$mac_add->id}}">
+
+            @elseif($mac_add->hide == true && !$check)
+            <input type="checkbox" name="mac_address[{{$mac_add->id}}][hide]" value="1"  id="devise-check-{{$mac_add->id}}">
+
             @else
+            hide false
             <input type="checkbox" name="mac_address[{{$mac_add->id}}][hide]" value="1" id="devise-check-{{$mac_add->id}}">
+
             @endif
+            {{-- is_array(old('mac_address.'.$mac_add->id.'.hide')) && in_array("1", old('mac_address.'.$mac_add->id.'.hide'), true)? 'checked="checked"' : '' --}}
+            {{-- is_array(old("hide")) && in_array("1", old("hide"), true)? 'checked="checked"' : '' --}}
+
       </div>
     </div>
 

@@ -424,7 +424,7 @@ class AdminUserController extends Controller
                 Auth::logout();
                 return redirect('/')->with('message', '退会が完了しました。ご利用ありがとうございました');
             } else {
-                return redirect('/admin_user')->with('message', 'ユーザー ' . $user->name . ' さんをを退会させました');
+                return redirect('/admin_user')->with('message', 'ユーザーを退会させました');
             }
         }
     }
