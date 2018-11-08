@@ -66,28 +66,35 @@
     <div class="line">
       <div class="head">非表示にする</div>
         <div class="body">
-            @php
-            
-            old('mac_address.'.$mac_add->id.'.hide') ? $check = "checked='checked'" : $check = '';
-            @endphp
-            {{$check}}
-            {{--old('mac_address.'.$mac_add->id.'.hide') ? "checked" : ''--}}
+@php
+if(
+    ($mac_add->hide == 1 && old('mac_address.'.$mac_add->id.'.hide') == null) ||
+    ($mac_add->hide == 0 && old('mac_address.'.$mac_add->id.'.hide') == 1)
+) {
+    $check = "checked='checked'";
+} else {
+    $check = "";
+}
+@endphp
             <!-- チェックされていない場合は0を送信 -->
             <input type="hidden" name="mac_address[{{$mac_add->id}}][hide]" value="0">
-            @if($mac_add->hide == true || $check)
-            hide true
-            <input type="checkbox" name="mac_address[{{$mac_add->id}}][hide]" value="1" checked="checked" id="devise-check-{{$mac_add->id}}">
 
-            @elseif($mac_add->hide == true && !$check)
-            <input type="checkbox" name="mac_address[{{$mac_add->id}}][hide]" value="1"  id="devise-check-{{$mac_add->id}}">
+            <br>add
+            <input type="checkbox" name="mac_address[{{$mac_add->id}}][hide]" value="old('mac_address.'.$mac_add->id.'.hide', $mac_add->hide)" id="devise-check-{{$mac_add->id}}" {{$check}}>
 
-            @else
+
+            @if($mac_add->hide == false || $check)
             hide false
             <input type="checkbox" name="mac_address[{{$mac_add->id}}][hide]" value="1" id="devise-check-{{$mac_add->id}}">
+
+            @else
+            hide true
+            <input type="checkbox" name="mac_address[{{$mac_add->id}}][hide]" value="1" checked="checked" id="devise-check-{{$mac_add->id}}">
 
             @endif
             {{-- is_array(old('mac_address.'.$mac_add->id.'.hide')) && in_array("1", old('mac_address.'.$mac_add->id.'.hide'), true)? 'checked="checked"' : '' --}}
             {{-- is_array(old("hide")) && in_array("1", old("hide"), true)? 'checked="checked"' : '' --}}
+
 
       </div>
     </div>
