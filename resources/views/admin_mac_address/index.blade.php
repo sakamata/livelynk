@@ -25,7 +25,7 @@
                             <th>
                                 @component('components.order', [
                                     'name' => 'current_stay',
-                                    'firld' => '滞在中',
+                                    'firld' => 'ステータス',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_mac_address',
@@ -88,7 +88,11 @@
                         @else
                         <tr>
                         @endif
-                            <td class="align-middle">{{$item->current_stay}}:ID{{$item->id}}</td>
+                            <td class="align-middle">
+                                ID:{{$item->id}}<br>
+                                {{$item->current_stay == 1 ? '滞在中' : '不在'}}<br>
+                                {{$item->hide == 1 ? '非表示' : ''}}
+                            </td>
                             @can('superAdmin')
                             <td class="align-middle">{{$item->community_id}} : {{$item->community_name}}<br>{{$item->service_name}}</td>
                             @endcan

@@ -17,17 +17,7 @@
                             <th>
                                 @component('components.order', [
                                     'name' => 'id',
-                                    'firld' => 'ID',
-                                    'key' => $key,
-                                    'order' => $order,
-                                    'action' => 'admin_user',
-                                ])
-                                @endcomponent
-                            </th>
-                            <th>
-                                @component('components.order', [
-                                    'name' => 'hide',
-                                    'firld' => '非表示',
+                                    'firld' => 'ステータス',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_user',
@@ -44,21 +34,11 @@
                                 ])
                                 @endcomponent
                             </th>
-                            <th>
-                                <table class='table table-borderless table-sm'>
-                                    <tr>
-                                      <th>ID</th>
-                                      <th>滞在中</th>
-                                      <th>非表示</th>
-                                      <th>デバイス名</th>
-                                      <th>vendor</th>
-                                    </tr>
-                                </table>
-                            </th>
+                            <th>デバイス情報</th>
                             <th>
                                 @component('components.order', [
                                     'name' => 'role',
-                                    'firld' => 'role',
+                                    'firld' => '権限',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_user',
@@ -115,8 +95,8 @@
                         @else
                         <tr  class="table-secondary">
                         @endif
-                            <td>{{$item->id}}</td>
-                            <td>{{$item->hide}}</td>
+                            <td>ID:{{$item->id}}</br>
+                            {{$item->hide == 1 ? '非表示' : ''}}</td>
                             <td>{{$item->name}}</br>{{$item->email}}</td>
                             <td>
                                 <table class="table table-hover table-sm table-borderless">
@@ -130,9 +110,10 @@
                                     @else
                                         <tr onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';">
                                     @endif
-                                            <td>ID:{{$mac_add->id}}</td>
-                                            <td>{{$mac_add->current_stay}}</td>
-                                            <td>{{$mac_add->hide}}</td>
+                                            <td>ID:{{$mac_add->id}} &nbsp;&nbsp;
+                                            {{$mac_add->current_stay == 1 ? '滞在' : '不在'}}</td>
+                                            <td>{{$mac_add->hide == 1 ? '隠' : ''}}
+                                            </td>
                                             <td>{{$mac_add->device_name}}</td>
                                             <td>{{$mac_add->vendor}}</td>
                                             <td class="blockquote text-right">

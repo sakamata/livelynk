@@ -40,8 +40,11 @@
     </div>
     @endcan
     <div class="line">
-      <div class="head">滞在中</div>
-      <div class="body">{{$mac_add->current_stay}}</div>
+      <div class="head">ステータス</div>
+      <div class="body">
+          {{$mac_add->current_stay == 1 ? '滞在中' : '不在'}}
+          {{$mac_add->hide == 1 ? ' / 非表示' : ''}}
+      </div>
     </div>
     <div class="line">
       <div class="head">MAC Address</div>
