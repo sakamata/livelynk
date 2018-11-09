@@ -35,6 +35,13 @@ class InportPostController extends Controller
         $community = DB::table('communities')
             ->where('name', $check_array['community_id'])
         ->first();
+
+        if (!$community) {
+            Log::debug(print_r('community_id not found!! check json ==> ', 1));
+            Log::debug(print_r($check_array, 1));
+            exit();
+        }
+
         $community_id_int = $community->id;
 
         if (!$community) {
@@ -212,6 +219,8 @@ class InportPostController extends Controller
             (new ExportPostController)->push_ifttt($push_users, $category = "arraival", $community->id);
         }
         $this->DepartureCheck($community->id);
+        return response('From Livelynk posted', 200)
+                  ->header('Content-Type', 'text/plain');
     }
 
     public function HashCheck($check_array)
@@ -223,8 +232,7 @@ class InportPostController extends Controller
         } else {
             $router_id = $check_array["router_id"];
         }
-        $secret = 'App\Router'::where('id', $router_id)->value('hash_key');
-
+        $secret = 'App\Router'::where('id', $router_id)->pluck('hash_key')->first();
         $time = $check_array["time"];
         $this_side_hash = hash('sha256',$time.$secret);
         $post_hash = $check_array["hash"];
