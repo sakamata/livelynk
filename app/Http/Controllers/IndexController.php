@@ -20,7 +20,7 @@ class IndexController extends Controller
             if (!$request->path) { return view('welcome'); }
             $community = $this->GetCommunityFromPath($request->path);
             if (!$community) {
-                return redirect('/')->with('message', '存在しないページです');
+                return view('errors.404');
             }
             $community_id = $community->id;
         } else {
