@@ -37,11 +37,6 @@ Route::post('/password/update', 'ChangePasswordController@update')->middleware('
 // 未ログイン時は滞在者画面への遷移を作ってはいけない（プライバシー的な問題）
 Route::get('/', 'IndexController@index');
 
-// /index で認証前、認証後、共有で welcome画面表示
-Route::get('/index', function() {
-    return view('welcome');
-});
-
 // 未ログイン時の 滞在者一覧画面 コミュニティ毎のpathを知っているものだけが閲覧できる
 // /index?path=hoge
 Route::get('/index/{path?}', 'IndexController@index')->name('index');
