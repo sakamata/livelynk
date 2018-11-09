@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Rules\ThisCommunityExist;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -72,7 +73,7 @@ class LoginController extends Controller
             'password' => $request->password,
         );
         $request->validate([
-            'email' => 'required|string|email|max:170',
+            'email' => ['required', 'string', 'email', 'max:170', new ThisCommunityExist($request->community_id, $request->email)],
             'password' => 'required|string|min:6|max:100',
         ]);
 
