@@ -18,6 +18,7 @@ return [
     'Register' => 'アカウント 新規登録',
     'Name' => '名前',
     'E-Mail Address' => 'E-Mail アドレス',
+    'unique_name' => 'ユーザーID(Email)',
     'Password' => 'パスワード',
     'Confirm Password' => '（確認）パスワード',
     'Login' => 'ログイン',

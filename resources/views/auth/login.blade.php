@@ -12,14 +12,14 @@
                         @csrf
                         <input type="hidden" name="community_id" value="{{$community->id}}">
                         <div class="form-group row">
-                            <label for="email" class="col-sm-4 col-form-label text-md-right">{{ __('auth.E-Mail Address') }}</label>
+                            <label for="unique_name" class="col-sm-4 col-form-label text-md-right">{{ __('auth.unique_name') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required autofocus>
+                                <input id="unique_name" type="text" class="form-control{{ $errors->has('unique_name') ? ' is-invalid' : '' }}" name="unique_name" value="{{ old('unique_name') }}" required autofocus>
 
-                                @if ($errors->has('email'))
+                                @if ($errors->has('unique_name'))
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('email') }}</strong>
+                                        <strong>{{ $errors->first('unique_name') }}</strong>
                                     </span>
                                 @endif
                             </div>

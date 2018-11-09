@@ -27,6 +27,20 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="unique_name" class="col-md-4 col-form-label text-md-right">{{ __('auth.unique_name') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="unique_name" type="text" class="form-control{{ $errors->has('unique_name') ? ' is-invalid' : '' }}" name="unique_name" value="{{ old('unique_name') }}" required placeholder="半角記号のID か Email">
+
+                                @if ($errors->has('unique_name'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('unique_name') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+<!-- 
+                        <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('auth.E-Mail Address') }}</label>
 
                             <div class="col-md-6">
@@ -38,7 +52,7 @@
                                     </span>
                                 @endif
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('auth.Password') }}</label>

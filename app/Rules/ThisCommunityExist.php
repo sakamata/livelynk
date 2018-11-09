@@ -8,17 +8,17 @@ use Illuminate\Contracts\Validation\Rule;
 class ThisCommunityExist implements Rule
 {
     protected $community_id;
-    protected $email;
+    protected $unique_name;
 
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct($community_id, $email)
+    public function __construct($community_id, $unique_name)
     {
         $this->community_id = $community_id;
-        $this->email = $email;
+        $this->unique_name = $unique_name;
     }
 
     /**
@@ -34,7 +34,7 @@ class ThisCommunityExist implements Rule
         return $users = DB::table('users')
             ->JoinSub($community, 'community_user', function($join) {
                 $join->on('users.id', '=', 'community_user.user_id');
-            })->where('email', $this->email)->exists();
+            })->where('unique_name', $this->unique_name)->exists();
     }
 
     /**

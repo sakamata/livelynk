@@ -72,12 +72,15 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        // unique_name はメールアドレスの記号を許可
+        // email null許可
         return Validator::make($data, [
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
-            'email' => 'required|string|email|max:170|unique:users',
+            'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', 'unique:users'],
             'password' => 'required|string|min:6|max:100|confirmed',
         ]);
+        // 'email' => 'nullable|string|email|max:170|unique:users',
     }
 
     /**
@@ -96,9 +99,11 @@ class RegisterController extends Controller
             // 最後に return で渡せば登録完了となるらしい。
             $user = User::create([
                 'name' => $data['name'],
-                'email' => $data['email'],
+                'unique_name' => $data['unique_name'],
                 'password' => Hash::make($data['password']),
             ]);
+            // 'email' => $data['email'],
+
             // 連携したtableに必要な値をinsertする
             $community_id = $data['community_id'];
             // 中間tableに値を入れる

@@ -63,17 +63,17 @@ class LoginController extends Controller
     // ログイン時に使用するユニークであるカラムを指定
     public function username()
     {
-        return 'email';
+        return 'unique_name';
     }
 
     public function authenticate(Request $request)
     {
         $credentials  = array(
-            'email' => $request->email,
+            'unique_name' => $request->unique_name,
             'password' => $request->password,
         );
         $request->validate([
-            'email' => ['required', 'string', 'email', 'max:170', new ThisCommunityExist($request->community_id, $request->email)],
+            'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', new ThisCommunityExist($request->community_id, $request->unique_name)],
             'password' => 'required|string|min:6|max:100',
         ]);
 
@@ -83,7 +83,7 @@ class LoginController extends Controller
                 ->select('community_user.id as id')
                 ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
                 ->where([
-                    ['email', $request->email],
+                    ['unique_name', $request->unique_name],
                     ['community_id', $request->community_id],
             ])->first();
             // session にcommunity値保存
@@ -91,7 +91,7 @@ class LoginController extends Controller
             $request->session()->put('community_user_id', $community_user->id);
             return redirect('/')->with('message', 'ログインしました');
         } else {
-            return redirect()->back()->withErrors(array('email' => 'E-mailかPasswordが正しくありません'))->withInput();
+            return redirect()->back()->withErrors(array('unique_name' => 'ユーザーIDかPasswordが正しくありません'))->withInput();
         }
     }
 
