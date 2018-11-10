@@ -74,6 +74,9 @@ class RegisterController extends Controller
     {
         // unique_name はメールアドレスの記号を許可
         // email null許可
+
+        // 他のコミュニティで既存ユーザーIDで新規登録した場合は？
+        // 2つめ以降のコミュニティに登録する際、どうする？
         return Validator::make($data, [
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
@@ -122,6 +125,7 @@ class RegisterController extends Controller
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
+
             DB::commit();
             $success = true;
         } catch (\Exception $e) {
