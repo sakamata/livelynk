@@ -12,8 +12,6 @@ use App\Service\UserService;
 use App\Service\MacAddressService;
 
 // normal user は閲覧、操作権限無し
-// ***ToDo*** Request パラメーターを利用して AdminMacRegistController::index を
-// こちらに集約して共通化 現状ほとんど一緒のコード
 class AdminMacAddressController extends Controller
 {
     private $call_user;
