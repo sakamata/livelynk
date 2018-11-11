@@ -11,8 +11,6 @@ class AuthUserProvider extends EloquentUserProvider
     // Auth::user()->hoge で取得可能なカラムを定義
 
     public function retrieveById($identifier) {
-        log::debug(print_r('identifier',1));
-        log::debug(print_r($identifier,1));
         $result = $this->createModel()->newQuery()
             ->Join('community_user', 'community_user.user_id', '=', 'users.id')
             ->Join('communities_users_statuses', 'community_user.id', '=', 'communities_users_statuses.id')

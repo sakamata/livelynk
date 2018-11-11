@@ -80,9 +80,21 @@ class AdminMacAddressController extends Controller
                 ->AllCommunityUsersGet('user_id', 'desc', (int)$user->community_id);
         } else {
             // normalAdmin & readerAdmin はcommunityの範囲で表示
-            // 未登録端末のみ呼び出す
-            $reader_id = $this->getReaderID();
-            $items = $this->call_mac->CommunityHavingMac($user->community_id, $reader_id, $order, $key, $case = 'index');
+            switch ($request->path()) {
+                // 登録済み端末のみ呼び出す
+                case 'admin_mac_address/index':
+                    $case = 'index';
+                    break;
+                // 未登録端末のみ呼び出す
+                case 'admin_mac_address/regist':
+                    $case = 'regist';
+                    break;
+                default:
+                    $case = 'index';
+                    break;
+            }
+            // 第5引数 $case を流し込んで表示を切り替え
+            $items = $this->call_mac->CommunityHavingMac($user->community_id, $reader_id, $order, $key, $case);
             // communityのユーザーlistを取得
             $users = $this->call_user
                 ->SelfCommunityUsersGet('user_id', 'desc', (int)$user->community_id);
@@ -93,7 +105,8 @@ class AdminMacAddressController extends Controller
             'key' => $key,
             'user' => $user,
             'users' => $users,
-            'view' => 'index',
+            'view' => $case,
+            'reader_id' => $reader_id,
         ]);
     }
 
