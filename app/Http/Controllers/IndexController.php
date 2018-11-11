@@ -108,7 +108,10 @@ class IndexController extends Controller
             ->orderBy('last_access', 'desc')
         ->get();
 
-        $reader_id = $this->getReaderID();
+        if (Auth::check()) {
+            $reader_id = $this->getReaderID();
+        } else { $reader_id = ""; }
+
         return view('index.index', [
             'community' => $community,
             'items' => $unregistered,
