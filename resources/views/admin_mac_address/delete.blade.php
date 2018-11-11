@@ -31,6 +31,9 @@
                             <h3>登録ユーザー:&nbsp;&nbsp;&nbsp;&nbsp; {{$person->name}}</h3>
                         </div>
                         <div>
+                            <h3>ユーザーID:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{$person->unique_name}}</h3>
+                        </div>
+                        <div>
                             <h3>Email:&nbsp;&nbsp;&nbsp;&nbsp; {{$person->email}}</h3>
                         </div>
                         @if($item->current_stay == 1)

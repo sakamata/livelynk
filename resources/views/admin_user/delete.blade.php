@@ -25,6 +25,9 @@
                             <h3>名前: {{$item->name}}</h3>
                         </div>
                         <div>
+                            <h3>ユーザーID: {{$item->unique_name}}</h3>
+                        </div>
+                        <div>
                             <h3>Email: {{$item->email}}</h3>
                         </div>
                         <div>

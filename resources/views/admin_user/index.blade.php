@@ -27,7 +27,7 @@
                             <th>
                                 @component('components.order', [
                                     'name' => 'name',
-                                    'firld' => '名前 / Email',
+                                    'firld' => 'ID/名前/Email',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_user',
@@ -95,9 +95,9 @@
                         @else
                         <tr  class="table-secondary">
                         @endif
-                            <td>ID:{{$item->id}}</br>
+                            <td>No.{{$item->id}}</br>
                             {{$item->hide == 1 ? '非表示' : ''}}</td>
-                            <td>{{$item->name}}</br>{{$item->email}}</td>
+                            <td>ID:{{$item->unique_name}}</br>{{$item->name}}</br>{{$item->email}}</td>
                             <td>
                                 <table class="table table-hover table-sm table-borderless">
                                     <tbody>

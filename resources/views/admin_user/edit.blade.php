@@ -8,6 +8,10 @@
       <span class="head">名前</span>
       <span class="body">{{$item->name}}</span>
     </div>
+    <div class="elem">
+      <span class="head">ユーザーID</span>
+      <span class="body">{{$item->unique_name}}</span>
+    </div>
     @can('superAdmin')
     <div class="elem">
       <span class="head">コミュニティID</span>

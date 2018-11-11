@@ -22,10 +22,13 @@
                             更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
                         </div>
                         <div>
-                            代表管理者 : ID : {{$item->owner->id}}
+                            代表管理者 : No. : {{$item->owner->id}}
                         </div>
                         <div>
                             代表管理者 : 名前 : {{$item->owner->name}}
+                        </div>
+                        <div>
+                            代表管理者 : ID : {{$item->owner->unique_name}}
                         </div>
                         <div>
                             代表管理者 : Email : {{$item->owner->email}}

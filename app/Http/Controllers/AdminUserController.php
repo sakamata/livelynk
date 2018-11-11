@@ -152,31 +152,32 @@ class AdminUserController extends Controller
         $request->validate([
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
-            'email' => 'required|string|email|max:170|unique:users',
+            'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', 'unique:users'],
+            'email' => 'nullable|string|email|max:170',
             'password' => 'required|string|min:6|max:100|confirmed',
             'mac_address.*.check' => 'boolean',
             'mac_address.*.hide' => 'boolean',
             'mac_address.*.vendor' => 'nullable|string|max:40',
             'mac_address.*.device_name' => 'nullable|string|max:40',
         ]);
-        // user roleは作成時はDBデフォルト値"normal"に固定となる
         DB::beginTransaction();
         try{
-            // Laravel のregisterは User::create の返り値 $user を
-            // 最後に return で渡せば登録完了となるらしい。
-            $user = User::create([
-                'name' => $request['name'],
-                'email' => $request['email'],
-                'password' => Hash::make($request['password']),
+            $now = Carbon::now();
+            $user_id = 'App\UserTable'::insertGetId([
+                'name' => $request->name,
+                'unique_name' => $request->unique_name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
             // 連携したtableに必要な値をinsertする
             $community_id = $request['community_id'];
             // 中間tableに値を入れる
             $community_user_id = DB::table('community_user')->insertGetId([
                 'community_id' => $community_id,
-                'user_id' => $user->id,
+                'user_id' => $user_id,
             ]);
-            $now = Carbon::now();
             // user status管理のtableに値を入れる
             // role_id デフォルト値 "normal" = 1 に固定
             DB::table('communities_users_statuses')->insert([
@@ -216,6 +217,7 @@ class AdminUserController extends Controller
         } catch (\Exception $e) {
             $success = false;
             DB::rollback();
+            return redirect('/admin_user/add')->with('message', '登録できませんでした。もう一度試してください');
         }
         if ($success) {
             return redirect('/admin_user')->with('message', '新規ユーザーを作成しました。');
@@ -265,8 +267,6 @@ class AdminUserController extends Controller
 
     public function update(Request $request)
     {
-        log::debug(print_r('request->user_id',1));
-        log::debug(print_r($request->user_id,1));
         $request->validate([
             'id' => 'required|integer',
             'user_id' => 'required|integer',
