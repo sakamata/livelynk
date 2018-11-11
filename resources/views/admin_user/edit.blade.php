@@ -67,6 +67,7 @@
       @endif
       @endcan
       <input type="hidden" name="id" value="{{$item->id}}">
+      <input type="hidden" name="user_id" value="{{$item->user_id}}">
       @component('components.error')
       @endcomponent
       <div class="form-elem">
@@ -81,7 +82,11 @@
         @endif
       </div>
       <div class="form-elem">
-        <label for="email" class="comp-ui">Email</label>
+        <label for="unique_name" class="comp-ui">ユーザーID(ログインに必要です)</label>
+        <input type="text" class="comp-ui" name="unique_name" value="{{old('unique_name', $item->unique_name)}}" id="unique_name">
+      </div>
+      <div class="form-elem">
+        <label for="email" class="comp-ui">Email(任意)</label>
         <input type="text" class="comp-ui" name="email" value="{{old('email', $item->email)}}" id="email">
       </div>
       @if(Auth::user()->role != 'normal')

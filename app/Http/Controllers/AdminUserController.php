@@ -6,7 +6,9 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+
 use Carbon\Carbon;
+use App\Rules\UniqueNameEdit;
 use App\Service\UserService;
 use App\Service\MacAddressService;
 use App\UserTable; //これを消す位の勢いでリファクタリング
@@ -263,11 +265,15 @@ class AdminUserController extends Controller
 
     public function update(Request $request)
     {
+        log::debug(print_r('request->user_id',1));
+        log::debug(print_r($request->user_id,1));
         $request->validate([
             'id' => 'required|integer',
+            'user_id' => 'required|integer',
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
-            'email' => 'required|string|email|max:170',
+            'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', new UniqueNameEdit($request->user_id)],
+            'email' => 'nullable|string|email|max:170',
             'role' => ['required', 'regex:/normal|normalAdmin|readerAdmin|superAdmin/'],
             'hide' => 'required|boolean',
             'mac_address.*.hide' => 'boolean',
@@ -295,10 +301,11 @@ class AdminUserController extends Controller
         // users tableの更新
         $param_user = [
             'name' => $request->name,
+            'unique_name' => $request->unique_name,
             'email' => $request->email,
             'updated_at' => $now,
         ];
-        'App\UserTable'::where('id', $request->id)->update($param_user);
+        'App\UserTable'::where('id', $request->user_id)->update($param_user);
 
         // role で取得した文字列を id int に変換
         $role_id = $this->roleNameToIdChange($request->role);
@@ -402,7 +409,7 @@ class AdminUserController extends Controller
             log::debug(print_r('$count>>>'.$count,1));
             if ($count <= 1) {
                 log::debug(print_r('user delete start!!!',1));
-                DB::table('users')->where('id', $request->id)->delete();
+                DB::table('users')->where('id', $user_id)->delete();
             }
             DB::table('community_user')->where('id', $request->id)->delete();
             DB::table('communities_users_statuses')->where('id', $request->id)->delete();

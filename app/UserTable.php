@@ -69,6 +69,7 @@ class UserTable extends Model
         // 'mac_addresses.*',
         return $query->select([
             'users.name',
+            'users.unique_name',
             'users.email',
             'community_user.*',
             'communities_users_statuses.hide',
