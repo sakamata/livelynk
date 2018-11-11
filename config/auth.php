@@ -70,6 +70,7 @@ return [
             'driver' => 'auth_ex',
             'model' => App\User::class,
         ],
+        // 'driver' => 'eloquent',
 
         // 'users' => [
         //     'driver' => 'database',

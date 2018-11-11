@@ -69,16 +69,14 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
-        $credentials  = array(
-            'unique_name' => $request->unique_name,
-            'password' => $request->password,
-        );
         $request->validate([
-            'unique_name' => ['required', 'string', 'min:6', 'max:40',  'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u'],
+            'unique_name' => ['required', 'string', 'min:6', 'max:40',  'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', new ThisCommunityExist($request->community_id, $request->unique_name)],
             'password' => 'required|string|min:6|max:100',
         ]);
+        // これを使用すると異なるコミュニティでログインできなくなる。
         // new ThisCommunityExist($request->community_id, $request->unique_name)]
 
+/*
         // ログインしようとしているコミュニティにいるuserか確認する
         $community = DB::table('community_user')->where('community_id', $request->community_id);
         $exists = DB::table('users')
@@ -124,25 +122,33 @@ class LoginController extends Controller
                 return redirect()->back()->withErrors(array('unique_name' => '認証に失敗しました。もう一度試してみてください'))->withInput();
             }
         }
+*/
+        // ↓コメントアウトにもある定義、一時的にここに書く
+        $new_community_user_id = "";
+        // 認証された場合は community_user で必要な値を取得 session に入れる
+        $community_user = DB::table('community_user')
+            ->select('community_user.id as id')
+            ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
+            ->where([
+                ['unique_name', $request->unique_name],
+                ['community_id', $request->community_id],
+        ])->first();
+
+        // sessionに既存のIDを使うか、今登録したIDを使うか判定
+        if (!$new_community_user_id) {
+            $community_user_id = $community_user->id;
+        } else {
+            $community_user_id = $new_community_user_id;
+        }
+
+        $credentials  = array(
+            'unique_name' => $request->unique_name,
+            'password' => $request->password,
+        );
+        // 'community_user.id' => $community_user_id,
 
         // 認証許可
         if (Auth::attempt($credentials)) {
-            // 認証された場合は community_user で必要な値を取得 session に入れる
-            $community_user = DB::table('community_user')
-                ->select('community_user.id as id')
-                ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
-                ->where([
-                    ['unique_name', $request->unique_name],
-                    ['community_id', $request->community_id],
-            ])->first();
-
-            // sessionに既存のIDを使うか、今登録したIDを使うか判定
-            if (!$new_community_user_id) {
-                $community_user_id = $community_user->id;
-            } else {
-                $community_user_id = $new_community_user_id;
-            }
-
             // session にcommunity値保存
             $request->session()->put('community_id', $request->community_id);
             $request->session()->put('community_user_id', $community_user_id);

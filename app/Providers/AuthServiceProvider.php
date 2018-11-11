@@ -21,6 +21,7 @@ class AuthServiceProvider extends ServiceProvider
     // Thanks!! https://blog.regrex.jp/2016/06/23/post-627/
     public function register() {
         Auth::provider('auth_ex', function($app) {
+        // Auth::provider('eloquent', function($app) {
             // スタックオーバーフロー先生はこれで取れると書いてあるんだけど、モデルが取れない…
             // $model = $this->app['config']['auth.model'];
             $model = $app['config']['auth.providers.users.model'];
