@@ -76,14 +76,7 @@
       @endcomponent
       <div class="form-elem">
         <label for="user_name" class="comp-ui">名前</label>
-        @php
-        if ($item->role == 'readerAdmin') { $readonly = 'readonly';}
-        else { $readonly = '';}
-        @endphp
-        <input type="text" class="comp-ui" name="name" value="{{old('name', $item->name)}}" {{$readonly}} id="user_name">
-        @if($item->role == 'readerAdmin')
-        <span>コミュニティ管理者は、名前の変更ができません。</span>
-        @endif
+        <input type="text" class="comp-ui" name="name" value="{{old('name', $item->name)}}" id="user_name">
       </div>
       <div class="form-elem">
         <label for="unique_name" class="comp-ui">ユーザーID(ログインに必要です)</label>

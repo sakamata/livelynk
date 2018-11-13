@@ -138,7 +138,11 @@
                                                     @else
                                                     <?php $selected = ''; ?>
                                                     @endif
+                                                    @if($user->id == $reader_id)
+                                                    <option value="{{$user->id}}" {{ $selected }}>{{$user->id}}&nbsp;:&nbsp;未登録デバイス</option>
+                                                    @else
                                                     <option value="{{$user->id}}" {{ $selected }}>{{$user->id}}&nbsp;:&nbsp;{{$user->name}}</option>
+                                                    @endif
                                                 @endforeach
                                             </select>
                                         </div>

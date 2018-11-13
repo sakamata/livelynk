@@ -31,9 +31,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('auth.Name') }}</label>
 
                             <div class="col-md-6">
-                                <input id="user_name" type="text" class="form-control{{ $errors->has('user_name') ? ' is-invalid' : '' }}" name="user_name" value="未登録" required autofocus  disabled>
-                                <p>管理者ユーザーには未登録端末用のアカウントが最初に登録されます。この名前は変更できません。</p>
-                                <!-- ***ToDo*** 任意の名前可能にします -->
+                                <input id="user_name" type="text" class="form-control{{ $errors->has('user_name') ? ' is-invalid' : '' }}" name="user_name" value="{{ old('user_name') }}" required  autofocus placeholder="30文字まで">
 
                                 @if ($errors->has('user_name'))
                                     <span class="invalid-feedback" role="alert">

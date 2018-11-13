@@ -110,6 +110,7 @@ class AdminMacAddressController extends Controller
             'user' => $user,
             'communities' => $communities,
             'community_id' => $community_id,
+            'reader_id' => $reader_id,
             'items' => $items,
             'users' => $users,
         ]);

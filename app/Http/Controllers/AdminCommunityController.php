@@ -31,8 +31,8 @@ class AdminCommunityController extends Controller
 
     public function create(Request $request)
     {
-        // 'user_name' => 'required|string|min:3|max:32',
         $request->validate([
+            'user_name' => 'required|string|min:3|max:30',
             'email' => 'nullable|string|email|max:170',
             'password' => 'required|string|min:6|max:100|confirmed',
             'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', 'unique:users'],
@@ -60,7 +60,7 @@ class AdminCommunityController extends Controller
         try {
             $community_id = DB::table('communities')->insertGetId($param_community);
             $param_user = [
-                'name' => '未登録',
+                'name' => $request->user_name,
                 'unique_name' => $request->unique_name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
