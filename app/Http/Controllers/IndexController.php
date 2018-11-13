@@ -108,6 +108,10 @@ class IndexController extends Controller
             ->orderBy('last_access', 'desc')
         ->get();
 
+        if (Auth::check()) {
+            $reader_id = $this->getReaderID();
+        } else { $reader_id = ""; }
+
         return view('index.index', [
             'community' => $community,
             'items' => $unregistered,
@@ -115,6 +119,7 @@ class IndexController extends Controller
             'items2' => $not_stays,
             'rate' => $unregistered_rate_array,
             'rate1' => $stays_rate_array,
+            'reader_id' => $reader_id,
         ]);
     }
 

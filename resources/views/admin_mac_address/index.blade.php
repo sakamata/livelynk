@@ -33,7 +33,7 @@
                                     'firld' => 'ステータス',
                                     'key' => $key,
                                     'order' => $order,
-                                    'action' => 'admin_mac_address',
+                                    'action' => '#',
                                 ])
                                 @endcomponent
                             </th>
@@ -44,7 +44,7 @@
                                     'firld' => 'community',
                                     'key' => $key,
                                     'order' => $order,
-                                    'action' => 'admin_mac_address',
+                                    'action' => '#',
                                 ])
                                 @endcomponent
                             </th>
@@ -55,7 +55,7 @@
                                     'firld' => 'MAC Address',
                                     'key' => $key,
                                     'order' => $order,
-                                    'action' => 'admin_mac_address',
+                                    'action' => '#',
                                 ])
                                 @endcomponent
                             </th>
@@ -73,7 +73,7 @@
                                     'firld' => 'もっとも最近',
                                     'key' => $key,
                                     'order' => $order,
-                                    'action' => 'admin_mac_address',
+                                    'action' => '#',
                                 ])
                                 @endcomponent
                             </th>
