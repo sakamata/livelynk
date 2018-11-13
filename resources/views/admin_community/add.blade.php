@@ -21,33 +21,48 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="InputTextarea">コミュニティID（半角英数字とアンダーバー 3～32文字まで）</label>
-                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="name" value="{{old('name')}}" onInput="checkForm(this)">
+                            <label for="InputTextarea">コミュニティID（半角英数字,アンダーバーのみ 3～32文字まで）</label>
+                            <input type="text" pattern="^\w{3,32}$" class="form-control form-control-lg" name="name" value="{{old('name')}}"  style=”ime-mode:disabled;”>
                         </div>
 
                         <h2>管理者ユーザー登録</h2>
                         <!-- この辺のレイアウト統一されてないのすみません。取り急ぎ張り付けただけです… -->
                         <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
+                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('auth.Name') }}</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="未登録" required autofocus  disabled>
+                                <input id="user_name" type="text" class="form-control{{ $errors->has('user_name') ? ' is-invalid' : '' }}" name="user_name" value="未登録" required autofocus  disabled>
                                 <p>管理者ユーザーには未登録端末用のアカウントが最初に登録されます。この名前は変更できません。</p>
                                 <!-- ***ToDo*** 任意の名前可能にします -->
 
-                                @if ($errors->has('name'))
+                                @if ($errors->has('user_name'))
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('name') }}</strong>
+                                        <strong>{{ $errors->first('user_name') }}</strong>
                                     </span>
                                 @endif
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+                            <label for="unique_name" class="col-md-4 col-form-label text-md-right">{{ __('auth.unique_name') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required style=”ime-mode:disabled;”>
+                                <input id="unique_name" type="text" class="form-control{{ $errors->has('unique_name') ? ' is-invalid' : '' }}" name="unique_name" value="{{ old('unique_name') }}" required  style=”ime-mode:disabled;”>
+
+                                @if ($errors->has('unique_name'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('unique_name') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail(いずれオーナーは必須に)') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" style=”ime-mode:disabled;”>
 
                                 @if ($errors->has('email'))
                                     <span class="invalid-feedback" role="alert">
@@ -58,7 +73,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
+                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('auth.Password') }}</label>
 
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
@@ -72,7 +87,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
+                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('auth.Confirm Password') }}</label>
 
                             <div class="col-md-6">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
@@ -81,7 +96,7 @@
 
                         <div class="form-group">
                             <label for="InputTextarea">アクセス用URL</label>
-                            <p>{{url("/index?path={$hash}")}}</p>
+                            <p>{{ url("/index?path=" . old('url_path', $hash)) }}</p>
                             <input type="text" class="form-control form-control-lg" name="url_path" value="{{old('url_path', $hash)}}" onInput="checkForm(this)">
                             <p>自動生成された乱数がURLに使用されます</p>
                         </div>
