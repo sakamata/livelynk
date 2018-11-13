@@ -73,11 +73,16 @@ class AdminMacAddressController extends Controller
         // ユーザーロールで表示範囲を変える
         if ($user->role == 'superAdmin') {
             // ***ToDo*** 表示物と仕様の精査
-            // コミュニティをプルダウンで切り替え 等が必要
+            // コミュニティをプルダウンで切り替え
             // サービス全管理者は全て表示
-            $items = $this->call_mac->SuperHavingMac();
+            $community_id = $request->community_id;
+            if (!$community_id) { $community_id = 1;}
+            $communities = DB::table('communities')->get();
+            $reader_id = DB::table('communities')->where('id', $community_id)
+                ->pluck('user_id')->first();
+            $items = $this->call_mac->CommunityHavingMac($community_id, $reader_id, $order, $key, $case = 'index');
             $users = $this->call_user
-                ->AllCommunityUsersGet('user_id', 'desc', (int)$user->community_id);
+                ->SelfCommunityUsersGet('user_id', 'desc', (int)$community_id);
         } else {
             // normalAdmin & readerAdmin はcommunityの範囲で表示
             // 未登録端末のみ呼び出す
@@ -86,6 +91,8 @@ class AdminMacAddressController extends Controller
             // communityのユーザーlistを取得
             $users = $this->call_user
                 ->SelfCommunityUsersGet('user_id', 'desc', (int)$user->community_id);
+            $communities = "";
+            $community_id = "";
         }
         return view('admin_mac_address.index', [
             'items' => $items,
@@ -94,6 +101,8 @@ class AdminMacAddressController extends Controller
             'user' => $user,
             'users' => $users,
             'view' => 'index',
+            'communities' => $communities,
+            'community_id' => $community_id,
         ]);
     }
 

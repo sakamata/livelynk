@@ -121,11 +121,13 @@ class AdminUserController extends Controller
             $community_id = $request->community_id;
             if (!$community_id) { $community_id = 1;}
             $reader_id = $this->getReaderIDParam($community_id);
+            $communities = DB::table('communities')->get();
         }
         // 通常管理者は自コミュニティ固定
         if ($user->role == 'normalAdmin' ||  $user->role == 'readerAdmin') {
             $community_id = $user->community_id;
             $reader_id = $this->getReaderID();
+            $communities = "";
         }
 
         $mac_addresses = $this->call_mac->PersonHavingGet(
@@ -135,7 +137,6 @@ class AdminUserController extends Controller
         $item = $this->call_user->PersonGet($reader_id);
 
         // ***ToDo*** user role 非表示のフォーム追加
-        $communities = DB::table('communities')->get();
         return view('admin_user.add', [
             'community_id' => $community_id,
             'mac_addresses' => $mac_addresses,
