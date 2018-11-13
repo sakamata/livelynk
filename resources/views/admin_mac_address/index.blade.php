@@ -106,6 +106,7 @@
                                 <form action="/admin_mac_address/update" method="post">
                                     {{ csrf_field() }}
                                     <input type="hidden" name="id" value="{{$item->id}}">
+                                    <input type="hidden" name="view" value="{{$view}}">
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
                                             <label>メーカー</label>

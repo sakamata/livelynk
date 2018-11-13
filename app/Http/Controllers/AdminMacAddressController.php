@@ -171,6 +171,7 @@ class AdminMacAddressController extends Controller
     {
         // ***ToDo*** view側の old（配列？）の値が取れていない
         $request->validate([
+            'view' => ['required','regex:/index|regist/'],
             'id' => 'required|integer',
             'vendor' => 'nullable|string|max:40',
             'device_name' => 'nullable|string|max:40',
@@ -206,7 +207,7 @@ class AdminMacAddressController extends Controller
             'updated_at' => $now,
         ];
         'App\MacAddress'::where('id', $request->id)->update($param);
-        return redirect('/admin_mac_address')->with('message', 'デバイスを編集しました。');
+        return redirect('/admin_mac_address/'. $request->view)->with('message', 'デバイスを編集しました。');
     }
 
     public function delete(Request $request)
