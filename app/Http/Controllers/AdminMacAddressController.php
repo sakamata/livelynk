@@ -115,6 +115,7 @@ class AdminMacAddressController extends Controller
         ]);
     }
 
+    // 廃止予定 デバイス単体で表示し編集する必要がない為 テスト期間が完了したら削除予定
     public function edit(Request $request)
     {
         // 不正なrequestは403
