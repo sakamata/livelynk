@@ -86,24 +86,4 @@ class CommunityUser extends Model
             ])
             ->orderBy($key, $order);
     }
-
-    // 上と一本化したかったが、object取得が上手く行かず諦めた
-    public function scopeSuperHavingMac($query)
-    {
-        return $query->select([
-            'mac_addresses.*',
-            'community_user.user_id',
-            'community_user.community_id',
-            'users.name as user_name',
-            'communities.id as community_id',
-            'communities.name as community_name',
-            'communities.service_name as service_name',
-            'routers.id as router_id',
-            'routers.name as router_name',
-        ])
-            ->Join('mac_addresses', 'community_user.id', '=', 'mac_addresses.community_user_id')
-            ->Join('users', 'users.id', '=', 'community_user.user_id')
-            ->Join('communities', 'communities.id', '=', 'community_user.community_id')
-            ->Join('routers', 'routers.id', '=', 'mac_addresses.router_id');
-    }
 }

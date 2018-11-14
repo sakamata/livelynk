@@ -64,19 +64,18 @@ class LoginController extends Controller
     // ログイン時に使用するユニークであるカラムを指定
     public function username()
     {
-        return 'unique_name';
+        return 'id';
     }
 
     public function authenticate(Request $request)
     {
         $request->validate([
-            'unique_name' => ['required', 'string', 'min:6', 'max:40',  'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', new ThisCommunityExist($request->community_id, $request->unique_name)],
+            'unique_name' => ['required', 'string', 'min:6', 'max:40',  'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u'],
             'password' => 'required|string|min:6|max:100',
         ]);
         // これを使用すると異なるコミュニティでログインできなくなる。
         // new ThisCommunityExist($request->community_id, $request->unique_name)]
 
-/*
         // ログインしようとしているコミュニティにいるuserか確認する
         $community = DB::table('community_user')->where('community_id', $request->community_id);
         $exists = DB::table('users')
@@ -84,12 +83,8 @@ class LoginController extends Controller
                 $join->on('users.id', '=', 'community_user.user_id');
             })->where('unique_name', $request->unique_name)->exists();
 
-        log::debug(print_r('exists',1));
-        log::debug(print_r($exists,1));
-
         // 既存ユーザーが新たなコミュニティにログインしようとした場合の処理
-        $new_community_user_id = "";
-        // このコミュに存在しない場合は community_user に登録 community_user_id を取得
+        // このコミュに存在しない場合は community_user に登録し 新たな community_user_id を取得する
         if (!$exists) {
             DB::beginTransaction();
             try{
@@ -115,16 +110,15 @@ class LoginController extends Controller
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
-
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollback();
                 return redirect()->back()->withErrors(array('unique_name' => '認証に失敗しました。もう一度試してみてください'))->withInput();
             }
+        } else {
+            $new_community_user_id = "";
         }
-*/
-        // ↓コメントアウトにもある定義、一時的にここに書く
-        $new_community_user_id = "";
+
         // 認証された場合は community_user で必要な値を取得 session に入れる
         $community_user = DB::table('community_user')
             ->select('community_user.id as id')
@@ -144,8 +138,8 @@ class LoginController extends Controller
         $credentials  = array(
             'unique_name' => $request->unique_name,
             'password' => $request->password,
+            'id' => $community_user_id,
         );
-        // 'community_user.id' => $community_user_id,
 
         // 認証許可
         if (Auth::attempt($credentials)) {

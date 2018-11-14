@@ -104,12 +104,13 @@
                             @if($item->mac_addresses != null)
                                 @foreach($item->mac_addresses as $mac_add)
                                     @if($mac_add->hide == true)
-                                        <tr class="table-secondary"  onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';">
+                                        <tr class="table-secondary">
                                     @elseif($mac_add->current_stay == true)
-                                        <tr class="table-info"  onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';">
+                                        <tr class="table-info">
                                     @else
-                                        <tr onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';">
+                                        <tr>
                                     @endif
+                                    <!--   onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';" -->
                                             <td>ID:{{$mac_add->id}} &nbsp;&nbsp;
                                             {{$mac_add->current_stay == 1 ? '滞在' : '不在'}}</td>
                                             <td>{{$mac_add->hide == 1 ? '隠' : ''}}

@@ -9,32 +9,11 @@
             <div class="card">
                 <div class="card-header"><h2>新規ユーザー登録</h2></div>
                 <div class="card-body">
-                    @can('superAdmin')
-                    <form method="GET" action="/admin_user/add" aria-label="{{ __('コミュニティ切替') }}">
-                        <div class="form-group row">
-                            <label for="community_id" class="col-md-2 col-form-label text-md-right">コミュニティ</label>
-                            <div class="col-md-7">
-                                <select id="community_id" name="community_id" class="form-control form-control-lg">
-                                @foreach($communities as $community)
-                                    @if($community->id == $community_id)
-                                    <?php $selected = 'selected'; ?>
-                                    @else
-                                    <?php $selected = ''; ?>
-                                    @endif
-                                    <option value="{{$community->id}}" {{ $selected }}>{{$community->id}}&nbsp;:&nbsp;{{$community->name}}&nbsp;:&nbsp;{{$community->service_name}}</option>
-                                @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('コミュニティ切替') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                    <hr>
-                    @endcan
-
+                    @component('components.community_changer', [
+                        'communities' => $communities,
+                        'community_id' => $community_id,
+                    ])
+                    @endcomponent
                     <form method="POST" action="/admin_user/create" aria-label="{{ __('Register') }}">
                         @csrf
                         <input type="hidden" name="community_id" value="{{$community_id}}">

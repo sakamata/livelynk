@@ -1,3 +1,4 @@
+<!-- この画面は廃止　予定テスト期間中に必要性が無いままなら削除します -->
 @extends('layouts.app')
 
 @section('content')

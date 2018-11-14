@@ -13,6 +13,11 @@
                 <div class="card-header"><h2>デバイス一覧</h2></div>
                 @endif
                 <div class="card-body">
+                @component('components.community_changer', [
+                    'communities' => $communities,
+                    'community_id' => $community_id,
+                ])
+                @endcomponent
                 @component('components.error')
                 @endcomponent
                 @if($view == 'regist')
@@ -101,6 +106,7 @@
                                 <form action="/admin_mac_address/update" method="post">
                                     {{ csrf_field() }}
                                     <input type="hidden" name="id" value="{{$item->id}}">
+                                    <input type="hidden" name="view" value="{{$view}}">
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
                                             <label>メーカー</label>
@@ -133,7 +139,11 @@
                                                     @else
                                                     <?php $selected = ''; ?>
                                                     @endif
+                                                    @if($user->id == $reader_id)
+                                                    <option value="{{$user->id}}" {{ $selected }}>{{$user->id}}&nbsp;:&nbsp;未登録デバイス</option>
+                                                    @else
                                                     <option value="{{$user->id}}" {{ $selected }}>{{$user->id}}&nbsp;:&nbsp;{{$user->name}}</option>
+                                                    @endif
                                                 @endforeach
                                             </select>
                                         </div>

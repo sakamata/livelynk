@@ -25,11 +25,6 @@ class MacAddressService
         return 'App\CommunityUser'::CommunityHavingMac($community_id, $reader_id, $order, $key, $case)->get();
     }
 
-    public function SuperHavingMac()
-    {
-        return 'App\CommunityUser'::SuperHavingMac()->get();
-    }
-
     public function MacIDtoGetCommunityID(int $mac_address_id)
     {
         return 'App\CommunityUser'::MacIDtoGetCommunityID($mac_address_id);

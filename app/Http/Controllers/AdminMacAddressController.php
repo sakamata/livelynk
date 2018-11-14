@@ -29,6 +29,7 @@ class AdminMacAddressController extends Controller
     public function index(Request $request)
     {
         $request->validate([
+            'community_id' => ['nullable', 'integer'],
             'id' => ['nullable','regex:/asc|desc/'],
             'current_stay' => ['nullable','regex:/asc|desc/'],
             'mac_address' => ['nullable','regex:/asc|desc/'],
@@ -67,47 +68,55 @@ class AdminMacAddressController extends Controller
         }
 
         $user = Auth::user();
-        $reader_id = $this->getReaderID();
         // ユーザーロールで表示範囲を変える
         if ($user->role == 'superAdmin') {
-            // ***ToDo*** 表示物と仕様の精査
-            // コミュニティをプルダウンで切り替え 等が必要
-            // サービス全管理者は全て表示
-            $items = $this->call_mac->SuperHavingMac();
-            $users = $this->call_user
-                ->AllCommunityUsersGet('user_id', 'desc', (int)$user->community_id);
+            // コミュニティをプルダウンで切り替え
+            // サービス全管理者はプルダウン切り替えで表示
+            $communities = DB::table('communities')->get();
+            $community_id = $request->community_id;
+            if (!$community_id) { $community_id = 1;}
+            $reader_id = DB::table('communities')->where('id', $community_id)
+                ->pluck('user_id')->first();
         } else {
-            // normalAdmin & readerAdmin はcommunityの範囲で表示
-            switch ($request->path()) {
-                // 登録済み端末のみ呼び出す
-                case 'admin_mac_address/index':
-                    $case = 'index';
-                    break;
-                // 未登録端末のみ呼び出す
-                case 'admin_mac_address/regist':
-                    $case = 'regist';
-                    break;
-                default:
-                    $case = 'index';
-                    break;
-            }
-            // 第5引数 $case を流し込んで表示を切り替え
-            $items = $this->call_mac->CommunityHavingMac($user->community_id, $reader_id, $order, $key, $case);
-            // communityのユーザーlistを取得
-            $users = $this->call_user
-                ->SelfCommunityUsersGet('user_id', 'desc', (int)$user->community_id);
+            $communities = "";
+            $community_id = $user->community_id;
+            $reader_id = $this->getReaderID();
         }
+
+        switch ($request->path()) {
+            // 登録済み端末のみ呼び出す
+            case 'admin_mac_address/index':
+                $case = 'index';
+                break;
+            // 未登録端末のみ呼び出す
+            case 'admin_mac_address/regist':
+                $case = 'regist';
+                break;
+            default:
+                $case = 'index';
+                break;
+        }
+
+        // 第5引数 $case を流し込んで表示を切り替え
+        $items = $this->call_mac->CommunityHavingMac($community_id, $reader_id, $order, $key, $case);
+        // communityのユーザーlistを取得
+        $users = $this->call_user
+            ->SelfCommunityUsersGet('user_id', 'desc', (int)$community_id);
+
         return view('admin_mac_address.index', [
-            'items' => $items,
             'order' => $order,
             'key' => $key,
-            'user' => $user,
-            'users' => $users,
             'view' => $case,
+            'user' => $user,
+            'communities' => $communities,
+            'community_id' => $community_id,
             'reader_id' => $reader_id,
+            'items' => $items,
+            'users' => $users,
         ]);
     }
 
+    // 廃止予定 デバイス単体で表示し編集する必要がない為 テスト期間が完了したら削除予定
     public function edit(Request $request)
     {
         // 不正なrequestは403
@@ -162,6 +171,7 @@ class AdminMacAddressController extends Controller
     {
         // ***ToDo*** view側の old（配列？）の値が取れていない
         $request->validate([
+            'view' => ['required','regex:/index|regist/'],
             'id' => 'required|integer',
             'vendor' => 'nullable|string|max:40',
             'device_name' => 'nullable|string|max:40',
@@ -197,7 +207,7 @@ class AdminMacAddressController extends Controller
             'updated_at' => $now,
         ];
         'App\MacAddress'::where('id', $request->id)->update($param);
-        return redirect('/admin_mac_address')->with('message', 'デバイスを編集しました。');
+        return redirect('/admin_mac_address/'. $request->view)->with('message', 'デバイスを編集しました。');
     }
 
     public function delete(Request $request)
