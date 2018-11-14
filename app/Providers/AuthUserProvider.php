@@ -1,4 +1,6 @@
 <?php
+
+// 認証方法を変更したのでファイルごと廃止予定
 // Thanks!! https://blog.regrex.jp/2016/06/23/post-627/
 namespace App\Providers;
 
@@ -9,7 +11,7 @@ class AuthUserProvider extends EloquentUserProvider
 {
     // 認証時に作られる User model を複数tableから定義
     // Auth::user()->hoge で取得可能なカラムを定義
-
+/*
     public function retrieveById($identifier) {
         $result = $this->createModel()->newQuery()
             ->Join('community_user', 'community_user.user_id', '=', 'users.id')
@@ -26,7 +28,7 @@ class AuthUserProvider extends EloquentUserProvider
             ])->find($identifier);
         return $result;
     }
-
+*/
 /*
     public function retrieveByCredentials(array $credentials) {
         log::debug(print_r('credentials',1));
