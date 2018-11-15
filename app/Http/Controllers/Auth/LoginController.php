@@ -83,7 +83,7 @@ class LoginController extends Controller
                 $join->on('users.id', '=', 'community_user.user_id');
             })->where('unique_name', $request->unique_name)->exists();
 
-        // 既存ユーザーが新たなコミュニティにログインしようとした場合の処理
+        // 既存ユーザーが新たなコミュニティにログインした場合の処理
         // このコミュに存在しない場合は community_user に登録し 新たな community_user_id を取得する
         if (!$exists) {
             DB::beginTransaction();
@@ -91,16 +91,12 @@ class LoginController extends Controller
                 $user_id = DB::table('users')
                     ->where('unique_name', $request->unique_name)
                     ->pluck('id')->first();
-                    log::debug(print_r('user_id',1));
-                    log::debug(print_r($user_id,1));
-
+                // *****ToDo***** 認証通ってないのにinsertしてしまうのはマズい。
                 $new_community_user_id = DB::table('community_user')->insertGetId([
                     'user_id' => $user_id,
                     'community_id' => $request->community_id,
                 ]);
-                log::debug(print_r('new_community_user_id',1));
-                log::debug(print_r($new_community_user_id,1));
-
+                // *****ToDo***** 認証通ってないのにinsertしてしまうのはマズい。
                 $now = Carbon::now();
                 DB::table('communities_users_statuses')->insert([
                     'id' => $new_community_user_id,
@@ -119,7 +115,7 @@ class LoginController extends Controller
             $new_community_user_id = "";
         }
 
-        // 認証された場合は community_user で必要な値を取得 session に入れる
+        //  該当の community_user の id を取得
         $community_user = DB::table('community_user')
             ->select('community_user.id as id')
             ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
@@ -140,14 +136,18 @@ class LoginController extends Controller
             'password' => $request->password,
             'id' => $community_user_id,
         );
-
         // 認証許可
         if (Auth::attempt($credentials)) {
+
+
+
+
             // session にcommunity値保存
             $request->session()->put('community_id', $request->community_id);
             $request->session()->put('community_user_id', $community_user_id);
             return redirect('/')->with('message', 'ログインしました');
         } else {
+            //
             return redirect()->back()->withErrors(array('unique_name' => 'ユーザーIDかPasswordが正しくありません'))->withInput();
         }
     }
