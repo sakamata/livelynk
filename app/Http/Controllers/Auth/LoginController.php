@@ -9,6 +9,7 @@ use App\Rules\ThisCommunityExist;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
@@ -76,61 +77,27 @@ class LoginController extends Controller
         // これを使用すると異なるコミュニティでログインできなくなる。
         // new ThisCommunityExist($request->community_id, $request->unique_name)]
 
-        // ログインしようとしているコミュニティにいるuserか確認する
-        $community = DB::table('community_user')->where('community_id', $request->community_id);
-        $exists = DB::table('users')
-            ->JoinSub($community, 'community_user', function($join) {
-                $join->on('users.id', '=', 'community_user.user_id');
-            })->where('unique_name', $request->unique_name)->exists();
-
-        // 既存ユーザーが新たなコミュニティにログインした場合の処理
-        // このコミュに存在しない場合は community_user に登録し 新たな community_user_id を取得する
-        if (!$exists) {
-            DB::beginTransaction();
-            try{
-                $user_id = DB::table('users')
-                    ->where('unique_name', $request->unique_name)
-                    ->pluck('id')->first();
-                // *****ToDo***** 認証通ってないのにinsertしてしまうのはマズい。
-                $new_community_user_id = DB::table('community_user')->insertGetId([
-                    'user_id' => $user_id,
-                    'community_id' => $request->community_id,
-                ]);
-                // *****ToDo***** 認証通ってないのにinsertしてしまうのはマズい。
-                $now = Carbon::now();
-                DB::table('communities_users_statuses')->insert([
-                    'id' => $new_community_user_id,
-                    'role_id' => 1,
-                    'hide' => 0,
-                    'last_access' => $now,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ]);
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollback();
-                return redirect()->back()->withErrors(array('unique_name' => '認証に失敗しました。もう一度試してみてください'))->withInput();
-            }
-        } else {
-            $new_community_user_id = "";
-        }
-
         //  該当の community_user の id を取得
-        $community_user = DB::table('community_user')
-            ->select('community_user.id as id')
+        $community_user_id = DB::table('community_user')
             ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
             ->where([
                 ['unique_name', $request->unique_name],
                 ['community_id', $request->community_id],
-        ])->first();
+        ])->pluck('community_user.id')->first();
 
-        // sessionに既存のIDを使うか、今登録したIDを使うか判定
-        if (!$new_community_user_id) {
-            $community_user_id = $community_user->id;
-        } else {
-            $community_user_id = $new_community_user_id;
+        if (!$community_user_id) {
+            // 他のコミュニティで承認取れるか？
+            $result_bool = $this->CheckOtherCommunityExists($request->unique_name, $request->password);
+            if ($result_bool) {
+                // 他のコミュニティにいる場合中間table等にレコード追加
+                $community_user_id = $this->InsertNewStatuses($request->community_id, $request->unique_name);
+            } else {
+                // 他のコミュニティにいない場合
+                return redirect()->back()->withErrors(array('unique_name' => 'ユーザーIDかPasswordが正しくありません'))->withInput();
+            }
         }
 
+        // community_user_id を含めた通常の承認フロー
         $credentials  = array(
             'unique_name' => $request->unique_name,
             'password' => $request->password,
@@ -138,18 +105,61 @@ class LoginController extends Controller
         );
         // 認証許可
         if (Auth::attempt($credentials)) {
-
-
-
-
             // session にcommunity値保存
             $request->session()->put('community_id', $request->community_id);
             $request->session()->put('community_user_id', $community_user_id);
             return redirect('/')->with('message', 'ログインしました');
         } else {
-            //
             return redirect()->back()->withErrors(array('unique_name' => 'ユーザーIDかPasswordが正しくありません'))->withInput();
         }
+    }
+
+    // return bool 他のコミュニティに存在するかを判定する
+    public function CheckOtherCommunityExists($unique_name, $password)
+    {
+        $hash_password = DB::table('users')->where([
+            ['unique_name', $unique_name],
+        ])->pluck('password')->first();
+
+        if ($hash_password) {
+            if (Hash::check($password, $hash_password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // return $community_user_id
+    // 既存ユーザーが新たなコミュニティにログインした場合
+    // 中間tableと status のrecordを新規作成
+    public function InsertNewStatuses($community_id, $unique_name)
+    {
+        // このコミュに存在しない場合は community_user & statusesに登録
+        // community_user_id を取得する
+        DB::beginTransaction();
+        try{
+            $user_id = DB::table('users')
+                ->where('unique_name', $unique_name)
+                ->pluck('id')->first();
+            $community_user_id = DB::table('community_user')->insertGetId([
+                'user_id' => $user_id,
+                'community_id' => $community_id,
+            ]);
+            $now = Carbon::now();
+            DB::table('communities_users_statuses')->insert([
+                'id' => $community_user_id,
+                'role_id' => 1,
+                'hide' => 0,
+                'last_access' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->withErrors(array('unique_name' => '認証に失敗しました。もう一度試してみてください'))->withInput();
+        }
+        return $community_user_id;
     }
 
     public function logout(Request $request)
