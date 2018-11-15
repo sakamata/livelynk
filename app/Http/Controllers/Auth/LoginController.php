@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Rules\ThisCommunityExist;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
@@ -74,8 +73,6 @@ class LoginController extends Controller
             'unique_name' => ['required', 'string', 'min:6', 'max:40',  'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u'],
             'password' => 'required|string|min:6|max:100',
         ]);
-        // これを使用すると異なるコミュニティでログインできなくなる。
-        // new ThisCommunityExist($request->community_id, $request->unique_name)]
 
         //  該当の community_user の id を取得
         $community_user_id = DB::table('community_user')
@@ -86,7 +83,7 @@ class LoginController extends Controller
         ])->pluck('community_user.id')->first();
 
         if (!$community_user_id) {
-            // 他のコミュニティで承認取れるか？
+            // 他のコミュニティで認証が取れるか？
             $result_bool = $this->CheckOtherCommunityExists($request->unique_name, $request->password);
             if ($result_bool) {
                 // 他のコミュニティにいる場合中間table等にレコード追加
