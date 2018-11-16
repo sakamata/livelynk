@@ -12,6 +12,7 @@
                     <form action="/admin_mac_address/remove" method="post">
                         {{ csrf_field() }}
                         <input type="hidden" name="id" value="{{$item->id}}">
+                        <input type="hidden" name="previous" value="{{url()->previous()}}">
                         <div>
                             <p>&nbsp;</p>
                             <h3>このデバイスを削除しても良いですか？</h3>
