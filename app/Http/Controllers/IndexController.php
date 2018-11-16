@@ -14,6 +14,12 @@ class IndexController extends Controller
     // 一般ユーザーのメイン画面、滞在者の一覧を表示する
     public function index(Request $request)
     {
+        $this->AuthUserSeter();
+        var_dump(Auth::user()->role);
+        var_dump(Auth::user()->id);
+        var_dump(Auth::user()->community_id);
+        var_dump(Auth::user()->community_user_id);
+
         // 非ログイン と ログイン時で対象の community を取得
         // /index?path=hoge
         if (!Auth::check()) {
