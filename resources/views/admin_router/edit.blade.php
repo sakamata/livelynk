@@ -58,6 +58,23 @@
                             </button>
                         </div>
                     </form>
+                    @can('superAdmin')
+                    <hr>
+                    <h2>RaspberryPi設定項目</h2>
+                    <p>コミュニティ名 : {{$item->community->service_name}}</p>
+                    <p>コミュニティID : {{$item->community->name}}</p>
+                    <hr>
+                    <h3>net</h3>
+                    <p>wlan wlan0 等 (wi-fiに繋いだlinux端末で ifcongig コマンド実施。段落部分に分かれた wl から始まる内容を入力)</p>
+                    <h3>community_id</h3>
+                    <p>{{$item->community->id}}</p>
+                    <h3>router_id</h3>
+                    <p>{{$item->id}}</p>
+                    <h3>secret</h3>
+                    <p>{{old('hash_key', $item->hash_key)}}</p>
+                    <h3>post_url</h3>
+                    <p>https://www.livelynk.jp/inport_post/mac_address</p>
+                    @endcan
                 </div>
             </div>
         </div>
