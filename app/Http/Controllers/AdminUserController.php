@@ -407,7 +407,6 @@ class AdminUserController extends Controller
             $count = DB::table('community_user')
                 ->where('user_id', $user_id)->count();
             // 他のコミュニティにアカウントが無い場合はuserTableの該当アカウント削除
-            log::debug(print_r('$count>>>'.$count,1));
             if ($count <= 1) {
                 log::debug(print_r('user delete start!!!',1));
                 DB::table('users')->where('id', $user_id)->delete();
