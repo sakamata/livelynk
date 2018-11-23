@@ -67,7 +67,7 @@
                     <h3>net</h3>
                     <p>wlan wlan0 等 (wi-fiに繋いだlinux端末で ifcongig コマンド実施。段落部分に分かれた wl から始まる内容を入力)</p>
                     <h3>community_id</h3>
-                    <p>{{$item->community->id}}</p>
+                    <p>{{$item->community->name}}</p>
                     <h3>router_id</h3>
                     <p>{{$item->id}}</p>
                     <h3>secret</h3>
