@@ -40,7 +40,7 @@
                         <nav>
                             @component('components.header_menu')
                             @endcomponent
-                            @component('components.header_menu_extra')
+                            @component('components.header_menu_extra',['community' => $community])
                             @endcomponent
                         </nav>
                     </div>
