@@ -17,11 +17,11 @@ class AdminRouterController extends Controller
         $user = Auth::user();
         // 一般管理者の場合は自コミュニティの端末のみを表示
         if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
-            $items = 'App\Router'::Mycommunity($user->community_id)->get();
+            $items = 'App\Router'::Mycommunity($user->community_id)->paginate(25);
         }
         // superAdminは全て表示
         if ($user->role == 'superAdmin') {
-            $items = 'App\Router'::get();
+            $items = 'App\Router'::paginate(25);
         }
         return view('admin_router.index',[
             'items' => $items,

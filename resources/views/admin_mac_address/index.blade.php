@@ -25,6 +25,9 @@
                     <a href="/admin_user/add" class="btn btn-info" role="button">新規ユーザー登録</a>
                 </div>
                 @endif
+                    <ul class="pagination justify-content-end mb-3">
+                        {{ $items->links() }}
+                    </ul>
                     <table class="table table-hover">
                         <tr class="info thead-light">
                             <th>
@@ -179,6 +182,9 @@
                     @endphp
                     @endforeach
                     </table>
+                    <ul class="pagination justify-content-center">
+                    {{ $items->links() }}
+                    </ul>
                 </div>
             </div>
         </div>
