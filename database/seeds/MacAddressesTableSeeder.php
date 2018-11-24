@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
 class MacAddressesTableSeeder extends Seeder
@@ -27,6 +28,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 1,
             'router_id' => 1,
             'mac_address' => 'AA:BB:CC:DD:EE:FF',
+            'mac_address_hash' => Hash::make('AA:BB:CC:DD:EE:FF'),
             'vendor' => 'Apple.inc',
             'device_name' => 'i-phoneX',
             'hide' => 0,
@@ -43,6 +45,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 1,
             'router_id' => 2,
             'mac_address' => '00:11:22:33:44:55',
+            'mac_address_hash' => Hash::make('00:11:22:33:44:55'),
             'vendor' => 'hoge.inc',
             'device_name' => 'すまほ-X',
             'hide' => 0,
@@ -59,6 +62,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 1,
             'router_id' => 2,
             'mac_address' => 'AA:BB:CC:33:44:55',
+            'mac_address_hash' => Hash::make('AA:BB:CC:33:44:55'),
             'vendor' => 'fuga.inc',
             'device_name' => '非表示プリンタ',
             'hide' => 1,
@@ -75,6 +79,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 5,
             'router_id' => 2,
             'mac_address' => '00:11:22:DD:EE:FF',
+            'mac_address_hash' => Hash::make('00:11:22:DD:EE:FF'),
             'vendor' => 'piyo.inc',
             'device_name' => 'i-piyo',
             'hide' => 0,
@@ -115,6 +120,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_hash' => Hash::make($mac),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -155,6 +161,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_hash' => Hash::make($mac),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -201,6 +208,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_hash' => Hash::make($mac),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -247,6 +255,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_hash' => Hash::make($mac),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -293,6 +302,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_hash' => Hash::make($mac),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -339,6 +349,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_hash' => Hash::make($mac),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
