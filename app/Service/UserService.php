@@ -21,13 +21,13 @@ class UserService
     {
         return 'App\UserTable'::UsersGet($orderkey, $order)
             ->MyCommunity($community_id)
-            ->get();
+            ->paginate(25);
     }
 
     public function AllCommunityUsersGet(string $orderkey, string $order)
     {
         return 'App\UserTable'::UsersGet($orderkey, $order)
-            ->get();
+            ->paginate(25);
     }
 
     public function IDtoRoleGet(int $community_user_id)

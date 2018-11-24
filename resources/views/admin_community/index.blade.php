@@ -12,6 +12,9 @@
                 <div class="blockquote text-left">
                     <a href="/admin_community/add" class="btn btn-info" role="button">Community新規登録</a>
                 </div>
+                    <ul class="pagination justify-content-end mb-3">
+                        {{ $items->links() }}
+                    </ul>
                     <table class="table table-hover">
                         <tr class="info thead-light">
                             <th>ID</th>
@@ -59,6 +62,9 @@
                         </tr>
                     @endforeach
                     </table>
+                    <ul class="pagination justify-content-center">
+                    {{ $items->links() }}
+                    </ul>
                 </div>
             </div>
         </div>

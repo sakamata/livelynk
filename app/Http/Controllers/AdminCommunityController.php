@@ -15,7 +15,7 @@ class AdminCommunityController extends Controller
 {
     public function index(Request $request)
     {
-        $items = 'App\Community'::get();
+        $items = 'App\Community'::paginate(25);
         return view('admin_community.index', [
             'items' => $items,
         ]);
