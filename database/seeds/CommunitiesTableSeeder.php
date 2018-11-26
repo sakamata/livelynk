@@ -19,7 +19,7 @@ class CommunitiesTableSeeder extends Seeder
             'service_name' => 'ギークオフィス恵比寿',
             'url_path' => 'hoge',
             'ifttt_event_name' => 'livelynk_local_dev',
-            'ifttt_webhooks_key' => 'cHg0VvN0DIuKFaorEQegpG',
+            'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -32,7 +32,7 @@ class CommunitiesTableSeeder extends Seeder
             'service_name' => '長い名前の人コミュニティ',
             'url_path' => 'hoge2',
             'ifttt_event_name' => 'dev_info_comm_2',
-            'ifttt_webhooks_key' => 'cHg0VvN0DIuKFaorEQegpG',
+            'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -45,7 +45,7 @@ class CommunitiesTableSeeder extends Seeder
             'service_name' => 'ランダム名のコミュニティ（無効化中）',
             'url_path' => 'hoge3',
             'ifttt_event_name' => 'dev_info_comm_3',
-            'ifttt_webhooks_key' => 'cHg0VvN0DIuKFaorEQegpG',
+            'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];

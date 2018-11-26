@@ -13,9 +13,6 @@
                     <form action="/admin_mac_address/update" method="post">
                         {{ csrf_field() }}
                         <div>
-                            <h3>MAC Address:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->mac_address}}</h3>
-                        </div>
-                        <div>
                             ID: {{$item->id}}
                         </div>
                         <div>

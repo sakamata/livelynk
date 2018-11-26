@@ -53,16 +53,6 @@
                             </th>
                             @endcan
                             <th>
-                                @component('components.order', [
-                                    'name' => 'mac_address',
-                                    'firld' => 'MAC Address',
-                                    'key' => $key,
-                                    'order' => $order,
-                                    'action' => '#',
-                                ])
-                                @endcomponent
-                            </th>
-                            <th>
                                 非表示　
                                 メーカー　
                                 デバイスメモ　
@@ -104,7 +94,6 @@
                             @can('superAdmin')
                             <td class="align-middle">{{$item->community_id}} : {{$item->community_name}}<br>{{$item->service_name}}</td>
                             @endcan
-                            <td class="align-middle">{{$item->mac_address}}</td>
                             <td class="align-middle">
                                 <form action="/admin_mac_address/update" method="post">
                                     {{ csrf_field() }}

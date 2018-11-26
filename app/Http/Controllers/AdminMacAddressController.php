@@ -32,7 +32,6 @@ class AdminMacAddressController extends Controller
             'community_id' => ['nullable', 'integer'],
             'id' => ['nullable','regex:/asc|desc/'],
             'current_stay' => ['nullable','regex:/asc|desc/'],
-            'mac_address' => ['nullable','regex:/asc|desc/'],
             'vendor' => ['nullable','regex:/asc|desc/'],
             'arraival_at' => ['nullable','regex:/asc|desc/'],
             'departure_at' => ['nullable','regex:/asc|desc/'],
@@ -45,10 +44,6 @@ class AdminMacAddressController extends Controller
         if ($request->current_stay) {
             $order = $request->current_stay;
             $key = 'current_stay';
-        }
-        elseif ($request->mac_address) {
-            $order = $request->mac_address;
-            $key = 'mac_address';
         }
         elseif ($request->arraival_at) {
             $order = $request->arraival_at;

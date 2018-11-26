@@ -68,7 +68,7 @@ class InportPostController extends Controller
         ->where([
             ['community_user.community_id', $community_id_int],
             ['mac_addresses.current_stay', true],
-        ])->pluck('mac_address');
+        ])->pluck('mac_address_hash');
 
         // クエリビルダで取得したオブジェクトを配列に変換
         $stays_mac_array = json_decode(json_encode($stays_macs), true);
@@ -80,11 +80,12 @@ class InportPostController extends Controller
         // POSTされたMACaddressを個々で精査し来訪判断
         foreach ((array)$post_mac_array as $post_mac) {
             // 登録済みMACアドレスか個別確認
+            $post_mac_hash = $this->CahngeCrypt($post_mac);
             $check = DB::table('community_user')
                 ->leftJoin('mac_addresses', 'mac_addresses.community_user_id', '=', 'community_user.id')
             ->where([
                 ['community_user.community_id', $community_id_int],
-                ['mac_addresses.mac_address', $post_mac],
+                ['mac_addresses.mac_address_hash', $post_mac_hash],
             ])->exists();
 
             if (!$check) {
@@ -94,6 +95,7 @@ class InportPostController extends Controller
                     'community_user_id' => $community->user_id,
                     'router_id' => $check_array["router_id"],
                     'mac_address' => $post_mac,
+                    'mac_address_hash' => $post_mac_hash,
                     'vendor' => $check_array["vendor"][$v],
                     'arraival_at' => $now,
                     'posted_at' => $now,
@@ -123,7 +125,7 @@ class InportPostController extends Controller
                 ->where([
                     ['community_user.community_id', $community->id],
                     ['mac_addresses.hide', false],
-                    ['mac_addresses.mac_address', $post_mac],
+                    ['mac_addresses.mac_address_hash', $post_mac_hash],
                 ])->first();
                 if (!$mac_record) { continue; }
                 $community_user_id = $mac_record->id;
@@ -155,7 +157,7 @@ class InportPostController extends Controller
                         //  該当レコードの来訪時間 arraival_at 更新
                         DB::table('mac_addresses')->where([
                             ['community_user_id', $community_user_id],
-                            ['mac_address', $post_mac],
+                            ['mac_address_hash', $post_mac_hash],
                         ])->update([
                             'router_id' => $check_array["router_id"],
                             'arraival_at' => $now,
@@ -196,7 +198,7 @@ class InportPostController extends Controller
             // 非表示デバイスの情報はMACが飛んでいても更新さない
             DB::table('mac_addresses')->where([
                 ['community_user_id', $community_user_id],
-                ['mac_address', $post_mac],
+                ['mac_address_hash', $post_mac_hash],
                 ['hide', false],
             ])->update([
                 'router_id' => $check_array["router_id"],
@@ -241,6 +243,11 @@ class InportPostController extends Controller
             Log::debug(print_r('Inport json post hash unmatch !! This side hash ==> ' .$this_side_hash, 1));
             exit();
         }
+    }
+
+    public function CahngeCrypt($mac_address)
+    {
+        return crypt($mac_address, '$2y$10$' . env('CRYPT_SALT') . '$');
     }
 
     // users table last_accessの一括更新

@@ -47,10 +47,6 @@
       </div>
     </div>
     <div class="line">
-      <div class="head">MAC Address</div>
-      <div class="body">{{$mac_add->mac_address}}</div>
-    </div>
-    <div class="line">
       <div class="head">メーカー（自動）</div>
       <div class="body">
         <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}][vendor]" value="{{old('mac_address.'.$mac_add->id.'.vendor', $mac_add->vendor)}}" placeholder="40文字まで">
