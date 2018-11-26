@@ -55,13 +55,11 @@ class AdminRouterController extends Controller
         $request->validate([
             'community_id' => 'required|integer',
             'name' => 'required|string|max:32',
-            'hash_key' => 'required|alpha_num|min:4|max:32',
         ]);
         $now = Carbon::now();
         $param = [
             'community_id' => $request->community_id,
             'name' => $request->name,
-            'hash_key' => $request->hash_key,
             'created_at' => $now,
             'updated_at' => $now,
         ];
@@ -112,13 +110,11 @@ class AdminRouterController extends Controller
         $request->validate([
             'community_id' => 'required|integer',
             'name' => 'required|string|max:32',
-            'hash_key' => 'required|alpha_num|min:4|max:32',
         ]);
         $now = Carbon::now();
         $param = [
             'community_id' => $request->community_id,
             'name' => $request->name,
-            'hash_key' => $request->hash_key,
             'updated_at' => $now,
         ];
         DB::table('routers')->where('id', $request->id)->update($param);

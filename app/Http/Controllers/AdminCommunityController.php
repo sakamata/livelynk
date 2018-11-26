@@ -23,9 +23,11 @@ class AdminCommunityController extends Controller
 
     public function add(Request $request)
     {
-        $hash = str_random(32);
+        $url_path = str_random(32);
+        $secret = str_random(32);
         return view('admin_community.add', [
-            'hash' => $hash,
+            'url_path' => $url_path,
+            'secret' => $secret,
         ]);
     }
 
@@ -36,10 +38,10 @@ class AdminCommunityController extends Controller
             'email' => 'nullable|string|email|max:170',
             'password' => 'required|string|min:6|max:100|confirmed',
             'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', 'unique:users'],
-
             'name' => 'required|string|alpha_dash|min:3|max:32|unique:communities',
             'service_name' => 'required|string|min:3|max:32',
             'url_path' => 'required|string|max:32|unique:communities',
+            'hash_key' => 'required|alpha_num|min:4|max:32',
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhook_key' => 'nullable|string|max:191',
         ]);
@@ -50,6 +52,7 @@ class AdminCommunityController extends Controller
             'user_id' => null,
             'name' => $request->name,
             'service_name' => $request->service_name,
+            'hash_key' => $request->hash_key,
             'url_path' => $request->url_path,
             'ifttt_event_name' => $request->ifttt_event_name,
             'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
@@ -136,6 +139,7 @@ class AdminCommunityController extends Controller
             'name' => 'required|string|alpha_num|min:3|max:32',
             'service_name' => 'required|string|min:3|max:32',
             'url_path' => 'required|string|max:32',
+            'hash_key' => 'required|alpha_num|min:4|max:32',
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhooks_key' => 'nullable|string|max:191',
         ]);
@@ -145,6 +149,7 @@ class AdminCommunityController extends Controller
             'name' => $request->name,
             'service_name' => $request->service_name,
             'url_path' => $request->url_path,
+            'hash_key' => $request->hash_key,
             'ifttt_event_name' => $request->ifttt_event_name,
             'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
             'updated_at' => $now,

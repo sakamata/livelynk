@@ -22,9 +22,7 @@
                             <th>コミュニティID/名称</th>
                             <th>代表管理者</th>
                             <th>ルーター</th>
-                            <th>url_hash</th>
                             <th>IFTTT Event Name</th>
-                            <th>IFTTT Webhooks key</th>
                             <th>created_at</th>
                             <th>updated_at</th>
                             <th>操作</th>
@@ -51,9 +49,7 @@
                                     </tbody>
                                 </table>
                             </td>
-                            <td>******</td>
                             <td>{{$item->ifttt_event_name}}</td>
-                            <td>******</td>
                             <td>{{$item->created_at->format('n月j日 G:i')}}</td>
                             <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
                             <td>

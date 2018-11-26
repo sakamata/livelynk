@@ -94,9 +94,15 @@
 
                         <div class="form-group">
                             <label for="InputTextarea">アクセス用URL</label>
-                            <p>{{ url("/index?path=" . old('url_path', $hash)) }}</p>
-                            <input type="text" class="form-control form-control-lg" name="url_path" value="{{old('url_path', $hash)}}" onInput="checkForm(this)">
+                            <p>{{ url("/index?path=" . old('url_path', $url_path)) }}</p>
+                            <input type="text" class="form-control form-control-lg" name="url_path" value="{{old('url_path', $url_path)}}" onInput="checkForm(this)">
                             <p>自動生成された乱数がURLに使用されます</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="InputTextarea">secret</label>
+                            <input type="text" class="form-control form-control-lg" name="hash_key" value="{{old('hash_key', $secret)}}">
+                            <p>自動生成されたこの乱数をRaspberryPI本体の環境変数 "secret" に適用させます。</p>
                         </div>
 
                         <div class="form-group">

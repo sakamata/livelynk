@@ -21,7 +21,6 @@
                             <th>community id</th>
                             <th>community名</th>
                             <th>ルーター名</th>
-                            <th>hash_key</th>
                             <th>created_at</th>
                             <th>updated_at</th>
                             <th>操作</th>
@@ -32,7 +31,6 @@
                             <td>{{$item->community_id}} : {{$item->community->name}}</td>
                             <td>{{$item->community->service_name}}</td>
                             <td>{{$item->name}}</td>
-                            <td>**********</td>
                             <td>{{$item->created_at->format('n月j日 G:i')}}</td>
                             <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
                             <td>

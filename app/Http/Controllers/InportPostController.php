@@ -41,24 +41,26 @@ class InportPostController extends Controller
             Log::debug(print_r($check_array, 1));
             exit();
         }
-
         $community_id_int = $community->id;
-
-        if (!$community) {
-            Log::debug(print_r('community name not found!! check json ==> ', 1));
-            Log::debug(print_r($check_array, 1));
+        if (!$community_id_int) {
+            Log::debug(print_r('community_id_int not found!! check json ==> ', 1));
             exit();
         }
 
-        // MACアドレス形式のみ大文字にして配列に入れ、それ以外はlog出力
+        // MACAddressの値をPOSTされた形式別で配列処理する
         $post_mac_array = array();
         foreach ((array)$check_array["mac"] as $check) {
-            $pattern = preg_match('/([a-fA-F0-9]{2}[:|\-]?){6}/', $check);
-            if (!$pattern) {
-                Log::debug(print_r('Inport post Not MACaddress!! posted element ==> ' .$check, 1));
-            } else {
+            // MACアドレス形式は大文字にして配列に入る
+            if (preg_match('/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/', $check)) {
                 $check_MAC = strtoupper($check);
                 array_push($post_mac_array, $check_MAC);
+
+            // hash化された値であれば配列に入れる
+            } elseif (preg_match('/[0-9a-f]{64}/', $check)) {
+                array_push($post_mac_array, $check);
+            } else {
+                Log::debug(print_r('Inport post MACAddress not pattern!! posted element ==> ' .$check, 1));
+                exit();
             }
         }
 
@@ -80,7 +82,13 @@ class InportPostController extends Controller
         // POSTされたMACaddressを個々で精査し来訪判断
         foreach ((array)$post_mac_array as $post_mac) {
             // 登録済みMACアドレスか個別確認
-            $post_mac_hash = $this->CahngeCrypt($post_mac);
+            // MACAddress形式の場合はhash化させる
+            if (preg_match('/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/', $post_mac)) {
+                $post_mac_hash = $this->CahngeCrypt($post_mac, $check_array['router_id']);
+            } else {
+                $post_mac_hash = $post_mac;
+            }
+
             $check = DB::table('community_user')
                 ->leftJoin('mac_addresses', 'mac_addresses.community_user_id', '=', 'community_user.id')
             ->where([
@@ -234,7 +242,8 @@ class InportPostController extends Controller
         } else {
             $router_id = $check_array["router_id"];
         }
-        $secret = 'App\Router'::where('id', $router_id)->pluck('hash_key')->first();
+        $secret = 'App\Router'::Join('communities', 'routers.community_id', '=', 'communities.id')
+            ->where('routers.id', $router_id)->pluck('hash_key')->first();
         $time = $check_array["time"];
         $this_side_hash = hash('sha256',$time.$secret);
         $post_hash = $check_array["hash"];
@@ -245,9 +254,11 @@ class InportPostController extends Controller
         }
     }
 
-    public function CahngeCrypt($mac_address)
+    public function CahngeCrypt($mac_address, $router_id)
     {
-        return crypt($mac_address, '$2y$10$' . env('CRYPT_SALT') . '$');
+        $secret = 'App\Router'::Join('communities', 'routers.community_id', '=', 'communities.id')
+            ->where('routers.id', $router_id)->pluck('hash_key')->first();
+        return hash('sha256', $mac_address . $secret);
     }
 
     // users table last_accessの一括更新

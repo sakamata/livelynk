@@ -226,6 +226,12 @@ class AdminMacAddressController extends Controller
         ) {
             return view('errors.403');
         }
+
+        // $mac_key = crypt($item->mac_address, '$2y$10$ABCDEFGHIJKLMNOPQRSTUV$');
+        $mac_key = crypt('password', '$5$');
+        echo $mac_key;
+        echo '<br>';
+        echo hash('sha256','password');
         $person = $this->call_user->PersonGet($item->community_user_id);
         return view('admin_mac_address.delete', [
             'item' => $item,
@@ -256,5 +262,20 @@ class AdminMacAddressController extends Controller
         } else {
             return redirect($request->previous)->with('message', 'デバイスを削除しました。');
         }
+    }
+
+    public function DatabaseMACHashChanger()
+    {
+        $macTable = DB::table('mac_addresses')->get();
+        foreach ($macTable as $mac) {
+            $mac_address_hash = CahngeCrypt($mac->mac_address);
+            DB::table('mac_addresses')->where('id', $mac->id)
+                ->update(['mac_address_hash' => $mac_address_hash]);
+        }
+    }
+
+    public function CahngeCrypt($mac_address)
+    {
+        return crypt($mac_address, '$2y$10$' . env('CRYPT_SALT') . '$');
     }
 }

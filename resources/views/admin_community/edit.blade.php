@@ -33,6 +33,10 @@
                         <div>
                             代表管理者 : Email : {{$item->owner->email}}
                         </div>
+                        <div>
+                            <p>ホームページURL</p>
+                            <h3>{{ url("/index?path=" . $item->url_path) }}</h3>
+                        </div>
                         <hr>
                         @if(Auth::user()->role == 'superAdmin' && Auth::user()->community_id != $item->id)
                         <p>Livelynk全体管理者権限</p>
@@ -62,6 +66,14 @@
                             <p>注意：編集すると在席確認ページやログインのページのリンク等が変更され再度周知が必要となります。</p>
                         </div>
 
+                        @can('superAdmin')
+                        <div class="form-group">
+                            <label for="InputTextarea">secret</label>
+                            <input type="text" class="form-control form-control-sm" name="hash_key" value="{{old('hash_key', $item->hash_key)}}">
+                            <span id="passwordHelpBlock" class="help-block">通常編集禁止(superAdminのみ変更可能)</span>
+                        </div>
+                        @endcan
+                        
                         <div class="form-group">
                             <label for="InputTextarea">IFTTT Event Name</label>
                             <input type="text" class="form-control form-control-lg" name="ifttt_event_name" value="{{old('ifttt_event_name', $item->ifttt_event_name)}}">
@@ -80,6 +92,25 @@
                             </button>
                         </div>
                     </form>
+                    @can('superAdmin')
+                    <hr>
+                    <h2>RaspberryPi設定項目</h2>
+                    <p>コミュニティ名 : {{$item->service_name}}</p>
+                    <p>コミュニティID : {{$item->id}}</p>
+                    <hr>
+                    <h3>community_id</h3>
+                    <p>{{$item->name}}</p>
+                    <h3>router_id</h3>
+                    @forelse ($item->router as $router)
+                    <p>ID : <b>{{$router->id}}</b> : {{$router->name}}</p>
+                    @empty
+                    <P>Routerが登録されていません</P>
+                    @endforelse
+                    <h3>secret</h3>
+                    <p>{{old('hash_key', $item->hash_key)}}</p>
+                    <h3>post_url</h3>
+                    <p>https://www.livelynk.jp/inport_post/mac_address</p>
+                    @endcan
                 </div>
             </div>
         </div>
