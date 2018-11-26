@@ -16,7 +16,6 @@ class RoutersTableSeeder extends Seeder
         $param = [
             'community_id' => 1,
             'name' => 'comu1ルーター1号',
-            'hash_key' => 'hoge',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -25,7 +24,6 @@ class RoutersTableSeeder extends Seeder
         $param = [
             'community_id' => 1,
             'name' => 'comu1ルーター2号',
-            'hash_key' => 'fuga',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -34,7 +32,6 @@ class RoutersTableSeeder extends Seeder
         $param = [
             'community_id' => 2,
             'name' => 'comu2ルーター1号',
-            'hash_key' => 'hoge2',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -42,8 +39,7 @@ class RoutersTableSeeder extends Seeder
 
         $param = [
             'community_id' => 2,
-            'name' => 'comu2ルーター1号',
-            'hash_key' => 'fuga2',
+            'name' => 'comu2ルーター2号',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -52,7 +48,6 @@ class RoutersTableSeeder extends Seeder
         $param = [
             'community_id' => 3,
             'name' => 'comu3単独ルーター',
-            'hash_key' => '6ba0103c2b443784aaeeeb2e2eeab19dc3452f',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];

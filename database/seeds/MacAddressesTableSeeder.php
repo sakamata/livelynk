@@ -27,7 +27,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 1,
             'router_id' => 1,
             'mac_address' => 'AA:BB:CC:DD:EE:FF',
-            'mac_address_hash' => $this->CahngeCrypt('AA:BB:CC:DD:EE:FF'),
+            'mac_address_hash' => $this->CahngeCrypt('AA:BB:CC:DD:EE:FF', 1),
             'vendor' => 'Apple.inc',
             'device_name' => 'i-phoneX',
             'hide' => 0,
@@ -44,7 +44,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 1,
             'router_id' => 2,
             'mac_address' => '00:11:22:33:44:55',
-            'mac_address_hash' => $this->CahngeCrypt('00:11:22:33:44:55'),
+            'mac_address_hash' => $this->CahngeCrypt('00:11:22:33:44:55', 1),
             'vendor' => 'hoge.inc',
             'device_name' => 'すまほ-X',
             'hide' => 0,
@@ -61,7 +61,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 1,
             'router_id' => 2,
             'mac_address' => 'AA:BB:CC:33:44:55',
-            'mac_address_hash' => $this->CahngeCrypt('AA:BB:CC:33:44:55'),
+            'mac_address_hash' => $this->CahngeCrypt('AA:BB:CC:33:44:55', 1),
             'vendor' => 'fuga.inc',
             'device_name' => '非表示プリンタ',
             'hide' => 1,
@@ -78,7 +78,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 5,
             'router_id' => 2,
             'mac_address' => '00:11:22:DD:EE:FF',
-            'mac_address_hash' => $this->CahngeCrypt('00:11:22:DD:EE:FF'),
+            'mac_address_hash' => $this->CahngeCrypt('00:11:22:DD:EE:FF', 1),
             'vendor' => 'piyo.inc',
             'device_name' => 'i-piyo',
             'hide' => 0,
@@ -119,7 +119,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
-                'mac_address_hash' => $this->CahngeCrypt($mac),
+                'mac_address_hash' => $this->CahngeCrypt($mac, 1),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -160,7 +160,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
-                'mac_address_hash' => $this->CahngeCrypt($mac),
+                'mac_address_hash' => $this->CahngeCrypt($mac, 1),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -207,7 +207,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
-                'mac_address_hash' => $this->CahngeCrypt($mac),
+                'mac_address_hash' => $this->CahngeCrypt($mac, 2),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -254,7 +254,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
-                'mac_address_hash' => $this->CahngeCrypt($mac),
+                'mac_address_hash' => $this->CahngeCrypt($mac, 3),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -301,7 +301,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
-                'mac_address_hash' => $this->CahngeCrypt($mac),
+                'mac_address_hash' => $this->CahngeCrypt($mac, 2),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -348,7 +348,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
-                'mac_address_hash' => $this->CahngeCrypt($mac),
+                'mac_address_hash' => $this->CahngeCrypt($mac, 3),
                 'vendor' => $vendor,
                 'device_name' => $device,
                 'hide' => 0,
@@ -363,8 +363,10 @@ class MacAddressesTableSeeder extends Seeder
         }
     }
 
-    public function CahngeCrypt($mac_address)
+    public function CahngeCrypt($mac_address, $community_id)
     {
-        return crypt($mac_address, '$2y$10$' . env('CRYPT_SALT') . '$');
+        $secret = DB::table('communities')->where('id', $community_id)
+            ->pluck('hash_key')->first();
+        return hash('sha256', $mac_address . $secret);
     }
 }
