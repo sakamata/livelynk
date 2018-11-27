@@ -261,6 +261,24 @@ class InportPostController extends Controller
         return hash('sha256', $mac_address . $secret);
     }
 
+    ///////////////////////////////////////////////////
+    // データ移行で内部的につかうだけ
+    ///////////////////////////////////////////////////
+    // public function MacAddressChangeHash()
+    // {
+    //     $macAddress = DB::table('mac_addresses')->get();
+
+    //     foreach ($macAddress as $mac) {
+    //         # code...
+    //         $mac->mac_address
+    //         DB::table('mac_addresses')->update('')
+    //     }
+
+    //     $secret = 'App\Router'::Join('communities', 'routers.community_id', '=', 'communities.id')
+    //         ->where('routers.id', $router_id)->pluck('hash_key')->first();
+    //     $mac_hash = hash('sha256', $mac_address . $secret);
+    // }
+
     // users table last_accessの一括更新
     public function user_last_access_update($users_ids, $now)
     {
