@@ -87,6 +87,11 @@ Route::get('error/{code}', function ($code) {
 // 外部からのPOST受け取り先 csrf off
 Route::post('/inport_post/mac_address', 'InportPostController@MacAddress');
 
+//////////////////////////////一時的に利用///////////////////////
+// Route::post('/inport_post/mac_address_change_hash', 'InportPostController@MacAddressChangeHash');
+// Route::get('admin_user/test', 'InportPostController@view');
+
+
 // 外部へのPOST送信 route必要?
 Route::post('/push_ifttt_arraival', 'ExportPostController@push_ifttt_arraival');
 

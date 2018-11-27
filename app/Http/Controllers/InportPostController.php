@@ -264,20 +264,36 @@ class InportPostController extends Controller
     ///////////////////////////////////////////////////
     // データ移行で内部的につかうだけ
     ///////////////////////////////////////////////////
-    // public function MacAddressChangeHash()
-    // {
-    //     $macAddress = DB::table('mac_addresses')->get();
+/*
+    public function MacAddressChangeHash()
+    {
+        $macAddress = DB::table('mac_addresses')->get();
 
-    //     foreach ($macAddress as $mac) {
-    //         # code...
-    //         $mac->mac_address
-    //         DB::table('mac_addresses')->update('')
-    //     }
+        foreach ($macAddress as $mac) {
+            Log::debug(print_r('$mac>>>',1));
+            Log::debug(print_r($mac,1));
+            $secret = DB::table('mac_addresses')
+            ->join('community_user', 'mac_addresses.community_user_id', '=', 'community_user.id')->join('communities', 'community_user.community_id', '=', 'communities.id')->where('mac_addresses.id', $mac->id)->pluck('communities.hash_key')->first();
+            Log::debug(print_r('$mac->id>>>',1));
+            Log::debug(print_r($mac->id,1));
+            Log::debug(print_r('$secret>>>',1));
+            Log::debug(print_r($secret,1));
+            
+            $mac_hash = hash('sha256', $mac->mac_address.$secret);
+            Log::debug(print_r('$mac_hash>>>',1));
+            Log::debug(print_r($mac_hash,1));
 
-    //     $secret = 'App\Router'::Join('communities', 'routers.community_id', '=', 'communities.id')
-    //         ->where('routers.id', $router_id)->pluck('hash_key')->first();
-    //     $mac_hash = hash('sha256', $mac_address . $secret);
-    // }
+            DB::table('mac_addresses')->where('id', $mac->id)->update(['mac_address_hash' => $mac_hash]);
+        }
+    }
+    ///////////////////////////////////////////////////
+    // データ移行で内部的につかうだけ
+    ///////////////////////////////////////////////////
+    public function view()
+    {
+        return view('admin_user.test');
+    }
+*/
 
     // users table last_accessの一括更新
     public function user_last_access_update($users_ids, $now)
