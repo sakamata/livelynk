@@ -66,7 +66,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header"><h2>503 Livelynkは現在メンテナンス中です</h2></div>
+                        <div class="card-header"><h2>Livelynkはメンテナンス中です</h2></div>
                         <div class="card-body">
                             @if (session('status'))
                                 <div class="alert alert-success" role="alert">
@@ -74,6 +74,7 @@
                                 </div>
                             @endif
                             <p>現在メンテナンスを行っています。復旧まで今しばらくおまちください。</p>
+                            <img src="{{asset("img/503/_c_chojudaB0020_s512_chojudaB0020_10.png")}}"   width="160" alt="作業中のカエルイラスト" class="rounded mx-auto d-block m-5">
                         </div>
                     </div>
                 </div>
@@ -82,4 +83,3 @@
     </div>
 </body>
 </html>
-
