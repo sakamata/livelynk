@@ -13,7 +13,7 @@
                     <a href="/admin_user/add" class="btn btn-info" role="button">新規ユーザー作成</a>
                 </div>
                     <ul class="pagination justify-content-end mb-3">
-                        {{ $items->links() }}
+                        {{-- {{ $items->links() }} --}}
                     </ul>
                     <table class="table table-hover">
                         <tr class="info thead-light">
@@ -143,7 +143,7 @@
                     @endforeach
                     </table>
                     <ul class="pagination justify-content-center">
-                    {{ $items->links() }}
+                    {{-- {{ $items->links() }} --}}
                     </ul>
                 </div>
             </div>
