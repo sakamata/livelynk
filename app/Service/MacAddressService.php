@@ -22,7 +22,7 @@ class MacAddressService
 
     public function CommunityHavingMac(int $community_id, int $reader_id, string $order, string $key, string $case)
     {
-        return 'App\CommunityUser'::CommunityHavingMac($community_id, $reader_id, $order, $key, $case)->paginate(25);
+        return 'App\CommunityUser'::CommunityHavingMac($community_id, $reader_id, $order, $key, $case)->get();
     }
 
     public function MacIDtoGetCommunityID(int $mac_address_id)
