@@ -7,6 +7,7 @@ use App\CommunityUser;
 use App\Http\Middleware\VerifyCsrfToken;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class InportPostController extends Controller
@@ -229,8 +230,16 @@ class InportPostController extends Controller
             (new ExportPostController)->push_ifttt($push_users, $category = "arraival", $community->id);
         }
         $this->DepartureCheck($community->id);
-        return response('From Livelynk posted', 200)
-                  ->header('Content-Type', 'text/plain');
+
+        // GoogleHomeへのコマンドを記載する
+        /*
+        return response()->json([
+            'status' => 'From Livelynk posted',
+            'MAC' => '20:DF:B9:34:CC:B3',
+            'name' => '俺の部屋',
+            'message' => 'こんにちは',
+        ]);
+        */
     }
 
     public function HashCheck($check_array)
@@ -331,6 +340,7 @@ class InportPostController extends Controller
         if (!$went_away) {
             // log::debug(print_r('$went_away 帰宅判断対象無し、処理停止',1));
             exit();
+            return;
         }
 
         // 帰宅判断以上の時間が経過した端末の current_stay やステータスを変更
@@ -377,6 +387,7 @@ class InportPostController extends Controller
         if (!$near_push_users_id) {
             // log::debug(print_r('$near_push_users_id 帰宅判断対象無し、処理停止',1));
             exit();
+            return;
         }
 
         // 該当userの非表示以外の滞在中mac_addressが無いか確認
@@ -399,6 +410,7 @@ class InportPostController extends Controller
         if (!$push_users_id) {
             // log::debug(print_r('$push_users_id 帰宅判断対象無し、処理停止',1));
             exit();
+            return;
         }
 
         $push_users_obj = DB::table('community_user')
