@@ -33,9 +33,14 @@ Route::post(env("PASSWORD_PATH").'/reset', 'Auth\ResetPasswordController@reset')
 Route::get('/password/edit{id?}', 'ChangePasswordController@edit')->middleware('auth');
 Route::post('/password/update', 'ChangePasswordController@update')->middleware('auth');
 
-// 未ログイン時 && ログイン後 index画面  [未]welcome を表示  [後]滞在者一覧画面
+// 未ログイン時 && ログイン後 index画面  [未]home を表示  [後]滞在者一覧画面
 // 未ログイン時は滞在者画面への遷移を作ってはいけない（プライバシー的な問題）
 Route::get('/', 'IndexController@index');
+
+// 通常サイトコンテンツ
+Route::view('/home', 'site.home');
+Route::view('/terms', 'site.terms');
+Route::view('/privacy', 'site.privacy');
 
 // 未ログイン時の 滞在者一覧画面 コミュニティ毎のpathを知っているものだけが閲覧できる
 // /index?path=hoge

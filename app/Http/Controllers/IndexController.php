@@ -17,7 +17,7 @@ class IndexController extends Controller
         // 非ログイン と ログイン時で対象の community を取得
         // /index?path=hoge
         if (!Auth::check()) {
-            if (!$request->path) { return view('welcome'); }
+            if (!$request->path) { return view('site.home'); }
             $community = $this->GetCommunityFromPath($request->path);
             if (!$community) {
                 return view('errors.404');

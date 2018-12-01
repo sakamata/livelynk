@@ -1,0 +1,81 @@
+html, body {
+    font-family:-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI","Noto Sans Japanese","ヒラギノ角ゴ ProN W3", Meiryo, sans-serif;
+    background-color: #f1f8e9;
+    color:  #636b6f;
+    font-weight: 100;
+    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+.flex-center {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.position-ref {
+    position: relative;
+}
+.top-right {
+    position: absolute;
+    right: 10px;
+    top: 18px;
+}
+.content {
+  }
+  .footer {
+    height: 50px;
+    background-color: #fff;
+}
+.title {
+    font-size: 9vw;
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+.message {
+    width: 100%;
+    font-size: 14px;
+}
+.summary-wp {
+    background-color: #ffffff;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    width: 95%;
+    border-radius: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.summary {
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}
+h1 {
+    margin-top: 30px;
+    margin-bottom: 40px;
+    font-size: 40px;
+}
+h2 {
+    margin-bottom: 30px;
+    font-size: 30px;
+}
+h3 {
+    margin-top: 50px;
+    margin-bottom: 10px;
+    font-size: 26px;
+}
+p {
+    font-size: 18px;
+    padding-left: 5%;
+}
+figure {
+    margin: 50px;
+    text-align: center;
+}
+img {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
