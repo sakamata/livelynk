@@ -39,7 +39,7 @@
                 </div>
                 <p class="lead">会員の方は専用のURLより閲覧してください。</p>
                 <div class="summary-wp">
-                    @yield('content');
+                    @yield('content')
                 </div>
                 <div class="footer">
                     <a href="/home">HOME</a> | <a href="/terms">利用規約</a> | <a href="/privacy">プライバシーポリシー</a>
