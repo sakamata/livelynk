@@ -5,74 +5,50 @@ namespace App\Http\Controllers;
 use DB;
 use App\CommunityUser;
 use App\Http\Middleware\VerifyCsrfToken;
+use App\Service\CommunityService;
+use App\Service\CommunityUserService;
+use App\Service\MacAddressService;
+use App\Service\MacAddress;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
+
 class InportPostController extends Controller
 {
+    private $call_community;
+    private $call_community_user;
+    private $call_mac;
+
+    public function __construct(
+        CommunityService $call_community,
+        CommunityUserService $call_community_user,
+        MacAddressService $call_mac
+        )
+    {
+        $this->call_community      = $call_community;
+        $this->call_community_user = $call_community_user;
+        $this->call_mac            = $call_mac;
+    }
+
     // MAC アドレス一覧を受け取って、mac_addresses tableへの登録、更新を行う
     public function MacAddress(Request $request)
     {
-        $json = $request->json;
-        if (!$json) { exit();};
-        $check_array = json_decode($json, true);
-        Log::debug(print_r($check_array, 1));
-        // hash値が異なる場合はexit() で処理停止
-        $this->HashCheck($check_array);
-
-        if (
-            !ctype_digit($check_array['time']) &&
-            !ctype_digit($check_array['router_id']) &&
-            !ctype_digit($check_array['community_id'])
-        ) {
-            Log::debug(print_r('json int value not integer!! check json ==> ', 1));
-            Log::debug(print_r($check_array, 1));
-            exit();
-        }
-
-        // POSTされた community_id の半角英数字から communities table の id を導く
-        $community = DB::table('communities')
-            ->where('name', $check_array['community_id'])
-        ->first();
+        $check_array  = $this->JsonValueCheck($request->json);
+        // POSTされた community_id の**半角英数字**から communities table の id を導く
+        $community = $this->call_community->NameGet((string)$check_array['community_id']);
 
         if (!$community) {
             Log::debug(print_r('community_id not found!! check json ==> ', 1));
             Log::debug(print_r($check_array, 1));
             exit();
         }
+        $post_mac_array  = $this->CheckMACArray((array)$check_array["mac"]);
+        // あえて宣言する変数名 jsonの ['community_id'] が半角英数で名前が紛らわしい為
         $community_id_int = $community->id;
-        if (!$community_id_int) {
-            Log::debug(print_r('community_id_int not found!! check json ==> ', 1));
-            exit();
-        }
-
-        // MACAddressの値をPOSTされた形式別で配列処理する
-        $post_mac_array = array();
-        foreach ((array)$check_array["mac"] as $check) {
-            // MACアドレス形式は大文字にして配列に入る
-            if (preg_match('/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/', $check)) {
-                $check_MAC = strtoupper($check);
-                array_push($post_mac_array, $check_MAC);
-
-            // hash化された値であれば配列に入れる
-            } elseif (preg_match('/[0-9a-f]{64}/', $check)) {
-                array_push($post_mac_array, $check);
-            } else {
-                Log::debug(print_r('Inport post MACAddress not pattern!! posted element ==> ' .$check, 1));
-                exit();
-            }
-        }
-
         // DBにあるPOST前のMACaddressを取得
-        $stays_macs = DB::table('community_user')
-            ->leftJoin('mac_addresses', 'mac_addresses.community_user_id', '=', 'community_user.id')
-        ->where([
-            ['community_user.community_id', $community_id_int],
-            ['mac_addresses.current_stay', true],
-        ])->pluck('mac_address_hash');
-
+        $stays_macs =$this->call_community_user->GetStaysMacs((int)$community_id_int);
         // クエリビルダで取得したオブジェクトを配列に変換
         $stays_mac_array = json_decode(json_encode($stays_macs), true);
         $now = Carbon::now();
@@ -89,14 +65,8 @@ class InportPostController extends Controller
             } else {
                 $post_mac_hash = $post_mac;
             }
-
-            $check = DB::table('community_user')
-                ->leftJoin('mac_addresses', 'mac_addresses.community_user_id', '=', 'community_user.id')
-            ->where([
-                ['community_user.community_id', $community_id_int],
-                ['mac_addresses.mac_address_hash', $post_mac_hash],
-            ])->exists();
-
+            // return bool
+            $check = $this->call_community_user->NewComerCheck((int)$community_id_int, (string)$post_mac_hash);
             if (!$check) {
                 // 未登録なら、最低限のinsert 滞在中に変更
                 // $community->user_id は [未登録] コミュニティ管理者
@@ -242,6 +212,23 @@ class InportPostController extends Controller
         */
     }
 
+    public function JsonValueCheck($json)
+    {
+        if (!$json) { exit(); };
+        $check_array = json_decode($json, true);
+        Log::debug(print_r($check_array, 1));
+        // hash値が異なる場合はexit() で処理停止
+        $this->HashCheck($check_array);
+        if (!ctype_digit($check_array['time']) &&
+            !ctype_digit($check_array['router_id']) &&
+            !ctype_digit($check_array['community_id'])) {
+            Log::debug(print_r('json int value not integer!! check json ==> ', 1));
+            Log::debug(print_r($check_array, 1));
+            exit();
+        }
+        return $check_array;
+    }
+
     public function HashCheck($check_array)
     {
         // hash確認 router_id が数値以外なら処理停止
@@ -261,6 +248,26 @@ class InportPostController extends Controller
             Log::debug(print_r('Inport json post hash unmatch !! This side hash ==> ' .$this_side_hash, 1));
             exit();
         }
+    }
+
+    public function CheckMACArray(array $check_array_mac)
+    {
+        // MACAddressの値をPOSTされた形式別で配列処理する
+        $post_mac_array = array();
+        foreach ((array)$check_array_mac as $check) {
+            // MACアドレス形式は大文字にして配列に入る
+            if (preg_match('/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/', $check)) {
+                $check_MAC = strtoupper($check);
+                array_push($post_mac_array, $check_MAC);
+            // hash化された値であれば配列に入れる
+            } elseif (preg_match('/[0-9a-f]{64}/', $check)) {
+                array_push($post_mac_array, $check);
+            } else {
+                Log::debug(print_r('Inport post MACAddress not pattern!! posted element ==> ' . $check, 1));
+                exit();
+            }
+        }
+        return $post_mac_array;
     }
 
     public function CahngeCrypt($mac_address, $router_id)
