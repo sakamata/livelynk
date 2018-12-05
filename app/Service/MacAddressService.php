@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\CommunityUser;
 use App\MacAddress;
+use Illuminate\Support\Facades\Log;
 
 /**
  *
@@ -53,5 +54,52 @@ class MacAddressService
         ]);
     }
 
+    // InportPostController MacAddress
+    public function Arraival_at_Update(
+        int $community_user_id,
+        string $post_mac_hash,
+        int $router_id,
+        string $now
+        )
+    {
+        'App\MacAddress'::where([
+            ['community_user_id', $community_user_id],
+            ['mac_address_hash', $post_mac_hash],
+        ])->update([
+            'router_id' => $router_id,
+            'arraival_at' => $now,
+            'current_stay' => true,
+        ]);
+        Log::debug(print_r('mac arraival_at update now!!!', 1));
+    }
 
+    // InportPostController MacAddress
+    public function ThisUserExists(int $community_user_id)
+    {
+        return 'App\MacAddress'::where([
+            ['community_user_id', $community_user_id],
+            ['current_stay', true],
+            ['hide', false],
+        ])->exists();
+    }
+
+    // InportPostController MacAddress
+    public function MacAddressStatusUpdate(
+        int $community_user_id,
+        string $post_mac_hash,
+        int $router_id,
+        string $now
+        )
+    {
+        'App\MacAddress'::where([
+            ['community_user_id', $community_user_id],
+            ['mac_address_hash', $post_mac_hash],
+            ['hide', false],
+        ])->update([
+            'router_id' => $router_id,
+            'current_stay' => true,
+            'posted_at' => $now,
+            'updated_at' => $now,
+        ]);
+    }
 }

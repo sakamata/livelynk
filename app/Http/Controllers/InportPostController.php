@@ -85,6 +85,8 @@ class InportPostController extends Controller
                 DB::table('mac_addresses')->insert($param);
                 $community_user_id = $community->user_id;
 
+                // ***ToDo*** GoogleHomeTalkの発火処理
+
                 // 新規訪問者通知へのpush
                 $person = array(
                     "id" => "id未定",
@@ -94,69 +96,43 @@ class InportPostController extends Controller
                 $i++;
             } else {
                 // 登録済みMACaddressの場合
-
                 // last_accessの更新をするuserのid一覧を取得
-                // *****ToDo***** 非表示端末は配列に入れない事にして、OUT時間が非表示端末の時間を拾うバグに対応する
-
-                $mac_record = DB::table('community_user')
-                    ->select('community_user.id', 'departure_at')
-                    ->leftJoin('mac_addresses', 'mac_addresses.community_user_id', '=', 'community_user.id')
-                ->where([
-                    ['community_user.community_id', $community->id],
-                    ['mac_addresses.hide', false],
-                    ['mac_addresses.mac_address_hash', $post_mac_hash],
-                ])->first();
+                $mac_record = $this->call_community_user->GetLastAccsessUpdateMacAddress(
+                    (int)$community->id,
+                    (string)$post_mac_hash
+                );
                 if (!$mac_record) { continue; }
                 $community_user_id = $mac_record->id;
                 $users_ids[] = $community_user_id;
-
                 // 前回のPOSTに該当MACaddressがない場合
                 if (!in_array($post_mac, $stays_mac_array)) {
                     // 来訪/継続ステータスの変更、通知の判断、通知の値取得を行う
 
-                    // 既にこのuserの他のデバイスの存在があるか?
-                    $stay = DB::table('mac_addresses')
-                        ->where([
-                            ['community_user_id', $community_user_id],
-                            ['current_stay', true],
-                            ['hide', false],
-                    ])->exists();
-
                     // 前回帰宅時間から、ルーター瞬断や中座に対応した通知処理を行う
-                    // 初来訪機器で、帰宅時間がない場合は limit は現在となる
                     $departure_at = new Carbon($mac_record->departure_at);
                     $second = env("JUDGE_ARRAIVAL_INTERVAL_SECOND");
+                    // 初来訪機器で、帰宅時間がない場合は limit は現在となる
                     $limit = $departure_at->addSecond($second);
+                    // 既にこのuserの他のデバイスの存在があるか?
+                    $stay = $this->call_mac->ThisUserExists((int)$community_user_id);
 
                     // 一定時間以上間の空いた場合はDBのステータス滞在中に変更 arraival_at のみ変更
                     // 現在を含むので ">="  が正
-                    // ***MEMO*** X hide X, current_stay の条件をDB構造変更(comm_user 追加)対応時に追加
-                    // ['hide', false],
                     if ($now >= $limit) {
                         //  該当レコードの来訪時間 arraival_at 更新
-                        DB::table('mac_addresses')->where([
-                            ['community_user_id', $community_user_id],
-                            ['mac_address_hash', $post_mac_hash],
-                        ])->update([
-                            'router_id' => $check_array["router_id"],
-                            'arraival_at' => $now,
-                            'current_stay' => true,
-                        ]);
-                        Log::debug(print_r('mac arraival_at update now!!!', 1));
+                        $this->call_mac->Arraival_at_Update(
+                            (int)$community_user_id,
+                            (string)$post_mac_hash,
+                            (int)$check_array["router_id"],
+                            (string)$now
+                        );
                     }
                     // 他のデバイスが無く、かつ不在から一定時間以上だった場合のみ
                     //  push_usersに追加
                     if (!$stay && $now >= $limit) {
                         //  通知の為のuser nameを取得
                         // user_id name hide を取得 (非表示ユーザー除外)
-                        $user = DB::table('community_user')
-                            ->select('user_id', 'name', 'hide')
-                            ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
-                            ->Join('communities_users_statuses', 'communities_users_statuses.id', '=', 'community_user.id')
-                            ->where([
-                                ['community_user.id', $community_user_id],
-                                ['hide', false],
-                        ])->first();
+                        $user = $this->call_community_user->GetPushUser((int) $community_user_id);
 
                         if ($user) {
                             Log::debug(print_r("来訪者の通知開始 該当user>>>", 1));
@@ -173,18 +149,13 @@ class InportPostController extends Controller
                 }
             }
             // 登録済みの場合、通知判定を終えた後、テータスを更新する
-            // ***MEMO*** DB変更時に 非表示デバイス hide を撥ねる条件追加
             // 非表示デバイスの情報はMACが飛んでいても更新さない
-            DB::table('mac_addresses')->where([
-                ['community_user_id', $community_user_id],
-                ['mac_address_hash', $post_mac_hash],
-                ['hide', false],
-            ])->update([
-                'router_id' => $check_array["router_id"],
-                'current_stay' => true,
-                'posted_at' => $now,
-                'updated_at' => $now,
-            ]);
+            $this->call_mac->MacAddressStatusUpdate(
+                (int)$community_user_id,
+                (string)$post_mac_hash,
+                (int)$check_array["router_id"],
+                (string)$now
+            );
             $v++;
         } // end foreach
 
@@ -196,7 +167,6 @@ class InportPostController extends Controller
         if ($push_users) {
             Log::debug(print_r("!push_ifttt arraival!>>>>", 1));
             Log::debug(print_r($push_users, 1));
-
             (new ExportPostController)->push_ifttt($push_users, $category = "arraival", $community->id);
         }
         $this->DepartureCheck($community->id);
@@ -276,40 +246,6 @@ class InportPostController extends Controller
             ->where('routers.id', $router_id)->pluck('hash_key')->first();
         return hash('sha256', $mac_address . $secret);
     }
-
-    ///////////////////////////////////////////////////
-    // データ移行で内部的につかうだけ
-    ///////////////////////////////////////////////////
-/*
-    public function MacAddressChangeHash()
-    {
-        $macAddress = DB::table('mac_addresses')->get();
-
-        foreach ($macAddress as $mac) {
-            Log::debug(print_r('$mac>>>',1));
-            Log::debug(print_r($mac,1));
-            $secret = DB::table('mac_addresses')
-            ->join('community_user', 'mac_addresses.community_user_id', '=', 'community_user.id')->join('communities', 'community_user.community_id', '=', 'communities.id')->where('mac_addresses.id', $mac->id)->pluck('communities.hash_key')->first();
-            Log::debug(print_r('$mac->id>>>',1));
-            Log::debug(print_r($mac->id,1));
-            Log::debug(print_r('$secret>>>',1));
-            Log::debug(print_r($secret,1));
-            
-            $mac_hash = hash('sha256', $mac->mac_address.$secret);
-            Log::debug(print_r('$mac_hash>>>',1));
-            Log::debug(print_r($mac_hash,1));
-
-            DB::table('mac_addresses')->where('id', $mac->id)->update(['mac_address_hash' => $mac_hash]);
-        }
-    }
-    ///////////////////////////////////////////////////
-    // データ移行で内部的につかうだけ
-    ///////////////////////////////////////////////////
-    public function view()
-    {
-        return view('admin_user.test');
-    }
-*/
 
     // users table last_accessの一括更新
     public function user_last_access_update($users_ids, $now)
