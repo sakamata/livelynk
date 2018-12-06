@@ -86,6 +86,8 @@ class InportPostController extends Controller
                 $community_user_id = $community->user_id;
 
                 // ***ToDo*** GoogleHomeTalkの発火処理
+                // $prov_name = (new AdminUserController)->provisionalNameMaker($community_id);
+                // Log::debug(print_r($prov_name, 1));
 
                 // 新規訪問者通知へのpush
                 $person = array(
