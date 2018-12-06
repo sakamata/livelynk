@@ -163,33 +163,18 @@ class AdminUserController extends Controller
         ]);
         DB::beginTransaction();
         try{
-            $now = Carbon::now();
-            $user_id = 'App\UserTable'::insertGetId([
-                'name' => $request->name,
-                'unique_name' => $request->unique_name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
-            // 連携したtableに必要な値をinsertする
-            $community_id = $request['community_id'];
-            // 中間tableに値を入れる
-            $community_user_id = DB::table('community_user')->insertGetId([
-                'community_id' => $community_id,
-                'user_id' => $user_id,
-            ]);
-            // user status管理のtableに値を入れる
-            // role_id デフォルト値 "normal" = 1 に固定
-            DB::table('communities_users_statuses')->insert([
-                'id' => $community_user_id,
-                'role_id' => 1,
-                'hide' => 0,
-                'last_access' => $now,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
+            // 管理画面から作成の場合roleは現状 1=normal で固定
+            $community_user_id  = $this->call_user->UserCreate(
+                (string)$request->name,
+                (string)$request->unique_name,
+                (string)$request->email,
+                (string)$request->password,
+                (int)$request->community_id,
+                (int)$role_id = 1,
+                (string)$action = 'AdminUserCreate'
+            );
 
+            $now = Carbon::now();
             // mac_address 編集項目の変更
             foreach ((array)$request->mac_address as $mac_id => $value) {
                 if ($value['check'] == 1) {

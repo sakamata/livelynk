@@ -3,16 +3,23 @@
 namespace App\Http\Controllers;
 
 use DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use App\Community;
+use App\Service\UserService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Community;
+use Illuminate\Support\Facades\Log;
 
 // normal userはrouter web.php 設定で閲覧不可となっている
 class AdminCommunityController extends Controller
 {
+    private $call_user;
+
+    public function __construct(UserService $call_user) {
+        $this->call_user = $call_user;
+    }
+
     public function index(Request $request)
     {
         $items = 'App\Community'::paginate(25);
@@ -62,33 +69,18 @@ class AdminCommunityController extends Controller
         DB::beginTransaction();
         try {
             $community_id = DB::table('communities')->insertGetId($param_community);
-            $param_user = [
-                'name' => $request->user_name,
-                'unique_name' => $request->unique_name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
-            // insertした管理者のusers_idを取得 今作成したcommunityに入れる
-            $user_id = DB::table('users')->insertGetId($param_user);
-            DB::table('communities')->where('id', $community_id)
-                ->update([ 'user_id' => $user_id ]);
-            // 中間tableに値を入れる
-            $community_user_id = DB::table('community_user')->insertGetId([
-                'community_id' => $community_id,
-                'user_id' => $user_id,
-            ]);
-            // user status管理のtableに値を入れる
             // role_id デフォルト値 "readerAdmin" = 3 に固定
-            DB::table('communities_users_statuses')->insert([
-                'id' => $community_user_id,
-                'role_id' => 3,
-                'hide' => 0,
-                'last_access' => $now,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
+            $user_id = $this->call_user->UserCreate(
+                (string)$request->user_name,
+                (string)$request->unique_name,
+                (string)$request->email,
+                (string)$request->password,
+                (int)$community_id,
+                (int)$role_id = 3,
+                (string)$action = 'AdminCommunityCreate'
+            );
+            DB::table('communities')->where('id', $community_id)
+                ->update(['user_id' => $user_id]);
             DB::commit();
             $success = true;
         } catch (\Exception $e) {
