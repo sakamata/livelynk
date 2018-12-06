@@ -69,11 +69,12 @@ class AdminCommunityController extends Controller
         DB::beginTransaction();
         try {
             $community_id = DB::table('communities')->insertGetId($param_community);
-            // role_id デフォルト値 "readerAdmin" = 3 に固定
+            // role_id "readerAdmin" = 3 に固定
             $user_id = $this->call_user->UserCreate(
                 (string)$request->user_name,
                 (string)$request->unique_name,
                 (string)$request->email,
+                (bool)$provisional = false,
                 (string)$request->password,
                 (int)$community_id,
                 (int)$role_id = 3,

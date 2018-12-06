@@ -9,27 +9,30 @@ use App\Service\CommunityService;
 use App\Service\CommunityUserService;
 use App\Service\MacAddressService;
 use App\Service\MacAddress;
+use App\Service\UserService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-
 
 class InportPostController extends Controller
 {
     private $call_community;
     private $call_community_user;
     private $call_mac;
+    private $call_user;
 
     public function __construct(
         CommunityService $call_community,
         CommunityUserService $call_community_user,
-        MacAddressService $call_mac
+        MacAddressService $call_mac,
+        UserService $call_user
         )
     {
         $this->call_community      = $call_community;
         $this->call_community_user = $call_community_user;
         $this->call_mac            = $call_mac;
+        $this->call_user           = $call_user;
     }
 
     // MAC アドレス一覧を受け取って、mac_addresses tableへの登録、更新を行う
@@ -68,31 +71,52 @@ class InportPostController extends Controller
             // return bool
             $check = $this->call_community_user->NewComerCheck((int)$community_id_int, (string)$post_mac_hash);
             if (!$check) {
-                // 未登録なら、最低限のinsert 滞在中に変更
-                // $community->user_id は [未登録] コミュニティ管理者
-                $param = [
-                    'community_user_id' => $community->user_id,
-                    'router_id' => $check_array["router_id"],
-                    'mac_address' => $post_mac,
-                    'mac_address_hash' => $post_mac_hash,
-                    'vendor' => $check_array["vendor"][$v],
-                    'arraival_at' => $now,
-                    'posted_at' => $now,
-                    'current_stay' => true,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-                DB::table('mac_addresses')->insert($param);
-                $community_user_id = $community->user_id;
-
+                // 未登録なら、仮ユーザーの登録と端末の insert 滞在中に変更
+                $provisional_name = $this->call_user->ProvisionalNameMaker($community_id_int);
+                DB::beginTransaction();
+                try {
+                    // 仮ユーザーの作成
+                    $community_user_id  = $this->call_user->UserCreate(
+                        (string)$provisional_name, // name
+                        (string)$provisional_name, // unique_name
+                        (string)$email = null,
+                        (bool)$provisional = true,
+                        (string)$provisional_name, // password
+                        (int)$community_id_int,
+                        (int)$role_id = 1, //normal
+                        (string)$action = 'InportPostProvisional'
+                    );
+                    // 仮ユーザーに紐づけてMACAddressの登録
+                    $param = [
+                        'community_user_id' => $community_user_id,
+                        'router_id' => $check_array["router_id"],
+                        'mac_address' => $post_mac,
+                        'mac_address_hash' => $post_mac_hash,
+                        'vendor' => $check_array["vendor"][$v],
+                        'arraival_at' => $now,
+                        'posted_at' => $now,
+                        'current_stay' => true,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                    DB::table('mac_addresses')->insert($param);
+                    DB::commit();
+                    $success = true;
+                } catch (\Exception $e) {
+                    $success = false;
+                    DB::rollback();
+                }
+                if (!$success) {
+                    // コケた際はひとまずlog出力
+                    Log::waning(print_r('Provisional User & Device Create Error!!', 1));
+                    continue;
+                }
                 // ***ToDo*** GoogleHomeTalkの発火処理
-                // $prov_name = (new AdminUserController)->provisionalNameMaker($community_id);
-                // Log::debug(print_r($prov_name, 1));
 
                 // 新規訪問者通知へのpush
                 $person = array(
                     "id" => "id未定",
-                    "name" => "初来訪者? wi-fi初接続",
+                    "name" => "初来訪? ". $provisional_name,
                  );
                 $push_users[$i] = $person;
                 $i++;
@@ -153,7 +177,7 @@ class InportPostController extends Controller
             // 登録済みの場合、通知判定を終えた後、テータスを更新する
             // 非表示デバイスの情報はMACが飛んでいても更新さない
             $this->call_mac->MacAddressStatusUpdate(
-                (int)$community_user_id,
+                (int)$community->user_id,
                 (string)$post_mac_hash,
                 (int)$check_array["router_id"],
                 (string)$now
@@ -171,6 +195,11 @@ class InportPostController extends Controller
             Log::debug(print_r($push_users, 1));
             (new ExportPostController)->push_ifttt($push_users, $category = "arraival", $community->id);
         }
+        // !!!Tips!!! 来訪直後に帰宅通知が出るのは .env ファイルのキャッシュの問題かも
+        // .env 値をlog出力して値が反映されるか確認 
+        // 無い場合はコンソールで以下のいずれかのコマンドをたたく事
+        // $ php artisan config:cache
+        // $ php artisan config:clear
         $this->DepartureCheck($community->id);
 
         // GoogleHomeへのコマンドを記載する
@@ -272,7 +301,6 @@ class InportPostController extends Controller
         // 帰宅処理が必要なIDを抽出
             // 端末の current_stay => false
             // user を特定、名前を取得して通知にpush
-        // ['community_id', 1],
         $went_away = DB::table('mac_addresses')
         ->select('mac_addresses.id', 'community_user_id', 'user_id')
         ->leftJoin('community_user', 'community_user.id', '=', 'mac_addresses.community_user_id')
