@@ -46,7 +46,7 @@ class CommunitiesTableSeeder extends Seeder
             'name' => 'random_name',
             'service_name' => 'ランダム名のコミュニティ（無効化中）',
             'url_path' => 'hoge3',
-            'hash_key' => '6ba0103c2b443784aaeeeb2e2eeab19dc3452f',
+            'hash_key' => 'bZsdNLG9RLJ7H0l5jjimnORuDq5nLki3',
             'ifttt_event_name' => 'dev_info_comm_3',
             'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
             'created_at' => $dateTime,

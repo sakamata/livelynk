@@ -77,8 +77,7 @@ class UserService
             'created_at' => $now,
             'updated_at' => $now,
         ]);
-
-        if ($action == ('AdminUserCreate' || 'InportPostProvisional')) {
+        if (($action == 'AdminUserCreate') || ($action == 'InportPostProvisional')) {
             return $community_user_id;
         }
         if ($action == 'AdminCommunityCreate') {

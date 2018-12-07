@@ -57,6 +57,7 @@ class InportPostController extends Controller
         $now = Carbon::now();
         $push_users =array();
         $users_ids = array();
+        $google_talk_trigger = null;
         $i = 0;
         $v = 0;
         // POSTされたMACaddressを個々で精査し来訪判断
@@ -114,9 +115,7 @@ class InportPostController extends Controller
                 // この宣言は外してはいけない！！
                 // MacAddressStatusUpdate 第一引数に必要な宣言
                 $community_user_id = $community->user_id;
-
-                // ***ToDo*** GoogleHomeTalkの発火処理
-
+                $google_talk_trigger = 'new_comer'; 
                 // 新規訪問者通知へのpush
                 $person = array(
                     "id" => "id未定",
@@ -205,16 +204,16 @@ class InportPostController extends Controller
         // $ php artisan config:cache
         // $ php artisan config:clear
         $this->DepartureCheck($community->id);
-
-        // GoogleHomeへのコマンドを記載する
-        /*
-        return response()->json([
-            'status' => 'From Livelynk posted',
-            'MAC' => '20:DF:B9:34:CC:B3',
-            'name' => '俺の部屋',
-            'message' => 'こんにちは',
-        ]);
-        */
+        if ($google_talk_trigger) {
+            // GoogleHomeへのコマンドを記載する
+            $set = (new GoogleHomeController)->GetGoogleHomeTalk($google_talk_trigger, $community);
+            return response()->json([
+                'status' => 'From Livelynk posted',
+                'MAC' => $set['MAC'],
+                'name' => $set['name'],
+                'message' => $set['message'],
+            ]);
+        }
     }
 
     public function JsonValueCheck($json)
@@ -300,8 +299,6 @@ class InportPostController extends Controller
         // ***ToDo*** 同時刻に人感センサー有りなら、帰宅確度を上げる処理を追加
         $now = Carbon::now();
         $second = env("JUDGE_DEPARTURE_INTERVAL_SECOND");
-        Log::debug(print_r('second', 1));
-        Log::debug(print_r($second, 1));
         $past_limit = $now->subSecond($second);
 
         // 帰宅処理が必要なIDを抽出
@@ -318,7 +315,7 @@ class InportPostController extends Controller
         ])->get();
         if (!$went_away) {
             // log::debug(print_r('$went_away 帰宅判断対象無し、処理停止',1));
-            exit();
+            // exit();
             return;
         }
 
@@ -365,7 +362,7 @@ class InportPostController extends Controller
 
         if (!$near_push_users_id) {
             // log::debug(print_r('$near_push_users_id 帰宅判断対象無し、処理停止',1));
-            exit();
+            // exit();
             return;
         }
 
@@ -388,7 +385,7 @@ class InportPostController extends Controller
         $push_users_id = array_diff($near_push_users_id, $no_push_user_id);
         if (!$push_users_id) {
             // log::debug(print_r('$push_users_id 帰宅判断対象無し、処理停止',1));
-            exit();
+            // exit();
             return;
         }
 

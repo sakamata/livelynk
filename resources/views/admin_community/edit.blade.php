@@ -87,6 +87,18 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="InputTextarea">GoogleHome デバイスの名前</label>
+                            <input type="text" class="form-control form-control-lg" name="google_home_name" value="{{old('google_home_name', $item->google_home_name)}}">
+                            <p>(任意)GoogleHomeのデバイス名を入力します 例:リビング 等</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="InputTextarea">GoogleHome MACアドレス</label>
+                            <input type="text" class="form-control form-control-lg" name="google_home_mac_address" value="{{old('google_home_mac_address', $item->google_home_mac_address)}}">
+                            <p>(任意)GoogleHomeのMACアドレスを入力します</p>
+                        </div>
+
+                        <div class="form-group">
                             <button type="submit" class="btn btn-primary">
                                 編集
                             </button>
