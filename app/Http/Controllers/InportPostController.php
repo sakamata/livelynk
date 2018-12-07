@@ -111,6 +111,10 @@ class InportPostController extends Controller
                     Log::waning(print_r('Provisional User & Device Create Error!!', 1));
                     continue;
                 }
+                // この宣言は外してはいけない！！
+                // MacAddressStatusUpdate 第一引数に必要な宣言
+                $community_user_id = $community->user_id;
+
                 // ***ToDo*** GoogleHomeTalkの発火処理
 
                 // 新規訪問者通知へのpush
@@ -177,7 +181,7 @@ class InportPostController extends Controller
             // 登録済みの場合、通知判定を終えた後、テータスを更新する
             // 非表示デバイスの情報はMACが飛んでいても更新さない
             $this->call_mac->MacAddressStatusUpdate(
-                (int)$community->user_id,
+                (int)$community_user_id,
                 (string)$post_mac_hash,
                 (int)$check_array["router_id"],
                 (string)$now
@@ -296,6 +300,8 @@ class InportPostController extends Controller
         // ***ToDo*** 同時刻に人感センサー有りなら、帰宅確度を上げる処理を追加
         $now = Carbon::now();
         $second = env("JUDGE_DEPARTURE_INTERVAL_SECOND");
+        Log::debug(print_r('second', 1));
+        Log::debug(print_r($second, 1));
         $past_limit = $now->subSecond($second);
 
         // 帰宅処理が必要なIDを抽出
