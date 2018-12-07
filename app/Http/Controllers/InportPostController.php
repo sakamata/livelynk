@@ -165,7 +165,7 @@ class InportPostController extends Controller
 
                         if ($user) {
                             Log::debug(print_r("来訪者の通知開始 該当user>>>", 1));
-                            Log::debug(print_r($user, 1));
+                            Log::debug(print_r($user->name, 1));
                             // ***ToDo*** 重複削除をする処理を追加する 1ユーザーの複数端末が同時到着の際、重複して名前が飛ぶ。
                             $person = array(
                                 "id" => $user->user_id,
@@ -197,6 +197,7 @@ class InportPostController extends Controller
             Log::debug(print_r("!push_ifttt arraival!>>>>", 1));
             Log::debug(print_r($push_users, 1));
             (new ExportPostController)->push_ifttt($push_users, $category = "arraival", $community->id);
+            $google_talk_trigger = 'users_arraival';
         }
         // !!!Tips!!! 来訪直後に帰宅通知が出るのは .env ファイルのキャッシュの問題かも
         // .env 値をlog出力して値が反映されるか確認 
@@ -206,7 +207,8 @@ class InportPostController extends Controller
         $this->DepartureCheck($community->id);
         if ($google_talk_trigger) {
             // GoogleHomeへのコマンドを記載する
-            $set = (new GoogleHomeController)->GetGoogleHomeTalk($google_talk_trigger, $community);
+            $set = (new GoogleHomeController)->GetGoogleHomeTalk($google_talk_trigger, $community, $push_users);
+            Log::debug(print_r($set, 1));
             return response()->json([
                 'status' => 'From Livelynk posted',
                 'MAC' => $set['MAC'],
