@@ -197,7 +197,9 @@ class InportPostController extends Controller
             Log::debug(print_r("!push_ifttt arraival!>>>>", 1));
             Log::debug(print_r($push_users, 1));
             (new ExportPostController)->push_ifttt($push_users, $category = "arraival", $community->id);
-            $google_talk_trigger = 'users_arraival';
+            if ($google_talk_trigger == null) {
+                $google_talk_trigger = 'users_arraival';
+            }
         }
         // !!!Tips!!! 来訪直後に帰宅通知が出るのは .env ファイルのキャッシュの問題かも
         // .env 値をlog出力して値が反映されるか確認 
