@@ -21,6 +21,8 @@ class CommunitiesTableSeeder extends Seeder
             'hash_key' => 'hoge',
             'ifttt_event_name' => 'livelynk_local_dev',
             'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
+            'google_home_name' => '俺の部屋',
+            'google_home_mac_address' => '20:DF:B9:34:CC:B3',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -35,6 +37,8 @@ class CommunitiesTableSeeder extends Seeder
             'hash_key' => 'hoge2',
             'ifttt_event_name' => 'dev_info_comm_2',
             'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
+            'google_home_name' => '俺の部屋',
+            'google_home_mac_address' => '20:DF:B9:34:CC:B3',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -49,6 +53,8 @@ class CommunitiesTableSeeder extends Seeder
             'hash_key' => 'bZsdNLG9RLJ7H0l5jjimnORuDq5nLki3',
             'ifttt_event_name' => 'dev_info_comm_3',
             'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
+            'google_home_name' => '俺の部屋',
+            'google_home_mac_address' => '20:DF:B9:34:CC:B3',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];

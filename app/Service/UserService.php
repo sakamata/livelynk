@@ -85,21 +85,21 @@ class UserService
         }
     }
 
-    public function ProvisionalNameMaker($community_id_int)
+    // 仮ユーザー名生成 動物名+色名のランダムな組み合わせ、重複の場合は増分値を追加
+    public function ProvisionalNameMaker()
     {
-        $count = count($this->animalList()) - 1;
-        $w = 1;
+        $a_count = count($this->animalList()) - 1;
+        $c_count = count($this->colorList()) - 1;
+        $w = null;
         do {
-            $n = rand(0, $count);
+            $a = rand(0, $a_count);
+            $c = rand(0, $c_count);
             $animalList = $this->animalList();
-            $animal = $animalList[$n];
-            $rand = rand(1, 999);
-            $provisionalName = $animal . '_' . $community_id_int . '_' . $rand;
+            $colorList = $this->colorList();
+            $animal = $animalList[$a];
+            $color = $colorList[$c];
+            $provisionalName = $color . '-' . $animal . $w;
             $exists = DB::table('users')->where('unique_name', $provisionalName)->exists();
-            if ($w > 999) {
-                $provisionalName = $animal . '_' . $community_id_int . '_' . 1000;
-                break;
-            }
             $w++;
         } while ($exists);
         return $provisionalName;
@@ -236,6 +236,82 @@ class UserService
             'wolf',
             'yak',
             'zebra'
+        );
+    }
+
+    public function ColorList()
+    {
+        return $color = array(
+            'beige',
+            'black',
+            'blue',
+            'blue-green',
+            'bright-yellow',
+            'bronze',
+            'brown',
+            'chestnut',
+            'maroon',
+            'chocolate',
+            'cinnabar-red',
+            'vermilion',
+            'cobalt-blue',
+            'copper',
+            'cream',
+            'cyan',
+            'dark-blue',
+            'dark-gray',
+            'charcoal-gray',
+            'dark-green',
+            'dark-red',
+            'emerald-green',
+            'fluorescent',
+            'gold',
+            'gray',
+            'green',
+            'greenish-brown',
+            'indigo-blue',
+            'deep-blue',
+            'iridescent',
+            'ivory',
+            'khaki',
+            'lavender',
+            'light-blue',
+            'lime',
+            'madder',
+            'dark-red',
+            'magenta',
+            'mint',
+            'mustard',
+            'navy-blue',
+            'ochre',
+            'olive',
+            'opaque',
+            'orange',
+            'pink',
+            'plum',
+            'purple',
+            'purple-blue',
+            'violet',
+            'rainbow',
+            'red',
+            'red-purple',
+            'rose',
+            'royal-blue',
+            'salmon-pink',
+            'sand',
+            'scarlet',
+            'silver',
+            'sky-blue',
+            'transparent',
+            'turquoise',
+            'turquoise-blue',
+            'vanilla',
+            'violet',
+            'viridian',
+            'white',
+            'wine-red',
+            'yellow',
+            'yellow-green'
         );
     }
 }

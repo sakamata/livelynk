@@ -73,7 +73,7 @@ class InportPostController extends Controller
             $check = $this->call_community_user->NewComerCheck((int)$community_id_int, (string)$post_mac_hash);
             if (!$check) {
                 // 未登録なら、仮ユーザーの登録と端末の insert 滞在中に変更
-                $provisional_name = $this->call_user->ProvisionalNameMaker($community_id_int);
+                $provisional_name = $this->call_user->ProvisionalNameMaker();
                 DB::beginTransaction();
                 try {
                     // 仮ユーザーの作成
@@ -119,7 +119,8 @@ class InportPostController extends Controller
                 // 新規訪問者通知へのpush
                 $person = array(
                     "id" => "id未定",
-                    "name" => "初来訪? ". $provisional_name,
+                    "name" => "newcomer! ". $provisional_name,
+                    "name_only" => $provisional_name,
                  );
                 $push_users[$i] = $person;
                 $i++;
@@ -170,6 +171,7 @@ class InportPostController extends Controller
                             $person = array(
                                 "id" => $user->user_id,
                                 "name" => $user->name,
+                                "name_only" => $user->name,
                             );
                             $push_users[$i] =  $person;
                             $i++;

@@ -16,5 +16,4 @@ class CommunityService
     {
         return 'App\Community'::where('name', $community_name)->first();
     }
-
 }

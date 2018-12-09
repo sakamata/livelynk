@@ -56,8 +56,19 @@ class LoginController extends Controller
         if (!$community) {
             return redirect('/')->with('message', '存在しないページです');
         }
+
+        if ($request->provisional_name) {
+            $request->validate([
+                'provisional_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u'],
+            ]);
+            $provisional_name = $request->provisional_name;
+        } else {
+            $provisional_name = null;
+        }
+
         return view('auth.login',[
             'community' => $community,
+            'provisional_name' => $provisional_name,
         ]);
     }
 

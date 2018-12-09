@@ -6,16 +6,18 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">{{ __('auth.Login') }}&nbsp;&nbsp;{{ $community->service_name }}</div>
-
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}" aria-label="{{ __('Login') }}">
                         @csrf
+                        @if($provisional_name)
+                        <p>初登録の際はこのままログインできます</p>
+                        @endif
                         <input type="hidden" name="community_id" value="{{$community->id}}">
                         <div class="form-group row">
                             <label for="unique_name" class="col-sm-4 col-form-label text-md-right">{{ __('auth.unique_name') }}</label>
 
                             <div class="col-md-6">
-                                <input id="unique_name" type="text" class="form-control{{ $errors->has('unique_name') ? ' is-invalid' : '' }}" name="unique_name" value="{{ old('unique_name') }}" required autofocus>
+                                <input id="unique_name" type="text" class="form-control{{ $errors->has('unique_name') ? ' is-invalid' : '' }}" name="unique_name" value="{{ $provisional_name ? $provisional_name : old('unique_name') }}" required autofocus>
 
                                 @if ($errors->has('unique_name'))
                                     <span class="invalid-feedback" role="alert">
@@ -29,7 +31,7 @@
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('auth.Password') }}</label>
 
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
+                            <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" value="{{ $provisional_name ? $provisional_name : '' }}"required>
 
                                 @if ($errors->has('password'))
                                     <span class="invalid-feedback" role="alert">

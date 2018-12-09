@@ -13,20 +13,26 @@
 @php $i = 0; @endphp
 @foreach ($items as $item)
   <div class="comp-box clearfix">
+  @guest
+  <a href="/login/?path={{$url_path}}&provisional_name={{$item->unique_name}}">
+  @endguest
     <div class="name">
       <div class="icon">
         <i class="fas fa-user-circle"></i>
       </div>
-      <div class="text">{{$item->vendor}}</div>
+      <div class="text">{{$item->name}}</div>
     </div>
     <div class="arrival">
       <div class="head">IN</div>
-      <div class="time">{{date('n/j G:i', strtotime($item->arraival_at))}}</div>
+      <div class="time">{{date('n/j G:i', strtotime($item->min_arraival_at))}}</div>
       <div class="accuracy">{{ $rate[$i] }}</div>
     </div>
     <div class="flag sp-none">
       <img src="{{asset("img/icon/newcomer.png")}}" width="46"  alt="Newcomer!">
     </div>
+    @guest
+    </a>
+    @endguest
   </div>
   @php $i++; @endphp
 @endforeach

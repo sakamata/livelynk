@@ -10,25 +10,34 @@ use Illuminate\Support\Facades\Log;
 
 class GoogleHomeController extends Controller
 {
-
     public function GetGoogleHomeTalk($google_talk_trigger, $community, $push_users)
     {
+        // "Aさん Bさん ..."の連結文作成
+        $users_name_str = "";
+        $users_name_only_str = "";
+        $count = 0;
+        foreach ((array)$push_users as $user) {
+            $users_name_str .= $user['name'] . "さん。";
+            $users_name_only_str .= $user['name_only'] . "。";
+            $count++;
+        }
         switch ($google_talk_trigger) {
             case 'new_comer':
-                $message = 'ワイファイに初接続された方、ようこそ' . $community->service_name . 'へ。　私は滞在者確認サービスのライブリンクです。よかったらアプリへの登録をお願いします。';
+                if ($count == 1) {
+                    $message = 'ワイファイに初接続された方、ようこそ' . $community->service_name . 'へ。　私は滞在者確認サービスのライブリンクです。よかったらアプリへの登録をお願いします。QRコードから移動した画面で仮ユーザー名の、' . $users_name_only_str .'　を、クリックして登録ができます';
+                }
+                // 200文字以上は発話しない為の処理
+                if ($count > 1 || mb_strlen($message) > 200) {
+                    $message = 'ワイファイに初接続された方、ようこそ' . $community->service_name . 'へ。　私は滞在者確認サービスのライブリンクです。よかったらアプリへの登録をお願いします。QRコードから登録ができます。現在の時間が入ったユーザー名をクリックしてください。でも同時に何名かのかたが接続されたようです。すみませんがご自分の端末を探してみてください';
+                }
             break;
 
             case 'users_arraival':
-                // "Aさん Bさん ..."の連結文作成
-                $users_name_str = "";
-                foreach ((array)$push_users as $user) {
-                    $users_name_str .=  $user['name'] . "さん。";
-                }
                 $frank_talk = array(
                     'ライブリンクが挨拶できるようになりましたよ',
                     'いつ以来の来訪なのか、そのうちお知らせできるようにしますね',
                     '今は朝ですか？昼ですか？夜ですか？挨拶をちゃんとするようにしますね',
-                    'おひとりですか？それともどなたかと一緒でしょうか？察する事ができるようになりますね',
+                    '今日はおひとりでの来訪でしょうか？それともどなたかとご一緒での来訪でしょうか？そういうこともわかるようになりたいです',
                     'そのうち挨拶がご迷惑にならないように空気が読めるようになりますね',
                     'そのうち今日のお天気などお伝えしても良いですかね？',
                     'お名前の読み方は正しかったでしょうか？失礼のないように正しくお名前を言えるようになりますね',
