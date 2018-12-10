@@ -49,13 +49,23 @@
     <div class="line">
       <div class="head">メーカー（自動）</div>
       <div class="body">
-        <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}][vendor]" value="{{old('mac_address.'.$mac_add->id.'.vendor', $mac_add->vendor)}}" placeholder="40文字まで">
+        <input type="text" class="form-control form-control-lg {{ $errors->has("mac_address.$mac_add->id.vendor") ? ' is-invalid' : '' }}" name="mac_address[{{$mac_add->id}}][vendor]" value="{{old('mac_address.'.$mac_add->id.'.vendor', $mac_add->vendor)}}" placeholder="40文字まで">
+        @if ($errors->has("mac_address.$mac_add->id.vendor"))
+        <span class="invalid-feedback" role="alert">
+          <strong>{{ $errors->first("mac_address.$mac_add->id.vendor") }}</strong>
+        </span>
+        @endif
       </div>
     </div>
     <div class="line">
       <div class="head">デバイスメモ</div>
       <div class="body">
-        <input type="text" class="form-control form-control-lg" name="mac_address[{{$mac_add->id}}][device_name]" value="{{old('mac_address.'.$mac_add->id.'.device_name', $mac_add->device_name)}}" placeholder="40文字まで">
+        <input type="text" class="form-control form-control-lg {{ $errors->has("mac_address.$mac_add->id.device_name") ? ' is-invalid' : '' }}" name="mac_address[{{$mac_add->id}}][device_name]" value="{{old('mac_address.'.$mac_add->id.'.device_name', $mac_add->device_name)}}" placeholder="40文字まで">
+        @if ($errors->has("mac_address.$mac_add->id.device_name"))
+        <span class="invalid-feedback" role="alert">
+          <strong>{{ $errors->first("mac_address.$mac_add->id.device_name") }}</strong>
+        </span>
+        @endif
       </div>
     </div>
     <div class="line">

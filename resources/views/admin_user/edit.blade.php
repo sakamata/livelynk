@@ -3,6 +3,7 @@
 @section('content')
 <h2 class="comp-title">プロフィール編集</h2>
 <div class="user-edit">
+  @if(Auth::user()->provisional == false)
   <div class="comp-information">
     <div class="elem">
       <span class="head">名前</span>
@@ -45,6 +46,7 @@
     <a href="/admin_user/delete?id={{$item->id}}" class="comp-ui">退会</a>
     @endif
   </div>
+  @endif
   <div class="comp-edit">
     <form action="/admin_user/update" method="post">
       {{ csrf_field() }}
@@ -76,16 +78,51 @@
       @endcomponent
       <div class="form-elem">
         <label for="user_name" class="comp-ui">名前</label>
-        <input type="text" class="comp-ui" name="name" value="{{old('name', $item->name)}}" id="user_name">
+        <input type="text" class="comp-ui form-control {{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{old('name', $item->name)}}" id="user_name">
+        @if ($errors->has('name'))
+        <span class="invalid-feedback" role="alert">
+          <strong>{{ $errors->first('name') }}</strong>
+        </span>
+        @endif
       </div>
+
       <div class="form-elem">
         <label for="unique_name" class="comp-ui">ユーザーID(ログインに必要です)</label>
-        <input type="text" class="comp-ui" name="unique_name" value="{{old('unique_name', $item->unique_name)}}" id="unique_name">
+        <input type="text" class="comp-ui form-control {{ $errors->has('unique_name') ? ' is-invalid' : '' }}" name="unique_name" value="{{old('unique_name', $item->unique_name)}}" id="unique_name" required>
+        @if ($errors->has('unique_name'))
+        <span class="invalid-feedback" role="alert">
+          <strong>{{ $errors->first('unique_name') }}</strong>
+        </span>
+        @endif
+      </div>
+
+      @if(Auth::user()->provisional == true)
+      <div class="form-elem">
+        <label for="password" class="comp-ui">{{ __('auth.Password') }}</label>
+        <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
+        @if ($errors->has('password'))
+        <span class="invalid-feedback" role="alert">
+          <strong>{{ $errors->first('password') }}</strong>
+        </span>
+        @endif
       </div>
       <div class="form-elem">
-        <label for="email" class="comp-ui">Email(任意)</label>
-        <input type="text" class="comp-ui" name="email" value="{{old('email', $item->email)}}" id="email">
+        <label for="password-confirm" class="comp-ui">{{ __('auth.Confirm Password') }}</label>
+        <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
       </div>
+      @endif
+
+      @if(Auth::user()->provisional == false)
+      <div class="form-elem">
+        <label for="email" class="comp-ui">Email(任意)</label>
+        <input type="text" class="comp-ui form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{old('email', $item->email)}}" id="email">
+        @if ($errors->has('email'))
+        <span class="invalid-feedback" role="alert">
+          <strong>{{ $errors->first('email') }}</strong>
+        </span>
+        @endif
+      </div>
+      @endif
       @if(Auth::user()->role != 'normal')
       <div class="form-elem">
         <label for="administrator" class="comp-ui">管理権限</label>
@@ -138,6 +175,7 @@
           'mac_addresses' => $mac_addresses,
           'item' => $item,
           'view' => $view,
+          'errors' => $errors,
         ])
         @endcomponent
       </div>

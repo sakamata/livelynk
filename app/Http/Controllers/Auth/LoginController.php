@@ -86,12 +86,14 @@ class LoginController extends Controller
         ]);
 
         //  該当の community_user の id を取得
-        $community_user_id = DB::table('community_user')
+        $user = DB::table('community_user')
+            ->select('community_user.id as community_user_id', 'users.*')
             ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
             ->where([
                 ['unique_name', $request->unique_name],
                 ['community_id', $request->community_id],
-        ])->pluck('community_user.id')->first();
+        ])->first();
+        $community_user_id = $user->community_user_id;
 
         if (!$community_user_id) {
             // 他のコミュニティで認証が取れるか？
@@ -116,6 +118,10 @@ class LoginController extends Controller
             // session にcommunity値保存
             $request->session()->put('community_id', $request->community_id);
             $request->session()->put('community_user_id', $community_user_id);
+            // 仮ユーザーならプロフ編集画面に遷移
+            if ($user->provisional == true) {
+                return redirect('/admin_user/edit?id='. $community_user_id )->with('message', 'ログインしました。最初にプロフィールとパスワードの編集をお願いします。');
+            }
             return redirect('/')->with('message', 'ログインしました');
         } else {
             return redirect()->back()->withErrors(array('unique_name' => 'ユーザーIDかPasswordが正しくありません'))->withInput();

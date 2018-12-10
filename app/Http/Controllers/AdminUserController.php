@@ -254,7 +254,7 @@ class AdminUserController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
+        $rules = [
             'id' => 'required|integer',
             'user_id' => 'required|integer',
             'community_id' => 'required|integer',
@@ -266,9 +266,19 @@ class AdminUserController extends Controller
             'mac_address.*.hide' => 'boolean',
             'mac_address.*.vendor' => 'nullable|string|max:40',
             'mac_address.*.device_name' => 'nullable|string|max:40',
-        ]);
-
+        ];
         $user = Auth::user();
+        // 仮ユーザーならパスワードフォーム必須
+        if ($user->provisional == true) {
+            $rules['password'] = 'required|string|min:6|max:100|confirmed';
+        }
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect('/admin_user/edit?id='. $user->id)
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         // normal userが自分以外のuserを編集しようとした場合は403
         if ($user->role == 'normal' && $user->id != $request->id) {
             log::warning(print_r("normalユーザーが異常な値でusersのupdateを試みる>>>", 1));
@@ -283,15 +293,21 @@ class AdminUserController extends Controller
             log::warning(print_r($user, 1));
             return view('errors.403');
         }
-
         $now = Carbon::now();
-        // users tableの更新
         $param_user = [
             'name' => $request->name,
             'unique_name' => $request->unique_name,
             'email' => $request->email,
             'updated_at' => $now,
         ];
+        // 仮ユーザーの場合の処理 パスワード有、 provisional false へ
+        if ($user->provisional == true) {
+            $param_user = array_merge($param_user, array(
+                'password' => Hash::make($request->password),
+                'provisional' => false
+            ));
+        }
+        // users tableの更新
         'App\UserTable'::where('id', $request->user_id)->update($param_user);
 
         // role で取得した文字列を id int に変換
@@ -309,6 +325,9 @@ class AdminUserController extends Controller
             $this->call_mac->Update($mac_id, $value['vendor'], $value['device_name'], $value['hide'], $now);
         }
 
+        if ($user->provisional == true) {
+            return redirect('/')->with('message', 'ユーザープロフィールを編集しました。');
+        }
         if ($user->role == 'normal') {
             return redirect('/admin_user/edit?id='. $user->id)->with('message', 'ユーザープロフィールを編集しました。');
         } else {

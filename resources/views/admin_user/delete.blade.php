@@ -43,7 +43,6 @@
                                 <tr class="info thead-light">
                                     <th>メーカー</th>
                                     <th>デバイスメモ</th>
-                                    <th>MAC Address</th>
                                     <th>来訪日時</th>
                                     <th>登録日時</th>
                                 </tr>
@@ -52,7 +51,6 @@
                                 <tr>
                                     <td>{{$mac_add->vendor}}</td>
                                     <td>{{$mac_add->device_name}}</td>
-                                    <td>{{$mac_add->mac_address}}</td>
                                     <td>{{Carbon\Carbon::parse($mac_add->arraival_at)->format('n月j日 G:i')}}</td>
                                     <td>{{Carbon\Carbon::parse($mac_add->created_at)->format('n月j日 G:i')}}</td>
                                 </tr>

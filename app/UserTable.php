@@ -71,6 +71,7 @@ class UserTable extends Model
             'users.name',
             'users.unique_name',
             'users.email',
+            'users.provisional',
             'community_user.*',
             'communities_users_statuses.hide',
             'communities_users_statuses.last_access as s_last_access',
