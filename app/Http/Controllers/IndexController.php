@@ -93,10 +93,11 @@ class IndexController extends Controller
         // コミュ内ユーザーと滞在中ユーザーから
         // 不在ユーザーの user_id をarrayで取得
         $users_id = $this->ChangeObjectToArray($users_id_obj, $column = null);
+        $unregistered_users_id = $this->ChangeObjectToArray($unregistered, $column = 'user_id');
         $stays_users_id = $this->ChangeObjectToArray($stays, $column = 'user_id');
-
+        $all_stays_users_id = array_merge($unregistered_users_id, $stays_users_id);
         // 不在中のuser_id array
-        $not_stay_users_id = array_diff($users_id, $stays_users_id);
+        $not_stay_users_id = array_diff($users_id, $all_stays_users_id);
         // 非滞在者objctの取得 last_access name
         $not_stays = DB::table('community_user')
             ->select('user_id', 'name', 'last_access')
