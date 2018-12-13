@@ -24,11 +24,11 @@ class GoogleHomeController extends Controller
         switch ($google_talk_trigger) {
             case 'new_comer':
                 if ($count == 1) {
-                    $message = 'いまワイファイを接続された方、ようこそ' . $community->service_name . 'へ。　私は滞在者確認アプリです。どこでもここにいる人がわかるサービスです。よかったらQRコードを読み取って、画面の仮ユーザー名。' . $users_name_only_str .'　を、クリックしてください';
+                    $message = 'いまワイファイに接続された方、ようこそ' . $community->service_name . 'へ。　私は滞在者確認アプリです。スマホでここにいる人がわかるサービスをしています。よかったらQRコードを読み取り、画面の仮ユーザー名。' . $users_name_only_str .'　を、クリックして登録をお願いします。';
                 }
-                // 200文字以上は発話しない為の処理
+                // 複数端末同時接続時の挨拶
                 if ($count > 1 || mb_strlen($message) > 200) {
-                    $message = 'ワイファイに初接続された方、ようこそ' . $community->service_name . 'へ。　私は滞在者確認アプリです。いつでもここにいる人がわかるサービスをしてます。よかったらQRコードを読み取って登録してみてください。同時に何名かのかたが接続されたようです。すみませんがご自分の端末を探してみてください';
+                    $message = 'いまワイファイに初接続された皆さん、ようこそ。' . $community->service_name . 'へ。　私は滞在者確認アプリです。スマホでここにいる人がわかるサービスをしています。よかったらQRコードを読み取って、画面をご覧ください。次回お越しの際、お一人のみで接続された際は簡単に登録が可能です';
                 }
             break;
 
