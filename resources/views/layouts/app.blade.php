@@ -68,7 +68,7 @@
             <div class="action">
                 @guest
 		    <a href="/login/?path={{$url_path}}">{{ __('ログイン') }}</a>
-		    <a href="/register/?path={{$url_path}}" class="register">{{ __('新規登録') }}</a>
+		    {{-- <a href="/register/?path={{$url_path}}" class="register">{{ __('新規登録') }}</a> --}}
                 @else
 		    <span>{{ Auth::user()->name }}</span>
                     <div class="logout">
