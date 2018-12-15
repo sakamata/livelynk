@@ -24,11 +24,11 @@ class GoogleHomeController extends Controller
         switch ($google_talk_trigger) {
             case 'new_comer':
                 if ($count == 1) {
-                    $message = 'いまワイファイに接続された方、ようこそ' . $community->service_name . 'へ。　私は滞在者確認アプリです。スマホでここにいる人がわかるサービスをしています。よかったらQRコードを読み取り、画面の仮ユーザー名。' . $users_name_only_str .'　を、クリックして登録をお願いします。';
+                    $message = 'いまワイファイに初接続された方、ようこそ' . $community->service_name . 'へ。　私は滞在者確認アプリです。スマホでここにいる人がわかるサービスをしています。よかったらキューアールコードを読み取り、画面の仮ユーザー名。' . $users_name_only_str .'　を、クリックして登録をお願いします。';
                 }
                 // 複数端末同時接続時の挨拶
                 if ($count > 1 || mb_strlen($message) > 200) {
-                    $message = 'いまワイファイに初接続された皆さん、ようこそ。' . $community->service_name . 'へ。　私は滞在者確認アプリです。スマホでここにいる人がわかるサービスをしています。よかったらQRコードを読み取って、画面をご覧ください。次回お越しの際、お一人のみで接続された際は簡単に登録が可能です';
+                    $message = 'いまワイファイに初接続された皆さん、ようこそ。' . $community->service_name . 'へ。　私は滞在者確認アプリです。スマホでここにいる人がわかるサービスをしています。よかったらキューアールコードを読み取って、画面をご覧ください。次回お越しの際、お一人のみで接続された際は、簡単に登録が可能です';
                 }
             break;
 
@@ -45,6 +45,9 @@ class GoogleHomeController extends Controller
                 );
                 $i = rand(0,7);
                 $message = 'こんにちは' . $users_name_str . $frank_talk[$i];
+                if (mb_strlen($message) > 200) {
+                    $message = 'こんにちは、みなさん。一度にたくさんの方がいらっしゃったみたいでちょっとびっくりです。' . $frank_talk;
+                }
             break;
 
             default:
