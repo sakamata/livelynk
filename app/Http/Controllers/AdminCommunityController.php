@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 // normal userはrouter web.php 設定で閲覧不可となっている
 class AdminCommunityController extends Controller
@@ -54,7 +55,9 @@ class AdminCommunityController extends Controller
             'ifttt_webhook_key' => 'nullable|string|max:191',
             'google_home_enable' => 'boolean',
             'google_home_name' => 'nullable|string|max:100',
-            'google_home_mac_address' => ['nullable', 'string', 'max:20', 'regex:/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/']
+            'google_home_mac_address' => ['nullable', 'string', 'max:20', 'regex:/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/'],
+            'admin_comment' => 'nullable|string|max:1000',
+
         ]);
         $now = Carbon::now();
         // user_id は users tabelにinsert後に再度挿入する
@@ -71,6 +74,7 @@ class AdminCommunityController extends Controller
             'google_home_enable' => $request->google_home_enable,
             'google_home_name' => $request->google_home_name,
             'google_home_mac_address' => $request->google_home_mac_address,
+            'admin_comment' => $request->admin_comment,
             'created_at' => $now,
             'updated_at' => $now,
         ];
@@ -135,7 +139,7 @@ class AdminCommunityController extends Controller
             }
         }
 
-        $request->validate([
+        $rules = [
             'enable' => 'required|boolean',
             'name' => 'required|string|alpha_dash|min:3|max:32',
             'service_name' => 'required|string|min:3|max:32',
@@ -147,7 +151,17 @@ class AdminCommunityController extends Controller
             'google_home_enable' => 'boolean',
             'google_home_name' => 'nullable|string|max:100',
             'google_home_mac_address' => ['nullable', 'string', 'max:20', 'regex:/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/']
-        ]);
+        ];
+        if ($user->role == 'superAdmin') {
+            $rules['admin_comment'] = 'nullable|string|max:1000';
+        }
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect('admin_community/edit?id=' . $request->id)
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $now = Carbon::now();
         $param = [
             'enable' => $request->enable,
@@ -163,6 +177,9 @@ class AdminCommunityController extends Controller
             'google_home_mac_address' => $request->google_home_mac_address,
             'updated_at' => $now,
         ];
+        if ($user->role == 'superAdmin') {
+            $param['admin_comment'] = $request->admin_comment;
+        }
         DB::table('communities')->where('id', $request->id)->update($param);
 
         if ($user->role != 'superAdmin') {

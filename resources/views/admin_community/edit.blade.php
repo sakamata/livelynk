@@ -125,6 +125,13 @@
                         <input type="hidden" name="google_home_name" value="{{$item->google_home_name}}">
                         <input type="hidden" name="google_home_mac_address" value="{{$item->google_home_mac_address}}">
                         @endif
+                        @can('superAdmin')
+                        <hr>
+                        <div class="form-group">
+                            <label for="InputTextarea">管理者メモ</label>
+                            <textarea class="form-control form-control-lg" name="admin_comment" rows="5">{{old('admin_comment', $item->admin_comment)}}</textarea>
+                        </div>
+                        @endcan
 
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">
