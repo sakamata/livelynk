@@ -19,6 +19,10 @@
                             <label for="InputTextarea">コミュニティ名称(3～32文字)</label>
                             <input type="text" class="form-control form-control-lg" name="service_name" value="{{old('service_name')}}">
                         </div>
+                        <div class="form-group">
+                            <label for="InputTextarea">コミュニティ よみがな（任意）</label>
+                            <input type="text" class="form-control form-control-lg" name="service_name_reading" value="{{old('service_name_reading')}}">
+                        </div>
 
                         <div class="form-group">
                             <label for="InputTextarea">コミュニティID（半角英数字,アンダーバーのみ 3～32文字まで）</label>
@@ -115,6 +119,14 @@
                             <label for="InputTextarea">IFTTT Webhooks key</label>
                             <input type="text" class="form-control form-control-lg" name="ifttt_webhooks_key" value="{{old('ifttt_webhooks_key')}}"  onInput="checkForm(this)">
                             <p>(任意)通知設定の為のIFTTTのWebhooks keyを入力します</p>
+                        </div>
+                        <hr>
+                        <div class="form-elem">
+                            <label for="InputTextarea">GoogleHome</label>
+                            <input id="google_home_enable_show" type="radio" value="1" name="google_home_enable" @if (old('google_home_enable') == "1") checked @endif>
+                            <label for="google_home_enable_show">有効</label>
+                            <input id="google_home_enable_hide" type="radio" value="0" name="google_home_enable" @if (old('google_home_enable') == "0") checked @endif>
+                            <label for="google_home_enable_hide">無効</label>
                         </div>
 
                         <div class="form-group">

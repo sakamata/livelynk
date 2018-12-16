@@ -209,7 +209,7 @@ class InportPostController extends Controller
         // $ php artisan config:cache
         // $ php artisan config:clear
         $this->DepartureCheck($community->id);
-        if ($google_talk_trigger) {
+        if ($google_talk_trigger && $community->google_home_enable == true) {
             // GoogleHomeへのコマンドを記載する
             $set = (new GoogleHomeController)->GetGoogleHomeTalk($google_talk_trigger, $community, $push_users);
             Log::debug(print_r($set, 1));

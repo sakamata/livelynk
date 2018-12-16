@@ -53,6 +53,10 @@
                             <label for="InputTextarea">コミュニティ名称(3～32文字)</label>
                             <input type="text" class="form-control form-control-lg" name="service_name" value="{{old('service_name', $item->service_name)}}">
                         </div>
+                        <div class="form-group">
+                            <label for="InputTextarea">コミュニティ よみがな(任意)</label>
+                            <input type="text" class="form-control form-control-lg" name="service_name_reading" value="{{old('service_name_reading', $item->service_name_reading)}}">
+                        </div>
 
                         <div class="form-group">
                             <label for="InputTextarea">コミュニティID（半角英数字,アンダーバーのみ 3～32文字まで）</label>
@@ -72,6 +76,8 @@
                             <input type="text" class="form-control form-control-sm" name="hash_key" value="{{old('hash_key', $item->hash_key)}}">
                             <span id="passwordHelpBlock" class="help-block">通常編集禁止(superAdminのみ変更可能)</span>
                         </div>
+                        @else
+                        <input type="hidden" name="hash_key" value="{{$item->hash_key}}">
                         @endcan
                         
                         <div class="form-group">
@@ -85,18 +91,40 @@
                             <input type="text" class="form-control form-control-lg" name="ifttt_webhooks_key" value="{{old('ifttt_webhooks_key', $item->ifttt_webhooks_key)}}">
                             <p>(任意)通知設定の為のIFTTTのWebhooks keyを入力します</p>
                         </div>
+                        <hr>
+                        <h3>Google Home アシスタント機能 &nbsp; : &nbsp;
+                            @if($item->google_home_enable == true) 有効 @else 無効 @endif
+                        </h3>
 
+                        @can('superAdmin')
+                        <div class="form-elem">
+                            <label for="InputTextarea">Google Home アシスタント機能</label>
+                            <input id="google_home_enable_show" type="radio" value="1" name="google_home_enable" @if (old('google_home_enable', $item->google_home_enable) == "1") checked @endif>
+                            <label for="google_home_enable_show">有効</label>
+                            <input id="google_home_enable_hide" type="radio" value="0" name="google_home_enable" @if (old('google_home_enable', $item->google_home_enable) == "0") checked @endif>
+                            <label for="google_home_enable_hide">無効</label>
+                        </div>
+                        @else
+                        <input type="hidden" name="google_home_enable" value="{{$item->google_home_enable}}">
+                        @endcan
+                        @if(
+                            (Auth::user()->role == 'superAdmin') ||
+                            (Auth::user()->role == 'readerAdmin' && $item->google_home_enable == true)
+                        )
                         <div class="form-group">
                             <label for="InputTextarea">GoogleHome デバイスの名前</label>
                             <input type="text" class="form-control form-control-lg" name="google_home_name" value="{{old('google_home_name', $item->google_home_name)}}">
                             <p>(任意)GoogleHomeのデバイス名を入力します 例:リビング 等</p>
                         </div>
-
                         <div class="form-group">
                             <label for="InputTextarea">GoogleHome MACアドレス</label>
                             <input type="text" class="form-control form-control-lg" name="google_home_mac_address" value="{{old('google_home_mac_address', $item->google_home_mac_address)}}">
                             <p>(任意)GoogleHomeのMACアドレスを入力します</p>
                         </div>
+                        @else
+                        <input type="hidden" name="google_home_name" value="{{$item->google_home_name}}">
+                        <input type="hidden" name="google_home_mac_address" value="{{$item->google_home_mac_address}}">
+                        @endif
 
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">

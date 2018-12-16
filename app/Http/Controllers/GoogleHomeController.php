@@ -21,14 +21,19 @@ class GoogleHomeController extends Controller
             $users_name_only_str .= $user['name_only'] . "。";
             $count++;
         }
+        if ($community->service_name_reading) {
+            $service_name = $community->service_name_reading;
+        } else {
+            $service_name = $community->service_name;
+        }
         switch ($google_talk_trigger) {
             case 'new_comer':
                 if ($count == 1) {
-                    $message = 'いまワイファイに初接続された方、ようこそ' . $community->service_name . 'へ。　私は滞在者確認アプリです。スマホでここにいる人がわかるサービスをしています。よかったらキューアールコードを読み取り、画面の仮ユーザー名。' . $users_name_only_str .'　を、クリックして登録をお願いします。';
+                    $message = 'いまワイファイに初接続された方、ようこそ' . $service_name . 'へ。　私は滞在者確認アプリ。スマホでここにいる人がわかるサービスです。よかったらキューアールコードを読み取り、画面の仮ユーザー名。' . $users_name_only_str .'　を、クリックして登録をお願いします。';
                 }
                 // 複数端末同時接続時の挨拶
                 if ($count > 1 || mb_strlen($message) > 200) {
-                    $message = 'いまワイファイに初接続された皆さん、ようこそ。' . $community->service_name . 'へ。　私は滞在者確認アプリです。スマホでここにいる人がわかるサービスをしています。よかったらキューアールコードを読み取って、画面をご覧ください。次回お越しの際、お一人のみで接続された際は、簡単に登録が可能です';
+                    $message = 'いまワイファイに初接続された皆さん、ようこそ。' . $service_name . 'へ。　私は滞在者確認アプリ。スマホでここにいる人がわかるサービスです。よかったらキューアールコードを読み取って、画面をご覧ください。次回お越しの際、お一人のみで接続された際は、簡単に登録が可能です';
                 }
             break;
 
