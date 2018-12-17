@@ -82,8 +82,8 @@ class CommunityUser extends Model
             ->Join('routers', 'routers.id', '=', 'mac_addresses.router_id')
             ->where([
                 ['community_user.community_id', $community_id],
-                ['community_user.user_id', $cmp, $reader_id],
-            ])
-            ->orderBy($key, $order);
+                ])
+                ->orderBy($key, $order);
+                // ['community_user.user_id', $cmp, $reader_id],
     }
 }
