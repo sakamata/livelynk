@@ -93,7 +93,12 @@ class LoginController extends Controller
                 ['unique_name', $request->unique_name],
                 ['community_id', $request->community_id],
         ])->first();
-        $community_user_id = $user->community_user_id;
+
+        if (!$user) {
+            return redirect()->back()->withErrors(array('unique_name' => 'ユーザーIDかPasswordが正しくありません'))->withInput();
+        } else {
+            $community_user_id = $user->community_user_id;
+        }
 
         if (!$community_user_id) {
             // 他のコミュニティで認証が取れるか？
