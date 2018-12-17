@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -26,6 +27,12 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        // withoutOverlappingをつけることで多重実行を防ぐので必須 らしいが現状不要
+        $schedule
+            ->call('App\Http\Controllers\TaskController@auto_provisional_user_remove')
+            // ->withoutOverlapping()
+            ->dailyAt('3:00');
     }
 
     /**
