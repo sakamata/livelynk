@@ -28,12 +28,6 @@ class UserService
             ->get();
     }
 
-    public function AllCommunityUsersGet(string $orderkey, string $order)
-    {
-        return 'App\UserTable'::UsersGet($orderkey, $order)
-            ->get();
-    }
-
     public function IDtoRoleGet(int $community_user_id)
     {
         return 'App\CommunityUserStatus'::IDtoRoleGet($community_user_id);

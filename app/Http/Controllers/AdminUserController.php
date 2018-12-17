@@ -41,6 +41,7 @@ class AdminUserController extends Controller
     public function index(Request $request)
     {
         $request->validate([
+            'community_id' => ['nullable', 'integer'],
             'id' => ['nullable','regex:/asc|desc/'],
             'role' => ['nullable','regex:/asc|desc/'],
             'name' => ['nullable','regex:/asc|desc/'],
@@ -87,26 +88,31 @@ class AdminUserController extends Controller
         }
 
         $user = Auth::user();
-        // normalAdmin,readerAdmin は同コミュニティ内のみを抽出
-        if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
-            $items = $this->call_user->SelfCommunityUsersGet(
-                (string)$key,
-                (string)$order,
-                (int)$user->community_id
-            );
-        }
-        // superAdminは全て表示
+        // ユーザーロールで表示範囲を変える
         if ($user->role == 'superAdmin') {
-            $items = $this->call_user->AllCommunityUsersGet(
-                (string)$key,
-                (string)$order
-            );
+            // コミュニティをプルダウンで切り替え
+            // サービス全管理者はプルダウン切り替えで表示
+            $communities = DB::table('communities')->get();
+            $community_id = $request->community_id;
+            if (!$community_id) {
+                $community_id = 1;
+            }
+        } else {
+            $communities = "";
+            $community_id = $user->community_id;
         }
+        $items = $this->call_user->SelfCommunityUsersGet(
+            (string)$key,
+            (string)$order,
+            (int)$community_id
+        );
 
         return view('admin_user.index',[
             'items' => $items,
             'order' => $order,
             'key' => $key,
+            'communities' => $communities,
+            'community_id' => $community_id,
         ]);
     }
 
