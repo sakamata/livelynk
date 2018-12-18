@@ -124,7 +124,7 @@ class AdminUserController extends Controller
         );
         // communityの既存ユーザーlistを取得
         $users = $this->call_user
-            ->SelfCommunityUsersGet('user_id', 'desc', (int)$community_id, $case_all='index');
+            ->SelfCommunityUsersGet('user_id', 'desc', (int)$community_id, $case_all=null);
         $reader_id = $this->getReaderID();
 
         return view('admin_user.index',[
