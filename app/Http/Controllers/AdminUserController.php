@@ -122,6 +122,10 @@ class AdminUserController extends Controller
             (int)$community_id,
             (string)$case
         );
+        // communityの既存ユーザーlistを取得
+        $users = $this->call_user
+            ->SelfCommunityUsersGet('user_id', 'desc', (int)$community_id, $case_all='index');
+        $reader_id = $this->getReaderID();
 
         return view('admin_user.index',[
             'items' => $items,
@@ -130,6 +134,8 @@ class AdminUserController extends Controller
             'view' => $case,
             'communities' => $communities,
             'community_id' => $community_id,
+            'reader_id' => $reader_id,
+            'users' => $users,
         ]);
     }
 
@@ -358,6 +364,32 @@ class AdminUserController extends Controller
         }
     }
 
+    public function owner_update(Request $request)
+    {
+        $request->validate([
+            'mac_id'                => 'required|integer',
+            'community_id'          => 'required|integer',
+            'old_community_user_id' => 'required|integer',
+            'new_community_user_id' => 'required|integer',
+        ]);
+        $user = Auth::user();
+        // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
+        if (($user->role == 'normalAdmin' || $user->role == 'readerAdmin') && $request->community_id != $user->community_id) {
+            log::warning(print_r("Adminユーザーが異常な値でowner_updateを試みる>>>", 1));
+            log::warning(print_r($user, 1));
+            return view('errors.403');
+        }
+        $now = Carbon::now();
+        // mac_addresses community_user_id を更新
+        $this->call_mac->UpdateProvisionalOwner(
+            (int)$request->mac_id,
+            (int)$request->old_community_user_id,
+            (int)$request->new_community_user_id,
+            (string)$now
+        );
+        return redirect('/admin_user_provisional')->with('message', '仮ユーザー端末のオーナーを変更しました。');
+    }
+
     public function delete(Request $request)
     {
         // 不正なrequestは403
@@ -459,7 +491,7 @@ class AdminUserController extends Controller
                 Auth::logout();
                 return redirect('/')->with('message', '退会が完了しました。ご利用ありがとうございました');
             } else {
-                return redirect('/admin_user')->with('message', 'ユーザーを退会させました');
+                return redirect($request->previous)->with('message', 'ユーザーを退会させました');
             }
         }
     }

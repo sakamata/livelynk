@@ -34,7 +34,7 @@
                             <th>
                                 @component('components.order', [
                                     'name' => 'id',
-                                    'firld' => 'ステータス',
+                                    'firld' => 'No',
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_user',
@@ -42,9 +42,14 @@
                                 @endcomponent
                             </th>
                             <th>
+                                @if($view == 'index')
+                                    @php $firld_title = 'ID/名前/Email'; @endphp
+                                @else
+                                    @php $firld_title = 'ID'; @endphp
+                                @endif
                                 @component('components.order', [
                                     'name' => 'name',
-                                    'firld' => 'ID/名前/Email',
+                                    'firld' => $firld_title,
                                     'key' => $key,
                                     'order' => $order,
                                     'action' => 'admin_user',
@@ -114,12 +119,19 @@
                         @endif
                             <td>No.{{$item->id}}</br>
                             {{$item->hide == 1 ? '非表示' : ''}}</td>
-                            <td>ID:{{$item->unique_name}}</br>{{$item->name}}</br>{{$item->email}}</td>
+                            <td>ID:{{$item->unique_name}}</br>
+                                @if($view == 'index')
+                                {{$item->name}}</br>{{$item->email}}</td>
+                                @endif
                             <td>
                                 <table class="table table-hover table-sm table-borderless">
                                     <tbody>
-                            @if($item->mac_addresses != null)
+                                @if($item->mac_addresses != null)
+                                @php $mac_add_id = ""; @endphp
                                 @foreach($item->mac_addresses as $mac_add)
+                                    @php
+                                    if($mac_add->id){ $mac_add_id = $mac_add->id; }
+                                    @endphp
                                     @if($mac_add->hide == true)
                                         <tr class="table-secondary">
                                     @elseif($mac_add->current_stay == true)
@@ -127,21 +139,52 @@
                                     @else
                                         <tr>
                                     @endif
-                                    <!--   onclick="window.location='/admin_mac_address/edit?id={{$mac_add->id}}';" -->
                                             <td>ID:{{$mac_add->id}} &nbsp;&nbsp;
                                             {{$mac_add->current_stay == 1 ? '滞在' : '不在'}}</td>
                                             <td>{{$mac_add->hide == 1 ? '隠' : ''}}
                                             </td>
                                             <td>{{$mac_add->device_name}}</td>
                                             <td>{{$mac_add->vendor}}</td>
+                                            @if($view == 'index')
                                             <td class="blockquote text-right">
                                                 <a href="/admin_mac_address/delete?id={{$mac_add->id}}" class="btn btn-danger" role="button">削除</a>
                                             </td>
+                                            @endif
                                         </tr>
                                 @endforeach
-                            @endif
                                     </tbody>
                                 </table>
+                                @if($view == 'provisional' && $mac_add_id)
+                                <form action="/admin_user/owner_update" method="post">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="community_id" value="{{$community_id}}">
+                                    <input type="hidden" name="mac_id" value="{{$mac_add_id}}">
+                                    <input type="hidden" name="old_community_user_id" value="{{$item->id}}">
+                                    <div class="form-inline">
+                                        <div class="form-group col-md-10">
+                                            <label>ユーザー</label>
+                                            <select name="new_community_user_id" class="form-control">
+                                                @foreach($users as $user)
+                                                    @if($item->id == $user->id)
+                                                    <?php $selected = 'selected'; ?>
+                                                    @else
+                                                    <?php $selected = ''; ?>
+                                                    @endif
+                                                    @if($user->id == $reader_id)
+                                                    <option value="{{$user->id}}" {{ $selected }}>{{$user->id}}&nbsp;:&nbsp;未登録デバイス</option>
+                                                    @else
+                                                    <option value="{{$user->id}}" {{ $selected }}>{{$user->id}}&nbsp;:&nbsp;{{$user->name}}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <button name="{{$user->id}}" type="button submit" class="btn btn-primary">編集</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                @endif
+                            @endif
                             </td>
                             <td>{{$item->role}}</td>
                             @can('superAdmin')
@@ -152,6 +195,7 @@
                             <td>{{$item->s_updated_at->format('n月j日 G:i')}}</td>
                             <td>
                                 <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
+                                <a href="admin_user/delete?id={{$item->id}}" class="btn btn-danger" role="button">退会</a>
                             </td>
                         </tr>
                     @endforeach
