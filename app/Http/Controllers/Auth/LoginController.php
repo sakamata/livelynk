@@ -93,7 +93,6 @@ class LoginController extends Controller
                 ['unique_name', $request->unique_name],
                 ['community_id', $request->community_id],
         ])->first();
-
         if (!$user) {
             return redirect()->back()->withErrors(array('unique_name' => 'ユーザーIDかPasswordが正しくありません'))->withInput();
         } else {

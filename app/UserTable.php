@@ -98,4 +98,26 @@ class UserTable extends Model
     {
         return $query->where('community_user.community_id', $self_community);
     }
+
+    public function scopeProvisional($query, $case)
+    {
+        switch ($case) {
+            case 'index':
+                $set = false;
+            break;
+
+            case 'provisional':
+                $set = true;
+            break;
+
+            case null:
+                return;
+            break;
+            
+            default:
+                return;
+            break;
+        }
+        return $query->where('users.provisional', $set);
+    }
 }

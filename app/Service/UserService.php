@@ -21,10 +21,11 @@ class UserService
             ->first();
     }
 
-    public function SelfCommunityUsersGet(string $orderkey, string $order, int $community_id)
+    public function SelfCommunityUsersGet(string $orderkey, string $order, int $community_id, string $case=null)
     {
         return 'App\UserTable'::UsersGet($orderkey, $order)
             ->MyCommunity($community_id)
+            ->Provisional($case)
             ->get();
     }
 

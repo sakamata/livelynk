@@ -101,16 +101,33 @@ class AdminUserController extends Controller
             $communities = "";
             $community_id = $user->community_id;
         }
+
+        switch ($request->path()) {
+            // 登録済み端末のみ呼び出す
+            case 'admin_user':
+                $case = 'index';
+                break;
+            // 未登録端末のみ呼び出す
+            case 'admin_user_provisional':
+                $case = 'provisional';
+                break;
+            default:
+                $case = null;
+                break;
+        }
+
         $items = $this->call_user->SelfCommunityUsersGet(
             (string)$key,
             (string)$order,
-            (int)$community_id
+            (int)$community_id,
+            (string)$case
         );
 
         return view('admin_user.index',[
             'items' => $items,
             'order' => $order,
             'key' => $key,
+            'view' => $case,
             'communities' => $communities,
             'community_id' => $community_id,
         ]);

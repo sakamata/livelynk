@@ -96,7 +96,7 @@ class AdminMacAddressController extends Controller
         $items = $this->call_mac->CommunityHavingMac($community_id, $reader_id, $order, $key, $case);
         // communityのユーザーlistを取得
         $users = $this->call_user
-            ->SelfCommunityUsersGet('user_id', 'desc', (int)$community_id);
+            ->SelfCommunityUsersGet('user_id', 'desc', (int)$community_id, $case=null);
 
         return view('admin_mac_address.index', [
             'order' => $order,

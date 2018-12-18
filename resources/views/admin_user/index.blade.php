@@ -7,7 +7,11 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
+                @if($view == 'provisional')
+                <div class="card-header"><h2>仮ユーザー一覧</h2></div>
+                @else
                 <div class="card-header"><h2>ユーザー一覧</h2></div>
+                @endif
                 <div class="card-body">
                 @component('components.community_changer', [
                     'communities' => $communities,
@@ -18,6 +22,9 @@
                 @endcomponent
                 <div class="blockquote text-left">
                     <a href="/admin_user/add" class="btn btn-info" role="button">新規ユーザー作成</a>
+                @if($view == 'provisional')
+                <p>仮ユーザーは最終来訪から一か月以上経過すると自動的に削除されます。</p>
+                @endif
                 </div>
                     <ul class="pagination justify-content-end mb-3">
                         {{-- {{ $items->links() }} --}}
