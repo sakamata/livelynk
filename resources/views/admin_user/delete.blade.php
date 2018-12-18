@@ -13,6 +13,7 @@
                         {{ csrf_field() }}
                         <input type="hidden" name="id" value="{{$item->id}}">
                         <input type="hidden" name="community_id" value="{{$item->community_id}}">
+                        <input type="hidden" name="previous" value="{{url()->previous()}}">
 
                         <p>&nbsp;</p>
                         @if($item->id == Auth::user()->id)

@@ -54,6 +54,17 @@ class MacAddressService
         ]);
     }
 
+    public function UpdateProvisionalOwner(int $mac_id, int $old_community_user_id, int $new_community_user_id, string $now)
+    {
+        return 'App\MacAddress'::where([
+                ['id', $mac_id],
+                ['community_user_id', $old_community_user_id],
+            ])->update([
+                'updated_at' => $now,
+                'community_user_id' => $new_community_user_id,
+        ]);
+    }
+
     // InportPostController MacAddress
     public function Arraival_at_Update(
         int $community_user_id,
