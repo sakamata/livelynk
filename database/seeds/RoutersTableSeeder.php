@@ -16,6 +16,8 @@ class RoutersTableSeeder extends Seeder
         $param = [
             'community_id' => 1,
             'name' => 'comu1ルーター1号',
+            'google_home_name' => '俺の部屋',
+            'google_home_mac_address' => '20:DF:B9:34:CC:B3',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -24,6 +26,8 @@ class RoutersTableSeeder extends Seeder
         $param = [
             'community_id' => 1,
             'name' => 'comu1ルーター2号',
+            'google_home_name' => '俺の部屋',
+            'google_home_mac_address' => '20:DF:B9:34:CC:B3',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -32,6 +36,8 @@ class RoutersTableSeeder extends Seeder
         $param = [
             'community_id' => 2,
             'name' => 'comu2ルーター1号',
+            'google_home_name' => '俺の部屋',
+            'google_home_mac_address' => '20:DF:B9:34:CC:B3',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -40,6 +46,8 @@ class RoutersTableSeeder extends Seeder
         $param = [
             'community_id' => 2,
             'name' => 'comu2ルーター2号',
+            'google_home_name' => '俺の部屋',
+            'google_home_mac_address' => '20:DF:B9:34:CC:B3',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -48,6 +56,8 @@ class RoutersTableSeeder extends Seeder
         $param = [
             'community_id' => 3,
             'name' => 'comu3単独ルーター',
+            'google_home_name' => '俺の部屋',
+            'google_home_mac_address' => '20:DF:B9:34:CC:B3',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Router;
+use App\Community;
 
 // normal userはrouter web.php 設定で閲覧不可となっている
 class AdminRouterController extends Controller
@@ -55,11 +56,15 @@ class AdminRouterController extends Controller
         $request->validate([
             'community_id' => 'required|integer',
             'name' => 'required|string|max:32',
+            'google_home_name' => 'nullable|string|max:100',
+            'google_home_mac_address' => ['nullable', 'string', 'max:20', 'regex:/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/'],
         ]);
         $now = Carbon::now();
         $param = [
             'community_id' => $request->community_id,
             'name' => $request->name,
+            'google_home_name' => $request->google_home_name,
+            'google_home_mac_address' => $request->google_home_mac_address,
             'created_at' => $now,
             'updated_at' => $now,
         ];
@@ -85,6 +90,7 @@ class AdminRouterController extends Controller
         ) {
             return view('errors.403');
         }
+        $google_home_enable = 'App\Community'::where('id', $item->community_id)->pluck('google_home_enable')->first();
 
         $communities = DB::table('communities')->orderBy('id', 'desc')->get();
         $user = Auth::user();
@@ -92,6 +98,7 @@ class AdminRouterController extends Controller
             'item' => $item,
             'user' => $user,
             'communities' => $communities,
+            'google_home_enable' => $google_home_enable,
         ]);
     }
 
@@ -110,11 +117,15 @@ class AdminRouterController extends Controller
         $request->validate([
             'community_id' => 'required|integer',
             'name' => 'required|string|max:32',
+            'google_home_name' => 'nullable|string|max:100',
+            'google_home_mac_address' => ['nullable', 'string', 'max:20', 'regex:/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/']
         ]);
         $now = Carbon::now();
         $param = [
             'community_id' => $request->community_id,
             'name' => $request->name,
+            'google_home_name' => $request->google_home_name,
+            'google_home_mac_address' => $request->google_home_mac_address,
             'updated_at' => $now,
         ];
         DB::table('routers')->where('id', $request->id)->update($param);

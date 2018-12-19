@@ -37,6 +37,11 @@
                             <p>ホームページURL</p>
                             <h3>{{ url("/index?path=" . $item->url_path) }}</h3>
                         </div>
+                        <div>
+                            <p>Google Home アシスタント機能 &nbsp; : &nbsp;
+                            @if($item->google_home_enable == true) 有効 @else 無効 @endif
+                            </p>
+                        </div>
                         <hr>
                         @if(Auth::user()->role == 'superAdmin' && Auth::user()->community_id != $item->id)
                         <p>Livelynk全体管理者権限</p>
@@ -92,41 +97,19 @@
                             <p>(任意)通知設定の為のIFTTTのWebhooks keyを入力します</p>
                         </div>
                         <hr>
-                        <h3>Google Home アシスタント機能 &nbsp; : &nbsp;
-                            @if($item->google_home_enable == true) 有効 @else 無効 @endif
-                        </h3>
 
                         @can('superAdmin')
                         <div class="form-elem">
-                            <label for="InputTextarea">Google Home アシスタント機能</label>
+                            <label for="InputTextarea">Google Home アシスタント機能&nbsp;&nbsp;&nbsp;&nbsp;</label>
                             <input id="google_home_enable_show" type="radio" value="1" name="google_home_enable" @if (old('google_home_enable', $item->google_home_enable) == "1") checked @endif>
-                            <label for="google_home_enable_show">有効</label>
+                            <label for="google_home_enable_show">有効&nbsp;&nbsp;&nbsp;&nbsp;</label>
                             <input id="google_home_enable_hide" type="radio" value="0" name="google_home_enable" @if (old('google_home_enable', $item->google_home_enable) == "0") checked @endif>
                             <label for="google_home_enable_hide">無効</label>
                         </div>
                         @else
                         <input type="hidden" name="google_home_enable" value="{{$item->google_home_enable}}">
                         @endcan
-                        @if(
-                            (Auth::user()->role == 'superAdmin') ||
-                            (Auth::user()->role == 'readerAdmin' && $item->google_home_enable == true)
-                        )
-                        <div class="form-group">
-                            <label for="InputTextarea">GoogleHome デバイスの名前</label>
-                            <input type="text" class="form-control form-control-lg" name="google_home_name" value="{{old('google_home_name', $item->google_home_name)}}">
-                            <p>(任意)GoogleHomeのデバイス名を入力します 例:リビング 等</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="InputTextarea">GoogleHome MACアドレス</label>
-                            <input type="text" class="form-control form-control-lg" name="google_home_mac_address" value="{{old('google_home_mac_address', $item->google_home_mac_address)}}">
-                            <p>(任意)GoogleHomeのMACアドレスを入力します</p>
-                        </div>
-                        @else
-                        <input type="hidden" name="google_home_name" value="{{$item->google_home_name}}">
-                        <input type="hidden" name="google_home_mac_address" value="{{$item->google_home_mac_address}}">
-                        @endif
                         @can('superAdmin')
-                        <hr>
                         <div class="form-group">
                             <label for="InputTextarea">管理者メモ</label>
                             <textarea class="form-control form-control-lg" name="admin_comment" rows="5">{{old('admin_comment', $item->admin_comment)}}</textarea>

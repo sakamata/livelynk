@@ -54,10 +54,7 @@ class AdminCommunityController extends Controller
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhook_key' => 'nullable|string|max:191',
             'google_home_enable' => 'boolean',
-            'google_home_name' => 'nullable|string|max:100',
-            'google_home_mac_address' => ['nullable', 'string', 'max:20', 'regex:/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/'],
             'admin_comment' => 'nullable|string|max:1000',
-
         ]);
         $now = Carbon::now();
         // user_id は users tabelにinsert後に再度挿入する
@@ -72,8 +69,6 @@ class AdminCommunityController extends Controller
             'ifttt_event_name' => $request->ifttt_event_name,
             'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
             'google_home_enable' => $request->google_home_enable,
-            'google_home_name' => $request->google_home_name,
-            'google_home_mac_address' => $request->google_home_mac_address,
             'admin_comment' => $request->admin_comment,
             'created_at' => $now,
             'updated_at' => $now,
@@ -149,8 +144,6 @@ class AdminCommunityController extends Controller
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhooks_key' => 'nullable|string|max:191',
             'google_home_enable' => 'boolean',
-            'google_home_name' => 'nullable|string|max:100',
-            'google_home_mac_address' => ['nullable', 'string', 'max:20', 'regex:/^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$/']
         ];
         if ($user->role == 'superAdmin') {
             $rules['admin_comment'] = 'nullable|string|max:1000';
@@ -173,8 +166,6 @@ class AdminCommunityController extends Controller
             'ifttt_event_name' => $request->ifttt_event_name,
             'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
             'google_home_enable' => $request->google_home_enable,
-            'google_home_name' => $request->google_home_name,
-            'google_home_mac_address' => $request->google_home_mac_address,
             'updated_at' => $now,
         ];
         if ($user->role == 'superAdmin') {

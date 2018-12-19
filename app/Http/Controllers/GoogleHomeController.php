@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class GoogleHomeController extends Controller
 {
-    public function GetGoogleHomeTalk($google_talk_trigger, $community, $push_users)
+    public function GetGoogleHomeTalk($google_talk_trigger, $community, $push_users, $router_id)
     {
         // "Aさん Bさん ..."の連結文作成
         $users_name_str = "";
@@ -59,9 +59,10 @@ class GoogleHomeController extends Controller
                 $message = 'ライブリンクへの送信を確認しました。';
             break;
         }
+        $router = DB::table('routers')->where('id', $router_id)->first();
         return array(
-            'MAC' => $community->google_home_mac_address,
-            'name' => $community->google_home_name,
+            'MAC' => $router->google_home_mac_address,
+            'name' => $router->google_home_name,
             'message' => $message,
         );
     }

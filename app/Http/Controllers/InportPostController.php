@@ -211,7 +211,7 @@ class InportPostController extends Controller
         $this->DepartureCheck($community->id);
         if ($google_talk_trigger && $community->google_home_enable == true) {
             // GoogleHomeへのコマンドを記載する
-            $set = (new GoogleHomeController)->GetGoogleHomeTalk($google_talk_trigger, $community, $push_users);
+            $set = (new GoogleHomeController)->GetGoogleHomeTalk($google_talk_trigger, $community, $push_users, $check_array['router_id']);
             Log::debug(print_r($set, 1));
             return response()->json([
                 'status' => 'From Livelynk posted',
