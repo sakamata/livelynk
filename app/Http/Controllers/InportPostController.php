@@ -110,7 +110,7 @@ class InportPostController extends Controller
                 if (!$success) {
                     // コケた際はひとまずlog出力
                     Log::waning(print_r('Provisional User & Device Create Error!!', 1));
-                    continue;
+                    // continue;
                 }
                 // この宣言は外してはいけない！！
                 // MacAddressStatusUpdate 第一引数に必要な宣言
@@ -131,7 +131,11 @@ class InportPostController extends Controller
                     (int)$community->id,
                     (string)$post_mac_hash
                 );
-                if (!$mac_record) { continue; }
+                if (!$mac_record) {
+                    $i++;
+                    $v++;
+                    continue;
+                }
                 $community_user_id = $mac_record->id;
                 $users_ids[] = $community_user_id;
                 // 前回のPOSTに該当MACaddressがない場合
