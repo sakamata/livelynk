@@ -40,6 +40,9 @@ class LoginTest_normalAdmin_user extends DuskTestCase
                 ->assertSeeLink('仮ユーザー一覧')
                 ->assertSeeLink('ユーザー一覧')
                 ->assertSeeLink('コミュニティ編集')
+
+                ->assertDontSeeLink('コミュニティ一覧')
+
                 ->assertSeeLink('ギークオフィスWebサービス')
                 ->assertSeeLink('ツモリンク')
                 ->click('.action')
