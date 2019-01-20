@@ -12,6 +12,7 @@ class CommunityUser extends Model
      * @var string
      */
     protected $table = 'community_user';
+    public $timestamps = false;
 
     // 日時表記変更の ->format('Y-m-d') を使いたいカラム名を指定する
     protected $dates = [

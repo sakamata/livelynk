@@ -119,6 +119,11 @@ return [
     |
     */
 
+    /*
+    * 追加記述 Faker 日本語化
+    */
+    'faker_locale' => 'ja_JP',
+
     'providers' => [
 
         /*

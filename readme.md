@@ -58,3 +58,24 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+### 追加インストール
+
+開発環境　ブラウザテスト用 dusk
+```
+composer require --dev laravel/dusk
+php artisan dusk:install
+```
+クロームをインストール
+```
+sudo wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+sudo apt-get update
+sudo apt-get install google-chrome-stable
+```
+
+.env ファイルの設定を確認 .app .dev などは使わない方が良い
+```
+APP_URL=http://whois.geek
+```

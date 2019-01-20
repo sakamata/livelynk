@@ -12,6 +12,7 @@ class Role extends Model
      * @var string
      */
     protected $table = 'roles';
+    public $timestamps = false;
 
     public function status()
     {
