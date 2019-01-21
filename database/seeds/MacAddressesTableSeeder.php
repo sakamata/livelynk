@@ -361,6 +361,33 @@ class MacAddressesTableSeeder extends Seeder
             ];
             DB::table('mac_addresses')->insert($param);
         }
+
+        // provision user用
+        $id = 41;
+        $router_id = array(1,2,3,4,5,5);
+        for ($i=0; $i <=5; $i++) {
+            $mac = strtoupper(str_random(2)) . ':' . strtoupper(str_random(2)) . ':' . strtoupper(str_random(2)) . ':' . strtoupper(str_random(2)) . ':' . strtoupper(str_random(2)) . ':' . strtoupper(str_random(2));
+            $XX = strtoupper(str_random(2));
+            $vendor = $XX . $XX . $XX . '.inc';
+            $device = $XX . $XX . $XX . $XX;
+            $param = [
+                'community_user_id' => $id,
+                'router_id' => $router_id[$i],
+                'mac_address' => $mac,
+                'mac_address_hash' => $this->CahngeCrypt($mac, 1),
+                'vendor' => $vendor,
+                'device_name' => $device,
+                'hide' => 0,
+                'arraival_at' => Carbon::now(),
+                'departure_at' => null,
+                'posted_at' => Carbon::now(),
+                'current_stay' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ];
+            DB::table('mac_addresses')->insert($param);
+            $id++;
+        }
     }
 
     public function CahngeCrypt($mac_address, $community_id)

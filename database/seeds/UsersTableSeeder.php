@@ -277,5 +277,20 @@ class UsersTableSeeder extends Seeder
             ];
             DB::table('users')->insert($param);
         }
+
+        // provision user
+        $color = array('red1','blue2','green3','yellow4','black5','white6');
+        for ($i = 0; $i <= 5; $i++) {
+            $param = [
+                'name' => $color[$i] . '-human',
+                'unique_name' => $color[$i] .'-human',
+                'provisional' => true,
+                'password' => $password,
+                'created_at' => $dateTime,
+                'updated_at' => $dateTime,
+            ];
+            DB::table('users')->insert($param);
+        }
+
     }
 }

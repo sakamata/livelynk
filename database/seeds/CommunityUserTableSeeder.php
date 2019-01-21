@@ -82,5 +82,17 @@ class CommunityUserTableSeeder extends Seeder
             DB::table('community_user')->insert($param);
             $user_id++;
         }
+
+        // provisional user
+        $community = array(1,1,2,2,3,3);
+        $user_id = 31;
+        for ($i = 0; $i <= 5; $i++) {
+            $param = [
+                'community_id' => $community[$i],
+                'user_id' => $user_id,
+            ];
+            DB::table('community_user')->insert($param);
+            $user_id++;
+        }
     }
 }

@@ -128,5 +128,20 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
             ];
             DB::table('communities_users_statuses')->insert($param);
         }
+
+        // provisonal user
+        $id = 41;
+        for ($i= 0; $i <= 5; $i++) { 
+            $param = [
+                'id' => $id,
+                'role_id' => 1,
+                'hide' => 0,
+                'last_access' => Carbon::now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ];
+            DB::table('communities_users_statuses')->insert($param);
+            $id++;
+        }
     }
 }
