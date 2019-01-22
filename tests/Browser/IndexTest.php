@@ -32,10 +32,10 @@ class IndexTest extends DuskTestCase
     protected function setUp()
     {
         parent::setUp();
-        Artisan::call('migrate:refresh');
-        Artisan::call('db:seed');
+        // Artisan::call('migrate:refresh');
+        // Artisan::call('db:seed');
 
-        Carbon::setTestNow();
+        // Carbon::setTestNow();
 /*
         factory(Community::class)->create([
             'url_path' => self::URL_PATH,
@@ -83,11 +83,38 @@ class IndexTest extends DuskTestCase
     /**
      * @test
      */
-    public function 未ログインで滞在者一覧画面閲覧()
+    public function 未ログインで恵比寿_滞在者一覧画面閲覧()
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/?path=hoge')
+                    ->assertSee('ギークオフィス恵比寿')
+                    ->assertSee('今日のイベント')
                     ->assertSeeLink('ログイン');
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function 未ログインで一般コミュニティ_滞在者一覧画面閲覧()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/?path=hoge2')
+                ->assertSee('長い名前の人コミュニティ')
+                ->assertDontSee('今日のイベント')
+                ->assertSeeLink('ログイン');
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function 未ログインで存在しないpathでコミュニティ_滞在者一覧画面閲覧()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/?path=xxxx')
+                ->assertSee('404 Not Found')
+                ->assertSeeLink('ログイン');
         });
     }
 
@@ -96,11 +123,6 @@ class IndexTest extends DuskTestCase
      */
     public function ログインtest()
     {
-        // $user = factory(User::class)->create([
-        //     'unique_name' => 'zzz@aaa.com',
-        //     'password' => bcrypt('aaaaaa'),
-        // ]);
-
         $this->browse(function ($browser)  {
             $browser->visit('/login/?path=hoge')
                 ->type('unique_name', 'aaa@aaa.com')
@@ -108,13 +130,5 @@ class IndexTest extends DuskTestCase
                 ->press('ログイン')
                 ->assertPathIs('/');
         });
-
-        // $this->browse(function ($first, $second) {
-        //     $first->loginAs(User::find(1))
-        //         ->visit('/?path=hoge')
-        //         // ->assertSee('hoge');
-        //         ->assertSee('ログイン');
-        // });
     }
-
 }

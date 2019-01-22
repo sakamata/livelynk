@@ -40,7 +40,7 @@ class LoginTest_readerAdmin_user extends DuskTestCase
                 ->assertSeeLink('仮ユーザー一覧')
                 ->assertSeeLink('ユーザー一覧')
                 ->assertSeeLink('コミュニティ編集')
-
+                // 非表示項目
                 ->assertDontSeeLink('コミュニティ一覧')
 
                 ->click('.action')
