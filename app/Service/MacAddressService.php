@@ -16,8 +16,8 @@ class MacAddressService
         return 'App\MacAddress'::UserHaving($community_user_id)
             ->MyCommunity($community_id)
             ->orderBy('hide','asc')
-            ->orderBy('user_id', 'desc')
             ->orderBy('arraival_at','desc')
+            ->orderBy('mac_addresses.id', 'desc')
             ->get();
     }
 

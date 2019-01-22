@@ -126,10 +126,10 @@ return [
 
     'custom' => [
         'mac_address.*.vendor' => [
-            'max' => ':attributeには、:max以下の数字を指定してください。',
+            'max' => ':attributeは、:max文字以下にしてください。',
         ],
         'mac_address.*.device_name' => [
-            'max' => ':attributeには、:max以下の数字を指定してください。',
+            'max' => ':attributeは、:max文字以下にしてください。',
         ],
     ],
 

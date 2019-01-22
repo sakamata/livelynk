@@ -281,6 +281,7 @@ class UsersTableSeeder extends Seeder
         // provision user
         $color = array('red1','blue2','green3','yellow4','black5','white6');
         for ($i = 0; $i <= 5; $i++) {
+            $password = bcrypt($color[$i] . '-human');
             $param = [
                 'name' => $color[$i] . '-human',
                 'unique_name' => $color[$i] .'-human',
@@ -291,6 +292,5 @@ class UsersTableSeeder extends Seeder
             ];
             DB::table('users')->insert($param);
         }
-
     }
 }
