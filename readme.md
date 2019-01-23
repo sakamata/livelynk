@@ -65,6 +65,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 開発環境　ブラウザテスト用 dusk
 ```
 composer require --dev laravel/dusk
+# 本番環境で以下のコマンドを入力してはいけない！
 php artisan dusk:install
 ```
 クロームをインストール
