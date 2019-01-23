@@ -32,8 +32,8 @@ class IndexTest extends DuskTestCase
     protected function setUp()
     {
         parent::setUp();
-        // Artisan::call('migrate:refresh');
-        // Artisan::call('db:seed');
+        Artisan::call('migrate:refresh');
+        Artisan::call('db:seed');
 
         // Carbon::setTestNow();
 /*
@@ -121,13 +121,71 @@ class IndexTest extends DuskTestCase
     /**
      * @test
      */
-    public function ログインtest()
+    public function ログイン_バリデート_異常入力test()
+    {
+        $this->browse(function ($browser) {
+            $browser->visit('/login/?path=hoge')
+                ->type('unique_name', 'あいうえおかきくけこ')
+                ->type('password', 'aaa')
+                ->press('ログイン')
+                ->assertSee('ユーザーIDに正しい形式を指定してください。')
+                ->assertSee('パスワードは、6文字以上で指定してください。');
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function ログイン_バリデート_文字数_less_test()
+    {
+        $this->browse(function ($browser) {
+            $browser->visit('/login/?path=hoge')
+                ->type('unique_name', 'aaa')
+                ->type('password', 'aaaaaa')
+                ->press('ログイン')
+                ->assertSee('ユーザーIDは、6文字以上で指定してください。');
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function ログイン_バリデート_文字数_gt_test()
+    {
+        $this->browse(function ($browser) {
+            $browser->visit('/login/?path=hoge')
+                ->type('unique_name', '12346578901234657890123465789012346578901')
+                ->type('password', 'aaaaaa')
+                ->press('ログイン')
+                ->assertSee('ユーザーIDは、40文字以下で指定してください。');
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function ログイン_バリデート_not_user_test()
+    {
+        $this->browse(function ($browser) {
+            $browser->visit('/login/?path=hoge')
+                ->type('unique_name', '1234657890123465789012346578901234657890')
+                ->type('password', 'aaaaaa')
+                ->press('ログイン')
+                ->assertSee('ユーザーIDかPasswordが正しくありません');
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function ログイン_正常_test()
     {
         $this->browse(function ($browser)  {
             $browser->visit('/login/?path=hoge')
                 ->type('unique_name', 'aaa@aaa.com')
                 ->type('password', 'aaaaaa')
                 ->press('ログイン')
+                ->assertSee('ギークオフィス恵比寿')
                 ->assertPathIs('/');
         });
     }

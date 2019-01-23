@@ -97,9 +97,10 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
             $subDay = $subDay->subDay(rand(31,59));
             $subDay2 = Carbon::now();
             $subDay2 = $subDay2->subDay(rand(1,30));
+            $role = $i == 13 ? 2 : 1;
             $param = [
                 'id' => $i,
-                'role_id' => 1,
+                'role_id' => $role,
                 'hide' => 0,
                 'last_access' => $subHour,
                 'created_at' => $subDay,
