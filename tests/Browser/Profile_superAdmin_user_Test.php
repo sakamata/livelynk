@@ -12,12 +12,12 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 class Profile_superAdmin_user_Test extends DuskTestCase
 {
     use RefreshDatabase;
-    // protected function setUp()
-    // {
-    //     parent::setUp();
-    //     Artisan::call('migrate:refresh');
-    //     Artisan::call('db:seed');
-    // }
+    protected function setUp()
+    {
+        parent::setUp();
+        Artisan::call('migrate:refresh');
+        Artisan::call('db:seed');
+    }
 
     // 不本意だがひとまずベタに書く
     // superAdmin でのtest項目を書いた後、シュリンクした配下のroleのテストに転用
@@ -139,16 +139,11 @@ class Profile_superAdmin_user_Test extends DuskTestCase
      */
     public function superAdmin_selfプロフィール編集_正常編集確認()
     {
-        $user = factory(User::class)->create([
-            'name' => '編集後',
-            'unique_name' => 'edit@laravel.com',
-            'email' => 'edit@laravel.com',
-        ]);
-        $this->browse(function ($browser) use ($user) {
+        $this->browse(function ($browser) {
             $browser->visit('/admin_user/edit?id=1')
-                ->type('name', $user->name)
-                ->type('unique_name', $user->unique_name)
-                ->type('email', $user->email)
+                ->type('name', '編集後')
+                ->type('unique_name', 'super_self_edit@laravel.com')
+                ->type('email', 'super_self_edit@laravel.com')
                 ->radio('hide', '1')
                 ->type('mac_address[1][vendor]', 'edit_vendor')
                 ->type('mac_address[1][device_name]', 'edit_device_name')
@@ -160,9 +155,9 @@ class Profile_superAdmin_user_Test extends DuskTestCase
                 ->assertPathIs('/admin_user');
             // 編集内容の確認
             $browser->visit('/admin_user/edit?id=1')
-                ->assertInputValue('name', $user->name)
-                ->assertInputValue('unique_name', $user->unique_name)
-                ->assertInputValue('email', $user->email)
+                ->assertInputValue('name', '編集後')
+                ->assertInputValue('unique_name', 'super_self_edit@laravel.com')
+                ->assertInputValue('email', 'super_self_edit@laravel.com')
                 ->assertRadioSelected('hide', '1')
                 ->assertInputValue('mac_address[1][vendor]', 'edit_vendor')
                 ->assertInputValue('mac_address[1][device_name]', 'edit_device_name')

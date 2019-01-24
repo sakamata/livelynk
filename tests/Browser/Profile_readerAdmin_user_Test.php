@@ -120,16 +120,11 @@ class Profile_readerAdmin_user_Test extends DuskTestCase
      */
     public function readerAdmin_selfプロフィール編集_正常編集確認()
     {
-        $user = factory(User::class)->create([
-            'name' => '編集後',
-            'unique_name' => 'admin2edit@laravel.com',
-            'email' => 'admin2edit@laravel.com',
-        ]);
-        $this->browse(function ($browser) use ($user) {
+        $this->browse(function ($browser) {
             $browser->visit('/admin_user/edit?id=2')
-                ->type('name', $user->name)
-                ->type('unique_name', $user->unique_name)
-                ->type('email', $user->email)
+                ->type('name', '編集')
+                ->type('unique_name', 'admin2edit@laravel.com')
+                ->type('email', 'admin2edit@laravel.com')
                 // ->radio('hide', '1')
                 // ->type('mac_address[1][vendor]', 'edit_vendor')
                 // ->type('mac_address[1][device_name]', 'edit_device_name')
@@ -142,9 +137,9 @@ class Profile_readerAdmin_user_Test extends DuskTestCase
                 ->assertPathIs('/admin_user');
             // 編集内容の確認
             $browser->visit('/admin_user/edit?id=2')
-                ->assertInputValue('name', $user->name)
-                ->assertInputValue('unique_name', $user->unique_name)
-                ->assertInputValue('email', $user->email)
+                ->assertInputValue('name', '編集')
+                ->assertInputValue('unique_name', 'admin2edit@laravel.com')
+                ->assertInputValue('email', 'admin2edit@laravel.com')
                 // ->assertRadioSelected('hide', '1')
                 // ->assertInputValue('mac_address[1][vendor]', 'edit_vendor')
                 // ->assertInputValue('mac_address[1][device_name]', 'edit_device_name')
