@@ -29,6 +29,20 @@ class UserService
             ->get();
     }
 
+    public function ProvisionalUserDelete(int $community_user_id)
+    {
+        // user_id の抽出
+        $user_id = DB::table('community_user')
+            ->where('id', $community_user_id)->pluck('user_id')->first();
+        // users table
+        DB::table('users')->where('id', $user_id)->delete();
+        // community_user table
+        DB::table('community_user')->where('id', $community_user_id)->delete();
+        // community_user_status table
+        DB::table('communities_users_statuses')
+            ->where('id', $community_user_id)->delete();
+    }
+
     public function IDtoRoleGet(int $community_user_id)
     {
         return 'App\CommunityUserStatus'::IDtoRoleGet($community_user_id);

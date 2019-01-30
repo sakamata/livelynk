@@ -162,24 +162,20 @@
                                     <input type="hidden" name="old_community_user_id" value="{{$item->id}}">
                                     <div class="form-inline">
                                         <div class="form-group col-md-10">
-                                            <label>ユーザー</label>
+                                            <label>ユーザー変更</label>
                                             <select name="new_community_user_id" class="form-control">
+                                                <option value="{{$item->id}}" selected>{{$item->id}}&nbsp;:&nbsp;{{$item->name}}</option>
                                                 @foreach($users as $user)
-                                                    @if($item->id == $user->id)
-                                                    <?php $selected = 'selected'; ?>
-                                                    @else
-                                                    <?php $selected = ''; ?>
-                                                    @endif
                                                     @if($user->id == $reader_id)
-                                                    <option value="{{$user->id}}" {{ $selected }}>{{$user->id}}&nbsp;:&nbsp;未登録デバイス</option>
+                                                    <option value="{{$user->id}}">{{$user->id}}&nbsp;:&nbsp;未登録デバイス</option>
                                                     @else
-                                                    <option value="{{$user->id}}" {{ $selected }}>{{$user->id}}&nbsp;:&nbsp;{{$user->name}}</option>
+                                                    <option value="{{$user->id}}">{{$user->id}}&nbsp;:&nbsp;{{$user->name}}</option>
                                                     @endif
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="form-group col-md-2">
-                                            <button name="{{$user->id}}" type="button submit" class="btn btn-primary">編集</button>
+                                            <button name="{{$user->id}}" type="button submit" class="btn btn-primary">統合</button>
                                         </div>
                                     </div>
                                 </form>

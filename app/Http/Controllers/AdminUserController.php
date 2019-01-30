@@ -123,8 +123,12 @@ class AdminUserController extends Controller
             (string)$case
         );
         // communityの既存ユーザーlistを取得
-        $users = $this->call_user
-            ->SelfCommunityUsersGet('user_id', 'desc', (int)$community_id, $case_all=null);
+        $users = $this->call_user->SelfCommunityUsersGet(
+                (string)$key = 'user_id',
+                (string)$order = 'desc',
+                (int)$community_id,
+                (string)$case_all = 'index'
+        );
         $reader_id = $this->getReaderID();
 
         return view('admin_user.index',[
@@ -364,6 +368,7 @@ class AdminUserController extends Controller
         }
     }
 
+    // 現状仮ユーザーを既存ユーザーに変更する為に使用しているのみ
     public function owner_update(Request $request)
     {
         $request->validate([
@@ -379,15 +384,29 @@ class AdminUserController extends Controller
             log::warning(print_r($user, 1));
             return view('errors.403');
         }
-        $now = Carbon::now();
-        // mac_addresses community_user_id を更新
-        $this->call_mac->UpdateProvisionalOwner(
-            (int)$request->mac_id,
-            (int)$request->old_community_user_id,
-            (int)$request->new_community_user_id,
-            (string)$now
-        );
-        return redirect('/admin_user_provisional')->with('message', '仮ユーザー端末のオーナーを変更しました。');
+        // 変更前と同じユーザーを指定した場合は処理しない
+        if ($request->old_community_user_id == $request->new_community_user_id) {
+            return redirect('/admin_user_provisional')->with('message', '変更前と同じユーザーのため処理を行いませんでした。');
+        }
+        DB::beginTransaction();
+        try {
+            $now = Carbon::now();
+            // 端末のオーナーを変更する mac_addresses community_user_id を更新
+            $this->call_mac->UpdateProvisionalOwner(
+                (int)$request->mac_id,
+                (int)$request->old_community_user_id,
+                (int)$request->new_community_user_id,
+                (string)$now
+            );
+            // 変更前の仮ユーザーアカウントの削除
+            $this->call_user->ProvisionalUserDelete((int)$request->old_community_user_id);
+            DB::commit();
+            return redirect('/admin_user_provisional')->with('message', '仮ユーザー端末のオーナーを変更しました。');
+        } catch (\Exception $e) {
+            DB::rollback();
+            log::error(print_r('ProvisionalUserDelete Transaction error and rollback!!', 1));
+            return redirect()->back()->with('message', 'ユーザーを編集できませんでした。もう一度試してみてください。');
+        }
     }
 
     public function delete(Request $request)
