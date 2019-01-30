@@ -327,22 +327,23 @@ class AdminUserController extends Controller
             return view('errors.403');
         }
         $now = Carbon::now();
+        //  編集を行う事でいかなる状態でも仮ユーザーを正ユーザーとする仕様
+        // provisional => false 
         $param_user = [
             'name' => $request->name,
             'unique_name' => $request->unique_name,
             'email' => $request->email,
             'updated_at' => $now,
+            'provisional' => false,
         ];
-        // 仮ユーザーの場合の処理 パスワード有、 provisional false へ
+        // 仮ユーザーの場合の処理 パスワード有
         if ($user->provisional == true) {
             $param_user = array_merge($param_user, array(
                 'password' => Hash::make($request->password),
-                'provisional' => false
             ));
         }
         // users tableの更新
         'App\UserTable'::where('id', $request->user_id)->update($param_user);
-
         // role で取得した文字列を id int に変換
         $role_id = $this->roleNameToIdChange($request->role);
         // user status tableの更新
