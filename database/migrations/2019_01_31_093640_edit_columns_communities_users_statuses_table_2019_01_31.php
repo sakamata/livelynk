@@ -14,7 +14,7 @@ class EditColumnsCommunitiesUsersStatusesTable20190131 extends Migration
     public function up()
     {
         Schema::table('communities_users_statuses', function (Blueprint $table) {
-            $table->dateTime('last_access')->nullable()->change();
+            $table->dateTime('last_access')->useCurrent()->change();
         });
     }
 
