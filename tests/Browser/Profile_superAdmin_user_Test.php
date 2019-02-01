@@ -11,12 +11,22 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class Profile_superAdmin_user_Test extends DuskTestCase
 {
+    protected static $db_inited = false;
     use RefreshDatabase;
+
+    protected static function initDB()
+    {
+        Artisan::call('migrate:refresh');
+        Artisan::call('db:seed');
+    }
+
     protected function setUp()
     {
         parent::setUp();
-        Artisan::call('migrate:refresh');
-        Artisan::call('db:seed');
+        if (!static::$db_inited) {
+            static::$db_inited = true;
+            static::initDB();
+        }
     }
 
     // 不本意だがひとまずベタに書く
@@ -25,7 +35,6 @@ class Profile_superAdmin_user_Test extends DuskTestCase
     //   文言編集に対応出来るようメタに書く( \resources\lang\ja\messages.php  に書いて呼び出す)
     //   https://readouble.com/laravel/5.6/ja/localization.html
     //   他のroleとの共通確認項目を共通で呼び出せるようにする
-    //   seederファイルの refreshはブラウザテスト開始の際のみ行えるようにする
 
     /*
     仮ユーザーのログインテスト
@@ -137,51 +146,6 @@ class Profile_superAdmin_user_Test extends DuskTestCase
     /**
      * @test
      */
-    public function superAdmin_selfプロフィール編集_正常編集確認()
-    {
-        $this->browse(function ($browser) {
-            $browser->visit('/admin_user/edit?id=1')
-                ->type('name', '編集後')
-                ->type('unique_name', 'super_self_edit@laravel.com')
-                ->type('email', 'super_self_edit@laravel.com')
-                ->radio('hide', '1')
-                ->type('mac_address[1][vendor]', 'edit_vendor')
-                ->type('mac_address[1][device_name]', 'edit_device_name')
-                ->check('mac_address[1][hide]')
-                //下までスクロール
-                ->script("window.scrollTo(0, 1500);");
-            $browser->uncheck('mac_address[3][hide]')
-                ->press('ユーザー情報を更新')
-                ->assertPathIs('/admin_user');
-            // 編集内容の確認
-            $browser->visit('/admin_user/edit?id=1')
-                ->assertInputValue('name', '編集後')
-                ->assertInputValue('unique_name', 'super_self_edit@laravel.com')
-                ->assertInputValue('email', 'super_self_edit@laravel.com')
-                ->assertRadioSelected('hide', '1')
-                ->assertInputValue('mac_address[1][vendor]', 'edit_vendor')
-                ->assertInputValue('mac_address[1][device_name]', 'edit_device_name')
-                ->assertChecked('mac_address[1][hide]')
-
-                // 最初の状態に戻す
-                ->type('name', '未登録 comm1 super')
-                ->type('unique_name', 'admin@aaa.com')
-                ->type('email', 'admin@aaa.com')
-                ->radio('hide', '0')
-                ->type('mac_address[1][vendor]', 'Apple.inc')
-                ->type('mac_address[1][device_name]', 'i-phoneX')
-                ->check('mac_address[1][hide]')
-                //下までスクロール
-                ->script("window.scrollTo(0, 1500);");
-            $browser->assertNotChecked('mac_address[3][hide]')
-                ->check('mac_address[3][hide]');
-            $browser->press('ユーザー情報を更新');
-        });
-    }
-
-    /**
-     * @test
-     */
     public function superAdmin_to_readerAdmin_プロフィール編集画面表示()
     {
         $this->browse(function ($browser) {
@@ -228,4 +192,49 @@ class Profile_superAdmin_user_Test extends DuskTestCase
                 ->assertSee('管理権限');
         });
     }
+
+    /**
+     * @test
+     */
+    public function superAdmin_selfプロフィール編集_正常編集確認()
+    {
+        $this->browse(function ($browser) {
+            $browser->visit('/admin_user/edit?id=1')
+                ->type('name', '編集後')
+                ->type('unique_name', 'super_self_edit@laravel.com')
+                ->type('email', 'super_self_edit@laravel.com')
+                ->radio('hide', '1')
+                ->type('mac_address[1][vendor]', 'edit_vendor')
+                ->type('mac_address[1][device_name]', 'edit_device_name')
+                ->check('mac_address[1][hide]')
+                //下までスクロール
+                ->script("window.scrollTo(0, 1500);");
+            $browser->uncheck('mac_address[3][hide]')
+                ->press('ユーザー情報を更新')
+                ->assertPathIs('/admin_user');
+            // 編集内容の確認
+            $browser->visit('/admin_user/edit?id=1')
+                ->assertInputValue('name', '編集後')
+                ->assertInputValue('unique_name', 'super_self_edit@laravel.com')
+                ->assertInputValue('email', 'super_self_edit@laravel.com')
+                ->assertRadioSelected('hide', '1')
+                ->assertInputValue('mac_address[1][vendor]', 'edit_vendor')
+                ->assertInputValue('mac_address[1][device_name]', 'edit_device_name')
+                ->assertChecked('mac_address[1][hide]');
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function 後処理()
+    {
+        $this->browse(function ($browser) {
+            $browser->visit('/admin_user/edit?id=1')
+                ->assertSeeIn('.comp-title', 'プロフィール編集');
+                echo 'now seeding!';
+                Artisan::call('migrate:refresh');
+                Artisan::call('db:seed');
+        });
+    } 
 }
