@@ -68,7 +68,7 @@ doctrine/dbalパッケージの導入
 composer require doctrine/dbal
 ```
 
-開発環境　ブラウザテスト用 dusk
+### 開発環境　ブラウザテスト用 dusk
 
 ```
 composer require --dev laravel/dusk
@@ -83,7 +83,30 @@ sudo apt-get update
 sudo apt-get install google-chrome-stable
 ```
 
+#### 設定ファイルの編集
+
 .env ファイルの設定を確認 .app .dev などは使わない方が良い
 ```
 APP_URL=http://whois.geek
+```
+
+#### ブラウザテストに備えた設定
+
+ブラウザテスト失敗の際に消失の恐れのある `.env`ファイルをコピーしてバックアップする   
+参考サイト[Laravel5.7: ブラウザテストを記述する](https://qiita.com/sutara79/items/9190c8444a49842ca25a#%E9%87%8D%E8%A6%81-env%E3%81%AE%E3%82%B3%E3%83%94%E3%83%BC)
+
+```
+cp .env .env.bk_copy
+```
+コピーされた`.evv.bk_copy`は `.gitignore`ファイルでリポジトリにアップしない様にすること   
+
+次に、ブラウザテスト用の `.env`ファイルをコピーする
+```
+cp .env .env.dusk.local
+```
+同様にコピーされた`.env.dusk.local`は `.gitignore`ファイルでリポジトリにアップしない様にする   
+
+`.env.dusk.local`のファイル内の以下の部分をtest用DBに変更する
+```
+DB_DATABASE=myapp_test
 ```
