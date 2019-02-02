@@ -11,28 +11,22 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class Profile_readerAdmin_user_Test extends DuskTestCase
 {
+    protected static $db_inited = false;
     use RefreshDatabase;
-    protected function setUp()
+
+    protected static function initDB()
     {
-        parent::setUp();
         Artisan::call('migrate:refresh');
         Artisan::call('db:seed');
     }
 
-    /**
-     * @test
-     */
-    public function readerAdminログイン()
+    protected function setUp()
     {
-        $this->browse(function ($browser) {
-            $browser->visit('/login/?path=hoge2')
-                ->assertSee('長い名前の人コミュニティ')
-                ->assertSee('ログイン')
-                ->assertSee('ログインを保持する')
-                ->type('#unique_name', 'admin2@aaa.com')
-                ->type('password', 'aaaaaa')
-                ->press('ログイン');
-        });
+        parent::setUp();
+        if (!static::$db_inited) {
+            static::$db_inited = true;
+            static::initDB();
+        }
     }
 
     /**
@@ -118,52 +112,6 @@ class Profile_readerAdmin_user_Test extends DuskTestCase
     /**
      * @test
      */
-    public function readerAdmin_selfプロフィール編集_正常編集確認()
-    {
-        $this->browse(function ($browser) {
-            $browser->visit('/admin_user/edit?id=2')
-                ->type('name', '編集')
-                ->type('unique_name', 'admin2edit@laravel.com')
-                ->type('email', 'admin2edit@laravel.com')
-                // ->radio('hide', '1')
-                // ->type('mac_address[1][vendor]', 'edit_vendor')
-                // ->type('mac_address[1][device_name]', 'edit_device_name')
-                // ->check('mac_address[1][hide]')
-                //下までスクロール
-                ->script("window.scrollTo(0, 1500);");
-            $browser
-                // ->uncheck('mac_address[3][hide]')
-                ->press('ユーザー情報を更新')
-                ->assertPathIs('/admin_user');
-            // 編集内容の確認
-            $browser->visit('/admin_user/edit?id=2')
-                ->assertInputValue('name', '編集')
-                ->assertInputValue('unique_name', 'admin2edit@laravel.com')
-                ->assertInputValue('email', 'admin2edit@laravel.com')
-                // ->assertRadioSelected('hide', '1')
-                // ->assertInputValue('mac_address[1][vendor]', 'edit_vendor')
-                // ->assertInputValue('mac_address[1][device_name]', 'edit_device_name')
-                // ->assertChecked('mac_address[1][hide]')
-
-                // 最初の状態に戻す
-                ->type('name', '未登録 comm2')
-                ->type('unique_name', 'admin2@aaa.com')
-                ->type('email', 'admin2@aaa.com')
-                // ->radio('hide', '0')
-                // ->type('mac_address[1][vendor]', 'Apple.inc')
-                // ->type('mac_address[1][device_name]', 'i-phoneX')
-                // ->check('mac_address[1][hide]')
-                //下までスクロール
-                ->script("window.scrollTo(0, 1500);");
-            // $browser->assertNotChecked('mac_address[3][hide]')
-            //     ->check('mac_address[3][hide]');
-            $browser->press('ユーザー情報を更新');
-        });
-    }
-
-    /**
-     * @test
-     */
     public function readerAdmin_to_superAdmin_プロフィール編集画面表示()
     {
         $this->browse(function ($browser) {
@@ -214,6 +162,51 @@ class Profile_readerAdmin_user_Test extends DuskTestCase
                 ->assertDontSee('このユーザーは権限の変更ができません。')
                 ->assertRadioSelected('role', 'normal')
                 ->assertSee('管理権限');
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function readerAdmin_selfプロフィール編集_正常編集確認()
+    {
+        $this->browse(function ($browser) {
+            $browser->visit('/admin_user/edit?id=2')
+                ->type('name', '編集')
+                ->type('unique_name', 'admin2edit@laravel.com')
+                ->type('email', 'admin2edit@laravel.com')
+                // ->radio('hide', '1')
+                // ->type('mac_address[1][vendor]', 'edit_vendor')
+                // ->type('mac_address[1][device_name]', 'edit_device_name')
+                // ->check('mac_address[1][hide]')
+                //下までスクロール
+                ->script("window.scrollTo(0, 1500);");
+            $browser
+                // ->uncheck('mac_address[3][hide]')
+                ->press('ユーザー情報を更新')
+                ->assertPathIs('/admin_user');
+            // 編集内容の確認
+            $browser->visit('/admin_user/edit?id=2')
+                ->assertInputValue('name', '編集')
+                ->assertInputValue('unique_name', 'admin2edit@laravel.com')
+                ->assertInputValue('email', 'admin2edit@laravel.com');
+                // ->assertRadioSelected('hide', '1')
+                // ->assertInputValue('mac_address[1][vendor]', 'edit_vendor')
+                // ->assertInputValue('mac_address[1][device_name]', 'edit_device_name')
+                // ->assertChecked('mac_address[1][hide]')
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function 後処理()
+    {
+        $this->browse(function ($browser) {
+            $browser->visit('/admin_user/edit?id=2')
+                ->assertSeeIn('.comp-title', 'プロフィール編集');
+            Artisan::call('migrate:refresh');
+            Artisan::call('db:seed');
         });
     }
 }

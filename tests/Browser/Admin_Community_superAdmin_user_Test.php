@@ -16,7 +16,6 @@ class Admin_Community_superAdmin_user_Test extends DuskTestCase
 
     protected static function initDB()
     {
-        echo 'now seeding!';
         Artisan::call('migrate:refresh');
         Artisan::call('db:seed');
     } 
@@ -33,26 +32,11 @@ class Admin_Community_superAdmin_user_Test extends DuskTestCase
     /**
      * @test
      */
-    public function superAdminログイン()
-    {
-        $this->browse(function ($browser) {
-            $browser->visit('/login/?path=hoge')
-                ->assertSee('ギークオフィス恵比寿')
-                ->assertSee('ログイン')
-                ->assertSee('ログインを保持する')
-                ->type('#unique_name', 'admin@aaa.com')
-                ->type('password', 'aaaaaa')
-                ->press('ログイン');
-        });
-    }
-
-    /**
-     * @test
-     */
     public function superAdmin_community編集画面表示()
     {
         $this->browse(function ($browser) {
-            $browser->visit('admin_community/edit?id=1')
+            $browser->loginAs(User::find(1))
+                ->visit('admin_community/edit?id=1')
                 ->assertSeeIn('h2', 'Community編集')
                 ->assertSee('ギークオフィス恵比寿')
                 ->assertSee('未登録 comm1 super')

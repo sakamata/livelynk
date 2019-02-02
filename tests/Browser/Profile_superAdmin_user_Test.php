@@ -47,30 +47,14 @@ class Profile_superAdmin_user_Test extends DuskTestCase
         編集後のパスワード再定義確認
      */
 
-
-    /**
-     * @test
-     */
-    public function superAdminログイン()
-    {
-        $this->browse(function ($browser) {
-            $browser->visit('/login/?path=hoge')
-                ->assertSee('ギークオフィス恵比寿')
-                ->assertSee('ログイン')
-                ->assertSee('ログインを保持する')
-                ->type('#unique_name', 'admin@aaa.com')
-                ->type('password', 'aaaaaa')
-                ->press('ログイン');
-        });
-    }
-
     /**
      * @test
      */
     public function superAdmin_selfプロフィール編集画面表示()
     {
         $this->browse(function ($browser) {
-            $browser->visit('/admin_user/edit?id=1')
+            $browser->loginAs(User::find(1))
+                ->visit('/admin_user/edit?id=1')
                 ->assertSeeIn('.comp-title', 'プロフィール編集')
                 ->assertSeeLink('パスワード変更')
                 ->assertDontSeeLink('退会')
@@ -232,7 +216,6 @@ class Profile_superAdmin_user_Test extends DuskTestCase
         $this->browse(function ($browser) {
             $browser->visit('/admin_user/edit?id=1')
                 ->assertSeeIn('.comp-title', 'プロフィール編集');
-                echo 'now seeding!';
                 Artisan::call('migrate:refresh');
                 Artisan::call('db:seed');
         });
