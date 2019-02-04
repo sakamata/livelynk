@@ -37,31 +37,18 @@ class UserTable extends Model
 
     public function mac_addresses()
     {
-        // superAdmin以外は自分のcommunity_idの範囲のみ端末を取得
-        if (Auth::user()->role == 'superAdmin') {
-            // MEMO hasManyThrough 第五引数の定義が日本語ドキュメントと異なり動作が怪しい
-            return $this->hasManyThrough(
-                'App\MacAddress',
-                'App\CommunityUser',
-                'user_id',
-                'community_user_id',
-                'user_id',
-                'community_user.id'
-                )
-                ->orderBy('arraival_at', 'desc');
-        } else {
-            // MEMO hasManyThrough 第五引数の定義が日本語ドキュメントと異なり動作が怪しい
-            $community_id = Auth::user()->community_id;
-            return $this->hasManyThrough(
-                'App\MacAddress',
-                'App\CommunityUser',
-                'community_user.user_id',
-                'community_user_id',
-                'user_id',
-                'community_user.id'
-                )
-                ->where('community_user.community_id', $community_id)->orderBy('arraival_at', 'desc');
-        }
+        // 選択中のcommunity_idの範囲のみ端末を取得
+        // MEMO hasManyThrough 第五引数の定義が日本語ドキュメントと異なり動作が怪しい
+        $community_id = Auth::user()->community_id;
+        return $this->hasManyThrough(
+            'App\MacAddress',
+            'App\CommunityUser',
+            'community_user.user_id',
+            'community_user_id',
+            'user_id',
+            'community_user.id'
+            )
+            ->where('community_user.community_id', $community_id)->orderBy('arraival_at', 'desc');
     }
 
     public function scopeUsersGet($query, $key, $order)
