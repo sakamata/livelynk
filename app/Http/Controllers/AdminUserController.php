@@ -122,7 +122,7 @@ class AdminUserController extends Controller
             (int)$community_id,
             (string)$case
         );
-        // communityの既存ユーザーlistを取得
+        // プルダウンメニュー用 communityの既存ユーザーlistを取得
         $users = $this->call_user->SelfCommunityUsersGet(
                 (string)$key = 'user_id',
                 (string)$order = 'desc',
@@ -511,7 +511,7 @@ class AdminUserController extends Controller
                 Auth::logout();
                 return redirect('/')->with('message', '退会が完了しました。ご利用ありがとうございました');
             } else {
-                return redirect($request->previous)->with('message', 'ユーザーを退会させました');
+                return redirect('/admin_user')->with('message', 'ユーザーを退会させました');
             }
         }
     }
