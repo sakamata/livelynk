@@ -36,17 +36,6 @@ class Profile_superAdmin_user_Test extends DuskTestCase
     //   https://readouble.com/laravel/5.6/ja/localization.html
     //   他のroleとの共通確認項目を共通で呼び出せるようにする
 
-    /*
-    仮ユーザーのログインテスト
-
-    プロフィール編集画面のrole別表示確認
-    プロフィール編集の
-        done バリテーションチェック
-        done 編集後の画面確認
-        パスワード変更のバリテーション
-        編集後のパスワード再定義確認
-     */
-
     /**
      * @test
      */
