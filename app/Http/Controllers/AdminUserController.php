@@ -500,19 +500,20 @@ class AdminUserController extends Controller
                 }
             }
             DB::commit();
-            $success = true;
         } catch (\Exception $e) {
-            $success = false;
             DB::rollback();
             return redirect('admin_user/delete?id='. $request->id)->with('message', '処理が行われませんでした。再度お試しください。');
         }
-        if ($success) {
-            if (Auth::user()->id == $request->id) {
-                Auth::logout();
-                return redirect('/')->with('message', '退会が完了しました。ご利用ありがとうございました');
+        if (Auth::user()->id == $request->id) {
+            Auth::logout();
+            return redirect('/')->with('message', '退会が完了しました。ご利用ありがとうございました');
+        } else {
+            if ($taget->provisional) {
+                $path = '/admin_user_provisional';
             } else {
-                return redirect('/admin_user')->with('message', 'ユーザーを退会させました');
+                $path = '/admin_user';
             }
+            return redirect($path)->with('message', 'ユーザーを退会させました');
         }
     }
 }
