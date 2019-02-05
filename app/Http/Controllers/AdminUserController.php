@@ -143,6 +143,7 @@ class AdminUserController extends Controller
         ]);
     }
 
+    // normal user は閲覧できない
     protected function add(Request $request)
     {
         $request->validate([
@@ -244,7 +245,6 @@ class AdminUserController extends Controller
         }
     }
 
-    // 廃止予定 現在はDB再構築前のcodeのままで403となる
     public function edit(Request $request)
     {
         // 不正なrequestは403
