@@ -44,6 +44,11 @@ class CommunityUser extends Model
         return $this->hasMany('App\MacAddress');
     }
 
+    public function tumolink()
+    {
+        return $this->hasOne('App\Tumolink', 'community_user_id', 'id');
+    }
+
     public function scopeGetCommunityID($query, $community_user_id)
     {
         return $query->where('id',$community_user_id)
