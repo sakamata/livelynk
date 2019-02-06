@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(TumolinkTableSeeder::class);
         $this->call(CommunitiesTableSeeder::class);
         $this->call(CommunitiesUsersStatusesTableSeeder::class);
         $this->call(CommunityUserTableSeeder::class);
