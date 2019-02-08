@@ -32,8 +32,8 @@ class Kernel extends ConsoleKernel
         $schedule
             ->call('App\Http\Controllers\TaskController@auto_provisional_user_remove')
             // ->withoutOverlapping()
-            ->everyMinute();
-            // ->dailyAt('3:00');
+            // ->everyMinute();
+            ->daily();
     }
 
     /**
