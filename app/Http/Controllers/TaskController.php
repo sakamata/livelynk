@@ -29,6 +29,7 @@ class TaskController extends Controller
         foreach ($res as $key) {
             DB::table('users')->where('id', $key->users_id)->delete();
             DB::table('community_user')->where('id', $key->community_user_id)->delete();
+            DB::table('communities_users_statuses')->where('id', $key->community_user_id)->delete();
             DB::table('mac_addresses')->where('id', $key->mac_id)->delete();
         }
     }
