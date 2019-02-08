@@ -2,12 +2,22 @@
 
 namespace Tests\Feature;
 
+
+use App\Tumolink;
+use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TumolinkTest extends TestCase
 {
+    use RefreshDatabase;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->artisan('db:seed', ['--class' => 'TumolinkTableSeeder']);
+    }
 
     // 行くツモリpostの値を検証する
     // tumolink_に非ログインでPOSTすると302が返る
@@ -30,54 +40,112 @@ class TumolinkTest extends TestCase
         $this->assertThat($response->content(), $this->isJson());
     }
 
+    // public function 現在のツモリスト取得のGETでstatus_OKが返る()
+    // {
+    //     $response = $this->get('tumolink/tumolist');
+    //     $response->assertJsonFragment(['status'=> 'OK']);
+    // }
+
     /**
      * @test
      */
-    public function 現在のツモリスト取得のGETでstatus_OKが返る()
+    public function 現在のツモリスト取得のGETで返るJSONの形式が正しいか()
     {
         $response = $this->get('tumolink/tumolist');
-        $response->assertJsonFragment(['status'=> 'OK']);
+        $tumolists = $response->json();
+        $tumolist = $tumolists[0];
+        $this->assertSame([
+            'id',
+            'community_user_id',
+            'maybe_arraival',
+            'maybe_departure',
+            'google_home_push',
+            'created_at',
+            'updated_at',
+        ], array_keys($tumolist));
     }
 
     /**
      * @test
      */
-    public function 現在のツモリスト取得のGETでツモリスト1名が返る()
+    public function 現在のツモリスト取得のGETでJSONが返る件数はSeederで作られた12件となる()
     {
         $response = $this->get('tumolink/tumolist');
-        $params = [
-            'status' => 'OK',
-            [
-                'community_user_id' => 1,
-                'name' => 'ツモリ太郎',
-                'tumori' => 'arraival',
-                'time' => '12:34',
-            ]
-        ];
-        $response->assertJsonFragment($params);
+        $response->assertJsonCount(12);
     }
-    
+
+
+    // 未着手 現在のツモリスト取得のGETでツモリスト1名が返る
     /**
      * @test
      */
-    public function POSTすると200が返る()
+    // public function 現在のツモリスト取得のGETでツモリスト1名が返る()
+    // {
+    //     factory(Tumolink::class)->create([
+    //         'community_user_id' => 10,
+    //     ]);
+    //     $response = $this->get('tumolink/tumolist');
+    //     $params = [
+    //         'status' => 'OK',
+    //         [
+    //             'community_user_id' => 10,
+    //         ]
+    //     ];
+    //     $response->assertJsonFragment($params);
+    // }
+
+
+    /**
+     * @test
+     */
+    public function ツモリ_に値をJSON_POSTするとステータス200が返る()
     {
-        // (2) 実行部分を記述
-        $response = $this->post('tumolink');
-        // (1) 先に検証部分を記述する
+        $now = Carbon::setTestNow();
+        $params = [
+            'community_user_id' => 10,
+            'maybe_arraival' => $now,
+            'maybe_departure' => $now,
+            'google_home_push' => false
+        ];
+        $response = $this->postJson('tumolink', $params);
         $response->assertStatus(200);
     }
 
     /**
      * @test
      */
-    public function POSTするとIDがJSONで返る()
+    public function ツモリ_に値をJSON_POSTするとtumolink_tableに値が追加される()
     {
-        $response = $this->post('tumolink');
-        $response->assertJsonFragment(['id' => 1]);
+        $now = Carbon::setTestNow();
+        $params = [
+            'community_user_id' => 10,
+            'maybe_arraival' => $now,
+            'maybe_departure' => $now,
+            'google_home_push' => false
+        ];
+        $this->postJson('tumolink', $params);
+        $this->assertDatabaseHas('tumolink', $params);
     }
 
+    /**
+     * @test
+     */
+    public function ツモリ_にcommunity_user_id無しでJSON_POPSTすると422バリデーションエラーが返される()
+    {
+        $params = [];
+        $response = $this->postJson('tumolink', $params);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
 
+    /**
+     * @test
+     */
+    public function ツモリ_にcommunity_user_idのキーのみでJSON_POPSTすると422バリデーションエラーが返される()
+    {
+        $params = ['community_user_id' => ''];
+        $response = $this->postJson('tumolink', $params);
+        $response->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
 
         // post時間は指定した時間となっている
         // 0時間0分で行くPOSTすると時刻と異なるメッセージが表示される『いますぐ来るツモリ』

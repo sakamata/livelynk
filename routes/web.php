@@ -46,23 +46,9 @@ Route::view('/privacy', 'site.privacy');
 // /index?path=hoge
 Route::get('/index/{path?}', 'IndexController@index')->name('index');
 
-
 // ツモリンク
-Route::get('/tumolink/tumolist', function () {
-    $params = [
-        'status' => 'OK',
-        [
-            'community_user_id' => 1,
-            'name' => 'ツモリ太郎',
-            'tumori' => 'arraival',
-            'time' => '12:34',
-        ]
-    ];
-    return response()->json($params);
-});
-Route::post('/tumolink', function () {
-    return response()->json(['id' => 1]);
-});
+Route::get('/tumolink/tumolist', 'TumolinkController@index');
+Route::post('/tumolink', 'TumolinkController@post');
 
 // 管理画面 認証済みuserのみ表示
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
