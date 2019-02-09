@@ -47,8 +47,8 @@ Route::view('/privacy', 'site.privacy');
 Route::get('/index/{path?}', 'IndexController@index')->name('index');
 
 // ツモリンク
-Route::get('/tumolink/tumolist', 'TumolinkController@index');
-Route::post('/tumolink', 'TumolinkController@post');
+Route::get('/tumolink/index/{community_id?}', 'TumolinkController@index');
+Route::post('/tumolink/post', 'TumolinkController@post')->middleware('auth');
 
 // 管理画面 認証済みuserのみ表示
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {

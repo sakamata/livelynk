@@ -1,10 +1,10 @@
 <?php
 
-use App\User;
+use App\UserTable;
 use Carbon\Carbon;
 use Faker\Generator as Faker;
 
-$factory->define(User::class, function (Faker $faker) {
+$factory->define(UserTable::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
         'name_reading' => $faker->name,

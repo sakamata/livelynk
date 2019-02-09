@@ -2,21 +2,37 @@
 
 namespace Tests\Feature;
 
-
+use \Artisan;
 use App\Tumolink;
+use App\AuthUser;
 use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 
 class TumolinkTest extends TestCase
 {
+    protected static $db_inited = false;
     use RefreshDatabase;
+
+    protected static function initDB()
+    {
+        // $this->artisan('migrate:refresh', ['--seed' => '']);
+        Artisan::call('migrate:refresh');
+        Artisan::call('db:seed');
+    } 
 
     public function setUp()
     {
         parent::setUp();
-        $this->artisan('db:seed', ['--class' => 'TumolinkTableSeeder']);
+        // $this->artisan('db:seed', ['--class' => 'TumolinkTableSeeder']);
+        // $this->artisan('db:seed', ['--class' => 'CommunityUserTableSeeder']);
+
+        if (!static::$db_inited) {
+            static::$db_inited = true;
+            static::initDB();
+        }
     }
 
     // 行くツモリpostの値を検証する
@@ -27,7 +43,7 @@ class TumolinkTest extends TestCase
      */
     public function 現在のツモリスト取得のGETで200が返る()
     {
-        $response = $this->get('tumolink/tumolist');
+        $response = $this->get('tumolink/index/?community_id=1');
         $response->assertStatus(200);
     }
 
@@ -36,22 +52,16 @@ class TumolinkTest extends TestCase
      */
     public function 現在のツモリスト取得のGETでJSONが返る()
     {
-        $response = $this->get('tumolink/tumolist');
+        $response = $this->get('tumolink/index/?community_id=1');
         $this->assertThat($response->content(), $this->isJson());
     }
-
-    // public function 現在のツモリスト取得のGETでstatus_OKが返る()
-    // {
-    //     $response = $this->get('tumolink/tumolist');
-    //     $response->assertJsonFragment(['status'=> 'OK']);
-    // }
 
     /**
      * @test
      */
     public function 現在のツモリスト取得のGETで返るJSONの形式が正しいか()
     {
-        $response = $this->get('tumolink/tumolist');
+        $response = $this->get('tumolink/index/?community_id=1');
         $tumolists = $response->json();
         $tumolist = $tumolists[0];
         $this->assertSame([
@@ -62,78 +72,223 @@ class TumolinkTest extends TestCase
             'google_home_push',
             'created_at',
             'updated_at',
+            'name',
+            'name_reading',
+            'provisional',
+            'hide',
         ], array_keys($tumolist));
     }
 
     /**
      * @test
      */
-    public function 現在のツモリスト取得のGETでJSONが返る件数はSeederで作られた12件となる()
+    public function 現在のツモリスト取得のGETでJSONが返る件数はSeederで作られたcoomu1の4件となる()
     {
-        $response = $this->get('tumolink/tumolist');
-        $response->assertJsonCount(12);
+        $response = $this->get('tumolink/index/?community_id=1');
+        $response->assertJsonCount(4);
     }
 
-
-    // 未着手 現在のツモリスト取得のGETでツモリスト1名が返る
     /**
      * @test
      */
-    // public function 現在のツモリスト取得のGETでツモリスト1名が返る()
-    // {
-    //     factory(Tumolink::class)->create([
-    //         'community_user_id' => 10,
-    //     ]);
-    //     $response = $this->get('tumolink/tumolist');
-    //     $params = [
-    //         'status' => 'OK',
-    //         [
-    //             'community_user_id' => 10,
-    //         ]
-    //     ];
-    //     $response->assertJsonFragment($params);
-    // }
-
-
-    /**
-     * @test
-     */
-    public function ツモリ_に値をJSON_POSTするとステータス200が返る()
+    public function 非ログインでツモリ_に値をJSON_POSTするとステータス401が返る()
     {
-        $now = Carbon::setTestNow();
+        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
         $params = [
-            'community_user_id' => 10,
-            'maybe_arraival' => $now,
-            'maybe_departure' => $now,
+            'community_user_id' => 4,
+            'maybe_arraival' => $time,
+            'maybe_departure' => $time,
             'google_home_push' => false
         ];
-        $response = $this->postJson('tumolink', $params);
+        $response = $this->postJson('tumolink/post', $params);
+        // 401 認証が必要
+        $response->assertStatus(401);
+    }
+
+    /**
+     * @test
+     */
+    public function ログイン状態でツモリ_に値をJSON_POSTするとステータス200が返る()
+    {
+        $user = \App\AuthUser::where('id', 1)->first();
+        $this->be($user);
+        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
+        $params = [
+            'community_user_id' => 4,
+            'maybe_arraival' => $time,
+            'maybe_departure' => $time,
+            'google_home_push' => false
+        ];
+        $response = $this->postJson('tumolink/post', $params);
         $response->assertStatus(200);
     }
 
     /**
      * @test
      */
-    public function ツモリ_に値をJSON_POSTするとtumolink_tableに値が追加される()
+    public function 非ログインでツモリ_に値をJSON_POSTしても値は追加されない()
     {
-        $now = Carbon::setTestNow();
+        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
         $params = [
-            'community_user_id' => 10,
-            'maybe_arraival' => $now,
-            'maybe_departure' => $now,
+            'community_user_id' => 4,
+            'maybe_arraival' => $time,
+            'maybe_departure' => $time,
             'google_home_push' => false
         ];
-        $this->postJson('tumolink', $params);
-        $this->assertDatabaseHas('tumolink', $params);
+        $this->postJson('tumolink/post', $params);
+        $this->assertDatabaseMissing('tumolink', $params);
     }
 
     /**
      * @test
      */
-    public function ツモリ_にcommunity_user_id無しでJSON_POPSTすると422バリデーションエラーが返される()
+    public function ログインでツモリ_に値をJSON_POSTするとtumolink_tableに値が追加される()
     {
+        $user = \App\AuthUser::where('id', 1)->first();
+        $this->be($user);
+        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
+        $params = [
+            'community_user_id' => 4,
+            'maybe_arraival' => $time,
+            'maybe_departure' => $time,
+            'google_home_push' => false
+        ];
+        $this->postJson('tumolink/post', $params);
+        $this->assertDatabaseHas('tumolink', $params);
+    }
+
+    public function dataProvider_for_community_user_id_validate(): array
+    {
+        // [ $value, $error_code ],
+        return [
+            '正常_存在するid' => [4, 200],
+            '異常_存在しないid' => [50, 422],
+            '異常_null' => ['', 422],
+            '異常_intではない' => [0, 422],
+            '異常_intではない' => ['AAA', 422],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider dataProvider_for_community_user_id_validate
+     */
+    public function community_user_id_のJSON_POST_バリデートtest($value, $error_code)
+    {
+        $user = \App\AuthUser::where('id', 1)->first();
+        $this->be($user);
+        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
+        $params = [
+            'community_user_id' => $value,
+            'maybe_arraival' => $time,
+            'maybe_departure' => $time,
+            'google_home_push' => false
+        ];
+        $response = $this->postJson('tumolink/post', $params);
+        $response->assertStatus($error_code);
+    }
+
+    public function dataProvider_for_maybe_datetime_validate() : array
+    {
+        // [ $value, $error_code ],
+        Carbon::setTestNow();
+        return [
+            '異常_1時間前'    => [Carbon::now()->subHour(1)->format('Y-m-d H:i:s'), 422],
+            '異常_1秒前'    => [Carbon::now()->subSecond(1)->format('Y-m-d H:i:s'), 422],
+            // test時間のタイムラグで60秒程以降で現在と認識する
+            '異常_現在時刻' => [Carbon::now()->format('Y-m-d H:i:s'), 422],
+            '正常_1分後'    => [Carbon::now()->addSecond(60)->format('Y-m-d H:i:s'), 200],
+            '正常_1時間後'  => [Carbon::now()->addHour(1)->format('Y-m-d H:i:s'), 200],
+            '正常_1日後'  => [Carbon::now()->addDay(1)->format('Y-m-d H:i:s'), 200],
+            '正常_1月後'  => [Carbon::now()->addMonth(1)->format('Y-m-d H:i:s'), 200],
+            '異常_int'      => [12345, 422],
+            '異常_null'     => ['', 422],
+            '異常_文字列'   => ['AAA', 422],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider dataProvider_for_maybe_datetime_validate
+     */
+    public function maybe_arraival_のJSON_POST_バリデートtest($value, $error_code)
+    {
+        $user = \App\AuthUser::where('id', 1)->first();
+        $this->be($user);
+        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
+        $params = [
+            'community_user_id' => 4,
+            'maybe_arraival' => $value,
+            'maybe_departure' => $time,
+            'google_home_push' => false
+        ];
+        $response = $this->postJson('tumolink/post', $params);
+        $response->assertStatus($error_code);
+    }
+
+    /**
+     * @test
+     * @dataProvider dataProvider_for_maybe_datetime_validate
+     */
+    public function maybe_departure_のJSON_POST_バリデートtest($value, $error_code)
+    {
+        $user = \App\AuthUser::where('id', 1)->first();
+        $this->be($user);
+        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
+        $params = [
+            'community_user_id' => 4,
+            'maybe_arraival' => $time,
+            'maybe_departure' => $value,
+            'google_home_push' => false
+        ];
+        $response = $this->postJson('tumolink/post', $params);
+        $response->assertStatus($error_code);
+    }
+
+    public function dataProvider_for_google_home_push_validate() : array
+    {
+        // [ $value, $error_code ],
+        return [
+            '正常_true' => [true, 200],
+            '正常_false' => [false, 200],
+            '正常_0' => [0, 200],
+            '正常_1' => [1, 200],
+            '正常_"0"' => ["0", 200],
+            '正常_"1"' => ["1", 200],
+            '異常_null' => [null, 422],
+            '異常_int' => [12345, 422],
+            '異常_文字列' => ['AAA', 422],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider dataProvider_for_google_home_push_validate
+     */
+    public function google_home_push_boolのJSON_POST_バリデートtest($value, $error_code)
+    {
+        $user = \App\AuthUser::where('id', 1)->first();
+        $this->be($user);
+        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
+        $params = [
+            'community_user_id' => 4,
+            'maybe_arraival' => $time,
+            'maybe_departure' => $time,
+            'google_home_push' => $value
+        ];
+        $response = $this->postJson('tumolink/post', $params);
+        $response->assertStatus($error_code);
+    }
+
+    /**
+     * @test
+     */
+    public function ツモリ_にパラメーター無しでJSON_POPSTすると422バリデーションエラーが返される()
+    {
+        $user = \App\AuthUser::where('id', 1)->first();
+        $this->be($user);
         $params = [];
-        $response = $this->postJson('tumolink', $params);
+        $response = $this->postJson('tumolink/post', $params);
         $response->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
@@ -142,8 +297,10 @@ class TumolinkTest extends TestCase
      */
     public function ツモリ_にcommunity_user_idのキーのみでJSON_POPSTすると422バリデーションエラーが返される()
     {
+        $user = \App\AuthUser::where('id', 1)->first();
+        $this->be($user);
         $params = ['community_user_id' => ''];
-        $response = $this->postJson('tumolink', $params);
+        $response = $this->postJson('tumolink/post', $params);
         $response->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
@@ -187,7 +344,14 @@ class TumolinkTest extends TestCase
         // GoogleHome通知ボタン表示中OFFでツモリボタンを押すと通知フラグがOFFでPOSTされる
 
 
-
-
+    /**
+     * @test
+     */
+    public function DB_を空にするdummy_test()
+    {
+        // $this->artisan('migrate:refresh', ['--seed' => '']);
+        Artisan::call('migrate:refresh');
+        $this->assertTrue(true);
+    } 
 
 }

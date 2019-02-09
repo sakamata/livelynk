@@ -2,19 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Tumolink;
+use DB;
+use App\Http\Requests\TumolinkPost;
+use App\Service\TumolinkService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TumolinkController extends Controller
 {
-    public function index()
+    private $tumolink_service;
+
+    public function __construct(TumolinkService $tumolink_service)
     {
-        $response = response()->json(\App\Tumolink::query()->get());
-        return $response;
+        $this->tumolink_service = $tumolink_service;
     }
 
-    public function post(Request $request)
+    public function index(Request $request)
+    {
+        $request->validate([
+            'community_id' => 'required|integer|exists:communities,id',
+        ]);
+        $res = $this->tumolink_service->tumolistGet($request->community_id);
+        return response()->json($res);
+    }
+
+    public function post(TumolinkPost $request)
     {
         if (!$request->json('community_user_id')) {
             return response()->json([], \Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
