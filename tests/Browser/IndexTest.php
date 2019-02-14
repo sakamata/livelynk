@@ -10,6 +10,7 @@ use App\MacAddress;
 use App\User;
 use App\Router;
 use App\Role;
+use App\Tumolink;
 use Carbon\Carbon;
 
 use Tests\DuskTestCase;
@@ -20,53 +21,32 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class IndexTest extends DuskTestCase
 {
-    use RefreshDatabase;
-    const COMMUNITY_ID = 1;
-    const USER_ID = 1;
-    const NAME = 'hoge';
-    const SERVICE_NAME = 'テストコミュニティ';
-    const SERVICE_NAME_READING = 'hoge';
-    const URL_PATH = 'hoge';
-    const HASH_KEY = 'hoge';
+    protected static $db_inited = false;
+    // 使うとDBtest前にrollbackがかかってしまう
+    // use RefreshDatabase;
 
-    protected function setUp()
+    protected static function initDB()
+    {
+        Artisan::call('migrate:refresh');
+        // Artisan::call('db:seed');
+        Artisan::call('db:seed', ['--class' => 'CommunitiesTableSeeder']);
+        Artisan::call('db:seed', ['--class' => 'CommunitiesUsersStatusesTableSeeder']);
+        Artisan::call('db:seed', ['--class' => 'CommunityUserTableSeeder']);
+        Artisan::call('db:seed', ['--class' => 'MacAddressesTableSeeder']);
+        Artisan::call('db:seed', ['--class' => 'RolesTableSeeder']);
+        Artisan::call('db:seed', ['--class' => 'RoutersTableSeeder']);
+        Artisan::call('db:seed', ['--class' => 'UsersTableSeeder']);
+        // Tumolink Tableは後で検証
+        // Artisan::call('db:seed', ['--class' => 'TumolinkTableSeeder']);
+    } 
+
+    public function setUp()
     {
         parent::setUp();
-        Artisan::call('migrate:refresh');
-        Artisan::call('db:seed');
-
-        // Carbon::setTestNow();
-/*
-        factory(Community::class)->create([
-            'url_path' => self::URL_PATH,
-            'service_name' => 'テストコミュニティ',
-        ]);
-        $user = factory(User::class)->create([
-            'name' => 'hoge',
-        ]);
-        $this->actingAs($user)
-            ->withSession([
-                'community_id' => 1,
-                'community_user_id' => 1,
-            ]);
-
-        factory(MacAddress::class)->create();
-        factory(Router::class, 1)->create();
-        factory(CommunityUser::class)->create();
-        factory(CommunityUserStatus::class)->create();
-        factory(Role::class)->create([
-            'role' => 'normal',
-        ]);
-        factory(Role::class)->create([
-            'role' => 'normalAdmin',
-        ]);
-        factory(Role::class)->create([
-            'role' => 'readerAdmin',
-        ]);
-        factory(Role::class)->create([
-            'role' => 'superAdmin',
-        ]);
-*/
+        if (!static::$db_inited) {
+            static::$db_inited = true;
+            static::initDB();
+        }
     }
 
     /**
@@ -83,12 +63,13 @@ class IndexTest extends DuskTestCase
     /**
      * @test
      */
-    public function 未ログインで恵比寿_滞在者一覧画面閲覧()
+    public function 未ログインで恵比寿_滞在者一覧画面閲覧_ツモリスト無し()
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/?path=hoge')
                     ->assertSee('ギークオフィス恵比寿')
                     ->assertSee('今日のイベント')
+                    ->assertDontSee('ツ')
                     ->assertSeeLink('ログイン');
         });
     }
@@ -96,12 +77,55 @@ class IndexTest extends DuskTestCase
     /**
      * @test
      */
-    public function 未ログインで一般コミュニティ_滞在者一覧画面閲覧()
+    public function 未ログインで一般コミュニティ_滞在者一覧画面閲覧_ツモリスト無し()
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/?path=hoge2')
                 ->assertSee('長い名前の人コミュニティ')
                 ->assertDontSee('今日のイベント')
+                ->assertDontSee('ツ')
+                ->assertSeeLink('ログイン');
+        });
+    }
+
+    /**
+     * @test
+     */
+    public function 未ログインで恵比寿_滞在者一覧画面閲覧_ツモリスト有り()
+    {
+        factory(Tumolink::class)->create([
+            'community_user_id' => 4,
+        ]);
+        factory(Tumolink::class)->create([
+            'community_user_id' => 5,
+        ]);
+        factory(Tumolink::class)->create([
+            'community_user_id' => 30,
+        ]);
+        $this->browse(function (Browser $browser) {
+            // $browser->pause(5000);
+            $browser->visit('/?path=hoge')
+            ->assertSee('ギークオフィス恵比寿')
+            ->assertSee('今日のイベント')
+            ->assertSee('ツ')
+            ->assertSeeLink('ログイン');
+        });
+        $this->assertDatabaseHas('tumolink', ['community_user_id' => 30]);
+    }
+
+    /**
+     * @test
+     */
+    public function 未ログインで一般コミュニティ_滞在者一覧画面閲覧_ツモリスト有り()
+    {
+        factory(Tumolink::class)->create([
+            'community_user_id' => 13,
+        ]);
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/?path=hoge2')
+                ->assertSee('長い名前の人コミュニティ')
+                ->assertDontSee('今日のイベント')
+                ->assertSee('ツ')
                 ->assertSeeLink('ログイン');
         });
     }
@@ -188,5 +212,14 @@ class IndexTest extends DuskTestCase
                 ->assertSee('ギークオフィス恵比寿')
                 ->assertPathIs('/');
         });
+    }
+
+    /**
+     * @test
+     */
+    public function DB_を空にするdummy_test()
+    {
+        Artisan::call('migrate:refresh');
+        $this->assertTrue(true);
     }
 }

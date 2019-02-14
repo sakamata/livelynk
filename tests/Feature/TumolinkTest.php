@@ -15,6 +15,8 @@ class TumolinkTest extends TestCase
 {
     protected static $db_inited = false;
     use RefreshDatabase;
+    const INDEX_PATH = 'tumolink/index/?community_id=1';
+    const POST_PATH = 'tumolink/post';
 
     protected static function initDB()
     {
@@ -35,15 +37,12 @@ class TumolinkTest extends TestCase
         }
     }
 
-    // 行くツモリpostの値を検証する
-    // tumolink_に非ログインでPOSTすると302が返る
-
     /**
      * @test
      */
     public function 現在のツモリスト取得のGETで200が返る()
     {
-        $response = $this->get('tumolink/index/?community_id=1');
+        $response = $this->get(self::INDEX_PATH);
         $response->assertStatus(200);
     }
 
@@ -52,7 +51,7 @@ class TumolinkTest extends TestCase
      */
     public function 現在のツモリスト取得のGETでJSONが返る()
     {
-        $response = $this->get('tumolink/index/?community_id=1');
+        $response = $this->get(self::INDEX_PATH);
         $this->assertThat($response->content(), $this->isJson());
     }
 
@@ -61,7 +60,7 @@ class TumolinkTest extends TestCase
      */
     public function 現在のツモリスト取得のGETで返るJSONの形式が正しいか()
     {
-        $response = $this->get('tumolink/index/?community_id=1');
+        $response = $this->get(self::INDEX_PATH);
         $tumolists = $response->json();
         $tumolist = $tumolists[0];
         $this->assertSame([
@@ -84,7 +83,7 @@ class TumolinkTest extends TestCase
      */
     public function 現在のツモリスト取得のGETでJSONが返る件数はSeederで作られたcoomu1の4件となる()
     {
-        $response = $this->get('tumolink/index/?community_id=1');
+        $response = $this->get(self::INDEX_PATH);
         $response->assertJsonCount(4);
     }
 
@@ -100,7 +99,7 @@ class TumolinkTest extends TestCase
             'maybe_departure' => $time,
             'google_home_push' => false
         ];
-        $response = $this->postJson('tumolink/post', $params);
+        $response = $this->postJson(self::POST_PATH, $params);
         // 401 認証が必要
         $response->assertStatus(401);
     }
@@ -119,7 +118,7 @@ class TumolinkTest extends TestCase
             'maybe_departure' => $time,
             'google_home_push' => false
         ];
-        $response = $this->postJson('tumolink/post', $params);
+        $response = $this->postJson(self::POST_PATH, $params);
         $response->assertStatus(200);
     }
 
@@ -135,7 +134,7 @@ class TumolinkTest extends TestCase
             'maybe_departure' => $time,
             'google_home_push' => false
         ];
-        $this->postJson('tumolink/post', $params);
+        $this->postJson(self::POST_PATH, $params);
         $this->assertDatabaseMissing('tumolink', $params);
     }
 
@@ -153,7 +152,7 @@ class TumolinkTest extends TestCase
             'maybe_departure' => $time,
             'google_home_push' => false
         ];
-        $this->postJson('tumolink/post', $params);
+        $this->postJson(self::POST_PATH, $params);
         $this->assertDatabaseHas('tumolink', $params);
     }
 
@@ -184,7 +183,7 @@ class TumolinkTest extends TestCase
             'maybe_departure' => $time,
             'google_home_push' => false
         ];
-        $response = $this->postJson('tumolink/post', $params);
+        $response = $this->postJson(self::POST_PATH, $params);
         $response->assertStatus($error_code);
     }
 
@@ -222,7 +221,7 @@ class TumolinkTest extends TestCase
             'maybe_departure' => $time,
             'google_home_push' => false
         ];
-        $response = $this->postJson('tumolink/post', $params);
+        $response = $this->postJson(self::POST_PATH, $params);
         $response->assertStatus($error_code);
     }
 
@@ -241,7 +240,7 @@ class TumolinkTest extends TestCase
             'maybe_departure' => $value,
             'google_home_push' => false
         ];
-        $response = $this->postJson('tumolink/post', $params);
+        $response = $this->postJson(self::POST_PATH, $params);
         $response->assertStatus($error_code);
     }
 
@@ -276,7 +275,7 @@ class TumolinkTest extends TestCase
             'maybe_departure' => $time,
             'google_home_push' => $value
         ];
-        $response = $this->postJson('tumolink/post', $params);
+        $response = $this->postJson(self::POST_PATH, $params);
         $response->assertStatus($error_code);
     }
 
@@ -288,7 +287,7 @@ class TumolinkTest extends TestCase
         $user = \App\AuthUser::where('id', 1)->first();
         $this->be($user);
         $params = [];
-        $response = $this->postJson('tumolink/post', $params);
+        $response = $this->postJson(self::POST_PATH, $params);
         $response->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
@@ -300,7 +299,7 @@ class TumolinkTest extends TestCase
         $user = \App\AuthUser::where('id', 1)->first();
         $this->be($user);
         $params = ['community_user_id' => ''];
-        $response = $this->postJson('tumolink/post', $params);
+        $response = $this->postJson(self::POST_PATH, $params);
         $response->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 

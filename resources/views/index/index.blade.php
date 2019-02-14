@@ -10,6 +10,24 @@
 @component('components.GOE_calendar', ['community' => $community])
 @endcomponent
 <div class="comp-box-container clearfix">
+
+@foreach ($tumolist as $item)
+  <div class="comp-box clearfix tumolist">
+    <div class="name">
+      <div class="icon">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <div class="text">{{$item->name}}</div>
+    </div>
+    <div class="arrival">
+      <div class="head">予定</div>
+      <div class="time">{{date('n/j G:i', strtotime($item->maybe_arraival))}}</div>
+      <div class="accuracy tumori_icon">ツ</div>
+    </div>
+  </div>
+@endforeach
+
+
 @php $i = 0; @endphp
 @foreach ($items as $item)
   <div class="comp-box clearfix">

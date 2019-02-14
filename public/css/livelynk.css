@@ -386,6 +386,10 @@ textarea.comp-ui {
   background-color: #E8F5E9;
   border-color: #C8E6C9;
 }
+.comp-box.tumolist {
+  background-color: #FBE9E7;
+  border-color: #FFCCBC;
+}
 .comp-box .name {
   display: table;
   width: 80%;
@@ -429,6 +433,11 @@ textarea.comp-ui {
   text-align: center;
   line-height: 1.9rem;
   font-size: .75rem;
+}
+.comp-box .arrival .tumori_icon{
+  border: solid 2px #F4511E;
+  background-color: #F4511E;
+  color: #FFFFFF;
 }
 .comp-box .flag {
   position: absolute;

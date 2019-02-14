@@ -5,8 +5,8 @@ use Carbon\Carbon;
 use Faker\Generator as Faker;
 
 $factory->define(Tumolink::class, function (Faker $faker) {
-    // 'community_user_id' => 4,
     return [
+        'community_user_id' => 1,
         'maybe_arraival' => Carbon::now()->addHour(1),
         'maybe_departure' => Carbon::now()->addHour(1),
         'google_home_push' => 1,

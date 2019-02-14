@@ -9,15 +9,19 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Service\TumolinkService;
 
 class IndexController extends Controller
 {
     private $call_community_user;
+    private $call_tumolink;
 
     public function __construct(
-        CommunityUserService $call_community_user
+        CommunityUserService $call_community_user,
+        TumolinkService $call_tumolink
     ) {
         $this->call_community_user = $call_community_user;
+        $this->call_tumolink = $call_tumolink;
     }
 
     // 一般ユーザーのメイン画面、滞在者の一覧を表示する
@@ -110,6 +114,9 @@ class IndexController extends Controller
             ->orderBy('last_access', 'desc')
         ->get();
 
+        // tumolinkユーザー一覧の取得
+        $tumolist = $this->call_tumolink->tumolistGet($community->id);
+
         if (Auth::check()) {
             $reader_id = $this->getReaderID();
         } else { $reader_id = ""; }
@@ -119,6 +126,7 @@ class IndexController extends Controller
             'items' => $unregistered,
             'items1' => $stays,
             'items2' => $not_stays,
+            'tumolist' => $tumolist,
             'rate' => $unregistered_rate_array,
             'rate1' => $stays_rate_array,
             'reader_id' => $reader_id,
