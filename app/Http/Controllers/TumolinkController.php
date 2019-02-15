@@ -32,9 +32,19 @@ class TumolinkController extends Controller
             return response()->json([], \Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         $tumolist = new \App\Tumolink();
+        $hour = intval($request->json('hour'));
+        $minute = intval($request->json('minute'));
+        $now = Carbon::now();
+        $time = $now->addHour($hour)->addSecond($minute * 60);
+        $direction = $request->json('direction');
+        if ($direction == 'arriving') {
+            $tumolist->maybe_arraival = $time;
+        } elseif ($direction == 'leaving') {
+            $tumolist->maybe_departure = $time;
+        } else {
+            // 例外処理
+        }
         $tumolist->community_user_id = $request->json('community_user_id');
-        $tumolist->maybe_arraival = $request->json('maybe_arraival');
-        $tumolist->maybe_departure = $request->json('maybe_departure');
         $tumolist->google_home_push = $request->json('google_home_push');
         $res = $tumolist->save();
     }

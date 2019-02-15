@@ -20,7 +20,6 @@ class TumolinkTest extends TestCase
 
     protected static function initDB()
     {
-        // $this->artisan('migrate:refresh', ['--seed' => '']);
         Artisan::call('migrate:refresh');
         Artisan::call('db:seed');
     } 
@@ -36,6 +35,8 @@ class TumolinkTest extends TestCase
             static::initDB();
         }
     }
+
+    // ----- INDEX --------------------------------------------------------
 
     /**
      * @test
@@ -87,16 +88,18 @@ class TumolinkTest extends TestCase
         $response->assertJsonCount(4);
     }
 
+    // ----- POST --------------------------------------------------------
+
     /**
      * @test
      */
     public function 非ログインでツモリ_に値をJSON_POSTするとステータス401が返る()
     {
-        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
         $params = [
             'community_user_id' => 4,
-            'maybe_arraival' => $time,
-            'maybe_departure' => $time,
+            'hour' => 1,
+            'minute' => 20,
+            'direction' => 'arriving',
             'google_home_push' => false
         ];
         $response = $this->postJson(self::POST_PATH, $params);
@@ -111,11 +114,11 @@ class TumolinkTest extends TestCase
     {
         $user = \App\AuthUser::where('id', 1)->first();
         $this->be($user);
-        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
         $params = [
             'community_user_id' => 4,
-            'maybe_arraival' => $time,
-            'maybe_departure' => $time,
+            'hour' => 1,
+            'minute' => 20,
+            'direction' => 'arriving',
             'google_home_push' => false
         ];
         $response = $this->postJson(self::POST_PATH, $params);
@@ -127,38 +130,82 @@ class TumolinkTest extends TestCase
      */
     public function 非ログインでツモリ_に値をJSON_POSTしても値は追加されない()
     {
-        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
+        $hour = 1;
+        $minute = 20;
+        $time = Carbon::now()->addHour($hour)->addSecond($minute * 60)->format('Y-m-d H:i:s');
         $params = [
             'community_user_id' => 4,
+            'hour' => $hour,
+            'minute' => $minute,
+            'direction' => 'arriving',
+            'google_home_push' => false
+        ];
+        $check_params = [
+            'community_user_id' => 4,
             'maybe_arraival' => $time,
-            'maybe_departure' => $time,
             'google_home_push' => false
         ];
         $this->postJson(self::POST_PATH, $params);
-        $this->assertDatabaseMissing('tumolink', $params);
+        $this->assertDatabaseMissing('tumolink', $check_params);
     }
 
     /**
      * @test
      */
-    public function ログインでツモリ_に値をJSON_POSTするとtumolink_tableに値が追加される()
+    public function ログインでツモリ_に値をJSON_POSTするとtumolink_tableに値が追加される_arraival()
     {
         $user = \App\AuthUser::where('id', 1)->first();
         $this->be($user);
-        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
+        $hour = 1;
+        $minute = 20;
+        $time = Carbon::now()->addHour($hour)->addSecond($minute * 60)->format('Y-m-d H:i:s');
         $params = [
             'community_user_id' => 4,
+            'hour' => $hour,
+            'minute' => $minute,
+            'direction' => 'arriving',
+            'google_home_push' => false
+        ];
+        $check_params = [
+            'community_user_id' => 4,
             'maybe_arraival' => $time,
-            'maybe_departure' => $time,
+            'maybe_departure' => null,
             'google_home_push' => false
         ];
         $this->postJson(self::POST_PATH, $params);
-        $this->assertDatabaseHas('tumolink', $params);
+        $this->assertDatabaseHas('tumolink', $check_params);
+    }
+    /**
+     * @test
+     */
+    public function ログインでツモリ_に値をJSON_POSTするとtumolink_tableに値が追加される_departure()
+    {
+        $user = \App\AuthUser::where('id', 1)->first();
+        $this->be($user);
+        $hour = 1;
+        $minute = 20;
+        $time = Carbon::now()->addHour($hour)->addSecond($minute * 60)->format('Y-m-d H:i:s');
+        $params = [
+            'community_user_id' => 4,
+            'hour' => $hour,
+            'minute' => $minute,
+            'direction' => 'leaving',
+            'google_home_push' => true
+        ];
+        $check_params = [
+            'community_user_id' => 4,
+            'maybe_arraival' => null,
+            'maybe_departure' => $time,
+            'google_home_push' => true
+        ];
+        $this->postJson(self::POST_PATH, $params);
+        $this->assertDatabaseHas('tumolink', $check_params);
     }
 
     public function dataProvider_for_community_user_id_validate(): array
     {
         // [ $value, $error_code ],
+        // 'community_user_id' => 'required|integer|exists:community_user,id',
         return [
             '正常_存在するid' => [4, 200],
             '異常_存在しないid' => [50, 422],
@@ -176,31 +223,29 @@ class TumolinkTest extends TestCase
     {
         $user = \App\AuthUser::where('id', 1)->first();
         $this->be($user);
-        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
         $params = [
             'community_user_id' => $value,
-            'maybe_arraival' => $time,
-            'maybe_departure' => $time,
+            'hour' => 1,
+            'minute' => 20,
+            'direction' => 'arriving',
             'google_home_push' => false
         ];
         $response = $this->postJson(self::POST_PATH, $params);
         $response->assertStatus($error_code);
     }
 
-    public function dataProvider_for_maybe_datetime_validate() : array
+    public function dataProvider_for_hour_validate() : array
     {
         // [ $value, $error_code ],
-        Carbon::setTestNow();
+        // 'hour' =>'required|integer|between:0,23',
         return [
-            '異常_1時間前'    => [Carbon::now()->subHour(1)->format('Y-m-d H:i:s'), 422],
-            '異常_1秒前'    => [Carbon::now()->subSecond(1)->format('Y-m-d H:i:s'), 422],
-            // test時間のタイムラグで60秒程以降で現在と認識する
-            '異常_現在時刻' => [Carbon::now()->format('Y-m-d H:i:s'), 422],
-            '正常_1分後'    => [Carbon::now()->addSecond(60)->format('Y-m-d H:i:s'), 200],
-            '正常_1時間後'  => [Carbon::now()->addHour(1)->format('Y-m-d H:i:s'), 200],
-            '正常_1日後'  => [Carbon::now()->addDay(1)->format('Y-m-d H:i:s'), 200],
-            '正常_1月後'  => [Carbon::now()->addMonth(1)->format('Y-m-d H:i:s'), 200],
-            '異常_int'      => [12345, 422],
+            '異常_マイナス値'    => [-10, 422],
+            '正常_0'  => [0, 200],
+            '正常_1'  => [1, 200],
+            '正常_23'  => [23, 200],
+            '異常_24'  => [24, 422],
+            '異常_int'      => [99, 422],
+            '異常_小数値'   => [1.5, 422],
             '異常_null'     => ['', 422],
             '異常_文字列'   => ['AAA', 422],
         ];
@@ -208,36 +253,97 @@ class TumolinkTest extends TestCase
 
     /**
      * @test
-     * @dataProvider dataProvider_for_maybe_datetime_validate
+     * @dataProvider dataProvider_for_hour_validate
      */
-    public function maybe_arraival_のJSON_POST_バリデートtest($value, $error_code)
+    public function hour_のJSON_POST_バリデートtest($value, $error_code)
     {
         $user = \App\AuthUser::where('id', 1)->first();
         $this->be($user);
-        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
+        $hour = 1;
+        $minute = 20;
         $params = [
             'community_user_id' => 4,
-            'maybe_arraival' => $value,
-            'maybe_departure' => $time,
+            'hour' => $value,
+            'minute' => $minute,
+            'direction' => 'arriving',
             'google_home_push' => false
         ];
         $response = $this->postJson(self::POST_PATH, $params);
         $response->assertStatus($error_code);
     }
 
+    public function dataProvider_for_minute_validate() : array
+    {
+        // [ $value, $error_code ],
+        // 'minute' => 'required|integer|in:0,10,20,30,40,50',
+        return [
+            '正常_0' => [0, 200],
+            '正常_10' => [10, 200],
+            '正常_50' => [50, 200],
+            '異常_マイナス値' => [-10, 422],
+            '異常_1' => [1, 422],
+            '異常_小数値' => [1.5, 422],
+            '異常_15' => [15, 422],
+            '異常_51' => [51, 422],
+            '異常_60' => [60, 422],
+            '異常_int' => [99, 422],
+            '異常_null' => ['', 422],
+            '異常_文字列' => ['AAA', 422],
+        ];
+    }
+
     /**
      * @test
-     * @dataProvider dataProvider_for_maybe_datetime_validate
+     * @dataProvider dataProvider_for_minute_validate
      */
-    public function maybe_departure_のJSON_POST_バリデートtest($value, $error_code)
+    public function minute_のJSON_POST_バリデートtest($value, $error_code)
     {
         $user = \App\AuthUser::where('id', 1)->first();
         $this->be($user);
-        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
         $params = [
             'community_user_id' => 4,
-            'maybe_arraival' => $time,
-            'maybe_departure' => $value,
+            'hour' => 1,
+            'minute' => $value,
+            'direction' => 'arriving',
+            'google_home_push' => false
+        ];
+        $response = $this->postJson(self::POST_PATH, $params);
+        $response->assertStatus($error_code);
+    }
+
+    public function dataProvider_for_direction_validate() : array
+    {
+        // [ $value, $error_code ],
+        // 'direction' =>'required|in:arriving,leaving',
+        return [
+            '正常_arriving' => ['arriving', 200],
+            '正常_leaving' => ['leaving', 200],
+            '異常_leaving_' => ['leaving_', 422],
+            '異常_null_quote' => ["", 422],
+            '異常_null' => [null, 422],
+            '異常_int' =>  [12345, 422],
+            '異常_0' =>  [0, 422],
+            '異常_1' =>  [1, 422],
+            '異常_true' =>  [true, 422],
+            '異常_false' =>  [false, 422],
+            '異常_大文字' => ['ARRAIVING', 422],
+            '異常_タイポ' => ['alliving', 422],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider dataProvider_for_direction_validate
+     */
+    public function direction_のJSON_POST_バリデートtest($value, $error_code)
+    {
+        $user = \App\AuthUser::where('id', 1)->first();
+        $this->be($user);
+        $params = [
+            'community_user_id' => 4,
+            'hour' => 1,
+            'minute' => 20,
+            'direction' => $value,
             'google_home_push' => false
         ];
         $response = $this->postJson(self::POST_PATH, $params);
@@ -247,6 +353,7 @@ class TumolinkTest extends TestCase
     public function dataProvider_for_google_home_push_validate() : array
     {
         // [ $value, $error_code ],
+        // 'google_home_push' =>'required|boolean',
         return [
             '正常_true' => [true, 200],
             '正常_false' => [false, 200],
@@ -268,11 +375,11 @@ class TumolinkTest extends TestCase
     {
         $user = \App\AuthUser::where('id', 1)->first();
         $this->be($user);
-        $time = Carbon::now()->addHour(5)->format('Y-m-d H:i:s');
         $params = [
             'community_user_id' => 4,
-            'maybe_arraival' => $time,
-            'maybe_departure' => $time,
+            'hour' => 1,
+            'minute' => 20,
+            'direction' => 'arriving',
             'google_home_push' => $value
         ];
         $response = $this->postJson(self::POST_PATH, $params);

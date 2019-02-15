@@ -25,8 +25,9 @@ class TumolinkPost extends FormRequest
     {
         return [
             'community_user_id' => 'required|integer|exists:community_user,id',
-            'maybe_arraival' => 'date_format:Y-m-d H:i:s|after:now',
-            'maybe_departure' => 'date_format:Y-m-d H:i:s|after:now',
+            'hour' => 'required|integer|between:0,23',
+            'minute' => 'required|integer|in:0,10,20,30,40,50',
+            'direction' => 'required|in:arriving,leaving',
             'google_home_push' => 'required|boolean',
         ];
     }
