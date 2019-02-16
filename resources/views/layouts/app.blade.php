@@ -31,6 +31,10 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}?q={{$file_date}}" rel="stylesheet">
     <link href="{{ asset('css/livelynk.css') }}?q={{$file_date}}" rel="stylesheet">
+    @if(Request::is('/'))
+    <link href="{{ asset('css/tumolink.css') }}?q={{$file_date}}" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet" type="text/css">
+    @endif
 
     <!-- favicon -->
     <link rel="shortcut icon" type="image/x-icon"  href="{{asset("img/icon/favicon_.ico")}}">

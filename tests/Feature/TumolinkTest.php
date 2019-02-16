@@ -175,31 +175,128 @@ class TumolinkTest extends TestCase
         $this->postJson(self::POST_PATH, $params);
         $this->assertDatabaseHas('tumolink', $check_params);
     }
+
     /**
      * @test
      */
     public function ログインでツモリ_に値をJSON_POSTするとtumolink_tableに値が追加される_departure()
     {
-        $user = \App\AuthUser::where('id', 1)->first();
+        $user = \App\AuthUser::where('id', 10)->first();
         $this->be($user);
         $hour = 1;
         $minute = 20;
         $time = Carbon::now()->addHour($hour)->addSecond($minute * 60)->format('Y-m-d H:i:s');
         $params = [
-            'community_user_id' => 4,
+            'community_user_id' => 10,
             'hour' => $hour,
             'minute' => $minute,
             'direction' => 'leaving',
             'google_home_push' => true
         ];
         $check_params = [
-            'community_user_id' => 4,
+            'community_user_id' => 10,
             'maybe_arraival' => null,
             'maybe_departure' => $time,
             'google_home_push' => true
         ];
         $this->postJson(self::POST_PATH, $params);
         $this->assertDatabaseHas('tumolink', $check_params);
+    }
+
+    /**
+     * @test
+     */
+    public function 行くツモリ宣言後_とgHome設定変更_同日中に再度行くツモリで時間が更新される()
+    {
+        $user = \App\AuthUser::where('id', 11)->first();
+        $this->be($user);
+
+        $hour = 0;
+        $minute = 10;
+        $time = Carbon::now()->addHour($hour)->addSecond($minute * 60)->format('Y-m-d H:i:s');
+        $params = [
+            'community_user_id' => 11,
+            'hour' => $hour,
+            'minute' => $minute,
+            'direction' => 'arriving',
+            'google_home_push' => true
+        ];
+        $this->postJson(self::POST_PATH, $params);
+        $check_params = [
+            'community_user_id' => 11,
+            'maybe_arraival' => $time,
+            'maybe_departure' => null,
+            'google_home_push' => true
+        ];
+
+        $hour2 = 1;
+        $minute2 = 20;
+        $time2 = Carbon::now()->addHour($hour2)->addSecond($minute2 * 60)->format('Y-m-d H:i:s');
+        $params2 = [
+            'community_user_id' => 11,
+            'hour' => $hour2,
+            'minute' => $minute2,
+            'direction' => 'arriving',
+            'google_home_push' => false
+        ];
+        $this->postJson(self::POST_PATH, $params2);
+
+        $check_params2 = [
+            'community_user_id' => 11,
+            'maybe_arraival' => $time2,
+            'maybe_departure' => null,
+            'google_home_push' => false
+        ];
+        $this->assertDatabaseMissing('tumolink', $check_params);
+        $this->assertDatabaseHas('tumolink', $check_params2);
+    }
+
+    /**
+     * @test
+     */
+    public function 返るツモリ宣言後_とgHome設定変更_同日中に再度行くツモリで時間が更新される()
+    {
+        $user = \App\AuthUser::where('id', 12)->first();
+        $this->be($user);
+
+        $hour = 0;
+        $minute = 10;
+        $time = Carbon::now()->addHour($hour)->addSecond($minute * 60)->format('Y-m-d H:i:s');
+        $params = [
+            'community_user_id' => 12,
+            'hour' => $hour,
+            'minute' => $minute,
+            'direction' => 'leaving',
+            'google_home_push' => false
+        ];
+        $this->postJson(self::POST_PATH, $params);
+        $check_params = [
+            'community_user_id' => 12,
+            'maybe_arraival' => null,
+            'maybe_departure' => $time,
+            'google_home_push' => false
+        ];
+
+        $hour2 = 1;
+        $minute2 = 20;
+        $time2 = Carbon::now()->addHour($hour2)->addSecond($minute2 * 60)->format('Y-m-d H:i:s');
+        $params2 = [
+            'community_user_id' => 12,
+            'hour' => $hour2,
+            'minute' => $minute2,
+            'direction' => 'leaving',
+            'google_home_push' => true
+        ];
+        $this->postJson(self::POST_PATH, $params2);
+
+        $check_params2 = [
+            'community_user_id' => 12,
+            'maybe_arraival' => null,
+            'maybe_departure' => $time2,
+            'google_home_push' => true
+        ];
+        $this->assertDatabaseMissing('tumolink', $check_params);
+        $this->assertDatabaseHas('tumolink', $check_params2);
     }
 
     public function dataProvider_for_community_user_id_validate(): array

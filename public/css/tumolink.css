@@ -1,0 +1,324 @@
+/* space-list */
+.space-list>li {
+  border: solid 1px #FFCCBC;
+  margin-bottom: 1rem;
+}
+.space-list>li .information,
+.space-list>li .action {
+  text-align: center;
+}
+.space-list>li .data {
+  padding: 1rem;
+}
+.space-list>li .action {
+  padding: 1rem 1rem 0 1rem;
+  vertical-align: bottom;
+}
+.space-list>li .information {
+  background-color: #F4511E;
+  position: relative;
+}
+.space-list>li .information .name {
+  padding: .75rem 0;
+  color: white;
+}
+.space-list>li .information .livelynk {
+  position: absolute;
+  display: inline-block;
+  background-color: #558B2F;
+  color: white;
+  border-radius: 1rem;
+}
+.space-list>li .information .livelynk i {
+  padding-left: .5rem;
+}
+.space-list>li .data .availabilities ul {
+  max-height: 152px;
+  overflow: hidden;
+  transition: all 500ms ease;
+}
+.space-list>li .data .availabilities ul.all {
+  max-height: 1000px;
+}
+.space-list>li .data .availabilities .btn-more {
+  padding: 1rem 0 0 0;
+  text-align: center;
+  display: none;
+}
+.space-list>li .data .availabilities .btn-more.visible {
+  display: block;
+}
+.space-list>li .action .tumoli-button,
+.space-list>li .action .remove-button {
+  background-color: #F4511E;
+  color: white;
+  margin-bottom: 1rem;
+}
+.space-list>li .data .availabilities .head span {
+  padding-left: .25rem;
+}
+.space-list>li .data .availability {
+  display: table;
+  width: 100%;
+  margin-top: .5rem;
+}
+.space-list>li .data .availability>div {
+  display: table-cell;
+  vertical-align: middle;
+}
+.space-list>li .data .availability .name .userstatus {
+  font-size: .75rem;
+  background-color: lightsteelblue;
+  padding: .2rem .5rem;
+  margin-left: .5rem;
+  border-radius: 1rem;
+}
+.space-list>li .data .availability.beforeEnd,
+.space-list>li .data .availability.afterBegin {
+  position: relative;
+}
+.space-list>li .data .availability.beforeEnd {
+  border-bottom: solid 1px #FFCCBC;
+  padding-bottom: .8rem;
+  margin-bottom: .8rem;
+}
+.space-list>li .data .availability.afterBegin {
+  border-top: solid 1px #FFCCBC;
+  padding-top: .8rem;
+  margin-top: .8rem;
+}
+.space-list>li .data .availability.beforeEnd .now,
+.space-list>li .data .availability.afterBegin .now {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 3rem;
+  margin: 0 auto;
+  line-height: .9;
+  padding: .2rem 0;
+  border: solid 1px #FFCCBC;
+  border-radius: 10px;
+  background-color: white;
+  text-align: center;
+}
+.space-list>li .data .availability.beforeEnd .now {
+  bottom: -.6rem;
+}
+.space-list>li .data .availability.afterBegin .now {
+  top: -.6rem;
+}
+.space-list>li .data .availability .photo {
+  width: 2.6rem;
+}
+.space-list>li .data .availability .arriving {
+  text-align: right;
+}
+.space-list>li .action .plans {
+  display: table;
+  margin-bottom: .5rem;
+  width: 100%;
+}
+.space-list>li .action .behavior {
+  margin-bottom: 1rem;
+}
+.space-list>li .action .plans .value,
+.space-list>li .action .plans .unit {
+  display: table-cell;
+}
+.space-list>li .action .plans .value.minute {
+  padding: .5rem;
+}
+.space-list>li .action .plans .unit {
+  vertical-align: middle;
+  text-align: right;
+}
+.space-list>li .action a {
+  margin-bottom: 1rem;
+}
+.space-list>li .action a:last-child {
+  margin-bottom: 0;
+}
+@media (max-width: 768px) {
+.space-list>li .data {
+  border-bottom: solid 1px #FFCCBC;
+}
+.space-list>li .action .plans .value.hour {
+  width: 35%;
+}
+.space-list>li .action .plans .value.minute {
+  width: 38%;
+}
+.space-list>li .action .plans .unit.hour {
+  width: 15%;
+}
+.space-list>li .action .plans .unit.minute {
+  width: 12%;
+}
+.space-list>li .information .livelynk {
+  font-size: 1rem;
+  padding: .5rem 1rem;
+  left: 1rem;
+  top: 1rem;
+}
+}
+@media (min-width: 768px) {
+.space-list>li {
+  display: table;
+  width: 100%;
+}
+.space-list>li .information,
+.space-list>li .data,
+.space-list>li .action {
+  display: table-cell;
+}
+.space-list>li .information {
+  width: 15rem;
+}
+.space-list>li .action {
+  width: 11rem;
+}
+.space-list>li .data {
+  border-right: solid 1px #FFCCBC;
+  border-left: solid 1px #FFCCBC;
+  vertical-align: top;
+}
+.space-list>li .action .plans .value.hour {
+  width: 28%;
+}
+.space-list>li .action .plans .value.minute {
+  width: 34%;
+}
+.space-list>li .action .plans .unit.hour {
+  width: 20%;
+}
+.space-list>li .action .plans .unit.minute {
+  width: 18%;
+}
+.space-list>li .information .livelynk {
+  left: .5rem;
+  top: .5rem;
+  padding: .25rem .5rem;
+}
+}
+
+/* comp-ui */
+.form-elem {
+  margin-bottom: 1.5em;
+}
+.form-elem .thumb {
+  width: 200px;
+}
+.radio-block {
+  display: table;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.action .label-text {
+  background-color: #FBE9E7;
+  padding: .5rem 0;
+  border-radius: 3px 3px 0 0;
+  border-left: solid 1px #FFCCBC;
+  border-right: solid 1px #FFCCBC;
+  border-top: solid 1px #FFCCBC;
+}
+.radio-block input[type="radio"],
+.radio-block label {
+  display: table-cell;
+  width: 50%;
+}
+.radio-block input[type="radio"] {
+  display: none;
+}
+.radio-block label {
+  border: solid 1px #FFCCBC;
+  padding: .5rem 0;
+}
+.radio-block label:first-of-type {
+  border-radius: 0 0 0 3px;
+  border-right: none;
+}
+.radio-block label:last-of-type {
+  border-radius: 0 0 3px 0;
+  border-left: none;
+}
+.radio-block input[type="radio"]:checked + label {
+  border-color: #F4511E;
+  background-color: #F4511E;
+  color: #ffffff;
+}
+label.comp-ui {
+  font-weight: bold;
+}
+label>input[type="text"].comp-ui,
+label>select.comp-ui,
+label>textarea.comp-ui,
+.form-elem .thumb {
+  margin-top: .25rem;
+}
+select.comp-ui {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: none transparent;
+  vertical-align: middle;
+  font-size: inherit;
+  color: inherit;
+  box-sizing: content-box;
+}
+a.comp-ui {
+  display: block;
+  text-align: center;
+  background-color: #F4511E;
+  color: white;
+}
+button.comp-ui {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+a.comp-ui,
+button.comp-ui {
+  width: 100%;
+  padding: .5rem 0;
+  border-radius: 3rem;
+}
+input[type="file"].comp-ui {
+  width: 100%;
+  margin-top: 1rem;
+}
+input[type="text"].comp-ui,
+select.comp-ui,
+textarea.comp-ui {
+  width: 100%;
+  padding: .5em;
+  box-sizing: border-box;
+  border: solid 1px #ddd;
+  border-radius: 3px;
+}
+.comp-btn-navigate {
+  margin-bottom: 1rem;
+}
+@media (max-width: 768px) {
+.radio-block label,
+a.comp-ui,
+button.comp-ui,
+input.comp-ui,
+select.comp-ui,
+textarea.comp-ui {
+  font-size: 16px;
+}
+}
+@media (min-width: 768px) {
+.radio-block label,
+a.comp-ui,
+button.comp-ui,
+input.comp-ui,
+select.comp-ui,
+textarea.comp-ui {
+  font-size: .9rem;
+}
+}

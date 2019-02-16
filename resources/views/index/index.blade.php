@@ -9,10 +9,19 @@
 @endif
 @component('components.GOE_calendar', ['community' => $community])
 @endcomponent
-<div class="comp-box-container clearfix">
 
+@if(Auth::check())
+@component('components.tumori_form', ['tumolist' => $tumolist])
+@endcomponent
+@else
+<p>ログインすると行くツモリ宣言ができます</p>
+@endif
+<div class="comp-box-container clearfix">
 @foreach ($tumolist as $item)
-  <div class="comp-box clearfix tumolist">
+  @if ($item->maybe_arraival == null)
+    @continue
+  @endif
+<div class="comp-box clearfix tumolist">
     <div class="name">
       <div class="icon">
         <i class="fas fa-user-circle"></i>
@@ -26,8 +35,6 @@
     </div>
   </div>
 @endforeach
-
-
 @php $i = 0; @endphp
 @foreach ($items as $item)
   <div class="comp-box clearfix">

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use DB;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -27,4 +28,26 @@ class TumolinkService
             ->get();
     }
 
+    // $column 'maybe_arraival|maybe_departure'
+    public function existsTodayPost(int $community_user_id, string $column)
+    {
+        return DB::table('tumolink')
+            ->where([
+                ['community_user_id', $community_user_id],
+                [$column, '>', Carbon::today()],
+            ])->exists();
+    }
+
+    // $column 'maybe_arraival|maybe_departure'
+    public function updateTime(int $community_user_id, string $column, $time, bool $google_home_push)
+    {
+        return DB::table('tumolink')
+            ->where([
+                ['community_user_id', $community_user_id],
+                [$column, '>', Carbon::today()],
+            ])->update([
+                $column            => $time,
+                'google_home_push' => $google_home_push,
+            ]);
+    }
 }
