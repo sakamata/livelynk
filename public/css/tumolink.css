@@ -1,7 +1,6 @@
 /* space-list */
 .space-list>li {
   border: solid 1px #FFCCBC;
-  margin-bottom: 1rem;
 }
 .space-list>li .information,
 .space-list>li .action {
@@ -86,6 +85,11 @@
   border-top: solid 1px #FFCCBC;
   padding-top: .8rem;
   margin-top: .8rem;
+}
+.space-list>li .data .availability.afterBegin .icon {
+  font-size: 1.0rem;
+  color: #689F38;
+  width: 2.0rem;
 }
 .space-list>li .data .availability.beforeEnd .now,
 .space-list>li .data .availability.afterBegin .now {
@@ -321,4 +325,45 @@ select.comp-ui,
 textarea.comp-ui {
   font-size: .9rem;
 }
+}
+
+/* space-list view change */
+/* Thanks! https://saruwakakun.com/html-css/reference/accordion */
+.accbox .label_tumoli {
+    display: block;
+    padding : 11px 12px;
+    background :#F4511E;
+    color :white;
+    border-top: solid 1px #FFCCBC;
+    border-left: solid 1px #FFCCBC;
+    border-right: solid 1px #FFCCBC;
+    border-radius: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: bold;
+    cursor :pointer;
+    transition: all 0.5s;
+}
+.accbox label:hover {
+    background :#f5663b;
+}
+.accbox input {
+    display: none;
+}
+.accbox .space-list {
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: 0.8s;
+}
+.cssacc:checked + .space-list {
+    height: auto;
+    opacity: 1;
+    margin-bottom: 1rem;
+}
+.cssacc:checked + .label_tumoli {
+    border-radius: 5em;
+    background :#4c1ef4;
+    color :blue;
 }
