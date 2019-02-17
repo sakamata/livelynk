@@ -27,14 +27,17 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        log::debug(print_r('Schedule method run!!!',1));
         // withoutOverlappingをつけることで多重実行を防ぐので必須 らしいが現状不要
         $schedule
             ->call('App\Http\Controllers\TaskController@auto_provisional_user_remove')
             // ->withoutOverlapping()
             // ->everyMinute();
             ->daily();
-    }
+        $schedule
+            ->call('App\Http\Controllers\TumolinkController@auto_remove_before_today')
+            // ->withoutOverlapping()
+            ->dailyAt('0:01');
+        }
 
     /**
      * Register the commands for the application.

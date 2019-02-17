@@ -103,4 +103,16 @@ class TumolinkController extends Controller
             // ***ToDo*** キャンセルのGoogleHome通知、DBにキャンセルの通知フラグ必要
         }
     }
+
+    // Laravel\app\Console\Kernel.php でスケジューラーで深夜0:01以降に実行する
+    // Ver2 でlogが残せるようにする際は廃止する
+    public function auto_remove_before_today()
+    {
+        $res = DB::table('tumolink')
+        ->where(function ($query) {
+            $query->where('maybe_arraival', '<', Carbon::today())
+            ->orWhere('maybe_departure', '<', Carbon::today());
+        })->delete();
+        log::debug(print_r('Schedule method Tumolink@auto_remove_before_today run! delete record count>>> ' . $res , 1));
+    }
 }
