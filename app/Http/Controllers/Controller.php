@@ -21,9 +21,12 @@ class Controller extends BaseController
     // リーダーのIDを取得
     public function getReaderID()
     {
-        $user = Auth::user();
-        return $reader_id = DB::table('communities')
-            ->where('id', $user->community_id)->value('user_id');
+        $user = "";
+        if (Auth::check()) {
+            $user = Auth::user();
+            return $reader_id = DB::table('communities')
+                ->where('id', $user->community_id)->value('user_id');
+        }
     }
 
     public function getReaderIDParam($community_id)

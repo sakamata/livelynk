@@ -11,7 +11,7 @@
 @endcomponent
 
 @if(Auth::check())
-@component('components.tumori_form', ['tumolist' => $tumolist])
+@component('components.tumori_form', ['tumolist' => $tumolist, 'tumori_declared' => $tumori_declared])
 @endcomponent
 @else
 <p>ログインすると行くツモリ宣言ができます</p>

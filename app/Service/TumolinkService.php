@@ -28,14 +28,28 @@ class TumolinkService
             ->get();
     }
 
+    // return bool
     // $column 'maybe_arraival|maybe_departure'
-    public function existsTodayPost(int $community_user_id, string $column)
+    public function existsTodayPost(int $community_user_id)
     {
+        // あるユーザーの2つの日時宣言カラムに本日以降のrecordがあるかを検証
         return DB::table('tumolink')
-            ->where([
-                ['community_user_id', $community_user_id],
-                [$column, '>', Carbon::today()],
-            ])->exists();
+            ->where('community_user_id', $community_user_id)
+            ->where(function($query){
+                $query->where('maybe_arraival', '>', Carbon::today())
+                      ->orWhere('maybe_departure', '>', Carbon::today());
+            })->exists();
+    }
+
+    public function getTodayRecord(int $community_user_id)
+    {
+        // あるユーザーの2つの日時宣言カラムに本日以降のrecordを取得
+        return DB::table('tumolink')
+            ->where('community_user_id', $community_user_id)
+            ->where(function ($query) {
+                $query->where('maybe_arraival', '>', Carbon::today())
+                    ->orWhere('maybe_departure', '>', Carbon::today());
+            })->first();
     }
 
     // $column 'maybe_arraival|maybe_departure'
@@ -44,10 +58,21 @@ class TumolinkService
         return DB::table('tumolink')
             ->where([
                 ['community_user_id', $community_user_id],
-                [$column, '>', Carbon::today()],
             ])->update([
                 $column            => $time,
                 'google_home_push' => $google_home_push,
             ]);
+    }
+
+    // $column 'maybe_arraival|maybe_departure'
+    public function updateTimeNull(int $id, string $column)
+    {
+        return DB::table('tumolink')->where('id', $id)
+            ->update([$column => null]);
+    }
+
+    public function remove(int $id)
+    {
+        return DB::table('tumolink')->where('id', $id)->delete();
     }
 }

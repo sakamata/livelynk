@@ -154,20 +154,20 @@ class TumolinkTest extends TestCase
      */
     public function ログインでツモリ_に値をJSON_POSTするとtumolink_tableに値が追加される_arraival()
     {
-        $user = \App\AuthUser::where('id', 1)->first();
+        $user = \App\AuthUser::where('id', 9)->first();
         $this->be($user);
         $hour = 1;
         $minute = 20;
         $time = Carbon::now()->addHour($hour)->addSecond($minute * 60)->format('Y-m-d H:i:s');
         $params = [
-            'community_user_id' => 4,
+            'community_user_id' => 9,
             'hour' => $hour,
             'minute' => $minute,
             'direction' => 'arriving',
             'google_home_push' => false
         ];
         $check_params = [
-            'community_user_id' => 4,
+            'community_user_id' => 9,
             'maybe_arraival' => $time,
             'maybe_departure' => null,
             'google_home_push' => false
@@ -297,6 +297,106 @@ class TumolinkTest extends TestCase
         ];
         $this->assertDatabaseMissing('tumolink', $check_params);
         $this->assertDatabaseHas('tumolink', $check_params2);
+    }
+
+    /**
+     * @test
+     */
+    public function 行くツモリ宣言後に_行くツモリ取り消しでレコード削除()
+    {
+        $user = \App\AuthUser::where('id', 16)->first();
+        $this->be($user);
+
+        $hour = 0;
+        $minute = 10;
+        $time = Carbon::now()->addHour($hour)->addSecond($minute * 60)->format('Y-m-d H:i:s');
+        $params = [
+            'community_user_id' => 16,
+            'hour' => $hour,
+            'minute' => $minute,
+            'direction' => 'arriving',
+            'google_home_push' => false
+        ];
+        $this->postJson(self::POST_PATH, $params);
+        $check_params = [
+            'community_user_id' => 16,
+            'maybe_arraival' => $time,
+            'maybe_departure' => null,
+            'google_home_push' => false
+        ];
+        $this->assertDatabaseHas('tumolink', $check_params);
+
+        // cancelをpost
+        $params2 = [
+            'action' => 'cancel',
+            'community_user_id' => 16,
+            'hour' => 0,
+            'minute' => 0,
+            'direction' => 'arriving',
+            'google_home_push' => false
+        ];
+        $this->postJson(self::POST_PATH, $params2);
+        // 削除を確認
+        $this->assertDatabaseMissing('tumolink', $check_params);
+    }
+
+    /**
+     * @test
+     */
+    public function 行く帰るツモリ宣言後に_行くツモリ取り消し_でレコード削除()
+    {
+        $user = \App\AuthUser::where('id', 17)->first();
+        $this->be($user);
+
+        $hour = 0;
+        $minute = 10;
+        $time = Carbon::now()->addHour($hour)->addSecond($minute * 60)->format('Y-m-d H:i:s');
+        // 行くツモリ宣言
+        $params = [
+            'community_user_id' => 17,
+            'hour' => $hour,
+            'minute' => $minute,
+            'direction' => 'arriving',
+            'google_home_push' => false
+        ];
+        $this->postJson(self::POST_PATH, $params);
+        $check_params = [
+            'community_user_id' => 17,
+            'maybe_arraival' => $time,
+            'maybe_departure' => null,
+            'google_home_push' => false
+        ];
+        $this->assertDatabaseHas('tumolink', $check_params);
+        // 帰るツモリ宣言
+        $params2 = [
+            'community_user_id' => 17,
+            'hour' => $hour,
+            'minute' => $minute,
+            'direction' => 'leaving',
+            'google_home_push' => false
+        ];
+        $this->postJson(self::POST_PATH, $params2);
+
+        $check_params = [
+            'community_user_id' => 17,
+            'maybe_arraival' => $time,
+            'maybe_departure' => $time,
+            'google_home_push' => false
+        ];
+        $this->assertDatabaseHas('tumolink', $check_params);
+
+        // cancelをpost
+        $params3 = [
+            'action' => 'cancel',
+            'community_user_id' => 17,
+            'hour' => 0,
+            'minute' => 0,
+            'direction' => 'leaving',
+            'google_home_push' => false
+        ];
+        $this->postJson(self::POST_PATH, $params3);
+        // 削除を確認
+        $this->assertDatabaseMissing('tumolink', $check_params);
     }
 
     public function dataProvider_for_community_user_id_validate(): array
