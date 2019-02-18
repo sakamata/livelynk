@@ -11,7 +11,7 @@
 @endcomponent
 
 @if(Auth::check())
-@component('components.tumori_form', ['tumolist' => $tumolist, 'tumori_declared' => $tumori_declared])
+@component('components.tumoli_form', ['tumolist' => $tumolist, 'tumoli_declared' => $tumoli_declared])
 @endcomponent
 @else
 <p>ログインすると行くツモリ宣言ができます</p>
@@ -31,7 +31,7 @@
     <div class="arrival">
       <div class="head">予定</div>
       <div class="time">{{date('n/j G:i', strtotime($item->maybe_arraival))}}</div>
-      <div class="accuracy tumori_icon">ツ</div>
+      <div class="accuracy tumoli_icon">ツ</div>
     </div>
   </div>
 @endforeach

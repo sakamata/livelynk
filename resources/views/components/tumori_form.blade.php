@@ -1,13 +1,3 @@
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
 <div class="accbox">
     <label for="label_tomoli" class="label_tumoli">ツモリンク</label>
     <input type="checkbox" id="label_tomoli" class="cssacc">
@@ -68,7 +58,7 @@
                         </div>
                         <div class="unit minute">分後</div>
                     </div>
-                    @if($tumori_declared == true)
+                    @if($tumoli_declared == true)
                     <div class="radio-block">
                         <input type="radio" name="direction" value="arriving" checked="checked" id="direction_arriving">
                         <label for="direction_arriving">行く</label>
@@ -86,7 +76,7 @@
                         <label for="googlehome_off">OFF</label>
                     </div>
                     <button type="submit" name="action" value="tumoli" class="tumoli-button comp-ui">ツモリ</button>
-                    @if($tumori_declared == true)
+                    @if($tumoli_declared == true)
                     <button type="submit" name="action" value="cancel" class="tumoli-button bel-button comp-ui">取り消し</button>
                     @endif
                 </form>

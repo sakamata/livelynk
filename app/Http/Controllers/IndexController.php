@@ -116,11 +116,11 @@ class IndexController extends Controller
 
         $tumolist = $this->call_tumolink->tumolistGet($community->id);
         $reader_id = "";
-        $tumori_declared = false;
+        $tumoli_declared = false;
         // login中であれば取得する reader_id tumolinkユーザー一覧
         if (Auth::check()) {
             $reader_id = $this->getReaderID();
-            $tumori_declared = $this->call_tumolink->existsTodayPost(Auth::user()->id, $column = 'maybe_arraival');
+            $tumoli_declared = $this->call_tumolink->existsTodayPost(Auth::user()->id, $column = 'maybe_arraival');
         }
 
         return view('index.index', [
@@ -129,7 +129,7 @@ class IndexController extends Controller
             'items1' => $stays,
             'items2' => $not_stays,
             'tumolist' => $tumolist,
-            'tumori_declared' => $tumori_declared,
+            'tumoli_declared' => $tumoli_declared,
             'rate' => $unregistered_rate_array,
             'rate1' => $stays_rate_array,
             'reader_id' => $reader_id,
