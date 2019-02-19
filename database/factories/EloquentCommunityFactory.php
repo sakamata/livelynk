@@ -13,6 +13,7 @@ $factory->define(Community::class, function (Faker $faker) {
         'service_name_reading' => $faker->company,
         'url_path' => $faker->password,
         'hash_key' => $faker->password,
+        'tumolink_enable' => false,
         'google_home_enable' => false,
         'created_at' => Carbon::now()->subDay(5),
         'updated_at' => Carbon::now()->subDay(3),

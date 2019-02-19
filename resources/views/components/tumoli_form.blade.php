@@ -58,16 +58,13 @@
                         </div>
                         <div class="unit minute">分後</div>
                     </div>
-                    @if($tumoli_declared == true)
                     <div class="radio-block">
                         <input type="radio" name="direction" value="arriving" checked="checked" id="direction_arriving">
                         <label for="direction_arriving">行く</label>
                         <input type="radio" name="direction" value="leaving" id="direction_leaving">
                         <label for="direction_leaving">帰る</label>
                     </div>
-                    @else
-                    <input type="hidden" name="direction" value="arriving">
-                    @endif
+                    @if($community->google_home_enable)
                     <p class="label-text">GoogleHome通知</p>
                     <div class="radio-block">
                         <input type="radio" name="google_home_push" value="1" checked="checked" id="google_home_on">
@@ -75,6 +72,9 @@
                         <input type="radio" name="google_home_push" value="0" id="googlehome_off">
                         <label for="googlehome_off">OFF</label>
                     </div>
+                    @else
+                    <input type="hidden" name="google_home_push" value="0">
+                    @endif
                     <button type="submit" name="action" value="tumoli" class="tumoli-button comp-ui">ツモリ</button>
                     @if($tumoli_declared == true)
                     <button type="submit" name="action" value="cancel" class="tumoli-button bel-button comp-ui">取り消し</button>

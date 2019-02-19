@@ -53,6 +53,7 @@ class AdminCommunityController extends Controller
             'hash_key' => 'required|regex:/^[a-zA-Z0-9-]+$/|min:4|max:64',
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhook_key' => 'nullable|string|max:191',
+            'tumolink_enable' => 'boolean',
             'google_home_enable' => 'boolean',
             'admin_comment' => 'nullable|string|max:1000',
         ]);
@@ -68,6 +69,7 @@ class AdminCommunityController extends Controller
             'url_path' => $request->url_path,
             'ifttt_event_name' => $request->ifttt_event_name,
             'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
+            'tumolink_enable' => $request->tumolink_enable,
             'google_home_enable' => $request->google_home_enable,
             'admin_comment' => $request->admin_comment,
             'created_at' => $now,
@@ -143,6 +145,7 @@ class AdminCommunityController extends Controller
             'hash_key' => 'required|regex:/^[a-zA-Z0-9-]+$/|min:4|max:64',
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhooks_key' => 'nullable|string|max:191',
+            'tumolink_enable' => 'boolean',
             'google_home_enable' => 'boolean',
         ];
         if ($user->role == 'superAdmin') {
@@ -165,6 +168,7 @@ class AdminCommunityController extends Controller
             'hash_key' => $request->hash_key,
             'ifttt_event_name' => $request->ifttt_event_name,
             'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
+            'tumolink_enable' => $request->tumolink_enable,
             'google_home_enable' => $request->google_home_enable,
             'updated_at' => $now,
         ];

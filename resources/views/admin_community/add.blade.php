@@ -129,6 +129,14 @@
                             <label for="google_home_enable_hide">無効</label>
                         </div>
 
+                        <div class="form-elem">
+                            <label for="InputTextarea">GoogleHome</label>
+                            <input id="tumolink_enable_show" type="radio" value="1" name="tumolink_enable" @if (old('tumolink_enable') == "1") checked @endif>
+                            <label for="tumolink_enable_show">有効</label>
+                            <input id="tumolink_enable_hide" type="radio" value="0" name="tumolink_enable" @if (old('tumolink_enable') == "0") checked @endif>
+                            <label for="tumolink_enable_hide">無効</label>
+                        </div>
+
                         <div class="form-group">
                             <label for="InputTextarea">管理者メモ</label>
                             <textarea class="form-control form-control-lg" name="admin_comment" rows="5">{{old('admin_comment')}}</textarea>

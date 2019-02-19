@@ -41,6 +41,9 @@
                             <p>Google Home アシスタント機能 &nbsp; : &nbsp;
                             @if($item->google_home_enable == true) 有効 @else 無効 @endif
                             </p>
+                            <p>ツモリンク機能 &nbsp; : &nbsp;
+                            @if($item->tumolink_enable == true) 有効 @else 無効 @endif
+                            </p>
                         </div>
                         <hr>
                         @if(Auth::user()->role == 'superAdmin' && Auth::user()->community_id != $item->id)
@@ -106,8 +109,17 @@
                             <input id="google_home_enable_hide" type="radio" value="0" name="google_home_enable" @if (old('google_home_enable', $item->google_home_enable) == "0") checked @endif>
                             <label for="google_home_enable_hide">無効</label>
                         </div>
+                        <div class="form-elem">
+                            <label for="InputTextarea">ツモリンク機能&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <input id="tumolink_enable_show" type="radio" value="1" name="tumolink_enable" @if (old('tumolink_enable', $item->tumolink_enable) == "1") checked @endif>
+                            <label for="tumolink_enable_show">有効&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <input id="tumolink_enable_hide" type="radio" value="0" name="tumolink_enable" @if (old('tumolink_enable', $item->tumolink_enable) == "0") checked @endif>
+                            <label for="tumolink_enable_hide">無効</label>
+                        </div>
+
                         @else
                         <input type="hidden" name="google_home_enable" value="{{$item->google_home_enable}}">
+                        <input type="hidden" name="tumolink_enable" value="{{$item->tumolink_enable}}">
                         @endcan
                         @can('superAdmin')
                         <div class="form-group">

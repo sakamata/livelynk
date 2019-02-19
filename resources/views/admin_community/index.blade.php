@@ -23,6 +23,7 @@
                             <th>代表管理者</th>
                             <th>ルーター</th>
                             <th>GoogleHome</th>
+                            <th>ツモリンク</th>
                             <th>IFTTT Event Name</th>
                             <th>created_at</th>
                             <th>updated_at</th>
@@ -53,6 +54,7 @@
                                 </table>
                             </td>
                             <td>@if($item->google_home_enable == 1 ) 有効　@else 無効 @endif</td>
+                            <td>@if($item->tumolink_enable == 1 ) 有効　@else 無効 @endif</td>
                             <td>{{$item->ifttt_event_name}}</td>
                             <td>{{$item->created_at->format('n月j日 G:i')}}</td>
                             <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
