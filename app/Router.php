@@ -24,6 +24,11 @@ class Router extends Model
         return $this->belongsTo('App\Community');
     }
 
+    public function talk_message()
+    {
+        return $this->hasMany('App\TalkMessage');
+    }
+
     public function scopeMyCommunity($query, $self_community)
     {
         return $query->where('community_id', $self_community);

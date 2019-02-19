@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use App\CommunityUser;
+use App\Router;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Service\CommunityService;
 use App\Service\CommunityUserService;
@@ -202,7 +203,7 @@ class InportPostController extends Controller
         if ($push_users) {
             Log::debug(print_r("!push_ifttt arraival!>>>>", 1));
             Log::debug(print_r($push_users, 1));
-            (new ExportPostController)->push_ifttt($push_users, $category = "arraival", $community->id);
+            (new ExportPostController)->access_message_maker($push_users, $category = "arraival", $community->id);
             if ($google_talk_trigger == null) {
                 $google_talk_trigger = 'users_arraival';
             }
@@ -215,12 +216,13 @@ class InportPostController extends Controller
         $this->DepartureCheck($community->id);
         if ($google_talk_trigger && $community->google_home_enable == true) {
             // GoogleHomeへのコマンドを記載する
-            $set = (new GoogleHomeController)->GetGoogleHomeTalk($google_talk_trigger, $community, $push_users, $check_array['router_id']);
+            $set = (new GoogleHomeController)->GoogleHomeMessageWelcomeMaker($google_talk_trigger, $community, $push_users);
+            $router = 'App\Router'::find($check_array['router_id']);
             Log::debug(print_r($set, 1));
             return response()->json([
                 'status' => 'From Livelynk posted',
-                'MAC' => $set['MAC'],
-                'name' => $set['name'],
+                'MAC' => $router->google_home_mac_address,
+                'name' => $router->google_home_name,
                 'message' => $set['message'],
             ]);
         }
@@ -424,7 +426,7 @@ class InportPostController extends Controller
             Log::debug(print_r("!!!push_ifttt departure pushusers >>>>!!!", 1));
             Log::debug(print_r($push_users, 1));
 
-            (new ExportPostController)->push_ifttt($push_users, $category = "departure", $community_id);
+            (new ExportPostController)->access_message_maker($push_users, $category = "departure", $community_id);
         }
     }   // end function
 }

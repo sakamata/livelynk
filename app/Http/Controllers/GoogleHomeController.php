@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class GoogleHomeController extends Controller
 {
-    public function GetGoogleHomeTalk($google_talk_trigger, $community, $push_users, $router_id)
+    public function GoogleHomeMessageWelcomeMaker($google_talk_trigger, $community, $push_users)
     {
         // "Aさん Bさん ..."の連結文作成
         $users_name_str = "";
@@ -39,7 +39,7 @@ class GoogleHomeController extends Controller
 
             case 'users_arraival':
                 $frank_talk = array(
-                    'ライブリンクが挨拶できるようになりましたよ',
+                    'ライブリンクがにツモリンク機能がつきましたよ',
                     'いつ以来の来訪なのか、そのうちお知らせできるようにしますね',
                     '今は朝ですか？昼ですか？夜ですか？挨拶をちゃんとするようにしますね',
                     '今日はおひとりでの来訪でしょうか？それともどなたかとご一緒での来訪でしょうか？そういうこともわかるようになりたいです',
@@ -56,14 +56,44 @@ class GoogleHomeController extends Controller
             break;
 
             default:
-                $message = 'ライブリンクへの送信を確認しました。';
+                $message = 'こんにちは、どなたかがいらっしゃったみたいですね。';
             break;
         }
-        $router = DB::table('routers')->where('id', $router_id)->first();
-        return array(
-            'MAC' => $router->google_home_mac_address,
-            'name' => $router->google_home_name,
-            'message' => $message,
-        );
+        return $message;
+    }
+
+    public function GoogleHomeMessageTumolinkMaker($trigger, $user_name, $time)
+    {
+        $time = $time->format('G時i分');
+        switch ($trigger) {
+            case 'maybe_arraival':
+                $message = $user_name . 'さんが' . $time . 'くらいに来るつもりみたいですよ。';
+                break;
+
+            case 'maybe_departure':
+                $message = $user_name . 'さんが' . $time . 'くらいに帰るつもりみたいですよ。';
+                break;
+
+            case 're_maybe_arraival':
+                $message = $user_name . 'さんが、やっぱり' . $time . 'くらいに来るつもりみたいですよ。';
+                break;
+
+            case 're_maybe_departure':
+                $message = $user_name . 'さんが、やっぱり' . $time . 'くらいに帰るつもりみたいですよ。';
+                break;
+
+            case 'cancel_arraival':
+                $message = $user_name . 'さんが来るのをやめたみたいです。';
+                break;
+
+            case 'cancel_arraival':
+                $message = $user_name . 'さんはもう少しいるつもりみたいです。';
+                break;
+
+            default:
+                $message = 'ツモリンクの調子が悪いみたいです。開発者に伝えてもらえると嬉しいです。';
+                break;
+        }
+        return $message;
     }
 }

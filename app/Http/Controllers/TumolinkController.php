@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use DB;
+use App\Community;
+use App\TalkMessage;
 use App\Http\Requests\TumolinkPost;
+use App\Service\CommunityService;
 use App\Service\TumolinkService;
+use App\Service\UserService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,9 +18,15 @@ class TumolinkController extends Controller
 {
     private $tumolink_service;
 
-    public function __construct(TumolinkService $tumolink_service)
+    public function __construct(
+        CommunityService $call_community,
+        TumolinkService $tumolink_service,
+        UserService $call_user
+        )
     {
+        $this->call_community = $call_community;
         $this->tumolink_service = $tumolink_service;
+        $this->call_user        = $call_user;
     }
 
     public function index(Request $request)
@@ -38,9 +48,9 @@ class TumolinkController extends Controller
         $tumolist->google_home_push = $request->google_home_push;
         $hour = intval($request->hour);
         $minute = intval($request->minute);
-        $now = Carbon::now();
-        $time = $now->addHour($hour)->addSecond($minute * 60);
+        $time = Carbon::now()->addHour($hour)->addSecond($minute * 60);
         $direction = $request->direction;
+
         if ($direction == 'arriving') {
             $tumolist->maybe_arraival = $time;
             $column = 'maybe_arraival';
@@ -48,6 +58,8 @@ class TumolinkController extends Controller
             $tumolist->maybe_departure = $time;
             $column = 'maybe_departure';
         }
+
+        $tumoli_again = false;
         // cancelなら処理先移行
         if ($request->action == 'cancel') {
             $this->cancel($request, $column);
@@ -56,21 +68,41 @@ class TumolinkController extends Controller
             // tumolink tableは 1ユーザーにつき1日1recordとなる仕様
             $exists = $this->tumolink_service->existsTodayPost($request->community_user_id);
             if ($exists) {
-            // 同日中のpostであれば該当recordを更新する
+                // 既に宣言したかを判定 bool
+                $tumoli_again = $this->tumolink_service->isAgainTumoli($request->community_user_id, $column);
+                // 同日中のpostであれば該当recordを更新する
                 $this->tumolink_service->updateTime($request->community_user_id, $column, $time, $request->google_home_push);
             } else {
             // 新規ならrecord追加
                 $res = $tumolist->save();
             }
             $message = 'ツモリ宣言をしました。';
-
-            // 必要ならGoogleHome通知
-            $community = DB::table('communities')
-                ->where('id', Auth::user()->community_id)->first();
-            if ($request->google_home_push == true && $community->google_home_enable == true) {
-            // ***ToDo*** Google Home push method
-            }
         }
+
+        // ifttt 通知
+        $community = DB::table('communities')
+            ->where('id', Auth::user()->community_id)->first();
+        $messages = $this->tumoli_message_maker(
+            $column,
+            $time,
+            $request->action,
+            $tumoli_again,
+            $community->service_name
+        );
+        (new ExportPostController)->push_ifttt($messages['title'], $messages['message'], $community);
+
+        // GoogleHome通知を保存
+        if ($request->google_home_push == true && $community->google_home_enable == true) {
+            $talking_message = (new GoogleHomeController)->GoogleHomeMessageTumolinkMaker($messages['trigger'], Auth::user()->name, $time);
+            // DBに入れる
+            $talkMessage = new \App\TalkMessage();
+            // ひままずcommunityの最初のrouterに紐づいたGoogleHomeを対象にする
+            $router = 'App\Community'::find($community->id)->router()->first();
+            $talkMessage->router_id       = $router->id;
+            $talkMessage->talking_message = $talking_message;
+            $talkMessage->save();
+        }
+
         if (!$request->isJson()) {
         // post form 処理
             return redirect('/')->with('message', $message);
@@ -102,6 +134,42 @@ class TumolinkController extends Controller
             $this->tumolink_service->updateTimeNull($existing->id, $column);
             // ***ToDo*** キャンセルのGoogleHome通知、DBにキャンセルの通知フラグ必要
         }
+    }
+
+    public function tumoli_message_maker($column, $time, $action, $tumoli_again, $service_name)
+    {
+        $name = Auth::user()->name;
+        $time = $time->format('G:i');
+        $mess = array();
+        $mess['title'] = "お知らせツモリンク";
+        $mess['message'] = "";
+        $mess['trigger'] = "";
+        // 2*2*2=6種類のメッセージ分岐なのでネストせず判定
+        if ($column == 'maybe_arraival' && $tumoli_again == false) {
+            $mess['message'] = $name . "「" . $time . "頃に、" . $service_name . "に行くツモリンク！」";
+            $mess['trigger'] = 'maybe_arraival';
+        }
+        if ($column == 'maybe_departure' && $tumoli_again == false) {
+            $mess['message'] = $name . "「" . $time . "頃に、" . $service_name . "から帰るツモリンク！」";
+            $mess['trigger'] = 'maybe_departure';
+        }
+        if ($column == 'maybe_arraival' && $tumoli_again) {
+            $mess['message'] = $name . "「やっぱり" . $time . "頃に、" . $service_name . "に行くツモリンク！」";
+            $mess['trigger'] = 're_maybe_arraival';
+        }
+        if ($column == 'maybe_departure' && $tumoli_again) {
+            $mess['message'] = $name . "「やっぱり" . $time . "頃に、" . $service_name . "から帰るツモリンク！」";
+            $mess['trigger'] = 're_maybe_departure';
+        }
+        if ($action == 'cancel' && $column == 'maybe_arraival') {
+            $mess['message'] = $name . "「やっぱり". $service_name . "に行くのをやめる」";
+            $mess['trigger'] = 'cancel_arraival';
+        }
+        if ($action == 'cancel' && $column == 'maybe_departure') {
+            $mess['message'] = $name . "「やっぱり" . $service_name . "にもうしばらくいるツモリ！」";
+            $mess['trigger'] = 'cancel_arraival';
+        }
+        return $mess;
     }
 
     // Laravel\app\Console\Kernel.php でスケジューラーで深夜0:01以降に実行する

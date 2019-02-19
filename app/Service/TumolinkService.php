@@ -41,6 +41,17 @@ class TumolinkService
             })->exists();
     }
 
+    public function isAgainTumoli($community_user_id, $column)
+    {
+        // あるユーザーの宣言が再度の(行く|帰る)宣言かを判定する
+        return DB::table('tumolink')
+            ->where([
+                ['community_user_id', $community_user_id],
+                [$column, '<>', null],
+                ['created_at', '>', Carbon::today()],
+            ])->exists();
+    }
+
     public function getTodayRecord(int $community_user_id)
     {
         // あるユーザーの2つの日時宣言カラムに本日以降のrecordを取得

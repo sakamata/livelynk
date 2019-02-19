@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        // withoutOverlappingをつけることで多重実行を防ぐので必須 らしいが現状不要
+        // withoutOverlappingをつけることで多重実行を防ぐ
         $schedule
             ->call('App\Http\Controllers\TaskController@auto_provisional_user_remove')
             // ->withoutOverlapping()

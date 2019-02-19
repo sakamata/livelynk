@@ -10,10 +10,10 @@ use Carbon\Carbon;
 
 class ExportPostController extends Controller
 {
-    // IFTTTに来訪者通知をPOSTする
+    // IFTTTに来訪者/帰宅者通知をPOSTするメッセージの加工を行う
     // $push_users = array( "id" => $user->id, "name" => $user->name)
     // $community_id  = int, communities table 'id' column
-    public function push_ifttt($push_users, $category, $community_id)
+    public function access_message_maker($push_users, $category, $community_id)
     {
         $community = DB::table('communities')->where('id', $community_id)->first();
         // 訪問者の名前と滞在中のおおよその人数を抽出、文字列を作成する
@@ -48,38 +48,7 @@ class ExportPostController extends Controller
                 $message = "";
                 break;
         }
-
-        // urlの生成とIFTTTへPOST(GuzzleHttpを使用)
-        $url1 = 'https://maker.ifttt.com/trigger/';
-        $url2 = '/with/key/';
-        $event_name = $community->ifttt_event_name;
-        $url = $url1 . $event_name . $url2;
-        $key = $community->ifttt_webhooks_key;
-        $domain = action('IndexController@index');
-
-        // https でのヘルパ関数の動きが不明な為、ひとまずこれで環境設定切り分け
-        if (env('APP_ENV') == 'local') {
-            // example  'http://192.168.10.10/index'
-            $domain = action('IndexController@index');
-        } elseif (env('APP_ENV') == 'production') {
-            $domain = 'https://www.livelynk.jp/index';
-        } else {
-            $domain = 'https://www.livelynk.jp/index';
-        }
-
-        $home_url = $domain . '/?path=' . $community->url_path;
-        $client = new \GuzzleHttp\Client([
-            'base_uri' => $url,
-        ]);
-        $responce = $client->request('POST', $key, [
-            'json' => [
-                'value1' => $message,
-                'value2' => $title,
-                'value3' => $home_url,
-            ],
-            ["timeout" => 10],
-            ["delay" => 2000.0]
-        ]);
+        $this->push_ifttt($title, $message, $community);
     }
 
     // 訪問者の名前と滞在中のおおよその人数を抽出、文字列を作成する
@@ -147,5 +116,50 @@ class ExportPostController extends Controller
             'users_count_str' => $users_res,
             'users_name_str' => $users_name_str,
         );
+    }
+
+    // IFTTTに通知をPOSTする
+    // $community  = communities table single record object
+    public function push_ifttt($title, $message, $community)
+    {
+        // testでは通知が飛ばない様に設定
+        if ( env('APP_ENV') == 'testing'
+            || $community->ifttt_event_name == null
+            || $community->ifttt_webhooks_key == null
+        ) {
+            return;
+        }
+        // urlの生成とIFTTTへPOST(GuzzleHttpを使用)
+        $url1 = 'https://maker.ifttt.com/trigger/';
+        $url2 = '/with/key/';
+        $event_name = $community->ifttt_event_name;
+        $url = $url1 . $event_name . $url2;
+        $key = $community->ifttt_webhooks_key;
+        $domain = action('IndexController@index');
+
+        // https でのヘルパ関数の動きが不明な為、ひとまずこれで環境設定切り分け
+        if (env('APP_ENV') == 'local') {
+            // example  'http://192.168.10.10/index'
+            $domain = action('IndexController@index');
+        } elseif (env('APP_ENV') == 'production') {
+            $domain = 'https://www.livelynk.jp/index';
+        } else {
+            $domain = 'https://www.livelynk.jp/index';
+        }
+
+        $home_url = $domain . '/?path=' . $community->url_path;
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => $url,
+        ]);
+        Log::debug(print_r('home_url>>'. $home_url, 1));
+        $responce = $client->request('POST', $key, [
+            'json' => [
+                'value1' => $message,
+                'value2' => $title,
+                'value3' => $home_url,
+            ],
+            ["timeout" => 10],
+            ["delay" => 2000.0]
+        ]);
     }
 }

@@ -336,8 +336,13 @@ class TumolinkTest extends TestCase
             'google_home_push' => false
         ];
         $this->postJson(self::POST_PATH, $params2);
-        // 削除を確認
+        // ステータスの変更状態を確認
         $this->assertDatabaseMissing('tumolink', $check_params);
+        // さらにrecord自体の削除を確認
+        $check_params2 = [
+            'community_user_id' => 16,
+        ];
+        $this->assertDatabaseMissing('tumolink', $check_params2);
     }
 
     /**
@@ -367,6 +372,7 @@ class TumolinkTest extends TestCase
             'google_home_push' => false
         ];
         $this->assertDatabaseHas('tumolink', $check_params);
+
         // 帰るツモリ宣言
         $params2 = [
             'community_user_id' => 17,
@@ -376,27 +382,95 @@ class TumolinkTest extends TestCase
             'google_home_push' => false
         ];
         $this->postJson(self::POST_PATH, $params2);
-
-        $check_params = [
+        $check_params2 = [
             'community_user_id' => 17,
             'maybe_arraival' => $time,
             'maybe_departure' => $time,
             'google_home_push' => false
         ];
-        $this->assertDatabaseHas('tumolink', $check_params);
+        $this->assertDatabaseHas('tumolink', $check_params2);
 
-        // cancelをpost
+        // maybe_arraival cancelをpost
         $params3 = [
             'action' => 'cancel',
             'community_user_id' => 17,
+            'hour' => 0,
+            'minute' => 0,
+            'direction' => 'arriving',
+            'google_home_push' => false
+        ];
+        $this->postJson(self::POST_PATH, $params3);
+        // maybe_arraival削除を確認
+        $check_params3 = [
+            'community_user_id' => 17,
+            'maybe_arraival' => null,
+            'maybe_departure' => $time,
+            'google_home_push' => false
+        ];
+        $this->assertDatabaseHas('tumolink', $check_params3);
+    }
+
+    /**
+     * @test
+     */
+    public function 行く帰るツモリ宣言後に_帰るツモリ取り消し_でレコード削除()
+    {
+        $user = \App\AuthUser::where('id', 18)->first();
+        $this->be($user);
+        $hour = 0;
+        $minute = 10;
+        $time = Carbon::now()->addHour($hour)->addSecond($minute * 60)->format('Y-m-d H:i:s');
+        // 行くツモリ宣言
+        $params = [
+            'community_user_id' => 18,
+            'hour' => $hour,
+            'minute' => $minute,
+            'direction' => 'arriving',
+            'google_home_push' => false
+        ];
+        $this->postJson(self::POST_PATH, $params);
+        $check_params = [
+            'community_user_id' => 18,
+            'maybe_arraival' => $time,
+            'maybe_departure' => null,
+            'google_home_push' => false
+        ];
+        $this->assertDatabaseHas('tumolink', $check_params);
+
+        // 帰るツモリ宣言
+        $params2 = [
+            'community_user_id' => 18,
+            'hour' => $hour,
+            'minute' => $minute,
+            'direction' => 'leaving',
+            'google_home_push' => false
+        ];
+        $this->postJson(self::POST_PATH, $params2);
+        $check_params2 = [
+            'community_user_id' => 18,
+            'maybe_arraival' => $time,
+            'maybe_departure' => $time,
+            'google_home_push' => false
+        ];
+        $this->assertDatabaseHas('tumolink', $check_params2);
+        // maybe_departure cancelをpost
+        $params3 = [
+            'action' => 'cancel',
+            'community_user_id' => 18,
             'hour' => 0,
             'minute' => 0,
             'direction' => 'leaving',
             'google_home_push' => false
         ];
         $this->postJson(self::POST_PATH, $params3);
-        // 削除を確認
-        $this->assertDatabaseMissing('tumolink', $check_params);
+        // maybe_departure削除を確認
+        $check_params3 = [
+            'community_user_id' => 18,
+            'maybe_arraival' => $time,
+            'maybe_departure' => null,
+            'google_home_push' => false
+        ];
+        $this->assertDatabaseHas('tumolink', $check_params3);
     }
 
     public function dataProvider_for_community_user_id_validate(): array
