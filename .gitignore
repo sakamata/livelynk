@@ -15,4 +15,5 @@ yarn-error.log
 # 設定ファイルを手動でコピーして保存しておく
 .env.bk_copy
 .env.dusk.local
+.env.testing
 *.swp
