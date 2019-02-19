@@ -151,7 +151,6 @@ class ExportPostController extends Controller
         $client = new \GuzzleHttp\Client([
             'base_uri' => $url,
         ]);
-        Log::debug(print_r('home_url>>'. $home_url, 1));
         $responce = $client->request('POST', $key, [
             'json' => [
                 'value1' => $message,

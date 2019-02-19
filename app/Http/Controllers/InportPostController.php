@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use App\CommunityUser;
 use App\Router;
+use App\TalkMessage;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Service\CommunityService;
 use App\Service\CommunityUserService;
@@ -208,24 +209,53 @@ class InportPostController extends Controller
                 $google_talk_trigger = 'users_arraival';
             }
         }
-        // !!!Tips!!! 来訪直後に帰宅通知が出るのは .env ファイルのキャッシュの問題かも
-        // .env 値をlog出力して値が反映されるか確認 
-        // 無い場合はコンソールで以下のいずれかのコマンドをたたく事
-        // $ php artisan config:cache
-        // $ php artisan config:clear
         $this->DepartureCheck($community->id);
-        if ($google_talk_trigger && $community->google_home_enable == true) {
-            // GoogleHomeへのコマンドを記載する
-            $set = (new GoogleHomeController)->GoogleHomeMessageWelcomeMaker($google_talk_trigger, $community, $push_users);
-            $router = 'App\Router'::find($check_array['router_id']);
-            Log::debug(print_r($set, 1));
-            return response()->json([
-                'status' => 'From Livelynk posted',
-                'MAC' => $router->google_home_mac_address,
-                'name' => $router->google_home_name,
-                'message' => $set['message'],
-            ]);
+
+        // 来訪者通知が無い場合
+        if ($google_talk_trigger == null) {
+            //他のメッセージがDBにあれば送信して処理終了（まずはツモリンク）
+            $talk_message = 'App\TalkMessage'::orderBy('id')->first();
+            if ($talk_message) {
+                Log::debug(print_r('talk_message>>>', 1));
+                Log::debug(print_r($talk_message, 1));
+                $talk_message->delete();
+                return $this->TalkMessageJsonResponse(
+                    $talk_message->router->google_home_mac_address,
+                    $talk_message->router->google_home_name,
+                    $talk_message->talking_message
+                );
+            }
         }
+
+        // 来訪者メッセージがあれば生成,送信して処理終了
+        if ($google_talk_trigger && $community->google_home_enable == true) {
+            // GoogleHomeへの音声メッセージを生成
+            $welcome_message = (new GoogleHomeController)->GoogleHomeMessageWelcomeMaker($google_talk_trigger, $community, $push_users);
+            $router = 'App\Router'::find($check_array['router_id']);
+            Log::debug(print_r('welcome_message>>>', 1));
+            Log::debug(print_r($welcome_message, 1));
+            return $this->TalkMessageJsonResponse(
+                $router->google_home_mac_address,
+                $router->google_home_name,
+                $welcome_message
+            );
+        }
+    }
+
+    // !!!Tips!!! 来訪直後に帰宅通知が出るのは .env ファイルのキャッシュの問題かも
+    // .env 値をlog出力して値が反映されるか確認 
+    // 無い場合はコンソールで以下のいずれかのコマンドをたたく事
+    // $ php artisan config:cache
+    // $ php artisan config:clear
+
+    public function TalkMessageJsonResponse($mac_address, $google_home_name, $talk_message)
+    {
+        return response()->json([
+            'status' => 'From Livelynk posted',
+            'MAC' => $mac_address,
+            'name' => $google_home_name,
+            'message' => $talk_message,
+        ]);
     }
 
     public function JsonValueCheck($json)
