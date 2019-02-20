@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+// 現状200文字以上ではGoogleHomeにしゃべらせることはできない
 class GoogleHomeController extends Controller
 {
     public function GoogleHomeMessageWelcomeMaker($google_talk_trigger, $community, $push_users)
@@ -26,6 +27,7 @@ class GoogleHomeController extends Controller
         } else {
             $service_name = $community->service_name;
         }
+        $greeting = $this->greetingMessageMaker();
         switch ($google_talk_trigger) {
             case 'new_comer':
                 if ($count == 1) {
@@ -39,24 +41,24 @@ class GoogleHomeController extends Controller
 
             case 'users_arraival':
                 $frank_talk = array(
-                    'ライブリンクがにツモリンク機能がつきましたよ',
-                    'いつ以来の来訪なのか、そのうちお知らせできるようにしますね',
-                    '今は朝ですか？昼ですか？夜ですか？挨拶をちゃんとするようにしますね',
-                    '今日はおひとりでの来訪でしょうか？それともどなたかとご一緒での来訪でしょうか？そういうこともわかるようになりたいです',
-                    'そのうち挨拶がご迷惑にならないように空気が読めるようになりますね',
-                    'そのうち今日のお天気などお伝えしても良いですかね？',
-                    'お名前の読み方は正しかったでしょうか？失礼のないように正しくお名前を言えるようになりますね',
-                    'これからもっと気の利いたことが言える、できる秘書になりたいです',
+                    "実は地味に時間別で挨拶ができる様になりました。",
+                    "ライブリンクがにツモリンク機能がつきましたよ、是非使ってみてください",
+                    "ライブリンクの画面からログインすれば、皆さんにここに行くつもりや、帰るつもりをお知らせできるようになりますよ。",
+                    "そろそろお名前の読み方を正しく言える様になるそうです。失礼のないようにします。",
+                    "実は常連さんへの挨拶は8種類です。みなさんで増やしたり変更したりきる様になるかもしれません",
+                    "お食事時に近所のおすすめのお店などを紹介などもしたいですね",
+                    "打ち合わせ中でしたらすみません。そろそろ空気が読めるようになりたいです。",
+                    "そのうちどなたかの伝言などをお伝えできるようになりたいです。",
                 );
                 $i = rand(0,7);
-                $message = 'こんにちは' . $users_name_str . $frank_talk[$i];
+                $message = $greeting . $users_name_str . $frank_talk[$i];
                 if (mb_strlen($message) > 200) {
-                    $message = 'こんにちは、みなさん。一度にたくさんの方がいらっしゃったみたいでちょっとびっくりです。' . $frank_talk;
+                    $message = $greeting . "みなさん。一度にたくさんの方がいらっしゃったみたいでちょっとびっくりです。" . $frank_talk;
                 }
             break;
 
             default:
-                $message = 'こんにちは、どなたかがいらっしゃったみたいですね。';
+                $message = $greeting . 'どなたかがいらっしゃったみたいですね。';
             break;
         }
         return $message;
@@ -93,6 +95,25 @@ class GoogleHomeController extends Controller
             default:
                 $message = 'ツモリンクの調子が悪いみたいです。開発者に伝えてもらえると嬉しいです。';
                 break;
+        }
+        return $message;
+    }
+
+    public function greetingMessageMaker()
+    {
+        $hour = date("G");
+        if ($hour >= 5 && $hour < 8) {
+            $message = 'お早うございます、早起きですね、';
+        } elseif ($hour >= 8 && $hour < 10) {
+            $message = 'お早うございます、';
+        } elseif ($hour >= 10 && $hour < 18) {
+            $message = 'こんにちは、';
+        } elseif ($hour >= 18 && $hour < 23) {
+            $message = 'こんばんは、';
+        } elseif ($hour >= 23 || $hour < 5) {
+            $message = 'こんな遅くに、こんばんは、';
+        } else {
+            $message = "こんにちは、";
         }
         return $message;
     }
