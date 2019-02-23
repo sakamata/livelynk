@@ -130,11 +130,29 @@
                         </div>
 
                         <div class="form-elem">
-                            <label for="InputTextarea">GoogleHome</label>
+                            <label for="InputTextarea">ツモリンク</label>
                             <input id="tumolink_enable_show" type="radio" value="1" name="tumolink_enable" @if (old('tumolink_enable') == "1") checked @endif>
                             <label for="tumolink_enable_show">有効</label>
                             <input id="tumolink_enable_hide" type="radio" value="0" name="tumolink_enable" @if (old('tumolink_enable') == "0") checked @endif>
                             <label for="tumolink_enable_hide">無効</label>
+                        </div>
+
+                        <div class="form-elem">
+                            <label for="InputTextarea">Google Calendar</label>
+                            <input id="calendar_enable_show" type="radio" value="1" name="calendar_enable" @if (old('calendar_enable') == "1") checked @endif>
+                            <label for="calendar_enable_show">有効</label>
+                            <input id="calendar_enable_hide" type="radio" value="0" name="calendar_enable" @if (old('calendar_enable') == "0") checked @endif>
+                            <label for="calendar_enable_hide">無効</label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="InputTextarea">公開 calendar iframe</label>
+                            <textarea class="form-control form-control-lg" name="calendar_public_iframe" rows="5">{{old('calendar_public_iframe')}}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="InputTextarea">非公開 calendar iframe</label>
+                            <textarea class="form-control form-control-lg" name="calendar_secret_iframe" rows="5">{{old('calendar_secret_iframe')}}</textarea>
                         </div>
 
                         <div class="form-group">

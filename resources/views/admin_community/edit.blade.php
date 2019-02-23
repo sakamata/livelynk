@@ -44,6 +44,9 @@
                             <p>ツモリンク機能 &nbsp; : &nbsp;
                             @if($item->tumolink_enable == true) 有効 @else 無効 @endif
                             </p>
+                            <p>Google Calendar機能 &nbsp; : &nbsp;
+                            @if($item->calendar_enable == true) 有効 @else 無効 @endif
+                            </p>
                         </div>
                         <hr>
                         @if(Auth::user()->role == 'superAdmin' && Auth::user()->community_id != $item->id)
@@ -116,12 +119,28 @@
                             <input id="tumolink_enable_hide" type="radio" value="0" name="tumolink_enable" @if (old('tumolink_enable', $item->tumolink_enable) == "0") checked @endif>
                             <label for="tumolink_enable_hide">無効</label>
                         </div>
+                        <div class="form-elem">
+                            <label for="InputTextarea">Calendar機能&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <input id="calendar_enable_show" type="radio" value="1" name="calendar_enable" @if (old('calendar_enable', $item->calendar_enable) == "1") checked @endif>
+                            <label for="calendar_enable_show">有効&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <input id="calendar_enable_hide" type="radio" value="0" name="calendar_enable" @if (old('calendar_enable', $item->calendar_enable) == "0") checked @endif>
+                            <label for="calendar_enable_hide">無効</label>
+                        </div>
 
                         @else
                         <input type="hidden" name="google_home_enable" value="{{$item->google_home_enable}}">
                         <input type="hidden" name="tumolink_enable" value="{{$item->tumolink_enable}}">
+                        <input type="hidden" name="google_calendar_enable" value="{{$item->calendar_enable}}">
                         @endcan
                         @can('superAdmin')
+                        <div class="form-group">
+                            <label for="InputTextarea">公開Calendar iframe</label>
+                            <textarea class="form-control form-control-lg" name="calendar_public_iframe" rows="5">{{old('calendar_public_iframe', $item->calendar_public_iframe)}}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="InputTextarea">非公開Calendar iframe</label>
+                            <textarea class="form-control form-control-lg" name="calendar_secret_iframe" rows="5">{{old('calendar_secret_iframe', $item->calendar_secret_iframe)}}</textarea>
+                        </div>
                         <div class="form-group">
                             <label for="InputTextarea">管理者メモ</label>
                             <textarea class="form-control form-control-lg" name="admin_comment" rows="5">{{old('admin_comment', $item->admin_comment)}}</textarea>

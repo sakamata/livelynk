@@ -54,6 +54,9 @@ class AdminCommunityController extends Controller
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhook_key' => 'nullable|string|max:191',
             'tumolink_enable' => 'boolean',
+            'calendar_enable' => 'boolean',
+            'calendar_public_iframe' => 'nullable|string|max:1000',
+            'calendar_secret_iframe' => 'nullable|string|max:1000',
             'google_home_enable' => 'boolean',
             'admin_comment' => 'nullable|string|max:1000',
         ]);
@@ -70,6 +73,9 @@ class AdminCommunityController extends Controller
             'ifttt_event_name' => $request->ifttt_event_name,
             'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
             'tumolink_enable' => $request->tumolink_enable,
+            'calendar_enable' => $request->calendar_enable,
+            'calendar_public_iframe' => $request->calendar_public_iframe,
+            'calendar_secret_iframe' => $request->calendar_secret_iframe,
             'google_home_enable' => $request->google_home_enable,
             'admin_comment' => $request->admin_comment,
             'created_at' => $now,
@@ -146,10 +152,13 @@ class AdminCommunityController extends Controller
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhooks_key' => 'nullable|string|max:191',
             'tumolink_enable' => 'boolean',
+            'calendar_enable' => 'boolean',
             'google_home_enable' => 'boolean',
         ];
         if ($user->role == 'superAdmin') {
             $rules['admin_comment'] = 'nullable|string|max:1000';
+            $rules['calendar_public_iframe'] = 'nullable|string|max:1000';
+            $rules['calendar_secret_iframe'] = 'nullable|string|max:1000';
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -169,11 +178,14 @@ class AdminCommunityController extends Controller
             'ifttt_event_name' => $request->ifttt_event_name,
             'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
             'tumolink_enable' => $request->tumolink_enable,
+            'calendar_enable' => $request->calendar_enable,
             'google_home_enable' => $request->google_home_enable,
             'updated_at' => $now,
         ];
         if ($user->role == 'superAdmin') {
             $param['admin_comment'] = $request->admin_comment;
+            $param['calendar_public_iframe'] = $request->calendar_public_iframe;
+            $param['calendar_secret_iframe'] = $request->calendar_secret_iframe;
         }
         DB::table('communities')->where('id', $request->id)->update($param);
 
