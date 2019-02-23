@@ -14,10 +14,12 @@
   @component('components.tumoli_form', ['tumolist' => $tumolist, 'tumoli_declared' => $tumoli_declared, 'community' => $community])
   @endcomponent
 @elseif(Auth::check() == false && $community->tumolink_enable)
-  <p>ログインすると行くツモリ宣言ができます</p>
+<p>ログインすると行くツモリ宣言ができます</p>
 @elseif(!$community->tumolink_enable)
-  {{-- <p>新機能ツモリンクをリリースしました</p> --}}
+{{-- <p>新機能ツモリンクをリリースしました</p> --}}
 @endif
+
+  <iframe class="g_calender" src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showTz=0&amp;mode=AGENDA&amp;height=200&amp;wkst=2&amp;bgcolor=%23ffffff&amp;src=60l6lbgjj74h8lji2jgq0s1kvs%40group.calendar.google.com&amp;color=%235F6B02&amp;ctz=Asia%2FTokyo" style="border-width:0" width="100%" height="200" frameborder="0" scrolling="no"></iframe>
 
 <div class="comp-box-container clearfix">
 @foreach ($tumolist as $item)
