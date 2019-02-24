@@ -5,8 +5,11 @@ use Carbon\Carbon;
 use Faker\Generator as Faker;
 
 $factory->define(MacAddress::class, function (Faker $faker) {
+    $front = substr($faker->macAddress, 0, 2);
+    $bottom = substr($faker->macAddress, -2);
     return [
         'mac_address' => $faker->macAddress,
+        'mac_address_omission' => $front . ":..:..:..:..:" . $bottom,
         'mac_address_hash' => $faker->sha256,
         'vendor' => $faker->company,
         'device_name' => $faker->company,

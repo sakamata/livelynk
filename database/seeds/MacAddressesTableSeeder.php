@@ -27,6 +27,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 1,
             'router_id' => 1,
             'mac_address' => 'AA:BB:CC:DD:EE:FF',
+            'mac_address_omission' => "AA:..:..:..:..:FF",
             'mac_address_hash' => $this->CahngeCrypt('AA:BB:CC:DD:EE:FF', 1),
             'vendor' => 'Apple.inc',
             'device_name' => 'i-phoneX',
@@ -44,6 +45,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 1,
             'router_id' => 2,
             'mac_address' => '00:11:22:33:44:55',
+            'mac_address_omission' => "00:..:..:..:..:55",
             'mac_address_hash' => $this->CahngeCrypt('00:11:22:33:44:55', 1),
             'vendor' => 'hoge.inc',
             'device_name' => 'すまほ-X',
@@ -61,6 +63,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 1,
             'router_id' => 2,
             'mac_address' => 'AA:BB:CC:33:44:55',
+            'mac_address_omission' => "AA:..:..:..:..:55",
             'mac_address_hash' => $this->CahngeCrypt('AA:BB:CC:33:44:55', 1),
             'vendor' => 'fuga.inc',
             'device_name' => '非表示プリンタ',
@@ -78,6 +81,7 @@ class MacAddressesTableSeeder extends Seeder
             'community_user_id' => 5,
             'router_id' => 2,
             'mac_address' => '00:11:22:DD:EE:FF',
+            'mac_address_omission' => "00:..:..:..:..:FF",
             'mac_address_hash' => $this->CahngeCrypt('00:11:22:DD:EE:FF', 1),
             'vendor' => 'piyo.inc',
             'device_name' => 'i-piyo',
@@ -110,8 +114,9 @@ class MacAddressesTableSeeder extends Seeder
             $posted = $posted->subSecond(rand(1,59));
 
             $stay = 1;
-
-            $mac = strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2));
+            $mac_top = strtoupper(str_random(2)) ;
+            $mac_bottom = strtoupper(str_random(2)) ;
+            $mac = $mac_top .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. $mac_bottom;
             $XX = strtoupper(str_random(2));
             $vendor = $XX . $XX . $XX . '.inc';
             $device = $XX . $XX . $XX . $XX;
@@ -119,6 +124,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_omission' => $mac_top .":..:..:..:..:" . $mac_bottom,
                 'mac_address_hash' => $this->CahngeCrypt($mac, 1),
                 'vendor' => $vendor,
                 'device_name' => $device,
@@ -152,7 +158,9 @@ class MacAddressesTableSeeder extends Seeder
             $posted = $posted->subSecond(rand(1,59));
 
             $stay = 0;
-            $mac = strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2));
+            $mac_top = strtoupper(str_random(2)) ;
+            $mac_bottom = strtoupper(str_random(2)) ;
+            $mac = $mac_top .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. $mac_bottom;
             $XX = strtoupper(str_random(2));
             $vendor = $XX . $XX . $XX . '.inc';
             $device = $XX . $XX . $XX . $XX;
@@ -160,6 +168,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_omission' => $mac_top .":..:..:..:..:" . $mac_bottom,
                 'mac_address_hash' => $this->CahngeCrypt($mac, 1),
                 'vendor' => $vendor,
                 'device_name' => $device,
@@ -199,7 +208,9 @@ class MacAddressesTableSeeder extends Seeder
             } else {
                 $stay = 0;
             }
-            $mac = strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2));
+            $mac_top = strtoupper(str_random(2)) ;
+            $mac_bottom = strtoupper(str_random(2)) ;
+            $mac = $mac_top .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. $mac_bottom;
             $XX = strtoupper(str_random(2));
             $vendor = $XX . $XX . $XX . '.inc';
             $device = $XX . $XX . $XX . $XX;
@@ -207,6 +218,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_omission' => $mac_top .":..:..:..:..:" . $mac_bottom,
                 'mac_address_hash' => $this->CahngeCrypt($mac, 2),
                 'vendor' => $vendor,
                 'device_name' => $device,
@@ -246,7 +258,9 @@ class MacAddressesTableSeeder extends Seeder
             } else {
                 $stay = 0;
             }
-            $mac = strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2));
+            $mac_top = strtoupper(str_random(2)) ;
+            $mac_bottom = strtoupper(str_random(2)) ;
+            $mac = $mac_top .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. $mac_bottom;
             $XX = strtoupper(str_random(2));
             $vendor = $XX . $XX . $XX . '.inc';
             $device = $XX . $XX . $XX . $XX;
@@ -254,6 +268,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_omission' => $mac_top .":..:..:..:..:" . $mac_bottom,
                 'mac_address_hash' => $this->CahngeCrypt($mac, 3),
                 'vendor' => $vendor,
                 'device_name' => $device,
@@ -293,14 +308,16 @@ class MacAddressesTableSeeder extends Seeder
             } else {
                 $stay = 0;
             }
-            $mac = strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2));
-            $XX = strtoupper(str_random(2));
+            $mac_top = strtoupper(str_random(2)) ;
+            $mac_bottom = strtoupper(str_random(2)) ;
+            $mac = $mac_top .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. $mac_bottom;            $XX = strtoupper(str_random(2));
             $vendor = $XX . $XX . $XX . '.inc';
             $device = $XX . $XX . $XX . $XX;
             $param = [
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_omission' => $mac_top .":..:..:..:..:" . $mac_bottom,
                 'mac_address_hash' => $this->CahngeCrypt($mac, 2),
                 'vendor' => $vendor,
                 'device_name' => $device,
@@ -340,7 +357,9 @@ class MacAddressesTableSeeder extends Seeder
             } else {
                 $stay = 0;
             }
-            $mac = strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2));
+            $mac_top = strtoupper(str_random(2)) ;
+            $mac_bottom = strtoupper(str_random(2)) ;
+            $mac = $mac_top .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. $mac_bottom;
             $XX = strtoupper(str_random(2));
             $vendor = $XX . $XX . $XX . '.inc';
             $device = $XX . $XX . $XX . $XX;
@@ -348,6 +367,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $i,
                 'router_id' => $rand_router,
                 'mac_address' => $mac,
+                'mac_address_omission' => $mac_top .":..:..:..:..:" . $mac_bottom,
                 'mac_address_hash' => $this->CahngeCrypt($mac, 3),
                 'vendor' => $vendor,
                 'device_name' => $device,
@@ -366,7 +386,9 @@ class MacAddressesTableSeeder extends Seeder
         $id = 41;
         $router_id = array(1,2,3,4,5,5);
         for ($i=0; $i <=5; $i++) {
-            $mac = strtoupper(str_random(2)) . ':' . strtoupper(str_random(2)) . ':' . strtoupper(str_random(2)) . ':' . strtoupper(str_random(2)) . ':' . strtoupper(str_random(2)) . ':' . strtoupper(str_random(2));
+            $mac_top = strtoupper(str_random(2)) ;
+            $mac_bottom = strtoupper(str_random(2)) ;
+            $mac = $mac_top .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. $mac_bottom;
             $XX = strtoupper(str_random(2));
             $vendor = $XX . $XX . $XX . '.inc';
             $device = $XX . $XX . $XX . $XX;
@@ -374,6 +396,7 @@ class MacAddressesTableSeeder extends Seeder
                 'community_user_id' => $id,
                 'router_id' => $router_id[$i],
                 'mac_address' => $mac,
+                'mac_address_omission' => $mac_top .":..:..:..:..:" . $mac_bottom,
                 'mac_address_hash' => $this->CahngeCrypt($mac, 1),
                 'vendor' => $vendor,
                 'device_name' => $device,
