@@ -63,6 +63,7 @@ class AdminCommunityController extends Controller
             'enable' => true,
             'user_id' => null,
             'name' => $request->name,
+            'name_reading' => $request->name_reading,
             'service_name' => $request->service_name,
             'service_name_reading' => $request->service_name_reading,
             'hash_key' => $request->hash_key,
@@ -81,6 +82,7 @@ class AdminCommunityController extends Controller
             // role_id "readerAdmin" = 3 に固定
             $user_id = $this->call_user->UserCreate(
                 (string)$request->user_name,
+                (string)$request->name_reading,
                 (string)$request->unique_name,
                 (string)$request->email,
                 (bool)$provisional = false,

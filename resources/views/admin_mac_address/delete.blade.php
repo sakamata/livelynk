@@ -19,6 +19,9 @@
                             <p>&nbsp;</p>
                         </div>
                         <div>
+                            <h3>MAC Address:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->mac_address_omission}}</h3>
+                        </div>
+                        <div>
                             <h3>メーカー:&nbsp;&nbsp;&nbsp;&nbsp; {{$item->vendor}}</h3>
                         </div>
                         <div>

@@ -81,6 +81,7 @@ class InportPostController extends Controller
                     // 仮ユーザーの作成
                     $community_user_id  = $this->call_user->UserCreate(
                         (string)$provisional_name, // name
+                        (string)$name_reading = null, // name_ふりがな
                         (string)$provisional_name, // unique_name
                         (string)$email = null,
                         (bool)$provisional = true,
@@ -173,10 +174,12 @@ class InportPostController extends Controller
                         if ($user) {
                             Log::debug(print_r("来訪者の通知開始 該当user>>>", 1));
                             Log::debug(print_r($user->name, 1));
+                            Log::debug(print_r($user->name_reading, 1));
                             // ***ToDo*** 重複削除をする処理を追加する 1ユーザーの複数端末が同時到着の際、重複して名前が飛ぶ。
                             $person = array(
                                 "id" => $user->user_id,
                                 "name" => $user->name,
+                                "name_reading" => $user->name_reading,
                                 "name_only" => $user->name,
                             );
                             $push_users[$i] =  $person;

@@ -56,6 +56,7 @@ class UserTable extends Model
         // 'mac_addresses.*',
         return $query->select([
             'users.name',
+            'users.name_reading',
             'users.unique_name',
             'users.email',
             'users.provisional',

@@ -18,8 +18,10 @@ class GoogleHomeController extends Controller
         $users_name_only_str = "";
         $count = 0;
         foreach ((array)$push_users as $user) {
-            $users_name_str .= $user['name'] . "さん。";
-            $users_name_only_str .= $user['name_only'] . "。";
+            $user->name_reading ? $user_name = $user->name_reading : $user_name = $user->name; 
+
+            $users_name_str .= $user_name . "さん。";
+            $users_name_only_str .= $user_name . "。";
             $count++;
         }
         if ($community->service_name_reading) {

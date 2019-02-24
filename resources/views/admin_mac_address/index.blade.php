@@ -53,6 +53,9 @@
                             </th>
                             @endcan
                             <th>
+                                MAC Address
+                            </th>
+                            <th>
                                 非表示　
                                 メーカー　
                                 デバイスメモ　
@@ -94,6 +97,9 @@
                             @can('superAdmin')
                             <td class="align-middle">{{$item->community_id}} : {{$item->community_name}}<br>{{$item->service_name}}</td>
                             @endcan
+                            <td class="align-middle">
+                                {{$item->mac_address_omission}}
+                            </td>
                             <td class="align-middle">
                                 <form action="/admin_mac_address/update" method="post">
                                     {{ csrf_field() }}

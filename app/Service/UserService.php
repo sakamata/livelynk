@@ -54,6 +54,7 @@ class UserService
     // InportPostController->MacAddress
     public function UserCreate(
         string $name = null,
+        string $name_reading = null,
         string $unique_name,
         string $email = null,
         bool $provisional,
@@ -65,6 +66,7 @@ class UserService
         $now = Carbon::now();
         $user_id = 'App\UserTable'::insertGetId([
             'name' => $name,
+            'name_reading' => $name_reading,
             'unique_name' => $unique_name,
             'email' => $email,
             'provisional' => $provisional,

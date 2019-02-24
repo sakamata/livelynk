@@ -93,7 +93,8 @@ class TumolinkController extends Controller
 
         // GoogleHome通知を保存
         if ($request->google_home_push == true && $community->google_home_enable == true) {
-            $talking_message = (new GoogleHomeController)->GoogleHomeMessageTumolinkMaker($messages['trigger'], Auth::user()->name, $time);
+            Auth::user()->name_reading ? $user_name = Auth::user()->name_reading : $user_name = Auth::user()->name; 
+            $talking_message = (new GoogleHomeController)->GoogleHomeMessageTumolinkMaker($messages['trigger'], $user_name, $time);
             // DBに入れる
             $talkMessage = new \App\TalkMessage();
             // ひままずcommunityの最初のrouterに紐づいたGoogleHomeを対象にする

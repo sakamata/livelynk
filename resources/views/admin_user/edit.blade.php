@@ -9,6 +9,12 @@
       <span class="head">名前</span>
       <span class="body">{{$item->name}}</span>
     </div>
+    @if($user_community->google_home_enable == true)
+    <div class="elem">
+      <span class="head">名前 ふりがな</span>
+      <span class="body">{{$item->name_reading}}</span>
+    </div>
+    @endif
     <div class="elem">
       <span class="head">ユーザーID</span>
       <span class="body">{{$item->unique_name}}</span>
@@ -85,6 +91,17 @@
         </span>
         @endif
       </div>
+      @if($user_community->google_home_enable == true || Auth::user()->role == 'superAdmin')
+      <div class="form-elem">
+        <label for="user_reading" class="comp-ui">名前 ふりがな</label>
+        <input type="text" class="comp-ui form-control {{ $errors->has('name_reading') ? ' is-invalid' : '' }}" name="name_reading" value="{{old('name_reading', $item->name_reading)}}" id="user_reading">
+        @if ($errors->has('name_reading'))
+        <span class="invalid-feedback" role="alert">
+          <strong>{{ $errors->first('name_reading') }}</strong>
+        </span>
+        @endif
+      </div>
+      @endif
 
       <div class="form-elem">
         <label for="unique_name" class="comp-ui">ユーザーID(ログインに必要です)</label>

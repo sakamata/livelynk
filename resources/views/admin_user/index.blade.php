@@ -143,6 +143,7 @@
                                             {{$mac_add->current_stay == 1 ? '滞在' : '不在'}}</td>
                                             <td>{{$mac_add->hide == 1 ? '隠' : ''}}
                                             </td>
+                                            <td>{{$mac_add->mac_address_omission}}</td>
                                             <td>{{$mac_add->device_name}}</td>
                                             <td>{{$mac_add->vendor}}</td>
                                             @if($view == 'index')

@@ -163,12 +163,11 @@ class AdminUserController extends Controller
             $reader_id = $this->getReaderID();
             $communities = "";
         }
-
         $mac_addresses = $this->call_mac->PersonHavingGet(
             (int)$reader_id,
             (int)$community_id
         );
-        $item = $this->call_user->PersonGet($reader_id);
+        $item = $this->call_user->PersonGet((int) $reader_id);
 
         // ***ToDo*** user role 非表示のフォーム追加
         return view('admin_user.add', [
@@ -187,6 +186,7 @@ class AdminUserController extends Controller
         $request->validate([
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
+            'name_reading' => 'nullable|string|max:30',
             'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', 'unique:users'],
             'email' => 'nullable|string|email|max:170',
             'password' => 'required|string|min:6|max:100|confirmed',
@@ -200,6 +200,7 @@ class AdminUserController extends Controller
             // 管理画面から作成の場合roleは現状 1=normal で固定
             $community_user_id  = $this->call_user->UserCreate(
                 (string)$request->name,
+                (string)$request->name_reading,
                 (string)$request->unique_name,
                 (string)$request->email,
                 (bool)$provisional = false,
@@ -270,6 +271,8 @@ class AdminUserController extends Controller
             (int)$request->id,
             (int)$user->community_id
         );
+        
+        $user_community = DB::table('communities')->where('id', $user->community_id)->first();
         $communities = DB::table('communities')->get();
         $taget_role = $this->call_user->IDtoRoleGet($request->id);
         $taget_role_int = 'App\Role'::where('role', $taget_role)->pluck('id')->first();
@@ -278,6 +281,7 @@ class AdminUserController extends Controller
         return view('admin_user.edit', [
             'item' => $item,
             'mac_addresses' => $mac_addresses,
+            'user_community' => $user_community,
             'communities' => $communities,
             'view' => 'edit',
             'taget_role_int' => $taget_role_int,
@@ -292,6 +296,7 @@ class AdminUserController extends Controller
             'user_id' => 'required|integer',
             'community_id' => 'required|integer',
             'name' => 'required|string|max:30',
+            'name_reading' => 'nullable|string|max:30',
             'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', new UniqueNameEdit($request->user_id)],
             'email' => 'nullable|string|email|max:170',
             'role' => ['required', 'regex:/normal|normalAdmin|readerAdmin|superAdmin/'],

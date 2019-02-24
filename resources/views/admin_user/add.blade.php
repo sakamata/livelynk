@@ -32,6 +32,20 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('auth.Name') }}ふりがな（任意）</label>
+
+                            <div class="col-md-8">
+                                <input id="name_reading" type="text" class="form-control{{ $errors->has('name_reading') ? ' is-invalid' : '' }}" name="name_reading" value="{{ old('name_reading') }}" autofocus placeholder="30文字まで">
+
+                                @if ($errors->has('name_reading'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('name_reading') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="unique_name" class="col-md-4 col-form-label text-md-right">{{ __('auth.unique_name') }}</label>
 
                             <div class="col-md-8">
