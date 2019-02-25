@@ -85,7 +85,7 @@
                         <div class="form-group">
                             <label for="InputTextarea">secret</label>
                             <input type="text" class="form-control form-control-sm" name="hash_key" value="{{old('hash_key', $item->hash_key)}}">
-                            <span id="passwordHelpBlock" class="help-block">通常編集禁止(superAdminのみ変更可能)</span>
+                            <span id="passwordHelpBlock" class="help-block">通常編集禁止(superAdminのみ表示・変更可能)</span>
                         </div>
                         @else
                         <input type="hidden" name="hash_key" value="{{$item->hash_key}}">
@@ -105,6 +105,7 @@
                         <hr>
 
                         @can('superAdmin')
+                        <h2>superAdmin Menu</h2>
                         <div class="form-elem">
                             <label for="InputTextarea">Google Home アシスタント機能&nbsp;&nbsp;&nbsp;&nbsp;</label>
                             <input id="google_home_enable_show" type="radio" value="1" name="google_home_enable" @if (old('google_home_enable', $item->google_home_enable) == "1") checked @endif>
