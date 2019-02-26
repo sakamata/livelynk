@@ -79,7 +79,7 @@ class TumolinkController extends Controller
             $message = 'ツモリ宣言をしました。';
         }
 
-        // ifttt 通知
+        // ifttt 通知文作成
         $community = DB::table('communities')
             ->where('id', Auth::user()->community_id)->first();
         $messages = $this->tumoli_message_maker(
@@ -89,10 +89,10 @@ class TumolinkController extends Controller
             $tumoli_again,
             $community->service_name
         );
-        (new ExportPostController)->push_ifttt($messages['title'], $messages['message'], $community);
 
-        // GoogleHome通知を保存
+        // GoogleHome通知作成と保存
         if ($request->google_home_push == true && $community->google_home_enable == true) {
+            // よみがな優先で発話
             Auth::user()->name_reading ? $user_name = Auth::user()->name_reading : $user_name = Auth::user()->name; 
             $talking_message = (new GoogleHomeController)->GoogleHomeMessageTumolinkMaker($messages['trigger'], $user_name, $time);
             // DBに入れる
@@ -104,6 +104,8 @@ class TumolinkController extends Controller
             $talkMessage->save();
         }
 
+        // POSTで固まるので処理後半で ifttt 通知
+        (new ExportPostController)->push_ifttt($messages['title'], $messages['message'], $community);
         if (!$request->isJson()) {
         // post form 処理
             return redirect('/')->with('message', $message);

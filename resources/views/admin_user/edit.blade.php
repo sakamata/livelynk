@@ -93,7 +93,7 @@
       </div>
       @if($user_community->google_home_enable == true || Auth::user()->role == 'superAdmin')
       <div class="form-elem">
-        <label for="user_reading" class="comp-ui">名前 ふりがな</label>
+        <label for="user_reading" class="comp-ui">名前 ふりがな（任意）</label>
         <input type="text" class="comp-ui form-control {{ $errors->has('name_reading') ? ' is-invalid' : '' }}" name="name_reading" value="{{old('name_reading', $item->name_reading)}}" id="user_reading">
         @if ($errors->has('name_reading'))
         <span class="invalid-feedback" role="alert">

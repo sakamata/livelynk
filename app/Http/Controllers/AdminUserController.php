@@ -267,12 +267,19 @@ class AdminUserController extends Controller
         ) {
             return view('errors.403');
         }
+        if ($user->role == 'superAdmin') {
+            $community_id = DB::table('community_user')
+                ->where('id', $request->id)->pluck('community_id')->first();
+        } else {
+            $community_id = $user->community_id;
+        }
+
         $mac_addresses = $this->call_mac->PersonHavingGet(
             (int)$request->id,
-            (int)$user->community_id
+            (int)$community_id
         );
         
-        $user_community = DB::table('communities')->where('id', $user->community_id)->first();
+        $user_community = DB::table('communities')->where('id', $community_id)->first();
         $communities = DB::table('communities')->get();
         $taget_role = $this->call_user->IDtoRoleGet($request->id);
         $taget_role_int = 'App\Role'::where('role', $taget_role)->pluck('id')->first();
@@ -336,7 +343,8 @@ class AdminUserController extends Controller
         // provisional => false 
         $param_user = [
             'name' => $request->name,
-            'unique_name' => $request->unique_name,
+            'name' => $request->name,
+            'name_reading' => $request->name_reading,
             'email' => $request->email,
             'updated_at' => $now,
             'provisional' => false,

@@ -123,6 +123,7 @@ class InportPostController extends Controller
                 $person = array(
                     "id" => "id未定",
                     "name" => "newcomer! ". $provisional_name,
+                    "name_reading" => $provisional_name,
                     "name_only" => $provisional_name,
                  );
                 $push_users[$i] = $person;
@@ -220,7 +221,9 @@ class InportPostController extends Controller
             $talk_message = 'App\TalkMessage'::orderBy('id')->first();
             if ($talk_message) {
                 Log::debug(print_r('talk_message>>>', 1));
-                Log::debug(print_r($talk_message, 1));
+                Log::debug(print_r('[id]' . $talk_message->id, 1));
+                Log::debug(print_r('[router_id]' . $talk_message->router_id, 1));
+                Log::debug(print_r('[talking_message]' . $talk_message->talking_message, 1));
                 $talk_message->delete();
                 return $this->TalkMessageJsonResponse(
                     $talk_message->router->google_home_mac_address,

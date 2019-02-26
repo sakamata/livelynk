@@ -18,7 +18,7 @@ class GoogleHomeController extends Controller
         $users_name_only_str = "";
         $count = 0;
         foreach ((array)$push_users as $user) {
-            $user->name_reading ? $user_name = $user->name_reading : $user_name = $user->name; 
+            $user['name_reading'] ? $user_name = $user['name_reading'] : $user_name = $user['name']; 
 
             $users_name_str .= $user_name . "さん。";
             $users_name_only_str .= $user_name . "。";
@@ -46,9 +46,9 @@ class GoogleHomeController extends Controller
                     "実は地味に時間別で挨拶ができる様になりました。",
                     "ライブリンクがにツモリンク機能がつきましたよ、是非使ってみてください",
                     "ライブリンクの画面からログインすれば、皆さんにここに行くつもりや、帰るつもりをお知らせできるようになりますよ。",
-                    "そろそろお名前の読み方を正しく言える様になるそうです。失礼のないようにします。",
+                    "ライブリンクのプロフィール編集画面で、ふりがなを入れてもらうと、お名前を正しく言える様になりました。",
                     "実は常連さんへの挨拶は8種類です。みなさんで増やしたり変更したりきる様になるかもしれません",
-                    "お食事時に近所のおすすめのお店などを紹介などもしたいですね",
+                    "実はお名前を正しく言える様になりました。ライブリンクのプロフィール編集画面で、ふりがなを入れてくださいね。",
                     "打ち合わせ中でしたらすみません。そろそろ空気が読めるようになりたいです。",
                     "そのうちどなたかの伝言などをお伝えできるようになりたいです。",
                 );
@@ -71,11 +71,11 @@ class GoogleHomeController extends Controller
         $time = $time->format('G時i分');
         switch ($trigger) {
             case 'maybe_arraival':
-                $message = $user_name . 'さんが' . $time . 'くらいに来るつもりみたいですよ。';
+                $message = $user_name . 'さんが、' . $time . 'くらいに来るつもりみたいですよ。';
                 break;
 
             case 'maybe_departure':
-                $message = $user_name . 'さんが' . $time . 'くらいに帰るつもりみたいですよ。';
+                $message = $user_name . 'さんが、' . $time . 'くらいに帰るつもりみたいですよ。';
                 break;
 
             case 're_maybe_arraival':
@@ -87,11 +87,11 @@ class GoogleHomeController extends Controller
                 break;
 
             case 'cancel_arraival':
-                $message = $user_name . 'さんが来るのをやめたみたいです。';
+                $message = $user_name . 'さんが、来るのをやめたみたいです。';
                 break;
 
             case 'cancel_arraival':
-                $message = $user_name . 'さんはもう少しいるつもりみたいです。';
+                $message = $user_name . 'さんは、もう少しいるつもりみたいです。';
                 break;
 
             default:

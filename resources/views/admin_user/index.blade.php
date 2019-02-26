@@ -115,77 +115,50 @@
                         @if($item->hide == false)
                         <tr>
                         @else
-                        <tr  class="table-secondary">
+                        <tr class="table-secondary">
                         @endif
-                            <td>No.{{$item->id}}</br>
-                            {{$item->hide == 1 ? '非表示' : ''}}</td>
-                            <td>ID:{{$item->unique_name}}</br>
-                                @if($view == 'index')
-                                {{$item->name}}</br>{{$item->email}}</td>
-                                @endif
                             <td>
+                                No.{{$item->id}}</br>
+                                {{$item->hide == 1 ? '非表示' : ''}}
+                            </td>
+                            <td>
+                                ID:{{$item->unique_name}}</br>
+                                @if($view == 'index')
+                                {{$item->name}}</br>
+                                {{$item->email}}
+                                @endif
+                            </td>
+                            <td>
+                            @if($item->mac_addresses != null)
+                            @php $mac_add_id = ""; @endphp
                                 <table class="table table-hover table-sm table-borderless">
                                     <tbody>
-                                @if($item->mac_addresses != null)
-                                @php $mac_add_id = ""; @endphp
-                                @foreach($item->mac_addresses as $mac_add)
-                                    @php
-                                    if($mac_add->id){ $mac_add_id = $mac_add->id; }
-                                    @endphp
-                                    @if($mac_add->hide == true)
-                                        <tr class="table-secondary">
-                                    @elseif($mac_add->current_stay == true)
-                                        <tr class="table-info">
-                                    @else
-                                        <tr>
-                                    @endif
-                                            <td>ID:{{$mac_add->id}} &nbsp;&nbsp;
-                                            {{$mac_add->current_stay == 1 ? '滞在' : '不在'}}</td>
-                                            <td>{{$mac_add->hide == 1 ? '隠' : ''}}
-                                            </td>
-                                            <td>{{$mac_add->mac_address_omission}}</td>
-                                            <td>{{$mac_add->device_name}}</td>
-                                            <td>{{$mac_add->vendor}}</td>
-                                            @if($view == 'index')
-                                            <td class="blockquote text-right">
-                                                <a href="/admin_mac_address/delete?id={{$mac_add->id}}" class="btn btn-danger" role="button">削除</a>
-                                            </td>
-                                            @endif
-                                        </tr>
-                                @endforeach
+                                    @component('components.device_info', [
+                                        'item' => $item,
+                                        'view' => $view,
+                                        'mac_add_id' => $mac_add_id,
+                                        ])
+                                    @endcomponent
                                     </tbody>
                                 </table>
-                                @if($view == 'provisional' && $mac_add_id)
-                                <form action="/admin_user/owner_update" method="post">
-                                    {{ csrf_field() }}
-                                    <input type="hidden" name="community_id" value="{{$community_id}}">
-                                    <input type="hidden" name="mac_id" value="{{$mac_add_id}}">
-                                    <input type="hidden" name="old_community_user_id" value="{{$item->id}}">
-                                    <div class="form-inline">
-                                        <div class="form-group col-md-10">
-                                            <label>ユーザー変更</label>
-                                            <select name="new_community_user_id" class="form-control">
-                                                <option value="{{$item->id}}" selected>{{$item->id}}&nbsp;:&nbsp;{{$item->name}}</option>
-                                                @foreach($users as $user)
-                                                    @if($user->id == $reader_id)
-                                                    <option value="{{$user->id}}">{{$user->id}}&nbsp;:&nbsp;未登録デバイス</option>
-                                                    @else
-                                                    <option value="{{$user->id}}">{{$user->id}}&nbsp;:&nbsp;{{$user->name}}</option>
-                                                    @endif
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <button name="{{$user->id}}" type="button submit" class="btn btn-primary">統合</button>
-                                        </div>
-                                    </div>
-                                </form>
+                                @if($view == 'provisional')
+                                @component('components.provisional_owner_update', [
+                                    'item' => $item,
+                                    'users' => $users,
+                                    'community_id' => $community_id,
+                                    'mac_add_id' => $mac_add_id,
+                                    'reader_id' => $reader_id,
+                                    ])
+                                @endcomponent
                                 @endif
                             @endif
                             </td>
                             <td>{{$item->role}}</td>
                             @can('superAdmin')
-                            <td>{{$item->community_id}} : {{$item->community_name}}<br>{{$item->community_service_name}}</td>
+                            <td>
+                                {{$item->community_id}} : {{$item->community_name}}<br>
+                                {{$item->community_service_name}}
+                            </td>
                             @endcan
                             <td>{{$item->s_last_access->format('n月j日 G:i')}}</td>
                             <td>{{$item->s_created_at->format('n月j日 G:i')}}</td>
@@ -205,5 +178,4 @@
         </div>
     </div>
 </div>
-
 @endsection
