@@ -45,11 +45,16 @@ class InportPostController extends Controller
         $community = $this->call_community->NameGet((string)$check_array['community_id']);
 
         if (!$community) {
-            Log::debug(print_r('community_id not found!! check json ==> ', 1));
-            Log::debug(print_r($check_array, 1));
+            Log::warning(print_r('community_id not found!! check json ==> ', 1));
+            Log::warning(print_r($check_array, 1));
             exit();
         }
         $post_mac_array  = $this->CheckMACArray((array)$check_array["mac"]);
+        if (isset($check_array["omit_mac"])) {
+            $omit_mac = $this->CheckAndPrepareOmitMACArray((array)$check_array["omit_mac"]);
+        } else {
+            $omit_mac = null;
+        }
         // あえて宣言する変数名 jsonの ['community_id'] が半角英数で名前が紛らわしい為
         $community_id_int = $community->id;
         // DBにあるPOST前のMACaddressを取得
@@ -95,6 +100,7 @@ class InportPostController extends Controller
                         'community_user_id' => $community_user_id,
                         'router_id' => $check_array["router_id"],
                         'mac_address' => $post_mac,
+                        'mac_address_omission' => $omit_mac[$v],
                         'mac_address_hash' => $post_mac_hash,
                         'vendor' => $check_array["vendor"][$v],
                         'arraival_at' => $now,
@@ -112,7 +118,7 @@ class InportPostController extends Controller
                 }
                 if (!$success) {
                     // コケた際はひとまずlog出力
-                    Log::waning(print_r('Provisional User & Device Create Error!!', 1));
+                    Log::warning(print_r('Provisional User & Device Create Error!!', 1));
                     // continue;
                 }
                 // この宣言は外してはいけない！！
@@ -273,9 +279,10 @@ class InportPostController extends Controller
         $this->HashCheck($check_array);
         if (!ctype_digit($check_array['time']) &&
             !ctype_digit($check_array['router_id']) &&
-            !ctype_digit($check_array['community_id'])) {
-            Log::debug(print_r('json int value not integer!! check json ==> ', 1));
-            Log::debug(print_r($check_array, 1));
+            !ctype_digit($check_array['community_id'])
+        ) {
+            Log::warning(print_r('json int value not integer!! check json ==> ', 1));
+            Log::warning(print_r($check_array, 1));
             exit();
         }
         return $check_array;
@@ -285,7 +292,7 @@ class InportPostController extends Controller
     {
         // hash確認 router_id が数値以外なら処理停止
         if (!is_numeric($check_array["router_id"])) {
-            Log::debug(print_r('Inport json post router_id not integer!! posted router_id ==> ' .$check_array["router_id"], 1));
+            Log::warning(print_r('Inport json post router_id not integer!! posted router_id ==> ' .$check_array["router_id"], 1));
             exit();
         } else {
             $router_id = $check_array["router_id"];
@@ -296,8 +303,8 @@ class InportPostController extends Controller
         $this_side_hash = hash('sha256',$time.$secret);
         $post_hash = $check_array["hash"];
         if ($this_side_hash != $post_hash) {
-            Log::debug(print_r('Inport json post hash unmatch !! posted hash ==> ' .$post_hash, 1));
-            Log::debug(print_r('Inport json post hash unmatch !! This side hash ==> ' .$this_side_hash, 1));
+            Log::warning(print_r('Inport json post hash unmatch !! posted hash ==> ' .$post_hash, 1));
+            Log::warning(print_r('Inport json post hash unmatch !! This side hash ==> ' .$this_side_hash, 1));
             exit();
         }
     }
@@ -315,11 +322,29 @@ class InportPostController extends Controller
             } elseif (preg_match('/[0-9a-f]{64}/', $check)) {
                 array_push($post_mac_array, $check);
             } else {
-                Log::debug(print_r('Inport post MACAddress not pattern!! posted element ==> ' . $check, 1));
+                Log::warning(print_r('Inport post MACAddress not pattern!! posted element ==> ' . $check, 1));
                 exit();
             }
         }
         return $post_mac_array;
+    }
+
+    public function CheckAndPrepareOmitMACArray(array $check_array_omit_mac)
+    {
+        $array = array();
+        foreach ($check_array_omit_mac as $check) {
+            // ex 12:EF
+            if(!preg_match('/^([0-9a-fA-F][0-9a-fA-F]:[0-9a-fA-F][0-9a-fA-F])$/', $check)) {
+                Log::warning(print_r('Inport post mac_address_omission not pattern!! check_array_omit_mac posted element ==> ' . $check, 1));
+                exit();
+            } else {
+                $top = substr($check, 0, 2);
+                $bottom = substr($check, 3, 2);
+                $prepare = $top . ':xx:xx:xx:xx:'. $bottom;
+                array_push($array, $prepare);
+            }
+        }
+        return $array;
     }
 
     public function CahngeCrypt($mac_address, $router_id)
