@@ -1,5 +1,5 @@
 <div class="accbox">
-    <label for="label_tomoli" class="label_tumoli">ツモリンク</label>
+    <label for="label_tomoli" class="accordion tumoli-label">ツモリンク</label>
     <input type="checkbox" id="label_tomoli" class="cssacc">
     <ul class="space-list">
         <li>

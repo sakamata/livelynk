@@ -397,6 +397,13 @@ textarea.comp-ui {
   color: #E65100;
   padding-right: .25rem;
 }
+/* calendar-label */
+.calendar-label {
+  background: #558B2F;
+}
+.accbox .calendar-label:hover {
+  background :#609738;
+}
 /* comp-box */
 .comp-box {
   background-color: white;

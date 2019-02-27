@@ -44,6 +44,9 @@ class Controller extends BaseController
         if (!preg_match("/^[a-zA-Z0-9]+$/", $request_path)) {
             return false;
         }
+        if (strlen($request_path) > 64) {
+            return false;
+        }
         // 半角英数の path ならDB見に行って match したコミュニティを返す
         $community = DB::table('communities')->where('url_path', $request_path)->first();
         if (!$community) {

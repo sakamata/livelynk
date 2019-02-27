@@ -14,10 +14,13 @@
   @component('components.tumoli_form', ['tumolist' => $tumolist, 'tumoli_declared' => $tumoli_declared, 'community' => $community])
   @endcomponent
 @elseif(Auth::check() == false && $community->tumolink_enable)
-  <p>ログインすると行くツモリ宣言ができます</p>
+<p>ログインすると行くツモリ宣言ができます</p>
 @elseif(!$community->tumolink_enable)
-  {{-- <p>新機能ツモリンクをリリースしました</p> --}}
+{{-- <p>新機能ツモリンクをリリースしました</p> --}}
 @endif
+
+@component('components.calendar', ['community' => $community])
+@endcomponent
 
 <div class="comp-box-container clearfix">
 @foreach ($tumolist as $item)

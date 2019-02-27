@@ -329,10 +329,15 @@ textarea.comp-ui {
 
 /* space-list view change */
 /* Thanks! https://saruwakakun.com/html-css/reference/accordion */
-.accbox .label_tumoli {
+.tumoli-label {
+  background :#F4511E;
+}
+.accbox .tumoli-label:hover {
+    background :#f5663b;
+}
+.accbox .accordion {
     display: block;
     padding : 11px 12px;
-    background :#F4511E;
     color :white;
     border: solid 1px #FFCCBC;
     border-radius: 2rem;
@@ -341,9 +346,6 @@ textarea.comp-ui {
     font-weight: bold;
     cursor :pointer;
     transition: all 0.5s;
-}
-.accbox .label_tumoli:hover {
-    background :#f5663b;
 }
 .accbox input {
     display: none;
@@ -360,6 +362,6 @@ textarea.comp-ui {
     opacity: 1;
     margin-bottom: 1rem;
 }
-.cssacc:checked + .label_tumoli {
+.cssacc:checked + .accordion {
     border-radius: 5em;
 }
