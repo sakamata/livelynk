@@ -69,7 +69,7 @@ class IndexTest extends DuskTestCase
             $browser->visit('/?path=hoge')
                     ->assertSee('ギークオフィス恵比寿')
                     ->assertSee('今日のイベント')
-                    ->assertDontSee('ツ')
+                    ->assertDontSee('予定')
                     ->assertSeeLink('ログイン');
         });
     }
@@ -83,7 +83,7 @@ class IndexTest extends DuskTestCase
             $browser->visit('/?path=hoge2')
                 ->assertSee('長い名前の人コミュニティ')
                 ->assertDontSee('今日のイベント')
-                ->assertDontSee('ツ')
+                ->assertDontSee('予定')
                 ->assertSeeLink('ログイン');
         });
     }

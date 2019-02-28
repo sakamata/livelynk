@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Service;
-
+use DB;
 use App\CommunityUser;
 use App\MacAddress;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +11,20 @@ use Illuminate\Support\Facades\Log;
  */
 class MacAddressService
 {
+    // IndexController サブクエリ用の滞在中端末を取得
+    public function GetStayMacAddressForSubQuery()
+    {
+        return 'App\MacAddress'::select(
+            DB::raw("community_user_id, min(arraival_at) as min_arraival_at")
+        )
+        ->where([
+            ['hide', false],
+            ['current_stay', true],
+        ])
+        ->orderBy('min_arraival_at', 'desc')
+        ->groupBy('community_user_id');
+    }
+
     public function PersonHavingGet(int $community_user_id, int $community_id)
     {
         return 'App\MacAddress'::UserHaving($community_user_id)

@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\MacAddress;
+use App\Service\CommunityService;
 use App\Service\CommunityUserService;
+use App\Service\MacAddressService;
+use App\Service\TumolinkService;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use App\Service\TumolinkService;
 
 class IndexController extends Controller
 {
@@ -17,10 +18,14 @@ class IndexController extends Controller
     private $call_tumolink;
 
     public function __construct(
+        CommunityService $call_community,
         CommunityUserService $call_community_user,
+        MacAddressService $call_mac_address,
         TumolinkService $call_tumolink
     ) {
+        $this->call_community = $call_community;
         $this->call_community_user = $call_community_user;
+        $this->call_mac_address = $call_mac_address;
         $this->call_tumolink = $call_tumolink;
     }
 
@@ -46,25 +51,12 @@ class IndexController extends Controller
                 ->where('id', $community_id)->first();
         }
 
-        // I'm here Newcomer 取得の為の処理------------------------
+        // I'm here Newcomer 取得------------------------------
 
         // community owner の user_id を取得
-        $owner_id = DB::table('communities')
-            ->where('id', $community->id)
-            ->pluck('user_id')->first();
-
+        $owner_id = $this->call_community->GetOwnerUserID((int)$community_id);
         // サブクエリ用の滞在中端末を取得
-        $sub_query = DB::table('mac_addresses')
-            ->select(
-                DB::raw("community_user_id, min(arraival_at) as min_arraival_at")
-            )
-            ->where([
-                ['hide', false],
-                ['current_stay', true],
-            ])
-            ->orderBy('min_arraival_at', 'desc')
-            ->groupBy('community_user_id');
-
+        $sub_query = $this->call_mac_address->GetStayMacAddressForSubQuery();
         // newcomer! 仮ユーザーフラグのuserを抽出--------------
         $unregistered  = $this->call_community_user->StayUsersGet(
             $sub_query,
@@ -85,17 +77,13 @@ class IndexController extends Controller
         // 既存滞在者、滞在率の取得
         $stays_rate_array = $this->DepartureRateMake($stays, $column='last_access');
 
-        // 非滞在者の取得処理開始----------------------
+        // 非滞在者の取得-------------------------------------
         // 該当コミュニティのuser id を配列で取得 （非表示user,readerAdmin除外）
-        $users_id_obj = DB::table('community_user')
-            ->join('communities_users_statuses' , 'community_user.id', '=', 'communities_users_statuses.id')
-            ->where([
-                ['user_id', '<>', $owner_id],
-                ['community_id', $community_id],
-                ['hide', false],
-        ])->pluck('user_id');
-        // コミュ内ユーザーと滞在中ユーザーから
-        // 不在ユーザーの user_id をarrayで取得
+        $users_id_obj = $this->call_community_user->GetNotStayUsersIdObjectArray(
+            (int)$owner_id,
+            (int)$community_id
+        );
+        // コミュ内ユーザーと滞在中ユーザーから 不在ユーザーの user_id をarrayで取得
         $users_id = $this->ChangeObjectToArray($users_id_obj, $column = null);
         $unregistered_users_id = $this->ChangeObjectToArray($unregistered, $column = 'user_id');
         $stays_users_id = $this->ChangeObjectToArray($stays, $column = 'user_id');
@@ -103,16 +91,10 @@ class IndexController extends Controller
         // 不在中のuser_id array
         $not_stay_users_id = array_diff($users_id, $all_stays_users_id);
         // 非滞在者objctの取得 last_access name
-        $not_stays = DB::table('community_user')
-            ->select('user_id', 'name', 'last_access')
-            ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
-            ->Join('communities_users_statuses', 'communities_users_statuses.id', '=', 'community_user.id')
-            ->where([
-                ['community_id', $community->id],
-            ])
-            ->whereIn('community_user.user_id', $not_stay_users_id)
-            ->orderBy('last_access', 'desc')
-        ->get();
+        $not_stays = $this->call_community_user->NotStayUsersGet(
+            (int)$community->id,
+            (array)$not_stay_users_id
+        );
 
         $tumolist = $this->call_tumolink->tumolistGet($community->id);
         $reader_id = "";

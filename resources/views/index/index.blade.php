@@ -28,6 +28,9 @@
     @continue
   @endif
 <div class="comp-box clearfix tumolist">
+  @can('normalAdmin')
+  <a href="/admin_user/edit?id={{$item->community_user_id}}">
+  @endcan
     <div class="name">
       <div class="icon">
         <i class="fas fa-user-circle"></i>
@@ -39,11 +42,17 @@
       <div class="time">{{date('n/j G:i', strtotime($item->maybe_arraival))}}</div>
       <div class="accuracy tumoli_icon">ツ</div>
     </div>
+    @can('normalAdmin')
+    </a>
+    @endcan
   </div>
 @endforeach
 @php $i = 0; @endphp
 @foreach ($items as $item)
   <div class="comp-box clearfix">
+  @can('normalAdmin')
+  <a href="/admin_user/edit?id={{$item->id}}">
+  @endcan
   @guest
   <a href="/login/?path={{$url_path}}&provisional_name={{$item->unique_name}}">
   @endguest
@@ -64,12 +73,18 @@
     @guest
     </a>
     @endguest
+    @can('normalAdmin')
+    </a>
+    @endcan
   </div>
   @php $i++; @endphp
 @endforeach
 @php $i = 0; @endphp
 @foreach ($items1 as $item)
   <div class="comp-box clearfix">
+    @can('normalAdmin')
+    <a href="/admin_user/edit?id={{$item->id}}">
+    @endcan
     <div class="name">
       <div class="icon">
         <i class="fas fa-user-circle"></i>
@@ -84,11 +99,17 @@
     <div class="flag sp-none">
       <img src="{{asset("img/icon/im_here.png")}}" width="46"  alt="I'm here!">
     </div>
+    @can('normalAdmin')
+    </a>
+    @endcan
   </div>
   @php $i++; @endphp
 @endforeach
 @foreach ($items2 as $item)
   <div class="comp-box clearfix absence">
+    @can('normalAdmin')
+    <a href="/admin_user/edit?id={{$item->id}}">
+    @endcan
     <div class="name">
       <div class="icon">
         <i class="fas fa-user-circle"></i>
@@ -99,6 +120,9 @@
       <div class="head">OUT</div>
       <div class="time">{{date('n/j G:i', strtotime($item->last_access))}}</div>
     </div>
+    @can('normalAdmin')
+    </a>
+    @endcan
   </div>
 @endforeach
 </div>
