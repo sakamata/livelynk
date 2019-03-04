@@ -6,9 +6,8 @@ use DB;
 use App\Community;
 use App\TalkMessage;
 use App\Http\Requests\TumolinkPost;
-use App\Service\CommunityService;
+use App\Service\CommunityUserService;
 use App\Service\TumolinkService;
-use App\Service\UserService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,16 +16,15 @@ use Illuminate\Support\Facades\Log;
 class TumolinkController extends Controller
 {
     private $tumolink_service;
+    private $call_community_user;
 
     public function __construct(
-        CommunityService $call_community,
-        TumolinkService $tumolink_service,
-        UserService $call_user
+        CommunityUserService $call_community_user,
+        TumolinkService $tumolink_service
         )
     {
-        $this->call_community = $call_community;
+        $this->call_community_user = $call_community_user;
         $this->tumolink_service = $tumolink_service;
-        $this->call_user        = $call_user;
     }
 
     public function index(Request $request)
@@ -68,13 +66,22 @@ class TumolinkController extends Controller
             // tumolink tableは 1ユーザーにつき1日1recordとなる仕様
             $exists = $this->tumolink_service->existsTodayPost($request->community_user_id);
             if ($exists) {
-                // 既に宣言したかを判定 bool
+                // 既に来訪中で本日中の行くツモリなら画面にメッセージを出すのみ
+                $current_stay = $this->call_community_user->IsCurrentStay($request->community_user_id);
+                if (
+                    $current_stay &&
+                    $time < Carbon::tomorrow() &&
+                    $direction == 'arriving'
+                ) {
+                    return redirect('/')->with('message', 'もう来ているみたいですよ');
+                }
+                // 「やっぱり」のメッセージ付与判定 既に宣言したか?の bool
                 $tumoli_again = $this->tumolink_service->isAgainTumoli($request->community_user_id);
                 // 同日中のpostであれば該当recordを更新する
                 $this->tumolink_service->updateTime($request->community_user_id, $column, $time, $request->google_home_push);
             } else {
             // 新規ならrecord追加
-                $res = $tumolist->save();
+                $tumolist->save();
             }
             $message = 'ツモリ宣言をしました。';
         }

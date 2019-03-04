@@ -69,7 +69,7 @@ class IndexTest extends DuskTestCase
             $browser->visit('/?path=hoge')
                     ->assertSee('ギークオフィス恵比寿')
                     ->assertSee('今日のイベント')
-                    ->assertDontSee('予定')
+                    ->assertMissing('.tumolist')
                     ->assertSeeLink('ログイン');
         });
     }
@@ -83,7 +83,7 @@ class IndexTest extends DuskTestCase
             $browser->visit('/?path=hoge2')
                 ->assertSee('長い名前の人コミュニティ')
                 ->assertDontSee('今日のイベント')
-                ->assertDontSee('予定')
+                ->assertMissing('.tumolist')
                 ->assertSeeLink('ログイン');
         });
     }
@@ -107,7 +107,7 @@ class IndexTest extends DuskTestCase
             $browser->visit('/?path=hoge')
             ->assertSee('ギークオフィス恵比寿')
             ->assertSee('今日のイベント')
-            ->assertSee('ツ')
+            ->assertPresent('.tumolist')
             ->assertSeeLink('ログイン');
         });
         $this->assertDatabaseHas('tumolink', ['community_user_id' => 30]);
@@ -125,7 +125,7 @@ class IndexTest extends DuskTestCase
             $browser->visit('/?path=hoge2')
                 ->assertSee('長い名前の人コミュニティ')
                 ->assertDontSee('今日のイベント')
-                ->assertSee('ツ')
+                ->assertPresent('.tumolist')
                 ->assertSeeLink('ログイン');
         });
     }

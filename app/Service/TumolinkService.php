@@ -37,7 +37,8 @@ class TumolinkService
             ->where('community_user_id', $community_user_id)
             ->where(function($query){
                 $query->where('maybe_arraival', '>', Carbon::today())
-                      ->orWhere('maybe_departure', '>', Carbon::today());
+                      ->orWhere('maybe_departure', '>', Carbon::today())
+                      ->orWhere('created_at', '>', Carbon::today());
             })->exists();
     }
 

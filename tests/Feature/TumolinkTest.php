@@ -681,6 +681,13 @@ class TumolinkTest extends TestCase
         $response->assertStatus(\Illuminate\Http\Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
+    // ツモリ宣言後来訪で、来訪予定時刻がnullになる
+    // ツモリ宣言後来訪で、来訪予定時刻がnullになった後再度ツモリ宣言で…
+        // 当日以内の行くツモリ宣言は既に現地にいるので、受け付けない　メッセージで（もう来てますよね？　みたいなバリテーション表示）
+        // 翌日以降の宣言は別レコードで受け入れ、発話　明日の…位に来るツモリ
+
+
+
         // post時間は指定した時間となっている
         // 0時間0分で行くPOSTすると時刻と異なるメッセージが表示される『いますぐ来るツモリ』
     // 行くツモリpost先を検証する

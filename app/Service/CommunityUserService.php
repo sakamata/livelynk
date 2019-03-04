@@ -104,4 +104,14 @@ class CommunityUserService
         ])->first();
     }
 
+    // TumolinkController post()
+    public function IsCurrentStay($community_user_id)
+    {
+        return 'App\CommunityUser'::leftJoin('mac_addresses', 'mac_addresses.community_user_id', '=', 'community_user.id')
+            ->where([
+                ['current_stay', true],
+                ['community_user_id', $community_user_id],
+            ])
+        ->exists();
+    }
 }
