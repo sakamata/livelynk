@@ -41,15 +41,12 @@ class TumolinkService
             })->exists();
     }
 
-    public function isAgainTumoli($community_user_id, $column)
+    public function isAgainTumoli($community_user_id)
     {
         // あるユーザーの宣言が再度の(行く|帰る)宣言かを判定する
         return DB::table('tumolink')
-            ->where([
-                ['community_user_id', $community_user_id],
-                [$column, '<>', null],
-                ['created_at', '>', Carbon::today()],
-            ])->exists();
+            ->where('community_user_id', $community_user_id)
+            ->exists();
     }
 
     public function getTodayRecord(int $community_user_id)
@@ -61,6 +58,15 @@ class TumolinkService
                 $query->where('maybe_arraival', '>', Carbon::today())
                     ->orWhere('maybe_departure', '>', Carbon::today());
             })->first();
+    }
+
+    public function UserArrivedColumnUpdateNull($community_user_id)
+    {
+        DB::table('tumolink')
+        ->where([
+            ['community_user_id', $community_user_id],
+            ['maybe_arraival', '>', Carbon::today()]
+        ])->update(['maybe_arraival' => null]);
     }
 
     // $column 'maybe_arraival|maybe_departure'

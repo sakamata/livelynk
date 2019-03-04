@@ -69,7 +69,7 @@ class TumolinkController extends Controller
             $exists = $this->tumolink_service->existsTodayPost($request->community_user_id);
             if ($exists) {
                 // 既に宣言したかを判定 bool
-                $tumoli_again = $this->tumolink_service->isAgainTumoli($request->community_user_id, $column);
+                $tumoli_again = $this->tumolink_service->isAgainTumoli($request->community_user_id);
                 // 同日中のpostであれば該当recordを更新する
                 $this->tumolink_service->updateTime($request->community_user_id, $column, $time, $request->google_home_push);
             } else {
@@ -180,10 +180,7 @@ class TumolinkController extends Controller
     public function auto_remove_before_today()
     {
         $res = DB::table('tumolink')
-        ->where(function ($query) {
-            $query->where('maybe_arraival', '<', Carbon::today())
-            ->orWhere('maybe_departure', '<', Carbon::today());
-        })->delete();
+            ->where('updated_at', '<', Carbon::today())->delete();
         log::debug(print_r('Schedule method Tumolink@auto_remove_before_today run! delete record count>>> ' . $res , 1));
     }
 }

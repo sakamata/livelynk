@@ -10,7 +10,7 @@ use App\Http\Middleware\VerifyCsrfToken;
 use App\Service\CommunityService;
 use App\Service\CommunityUserService;
 use App\Service\MacAddressService;
-use App\Service\MacAddress;
+use App\Service\TumolinkService;
 use App\Service\UserService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -22,18 +22,21 @@ class InportPostController extends Controller
     private $call_community;
     private $call_community_user;
     private $call_mac;
+    private $call_tumolink;
     private $call_user;
 
     public function __construct(
         CommunityService $call_community,
         CommunityUserService $call_community_user,
         MacAddressService $call_mac,
+        TumolinkService $call_tumolink,
         UserService $call_user
         )
     {
         $this->call_community      = $call_community;
         $this->call_community_user = $call_community_user;
         $this->call_mac            = $call_mac;
+        $this->call_tumolink       = $call_tumolink;
         $this->call_user           = $call_user;
     }
 
@@ -184,6 +187,7 @@ class InportPostController extends Controller
                             Log::debug(print_r($user->name_reading, 1));
                             // ***ToDo*** 重複削除をする処理を追加する 1ユーザーの複数端末が同時到着の際、重複して名前が飛ぶ。
                             $person = array(
+                                "community_user_id" => $user->community_user_id,
                                 "id" => $user->user_id,
                                 "name" => $user->name,
                                 "name_reading" => $user->name_reading,
@@ -191,6 +195,8 @@ class InportPostController extends Controller
                             );
                             $push_users[$i] =  $person;
                             $i++;
+                            // ツモリンク予告者なら、maybe_arraivalをnullにする
+                            $this->call_tumolink->UserArrivedColumnUpdateNull($user->community_user_id);
                         }
                     }
                 }
@@ -210,8 +216,9 @@ class InportPostController extends Controller
         $users_ids = array_unique($users_ids);
         $users_ids = array_values($users_ids);
         $this->user_last_access_update($users_ids, $now);
-        // 外部機能IFTTTに来訪通知をPOST
+        // 来訪者がいた場合の処理
         if ($push_users) {
+            // 外部機能IFTTTに来訪通知をPOST
             Log::debug(print_r("!push_ifttt arraival!>>>>", 1));
             Log::debug(print_r($push_users, 1));
             (new ExportPostController)->access_message_maker($push_users, $category = "arraival", $community->id);

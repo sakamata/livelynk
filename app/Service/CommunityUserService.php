@@ -89,7 +89,13 @@ class CommunityUserService
     // InportPostController MacAddress
     public function GetPushUser(int $community_user_id)
     {
-        return 'App\CommunityUser'::select('user_id', 'name', 'name_reading', 'hide')
+        return 'App\CommunityUser'::select(
+            'community_user.id AS community_user_id',
+            'user_id',
+            'name',
+            'name_reading',
+            'hide'
+            )
             ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
             ->Join('communities_users_statuses', 'communities_users_statuses.id', '=', 'community_user.id')
             ->where([
