@@ -16,7 +16,7 @@ class TumolinkTableSeeder extends Seeder
      */
     public function run()
     {
-        $list = array(4, 5, 6, 13, 14, 15, 22, 23, 24, 41, 43, 45);
+        $list = array(4, 5, 6, 13, 14, 15, 22, 23, 24, 41, 43, 45, 48, 50, 52);
         $three = 3;
         foreach ($list as $key => $community_user_id) {
             // $list の 3倍数の要素はGoogleHomeをOFFにする

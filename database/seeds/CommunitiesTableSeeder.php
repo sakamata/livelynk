@@ -62,5 +62,22 @@ class CommunitiesTableSeeder extends Seeder
             'updated_at' => $dateTime,
         ];
         DB::table('communities')->insert($param);
+
+        $param = [
+            'enable' => 0,
+            'user_id' => 4,
+            'name' => 'faker',
+            'service_name' => 'サンプルコミュニティ',
+            'service_name_reading' => 'サンプルコミュニティ',
+            'url_path' => 'hoge4',
+            'hash_key' => 'hoge4',
+            'ifttt_event_name' => 'dev_info_comm_4',
+            'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
+            'tumolink_enable' => 1,
+            'google_home_enable' => 1,
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('communities')->insert($param);
     }
 }

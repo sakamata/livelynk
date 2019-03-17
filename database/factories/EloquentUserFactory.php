@@ -8,10 +8,10 @@ $factory->define(UserTable::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
         'name_reading' => $faker->name,
-        'unique_name' => $faker->safeEmail,
+        'unique_name' => $faker->userName,
         'email' => $faker->email,
         'provisional' => 0,
-        'password' => $faker->password,
+        'password' => bcrypt('aaaaaa'),
         'created_at' => Carbon::now()->subDay(5),
         'updated_at'  => Carbon::yesterday(),
     ];

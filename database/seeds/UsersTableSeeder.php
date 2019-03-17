@@ -315,5 +315,8 @@ class UsersTableSeeder extends Seeder
             ];
             DB::table('users')->insert($param);
         }
+
+        // community 4
+        factory(App\UserTable::class,10)->create();
     }
 }
