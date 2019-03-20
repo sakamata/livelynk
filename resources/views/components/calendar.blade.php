@@ -1,6 +1,6 @@
 @if($community->calendar_enable && $community->calendar_public_iframe)
 <div class="accbox">
-  <label for="calendar_public" class="accordion calendar-label">公開カレンダー</label>
+  <label for="calendar_public" class="accordion calendar-label">カレンダー</label>
   <input type="checkbox" id="calendar_public" class="cssacc">
   <ul class="space-list">
     <li>
