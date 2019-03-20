@@ -411,6 +411,55 @@ class MacAddressesTableSeeder extends Seeder
             DB::table('mac_addresses')->insert($param);
             $id++;
         }
+
+        // community4
+        for ($i=47; $i <= 56; $i++) {
+            $now = Carbon::now();
+            $subSecond = Carbon::now();
+            $subSecond = $subSecond->subSecond(rand(1,59));
+            $subMinutes = Carbon::now();
+            $subMinutes = $subMinutes->subMinutes(rand(1,59));
+            $subHour5 = Carbon::now();
+            $subHour5 = $subHour5->subHour(rand(1,5));
+            $subHour = Carbon::now();
+            $subHour = $subHour->subHour(rand(1,23));
+            $subDay = Carbon::now();
+            $subDay = $subDay->subDay(rand(1,59));
+
+            $posted = Carbon::now();
+            $posted = $posted->subSecond(rand(1,59));
+
+            $posted30 = Carbon::now();
+            $posted30 = $posted30->subSecond(30);
+            if ($posted < $posted30) {
+                $stay = 1;
+            } else {
+                $stay = 0;
+            }
+            $mac_top = strtoupper(str_random(2)) ;
+            $mac_bottom = strtoupper(str_random(2)) ;
+            $mac = $mac_top .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. $mac_bottom;
+            $XX = strtoupper(str_random(2));
+            $vendor = $XX . $XX . $XX . '.inc';
+            $device = $XX . $XX . $XX . $XX;
+            $param = [
+                'community_user_id' => $i,
+                'router_id' => 6,
+                'mac_address' => $mac,
+                'mac_address_omission' => $mac_top .":..:..:..:..:" . $mac_bottom,
+                'mac_address_hash' => $this->CahngeCrypt($mac, 3),
+                'vendor' => $vendor,
+                'device_name' => $device,
+                'hide' => 0,
+                'arraival_at' => $subMinutes,
+                'departure_at' => $subHour,
+                'posted_at' => $subSecond,
+                'current_stay' => $stay,
+                'created_at' => $subDay,
+                'updated_at' => $subHour,
+            ];
+            DB::table('mac_addresses')->insert($param);
+        }
     }
 
     public function CahngeCrypt($mac_address, $community_id)

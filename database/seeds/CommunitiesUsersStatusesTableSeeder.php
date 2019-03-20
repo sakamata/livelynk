@@ -144,5 +144,25 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
             DB::table('communities_users_statuses')->insert($param);
             $id++;
         }
+
+        // faker用 community 4 10名分
+        for ($i=47; $i < 57; $i++) {
+            if ($i == 47) {
+                $role = 3;
+            } elseif ($i == 48) {
+                $role = 2;
+            } else {
+                $role = 1;
+            }
+            $param = [
+                'id' => $i,
+                'role_id' => $role,
+                'hide' => 0,
+                'last_access' => Carbon::now(),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ];
+            DB::table('communities_users_statuses')->insert($param);
+        }
     }
 }

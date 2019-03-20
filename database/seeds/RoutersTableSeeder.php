@@ -63,5 +63,14 @@ class RoutersTableSeeder extends Seeder
         ];
         DB::table('routers')->insert($param);
 
+        $param = [
+            'community_id' => 4,
+            'name' => 'comu4単独ルーター',
+            'google_home_name' => '俺の部屋',
+            'google_home_mac_address' => '20:DF:B9:34:CC:B3',
+            'created_at' => $dateTime,
+            'updated_at' => $dateTime,
+        ];
+        DB::table('routers')->insert($param);
     }
 }
