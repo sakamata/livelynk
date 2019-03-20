@@ -135,11 +135,11 @@
                         @endcan
                         @can('superAdmin')
                         <div class="form-group">
-                            <label for="InputTextarea">公開Calendar iframe</label>
+                            <label for="InputTextarea">非ログインでも表示するカレンダー iframe</label>
                             <textarea class="form-control form-control-lg" name="calendar_public_iframe" rows="5">{{old('calendar_public_iframe', $item->calendar_public_iframe)}}</textarea>
                         </div>
                         <div class="form-group">
-                            <label for="InputTextarea">非公開Calendar iframe</label>
+                            <label for="InputTextarea">ログイン時のみ表示するカレンダー iframe</label>
                             <textarea class="form-control form-control-lg" name="calendar_secret_iframe" rows="5">{{old('calendar_secret_iframe', $item->calendar_secret_iframe)}}</textarea>
                         </div>
                         <div class="form-group">
