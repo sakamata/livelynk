@@ -7,9 +7,6 @@
     <span>あなたは現在コミュニティ管理者でログイン中です。この画面には表示されません。</span>
 @endif
 @endif
-@component('components.GOE_calendar', ['community' => $community])
-@endcomponent
-
 @if(Auth::check() && $community->tumolink_enable)
   @component('components.tumoli_form', ['tumolist' => $tumolist, 'tumoli_declared' => $tumoli_declared, 'community' => $community])
   @endcomponent
