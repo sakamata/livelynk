@@ -169,7 +169,7 @@
       @if(Auth::user()->role == 'normal')
       <input type="hidden" name="role" value="normal">
       @endif
-      @if(Auth::user()->role =='readerAdmin')
+      @if($item->role =='readerAdmin')
       <input type="hidden" name="hide" value="0">
       @else
       <div class="form-elem">
