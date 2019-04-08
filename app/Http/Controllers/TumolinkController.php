@@ -105,7 +105,7 @@ class TumolinkController extends Controller
             // DBに入れる
             $talkMessage = new \App\TalkMessage();
             // ひままずcommunityの最初のrouterに紐づいたGoogleHomeを対象にする
-            $router = 'App\Community'::find($community->id)->router()->first();
+            $router = 'App\Community'::find($community->id)->router()->orderBy('id')->first();
             $talkMessage->router_id       = $router->id;
             $talkMessage->talking_message = $talking_message;
             $talkMessage->save();
