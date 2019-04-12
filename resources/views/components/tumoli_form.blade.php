@@ -1,11 +1,11 @@
 <div class="accbox">
-    <label for="label_tomoli" class="accordion tumoli-label">ツモリンク</label>
+    <label for="label_tomoli" class="accordion tumoli-label">ヨテイ</label>
     <input type="checkbox" id="label_tomoli" class="cssacc">
     <ul class="space-list">
         <li>
             <div class="data">
                 <div class="availabilities">
-                <div class="head">今日のツモリスト<span>{{ $tumolist->count() }} 人</span></div>
+                <div class="head">今日のヨテイ<span>{{ $tumolist->count() }} 人</span></div>
                     <ul class="body">
                         @foreach ($tumolist as $item)
                         <li class="availability afterBegin">
