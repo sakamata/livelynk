@@ -53,7 +53,8 @@ class GoogleHomeController extends Controller
                     "そのうちどなたかの伝言などをお伝えできるようになりたいです。",
                 );
                 $i = rand(0,7);
-                $message = $greeting . $users_name_str . $frank_talk[$i];
+                //  $frank_talk[$i] 廃止
+                $message = $greeting . $users_name_str;
                 if (mb_strlen($message) > 200) {
                     $message = $greeting . "みなさん。一度にたくさんの方がいらっしゃったみたいでちょっとびっくりです。" . $frank_talk;
                 }
