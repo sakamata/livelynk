@@ -259,6 +259,11 @@ class InportPostController extends Controller
                 $welcome_message
             );
         }
+        Log::debug(print_r('status updated.', 1));
+        return response()->json([
+            'status' => 'From Livelynk status updated.',
+            'datetime' => $now,
+        ]);
     }
 
     // !!!Tips!!! 来訪直後に帰宅通知が出るのは .env ファイルのキャッシュの問題かも
