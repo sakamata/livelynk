@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(MacAddressesTableSeeder::class);
         $this->call(RolesTableSeeder::class);
         $this->call(RoutersTableSeeder::class);
+        $this->call(UserStayLogTableSeeder::class);
         $this->call(UsersTableSeeder::class);
     }
 }
