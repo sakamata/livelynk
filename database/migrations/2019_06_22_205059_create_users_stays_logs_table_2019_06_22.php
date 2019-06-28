@@ -15,10 +15,9 @@ class CreateUsersStaysLogsTable20190622 extends Migration
     {
         Schema::create('users_stays_logs', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('community_user_id')->unsigned();
-            $table->foreign('community_user_id')->references('id')->on('community_user'); //外部キー参照
+            $table->integer('community_user_id');
             $table->dateTime('arraival_at');
-            $table->dateTime('departure_at')->nullable()->default(null);
+            $table->dateTime('departure_at')->nullable();
             $table->dateTime('last_datetime');
             $table->timestamps();
         });
