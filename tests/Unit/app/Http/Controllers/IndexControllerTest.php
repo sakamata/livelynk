@@ -4,7 +4,7 @@ namespace Tests\Unit\app\Http\Controllers;
 
 use App\Community;
 use App\CommunityUser;
-use App\User;
+use App\UserTable;
 use App\Router;
 use App\Role;
 use Carbon\Carbon;
@@ -33,7 +33,7 @@ class IndexControllerTest extends TestCase
             'url_path' => self::URL_PATH,
         ]);
         factory(CommunityUser::class)->create();
-        factory(User::class, 10)->create();
+        factory(UserTable::class, 10)->create();
         factory(Router::class, 1)->create();
         factory(Role::class)->create([
             'role' => 'normal',

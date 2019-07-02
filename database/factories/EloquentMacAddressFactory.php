@@ -19,7 +19,6 @@ $factory->define(MacAddress::class, function (Faker $faker) {
         'arraival_at' => Carbon::now(),
         'departure_at' => Carbon::now(),
         'posted_at' => Carbon::now(),
-        'posted_at' => Carbon::now(),
         'current_stay' => 1,
         'created_at' => Carbon::now(),
         'updated_at' => Carbon::now(),

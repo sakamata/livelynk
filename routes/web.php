@@ -50,6 +50,9 @@ Route::get('/index/{path?}', 'IndexController@index')->name('index');
 Route::get('/tumolink/index/{community_id?}', 'TumolinkController@index');
 Route::post('/tumolink/post', 'TumolinkController@post')->middleware('auth');
 
+// 履歴
+Route::get('/log', 'UserStayLogController@index');
+
 // 管理画面 認証済みuserのみ表示
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
     Route::get('/admin_user', 'AdminUserController@index');

@@ -44,18 +44,28 @@ class UserStayLogService
             ->update(['last_datetime' => $now]);
     }
 
-    // 帰宅判断として該当userの departure_at に帰宅想定時間をupdateする
-    public function departurePastTimeUpdate(int $community_user_id, string $now, string $departure_at)
+    // 帰宅判断として該当userの departure_at に last_datetime をupdateする
+    public function departurePastTimeUpdate(string $past_limit)
     {
         return DB::table('users_stays_logs')
             ->where([
-                ['community_user_id', $community_user_id],
                 ['departure_at', null],
+                ['last_datetime', '<', $past_limit],
             ])
         ->update([
-            'departure_at' => $departure_at,
-            'last_datetime' => $now
+            'departure_at' => $past_limit,
         ]);
     }
 
+    // 長期サービス停止後の稼働直後、停止前滞在中だったユーザーを一律で帰宅中に変更する
+    public function longTermStopAfterStayUsersChangeDeparture(string $departure_at)
+    {
+        return DB::table('users_stays_logs')
+            ->where([
+                ['departure_at', null]
+            ])
+        ->update([
+            'departure_at' => $departure_at
+        ]);
+    }
 }

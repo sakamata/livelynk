@@ -37,6 +37,13 @@ class Kernel extends ConsoleKernel
             ->call('App\Http\Controllers\TumolinkController@auto_remove_before_today')
             // ->withoutOverlapping()
             ->dailyAt('0:01');
+
+        Log::warning(print_r('!!!schedule!!!UserStayLogController@stayCheck run!!', 1));
+        $schedule
+            ->call('App\Http\Controllers\UserStayLogController@stayCheck')
+            // ->withoutOverlapping()
+            ->everyMinute();
+
         }
 
     /**

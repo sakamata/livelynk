@@ -127,4 +127,49 @@ class MacAddressService
             'updated_at' => $now,
         ]);
     }
+
+    // 未使用　使わなくなっている
+    // mac_address.posted_at がnowからn分以内の curret stay 1 のcommunity_user_idを配列で取得する
+    // UserStayLogController->arraivalUsersRecords
+    /**
+     * @return array
+     */
+    public function getRecentStayCommunityUserIds(string $recent_datetime)
+    {
+        return 'App\MacAddress'::where([
+                ['current_stay', true],
+                ['posted_at', '>=', $recent_datetime],
+            ])
+            ->groupBy('community_user_id')
+        ->pluck('community_user_id');
+    }
+
+    // mac_address.posted_at がnowからn分以内の curret stay 1 のcommunity_user_idとposted_atを取得する
+    // UserStayLogController->stayCheck
+    public function getRecentStayIdsAndMaxPostedAt(string $last_check_time)
+    {
+        return DB::select("
+            SELECT
+                community_user_id,
+                current_stay,
+                MAX(posted_at) AS posted_at
+            FROM mac_addresses
+            WHERE
+                current_stay = true
+                AND
+                posted_at >= ?
+            GROUP BY community_user_id
+            ORDER BY community_user_id
+        ", [$last_check_time]);
+    }
+
+    public function nearArraivalExists(int $community_user_id, string $past_limit)
+    {
+        return DB::table('mac_addresses')
+            ->where([
+                ['community_user_id', $community_user_id],
+                ['arraival_at', '>', $past_limit]
+            ])
+            ->exists();
+    }
 }

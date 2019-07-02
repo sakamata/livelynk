@@ -5,6 +5,7 @@ namespace Tests\Unit\app\Http\Controllers;
 use \Artisan;
 use App\Service\UserStayLogService;
 use App\UserStayLog;
+
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -41,7 +42,7 @@ class UserStayLogServiceTest extends TestCase
     public function UserStayLogServiceのtest_来訪中としてrecordを登録する()
     {
         $service = app()->make('\App\Service\UserStayLogService');
-        $community_user_id = 10;
+        $community_user_id = 100;
         $date = Carbon::create(2018, 12, 31, 23, 59, 58);
         $service->arraivalInsertNow($community_user_id, $date);
         $this->assertDatabaseHas('users_stays_logs',[
@@ -52,33 +53,13 @@ class UserStayLogServiceTest extends TestCase
         ]);
     }
 
-    public function dataProvider_for_minute_validate() : array
-    {
-        return [
-            '正常_0' => [0, 200],
-            '正常_10' => [10, 200],
-            '正常_50' => [50, 200],
-            '異常_マイナス値' => [-10, 422],
-            '異常_1' => [1, 422],
-            '異常_小数値' => [1.5, 422],
-            '異常_15' => [15, 422],
-            '異常_51' => [51, 422],
-            '異常_60' => [60, 422],
-            '異常_int' => [99, 422],
-            '異常_null' => ['', 422],
-            '異常_文字列' => ['AAA', 422],
-        ];
-    }
-
-    // * @dataProvider dataProvider_for_minute_validate
-
     /**
      * @test
      */
     public function UserStayLogServiceのtest_来訪中として異常な値のrecordは登録できない()
     {
         $service = app()->make('\App\Service\UserStayLogService');
-        $community_user_id = 10;
+        $community_user_id = 100;
         $date = Carbon::create(2018, 12, 31, 23, 59, 58);
         $response = $service->arraivalInsertNow($community_user_id, $date);
         $this->assertDatabaseHas('users_stays_logs',[
@@ -89,7 +70,6 @@ class UserStayLogServiceTest extends TestCase
         ]);
     }
 
-
     /**
      * @test
      */
@@ -99,10 +79,10 @@ class UserStayLogServiceTest extends TestCase
         $service = app()->make('\App\Service\UserStayLogService');
  
         $date = Carbon::create(2018, 12, 31, 23, 59, 58);
-        $community_user_id = 11;
+        $community_user_id = 101;
         $service->arraivalInsertNow($community_user_id, $date);
  
-        $community_user_id = 12;
+        $community_user_id = 102;
         $isDupl = $service->ArraivalUserDuplicationCheck($community_user_id);
         $this->assertNotTrue($isDupl);
     }
@@ -117,7 +97,7 @@ class UserStayLogServiceTest extends TestCase
         $service = app()->make('\App\Service\UserStayLogService');
         $date = Carbon::create(2018, 12, 31, 23, 59, 58);
 
-        $community_user_id = 11;
+        $community_user_id = 101;
         $service->arraivalInsertNow($community_user_id, $date);
 
         $isDupl = $service->ArraivalUserDuplicationCheck($community_user_id);
@@ -131,7 +111,7 @@ class UserStayLogServiceTest extends TestCase
     {
         // last_datetimeUpdate のtest
         $service = app()->make('\App\Service\UserStayLogService');
-        $community_user_id = 11;
+        $community_user_id = 101;
         $date = Carbon::create(2018, 12, 31, 12, 00, 00);
         
         $service->arraivalInsertNow($community_user_id, $date);
@@ -164,19 +144,73 @@ class UserStayLogServiceTest extends TestCase
         // departurePastTimeUpdate のtest
         $service = app()->make('\App\Service\UserStayLogService');
         $now = Carbon::create(2018, 12, 31, 12, 00, 00);
-        $community_user_id = 11;
+        $community_user_id = 101;
         $service->arraivalInsertNow($community_user_id, $now);
         
-        $now2 =         Carbon::create(2018, 12, 31, 14, 59, 59);
+        $past_limit =   Carbon::create(2018, 12, 31, 14, 59, 59);
         $departure_at = Carbon::create(2018, 12, 31, 13, 59, 59);
-        $service->departurePastTimeUpdate($community_user_id, $now2, $departure_at);
+        $service->departurePastTimeUpdate($past_limit);
+        // $service->departurePastTimeUpdate($community_user_id, $past_limit);
 
         $this->assertDatabaseHas('users_stays_logs',[
-            'community_user_id' => $community_user_id,
+            // 'community_user_id' => $community_user_id,
             'arraival_at' => $now,
-            'departure_at' => $departure_at,
-            'last_datetime' => $now2,
+            'departure_at' => $past_limit,
+            'last_datetime' => $now,
         ]);
+    }
+
+    public function dataProvider_for_longTermStopAfterStayUsers() :array
+    {
+        $past2Hour   = Carbon::now()->subHour(2);
+        $past3Hour   = Carbon::now()->subHour(3);
+        $past4Hour   = Carbon::now()->subHour(4);
+        $past10Hour   = Carbon::now()->subHour(10);
+        $past1Day    = Carbon::now()->subDay();
+        // サービスが長期(3Hour)時間停止していた際の滞在中ユーザーのステータス変更テスト
+        //                                           id,  arraival_at,    departure_at, last_datetime,  更新されるか
+        return [
+            '来訪8H前_帰宅済み_更新されない' =>      [110,  $past10Hour,   $past4Hour, $past4Hour,     false ],
+            '帰宅後過去重複_更新されない' =>         [111,  $past1Day,     $past10Hour,$past10Hour,    false ],
+            '来訪4H前_更新される' =>                 [111,  $past4Hour,    null,       $past3Hour,     true  ],
+            '来訪3H前_ありえないが_更新される' =>    [112,  $past3Hour,    null,       $past2Hour,     true  ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider dataProvider_for_longTermStopAfterStayUsers
+     */
+    public function UserStayLogServiceのtest_長期サービス停止後_3H_の稼働直後、停止前滞在中だったユーザーを一律で帰宅中に変更する($community_user_id, $arraival_at, $departure_at, $last_datetime, $check_bool)
+    // public function UserStayLogServiceのtest_長期サービス停止後_12H_の稼働直後、停止前滞在中だったユーザーを一律で帰宅中に変更する()
+    {
+        factory(UserStayLog::class)->create([
+            'community_user_id' => $community_user_id,
+            'arraival_at' => $arraival_at,
+            'departure_at' => $departure_at,
+            'last_datetime' => $last_datetime
+        ]);
+
+        $service = app()->make('\App\Service\UserStayLogService');
+        $departure_at_CHECK_stamp = Carbon::now()->subHour(3);
+        $service->longTermStopAfterStayUsersChangeDeparture($departure_at_CHECK_stamp);
+
+        // 値の有無を確認
+        if ($check_bool) {
+            $this->assertDatabaseHas('users_stays_logs',[
+                'community_user_id' => $community_user_id,
+                'arraival_at' => $arraival_at,
+                'departure_at' => $departure_at_CHECK_stamp,
+                'last_datetime' => $last_datetime,
+            ]);
+        } else {
+            $this->assertDatabaseMissing('users_stays_logs',[
+                'community_user_id' => $community_user_id,
+                'arraival_at' => $arraival_at,
+                'departure_at' => $departure_at_CHECK_stamp,
+                'last_datetime' => $last_datetime,
+            ]);
+        }
     }
 
     /**

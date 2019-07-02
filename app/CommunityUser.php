@@ -49,6 +49,11 @@ class CommunityUser extends Model
         return $this->hasOne('App\Tumolink', 'community_user_id', 'id');
     }
 
+    public function user_stay_log()
+    {
+        return $this->hasMany('App\UserStayLog');
+    }
+
     public function scopeGetCommunityID($query, $community_user_id)
     {
         return $query->where('id',$community_user_id)
