@@ -93,7 +93,7 @@ class GoogleHomeController extends Controller
                 $message = $user_name . 'さんが、来るのをやめたみたいです。';
                 break;
 
-            case 'cancel_arraival':
+            case 're_stay':
                 $message = $user_name . 'さんは、もう少しいるつもりみたいです。';
                 break;
 
