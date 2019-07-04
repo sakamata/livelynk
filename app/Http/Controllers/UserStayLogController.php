@@ -48,8 +48,6 @@ class UserStayLogController extends Controller
     public function stayCheck()
     {
         $last_check_time = new Carbon($this->last_log_check_datetime);
-        $limit = Carbon::now();
-        $past_limit = $limit->subSeconds(env("JUDGE_STAY_LOGS_DEPARTURE_SECOND"));
         // 通常のルーティン処理  >1分 || <=90分
         $update_Ids_poted_at = $this->call_mac_address->getRecentStayIdsAndMaxPostedAt($last_check_time);
         foreach ($update_Ids_poted_at as $key => $val) {
@@ -59,10 +57,13 @@ class UserStayLogController extends Controller
             $this->call_user_stay_log->last_datetimeUpdate($val->community_user_id, $val->posted_at);
             // 来訪判断
             $this->arraivalCheck($val->community_user_id, $last_check_time);
-            // 帰宅判断
-            // log.departure_atがnull かつ log.last_datetime が調査時間より90分より大きければ 90分前の時間を => posted_at の値を 挿入する。
-            $this->call_user_stay_log->departurePastTimeUpdate($past_limit, $val->community_user_id, $val->posted_at);
         }
+        // 帰宅判断
+        // 上のforeachに入れては駄目 取得できる時間の範囲外になる
+        // log.departure_atがnull かつ log.last_datetime が調査時間より90分より大きければ90分前の時間を挿入する。
+        $limit = Carbon::now();
+        $past_limit = $limit->subSeconds(env("JUDGE_STAY_LOGS_DEPARTURE_SECOND"));
+        $this->call_user_stay_log->departurePastTimeUpdate($past_limit);
         // 最終確認時間の更新
         $this->updateLastLogCheckDatetime();
     }
