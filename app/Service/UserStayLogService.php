@@ -34,26 +34,27 @@ class UserStayLogService
     }
 
     // 来訪中のユーザーの更新 last_datetimeを更新する
-    public function last_datetimeUpdate(int $community_user_id, string $now)
+    public function last_datetimeUpdate(int $community_user_id, string $posted_at)
     {
         return DB::table('users_stays_logs')
             ->where([
                 ['community_user_id', $community_user_id],
                 ['departure_at', null],
             ])
-            ->update(['last_datetime' => $now]);
+            ->update(['last_datetime' => $posted_at]);
     }
 
     // 帰宅判断として該当userの departure_at に last_datetime をupdateする
-    public function departurePastTimeUpdate(string $past_limit)
+    public function departurePastTimeUpdate(string $past_limit, int $community_user_id, string $posted_at)
     {
         return DB::table('users_stays_logs')
             ->where([
+                ['community_user_id', $community_user_id],
                 ['departure_at', null],
                 ['last_datetime', '<', $past_limit],
             ])
         ->update([
-            'departure_at' => $past_limit,
+            'departure_at' => $posted_at,
         ]);
     }
 

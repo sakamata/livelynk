@@ -58,21 +58,27 @@ class UserStayLogController extends Controller
             //log.last_datetimeの値を mac.last_postedの値で更新する
             $this->call_user_stay_log->last_datetimeUpdate($val->community_user_id, $val->posted_at);
             // 来訪判断
-            // mac_address.arraival が最近であるか（今から90分前迄 => 前回確認時間迄）
-            $near_arraival_exists = $this->call_mac_address->nearArraivalExists($val->community_user_id, $last_check_time);
-            // user_stay_log 滞在中が重複していないか？ departure_at が空のカラムが存在していないか?
-            $dupl_exists = $this->call_user_stay_log->ArraivalUserDuplicationCheck($val->community_user_id);
-            if ($near_arraival_exists) {
-                if (!$dupl_exists) {
-                    $this->call_user_stay_log->arraivalInsertNow($val->community_user_id, $this->now);
-                }
-            }
+            $this->arraivalCheck($val->community_user_id, $last_check_time);
+            // 帰宅判断
+            // log.departure_atがnull かつ log.last_datetime が調査時間より90分より大きければ 90分前の時間を => posted_at の値を 挿入する。
+            $this->call_user_stay_log->departurePastTimeUpdate($past_limit, $val->community_user_id, $val->posted_at);
         }
-        // 帰宅判断
-        // log.departure_atがnull かつ log.last_datetime が調査時間より90分より大きければ90分前の時間を挿入する。
-        $this->call_user_stay_log->departurePastTimeUpdate($past_limit);
         // 最終確認時間の更新
         $this->updateLastLogCheckDatetime();
+    }
+
+    // 来訪判断 foreach内の処理
+    public function arraivalCheck(int $community_user_id, $last_check_time)
+    {
+        // mac_address.arraival が最近であるか 前回確認時間基準
+        $near_arraival_exists = $this->call_mac_address->nearArraivalExists($community_user_id, $last_check_time);
+        // user_stay_log 滞在中が重複していないか？ departure_at が空のカラムが存在していないか?
+        $dupl_exists = $this->call_user_stay_log->ArraivalUserDuplicationCheck($community_user_id);
+        if ($near_arraival_exists) {
+            if (!$dupl_exists) {
+                $this->call_user_stay_log->arraivalInsertNow($community_user_id, $this->now);
+            }
+        }
     }
 
     public function updateLastLogCheckDatetime()
