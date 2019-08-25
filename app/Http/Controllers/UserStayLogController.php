@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\UserStayLog;
 use App\Service\UserStayLogService;
 use App\Service\MacAddressService;
 use App\Service\SystemSettingService;
@@ -35,9 +36,9 @@ class UserStayLogController extends Controller
     public function index(Request $request)
     {
         $recent_stay_ids = $this->macAddressService->getRecentStayIdsAndMaxPostedAt($this->lastLogCheckDatetime);
-        $res = 'App\UserStaylog'::all();
+        $items = UserStaylog::all();
         return view('logs/index', [
-            'res'             => $res,
+            'items'           => $items,
             'recent_stay_ids' => $recent_stay_ids,
             'now'             => $this->now,
             'last_time'       => $this->lastLogCheckDatetime,

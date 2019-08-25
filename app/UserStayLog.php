@@ -24,6 +24,11 @@ class UserStayLog extends Model
 
     public function community_user()
     {
-        return $this->belongsTo('App\CommunityUser');
+        return $this->belongsTo('App\CommunityUser', 'community_user_id');
+    }
+
+    public function mac_address()
+    {
+        return $this->hasMany('App\MacAddress', 'community_user_id', 'community_user_id');
     }
 }

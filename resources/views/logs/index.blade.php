@@ -12,16 +12,24 @@
   <tr class="info thead-light">
       <th>id</th>
       <th>community_user_id</th>
+      <th>仮</th>
       <th>name</th>
+      <th>mac_address</th>
       <th>arraival_at</th>
       <th>last_datetime</th>
       <th>departure_at</th>
   </tr>
-  @foreach ($res as $item)
+  @foreach ($items as $item)
   <tr class="table-default">
     <td>{{$item->id}}</td>
     <td>{{$item->community_user_id}}</td>
+    <td>{{$item->community_user->user->provisional}}</td>
     <td>{{$item->community_user->user->name}}</td>
+    <td>
+      @foreach ($item->mac_address as $mac)
+      {{$mac->mac_address_omission}}<br>
+      @endforeach
+    </td>
     <td>{{$item->arraival_at}}</td>
     <td>{{$item->last_datetime}}</td>
     <td>{{$item->departure_at}}</td>
