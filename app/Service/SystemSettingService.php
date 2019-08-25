@@ -23,7 +23,7 @@ class SystemSettingService
     }
 
     // 上記のCreateKeyOrUpdateと機能が重複するが安全な更新の為通常はこちらを使用する
-    public function updateValue(string $set_key, string $set_value)
+    public function updateValue(string $set_key, $set_value)
     {
         return DB::table('systems_settings')
             ->where('set_key', $set_key)

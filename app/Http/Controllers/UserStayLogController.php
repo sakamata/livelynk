@@ -11,22 +11,22 @@ use Illuminate\Support\Facades\Log;
 
 class UserStayLogController extends Controller
 {
-    public $call_user_stay_log;
-    public $call_mac_address;
-    public $call_system_setting;
-    public $last_log_check_datetime;
+    public $userStayLogService;
+    public $macAddressService;
+    public $systemSettingService;
+    public $lastLogCheckDatetime;
     public $now;
 
     public function __construct(
-        UserStayLogService $call_user_stay_log,
-        MacAddressService $call_mac_address,
-        SystemSettingService $call_system_setting
+        UserStayLogService      $userStayLogService,
+        MacAddressService       $macAddressService,
+        SystemSettingService    $systemSettingService
         )
     {
-        $this->call_user_stay_log        = $call_user_stay_log;
-        $this->call_mac_address          = $call_mac_address;
-        $this->call_system_setting       = $call_system_setting;
-        $this->last_log_check_datetime   = $call_system_setting->getValue('last_log_check_datetime');
+        $this->userStayLogService   = $userStayLogService;
+        $this->macAddressService    = $macAddressService;
+        $this->systemSettingService = $systemSettingService;
+        $this->lastLogCheckDatetime = $systemSettingService->getValue('last_log_check_datetime');
         $this->now = Carbon::now();
 
     }
@@ -34,27 +34,35 @@ class UserStayLogController extends Controller
     // 仮 一覧画面表示　tableの状態を出力して確認させるものから
     public function index(Request $request)
     {
-        $RecentStayIds = $this->call_mac_address->getRecentStayIdsAndMaxPostedAt($this->last_log_check_datetime);
+        $recent_stay_ids = $this->macAddressService->getRecentStayIdsAndMaxPostedAt($this->lastLogCheckDatetime);
         $res = 'App\UserStaylog'::all();
         return view('logs/index', [
-            'res' => $res,
-            'RecentStayIds' => $RecentStayIds,
-            'now' => $this->now,
-            'last_time' => $this->last_log_check_datetime,
+            'res'             => $res,
+            'recent_stay_ids' => $recent_stay_ids,
+            'now'             => $this->now,
+            'last_time'       => $this->lastLogCheckDatetime,
         ]);
     }
 
-    // 1分毎のcronで滞在者の確認をする 来訪、更新、帰宅をusers_stays_logs tableに残す
+    /**
+     * 1分毎のcronで滞在者の確認をする 来訪、更新、帰宅をusers_stays_logs tableに残す
+     * 
+     * @param void
+     * @return void
+     */
     public function stayCheck()
     {
-        $last_check_time = new Carbon($this->last_log_check_datetime);
+        $time_obj = new Carbon($this->lastLogCheckDatetime);
+        // 他のメソッドの引数にするのであえて文字列に変換する
+        $last_check_time = $time_obj->toDateTimeString();
+
         // 通常のルーティン処理  >1分 || <=90分
-        $update_Ids_poted_at = $this->call_mac_address->getRecentStayIdsAndMaxPostedAt($last_check_time);
-        foreach ($update_Ids_poted_at as $key => $val) {
+        $update_ids_posted_at = $this->macAddressService->getRecentStayIdsAndMaxPostedAt($last_check_time);
+        foreach ($update_ids_posted_at as $val) {
             // 更新判断
             // mac_address の last posted が  前回確認時間以降であれば 来訪中と判断
             //log.last_datetimeの値を mac.last_postedの値で更新する
-            $this->call_user_stay_log->last_datetimeUpdate($val->community_user_id, $val->posted_at);
+            $this->userStayLogService->lastDatetimeUpdate($val->community_user_id, $val->posted_at);
             // 来訪判断
             $this->arraivalCheck($val->community_user_id, $last_check_time);
         }
@@ -62,29 +70,41 @@ class UserStayLogController extends Controller
         // 上のforeachに入れては駄目 取得できる時間の範囲外になる
         // log.departure_atがnull かつ log.last_datetime が調査時間より90分より大きければ90分前の時間を挿入する。
         $limit = Carbon::now();
-        $past_limit = $limit->subSeconds(env("JUDGE_STAY_LOGS_DEPARTURE_SECOND"));
-        $this->call_user_stay_log->departurePastTimeUpdate($past_limit);
+        $pastLimit = $limit->subSeconds(env("JUDGE_STAY_LOGS_DEPARTURE_SECOND"));
+        $this->userStayLogService->departurePastTimeUpdate($pastLimit);
         // 最終確認時間の更新
         $this->updateLastLogCheckDatetime();
     }
 
-    // 来訪判断 foreach内の処理
-    public function arraivalCheck(int $community_user_id, $last_check_time)
+    /**
+     * 来訪判断 foreach内の処理
+     * 
+     * @param int    $community_user_id
+     * @param string $last_check_time  Y-m-d H:i:s
+     * @return void
+     */
+    public function arraivalCheck(int $community_user_id, string $last_check_time)
     {
         // mac_address.arraival が最近であるか 前回確認時間基準
-        $near_arraival_exists = $this->call_mac_address->nearArraivalExists($community_user_id, $last_check_time);
+        $near_arraival_exists = $this->macAddressService->nearArraivalExists($community_user_id, $last_check_time);
         // user_stay_log 滞在中が重複していないか？ departure_at が空のカラムが存在していないか?
-        $dupl_exists = $this->call_user_stay_log->ArraivalUserDuplicationCheck($community_user_id);
+        $dupl_exists = $this->userStayLogService->ArraivalUserDuplicationCheck($community_user_id);
         if ($near_arraival_exists) {
             if (!$dupl_exists) {
-                $this->call_user_stay_log->arraivalInsertNow($community_user_id, $this->now);
+                $this->userStayLogService->arraivalInsertNow($community_user_id, $this->now);
             }
         }
     }
 
+    /**
+     * 最終確認時間の更新
+     * 
+     * @param void
+     * @return void
+     */
     public function updateLastLogCheckDatetime()
     {
-        $this->call_system_setting->updateValue('last_log_check_datetime', $this->now);
+        $this->systemSettingService->updateValue('last_log_check_datetime', $this->now);
     }
 
     // 未使用
@@ -95,12 +115,12 @@ class UserStayLogController extends Controller
         // 前回調査時間から90分後を仮の帰宅時間と想定し、帰宅処理を行う。
         $past_limit = Carbon::now()->subSeconds(env("JUDGE_DEPARTURE_INTERVAL_SECOND"));
         // 最終確認時間がn分前よりも過去ならば
-        if ($this->last_log_check_datetime < $past_limit) {
+        if ($this->lastLogCheckDatetime < $past_limit) {
             // 滞在中だったユーザーを一気に更新
             // 最終確認時間から帰宅判断時間以降を帰宅時間と想定して滞在中ユーザー全てを帰宅状態に変更
-            $last_check = new Carbon($this->last_log_check_datetime);
+            $last_check = new Carbon($this->lastLogCheckDatetime);
             $departure_at = $last_check->addSeconds(env("JUDGE_DEPARTURE_INTERVAL_SECOND"));
-            $this->call_user_stay_log->longTermStopAfterStayUsersChangeDeparture($departure_at);
+            $this->userStayLogService->longTermStopAfterStayUsersChangeDeparture($departure_at);
         }
     }
 

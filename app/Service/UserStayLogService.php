@@ -23,18 +23,18 @@ class UserStayLogService
     }
 
     // 来訪中としてrecordを登録する
-    public function arraivalInsertNow(int $community_user_id, string $now)
+    public function arraivalInsertNow(int $community_user_id, $now)
     {
         return DB::table('users_stays_logs')
             ->insert([
                 'community_user_id' => $community_user_id,
-                'arraival_at' => $now,
-                'last_datetime' => $now
+                'arraival_at'       => $now,
+                'last_datetime'     => $now
             ]);
     }
 
     // 来訪中のユーザーの更新 last_datetimeを更新する
-    public function last_datetimeUpdate(int $community_user_id, string $posted_at)
+    public function lastDatetimeUpdate(int $community_user_id, string $posted_at)
     {
         return DB::table('users_stays_logs')
             ->where([
@@ -45,7 +45,7 @@ class UserStayLogService
     }
 
     // 帰宅判断として該当userの departure_at に last_datetime をupdateする
-    public function departurePastTimeUpdate(string $past_limit)
+    public function departurePastTimeUpdate($past_limit)
     {
         return DB::table('users_stays_logs')
             ->where([
@@ -58,7 +58,7 @@ class UserStayLogService
     }
 
     // 長期サービス停止後の稼働直後、停止前滞在中だったユーザーを一律で帰宅中に変更する
-    public function longTermStopAfterStayUsersChangeDeparture(string $departure_at)
+    public function longTermStopAfterStayUsersChangeDeparture($departure_at)
     {
         return DB::table('users_stays_logs')
             ->where([

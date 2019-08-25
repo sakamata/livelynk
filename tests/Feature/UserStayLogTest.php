@@ -56,11 +56,11 @@ class UserStayLogTest extends TestCase
     {
         $params = [
             'community_user_id' => 10,
-            'arraival_at' => $this->now,
-            'departure_at' => null,
-            'last_datetime' => $this->now,
-            'created_at' => $this->now,
-            'updated_at' => $this->now,
+            'arraival_at'       => $this->now,
+            'departure_at'      => null,
+            'last_datetime'     => $this->now,
+            'created_at'        => $this->now,
+            'updated_at'        => $this->now,
         ];
         factory(UserStayLog::class)->create($params);
 
@@ -76,11 +76,11 @@ class UserStayLogTest extends TestCase
     {
         $params = [
             'community_user_id' => 10,
-            'arraival_at' => $this->now,
-            'departure_at' => null,
-            'last_datetime' => $this->now,
-            'created_at' => $this->now,
-            'updated_at' => $this->now,
+            'arraival_at'       => $this->now,
+            'departure_at'      => null,
+            'last_datetime'     => $this->now,
+            'created_at'        => $this->now,
+            'updated_at'        => $this->now,
         ];
         factory(UserStayLog::class)->create($params);
 

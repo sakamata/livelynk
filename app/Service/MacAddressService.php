@@ -60,11 +60,11 @@ class MacAddressService
     {
         return 'App\MacAddress'::where('id', $mac_id)
             ->update([
-                'vendor'      => $vendor,
-                'device_name' => $device_name,
-                'hide'        => $hide,
-                'updated_at'  => $now,
-                'community_user_id'  => $community_user_id,
+                'vendor'            => $vendor,
+                'device_name'       => $device_name,
+                'hide'              => $hide,
+                'updated_at'        => $now,
+                'community_user_id' => $community_user_id,
         ]);
     }
 
@@ -74,7 +74,7 @@ class MacAddressService
                 ['id', $mac_id],
                 ['community_user_id', $old_community_user_id],
             ])->update([
-                'updated_at' => $now,
+                'updated_at'        => $now,
                 'community_user_id' => $new_community_user_id,
         ]);
     }
@@ -91,9 +91,9 @@ class MacAddressService
             ['community_user_id', $community_user_id],
             ['mac_address_hash', $post_mac_hash],
         ])->update([
-            'router_id' => $router_id,
-            'arraival_at' => $now,
-            'current_stay' => true,
+            'router_id'     => $router_id,
+            'arraival_at'   => $now,
+            'current_stay'  => true,
         ]);
         Log::debug(print_r('mac arraival_at update now!!!', 1));
     }
@@ -121,10 +121,10 @@ class MacAddressService
             ['mac_address_hash', $post_mac_hash],
             ['hide', false],
         ])->update([
-            'router_id' => $router_id,
-            'current_stay' => true,
-            'posted_at' => $now,
-            'updated_at' => $now,
+            'router_id'     => $router_id,
+            'current_stay'  => true,
+            'posted_at'     => $now,
+            'updated_at'    => $now,
         ]);
     }
 
@@ -146,7 +146,7 @@ class MacAddressService
 
     // mac_address.posted_at がnowからn分以内の curret stay 1 のcommunity_user_idとposted_atを取得する
     // UserStayLogController->stayCheck
-    public function getRecentStayIdsAndMaxPostedAt(string $last_check_time)
+    public function getRecentStayIdsAndMaxPostedAt(string $last_check_datetime)
     {
         return DB::select("
             SELECT
@@ -160,7 +160,7 @@ class MacAddressService
                 posted_at >= ?
             GROUP BY community_user_id
             ORDER BY community_user_id
-        ", [$last_check_time]);
+        ", [$last_check_datetime]);
     }
 
     public function nearArraivalExists(int $community_user_id, string $past_limit)
