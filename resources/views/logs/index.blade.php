@@ -9,7 +9,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h2>ユーザー滞在ログ 一覧</h2>
+                    <h2>滞在ログ 一覧</h2>
                 </div>
                 <div class="card-body">
                     @can('superAdmin')
@@ -19,9 +19,17 @@
                         'provisionalArr' => $provisionalArr,
                     ])
                     @endcomponent
-                    @component('components.error')
+                    @endcan
+                    @can('communityAdmin')
+                    @component('components.form.commAdmin_log_index', [
+                        'communities' => $communities,
+                        'community_id' => $community_id,
+                        'provisionalArr' => $provisionalArr,
+                    ])
                     @endcomponent
                     @endcan
+                    @component('components.error')
+                    @endcomponent
                     <p>
                         last_log_check : {{$lastTime}}
                     </p>

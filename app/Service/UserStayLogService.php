@@ -43,7 +43,6 @@ class UserStayLogService
         if ($provisionalArr['regl'] == 1) {
             array_push($arr, 1);
         }
-        var_dump($arr);
         return UserStaylog::with('community_user.user')
         ->select(
             'users_stays_logs.*',

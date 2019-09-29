@@ -11,6 +11,7 @@
 <a href="/admin_mac_address/index">デバイス一覧</a>
 <a href="/admin_router">ルーター一覧</a>
 <a href="/admin_community/edit?id={{Auth::user()->community_id}}">コミュニティ編集</a>
+<a href="/admin_log">滞在ログ一覧</a>
 @endcan
 @can('superAdmin')
 <!-- 特別管理者メニュー。アイコン等でデザインに差をつけてもらうと嬉しいです。 -->
