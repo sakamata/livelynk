@@ -2,46 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\UserStayLog;
 use App\Service\UserStayLogService;
 use App\Service\MacAddressService;
+use App\Service\CommunityService;
 use App\Service\SystemSettingService;
+use App\UserStayLog;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+use App\Http\Requests\UserStayLog\IndexGet;
 use Illuminate\Support\Facades\Log;
 
 class UserStayLogController extends Controller
 {
     public $userStayLogService;
     public $macAddressService;
+    public $communityService;
     public $systemSettingService;
     public $lastLogCheckDatetime;
-    public $now;
 
     public function __construct(
         UserStayLogService      $userStayLogService,
         MacAddressService       $macAddressService,
+        CommunityService        $communityService,
         SystemSettingService    $systemSettingService
         )
     {
         $this->userStayLogService   = $userStayLogService;
         $this->macAddressService    = $macAddressService;
+        $this->communityService     = $communityService;
         $this->systemSettingService = $systemSettingService;
         $this->lastLogCheckDatetime = $systemSettingService->getValue('last_log_check_datetime');
-        $this->now = Carbon::now();
-
     }
 
-    // 仮 一覧画面表示　tableの状態を出力して確認させるものから
-    public function index(Request $request)
+    // 仮 一覧画面表示 tableの状態を出力して確認させるものから
+    public function index(IndexGet $request)
     {
-        $recent_stay_ids = $this->macAddressService->getRecentStayIdsAndMaxPostedAt($this->lastLogCheckDatetime);
-        $items = UserStaylog::all();
+        $recentStayIds = $this->macAddressService->getRecentStayIdsAndMaxPostedAt($this->lastLogCheckDatetime);
+        $communityId = $this->userStayLogService->communityCanger($request);
+        $communities = $this->communityService->CommunitysGet();
+        $provisionalArr = $this->userStayLogService->provisionalGet($request);
+
+        $items = $this->userStayLogService->getStayLog($communityId, $provisionalArr);
         return view('logs/index', [
             'items'           => $items,
-            'recent_stay_ids' => $recent_stay_ids,
-            'now'             => $this->now,
-            'last_time'       => $this->lastLogCheckDatetime,
+            'community_id'    => $communityId,
+            'provisionalArr'  => $request->provisional,
+            'communities'     => $communities,
+            'recentStayIds'   => $recentStayIds,
+            'now'             => Carbon::now(),
+            'lastTime'        => $this->lastLogCheckDatetime,
         ]);
     }
 
@@ -92,7 +100,7 @@ class UserStayLogController extends Controller
         $dupl_exists = $this->userStayLogService->ArraivalUserDuplicationCheck($community_user_id);
         if ($near_arraival_exists) {
             if (!$dupl_exists) {
-                $this->userStayLogService->arraivalInsertNow($community_user_id, $this->now);
+                $this->userStayLogService->arraivalInsertNow($community_user_id, Carbon::now());
             }
         }
     }
@@ -105,7 +113,7 @@ class UserStayLogController extends Controller
      */
     public function updateLastLogCheckDatetime()
     {
-        $this->systemSettingService->updateValue('last_log_check_datetime', $this->now);
+        $this->systemSettingService->updateValue('last_log_check_datetime', Carbon::now());
     }
 
     // 未使用

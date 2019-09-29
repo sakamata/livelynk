@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use DB;
 use App\Community;
 use Illuminate\Support\Facades\Log;
 
@@ -21,5 +22,10 @@ class CommunityService
     public function NameGet(string $community_name)
     {
         return 'App\Community'::where('name', $community_name)->first();
+    }
+
+    public function CommunitysGet()
+    {
+        return DB::table('communities')->get();
     }
 }
