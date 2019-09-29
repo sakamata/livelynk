@@ -42,13 +42,13 @@ class AdminUserController extends Controller
     {
         $request->validate([
             'community_id' => ['nullable', 'integer'],
-            'id' => ['nullable','regex:/asc|desc/'],
-            'role' => ['nullable','regex:/asc|desc/'],
-            'name' => ['nullable','regex:/asc|desc/'],
-            'hide' => ['nullable','regex:/asc|desc/'],
-            's_last_access' => ['nullable','regex:/asc|desc/'],
-            's_created_at' => ['nullable','regex:/asc|desc/'],
-            's_updated_at' => ['nullable','regex:/asc|desc/'],
+            'id' => ['nullable','regex:/^(asc|desc)$/'],
+            'role' => ['nullable','regex:/^(asc|desc)$/'],
+            'name' => ['nullable','regex:/^(asc|desc)$/'],
+            'hide' => ['nullable','regex:/^(asc|desc)$/'],
+            's_last_access' => ['nullable','regex:/^(asc|desc)$/'],
+            's_created_at' => ['nullable','regex:/^(asc|desc)$/'],
+            's_updated_at' => ['nullable','regex:/^(asc|desc)$/'],
         ]);
 
         // ***ToDo*** もう少しスマートに書けないものか?
@@ -306,7 +306,7 @@ class AdminUserController extends Controller
             'name_reading' => 'nullable|string|max:30',
             'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', new UniqueNameEdit($request->user_id)],
             'email' => 'nullable|string|email|max:170',
-            'role' => ['required', 'regex:/normal|normalAdmin|readerAdmin|superAdmin/'],
+            'role' => ['required', 'regex:/^(normal|normalAdmin|readerAdmin|superAdmin)$/'],
             'hide' => 'required|boolean',
             'mac_address.*.hide' => 'boolean',
             'mac_address.*.vendor' => 'nullable|string|max:40',

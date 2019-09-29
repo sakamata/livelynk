@@ -127,7 +127,7 @@ class InportPostController extends Controller
                 // この宣言は外してはいけない！！
                 // MacAddressStatusUpdate 第一引数に必要な宣言
                 $community_user_id = $community->user_id;
-                $google_talk_trigger = 'new_comer'; 
+                $google_talk_trigger = 'new_comer';
                 // 新規訪問者通知へのpush
                 $person = array(
                     "id" => "id未定",
@@ -165,7 +165,8 @@ class InportPostController extends Controller
 
                     // 一定時間以上間の空いた場合はDBのステータス滞在中に変更 arraival_at のみ変更
                     // 現在を含むので ">="  が正
-                    if ($now >= $limit) {
+                    // 2019/8/1 mazaribaで 乱発、時間バグの為一時的に >= を > に変える
+                    if ($now > $limit) {
                         //  該当レコードの来訪時間 arraival_at 更新
                         $this->call_mac->Arraival_at_Update(
                             (int)$community_user_id,
@@ -267,7 +268,7 @@ class InportPostController extends Controller
     }
 
     // !!!Tips!!! 来訪直後に帰宅通知が出るのは .env ファイルのキャッシュの問題かも
-    // .env 値をlog出力して値が反映されるか確認 
+    // .env 値をlog出力して値が反映されるか確認
     // 無い場合はコンソールで以下のいずれかのコマンドをたたく事
     // $ php artisan config:cache
     // $ php artisan config:clear

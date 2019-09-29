@@ -177,7 +177,7 @@ class TumolinkController extends Controller
         }
         if ($action == 'cancel' && $column == 'maybe_departure') {
             $mess['message'] = $name . "「やっぱり" . $service_name . "にもうしばらくいるツモリ！」";
-            $mess['trigger'] = 'cancel_arraival';
+            $mess['trigger'] = 're_stay';
         }
         return $mess;
     }

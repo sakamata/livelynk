@@ -30,12 +30,12 @@ class AdminMacAddressController extends Controller
     {
         $request->validate([
             'community_id' => ['nullable', 'integer'],
-            'id' => ['nullable','regex:/asc|desc/'],
-            'current_stay' => ['nullable','regex:/asc|desc/'],
-            'vendor' => ['nullable','regex:/asc|desc/'],
-            'arraival_at' => ['nullable','regex:/asc|desc/'],
-            'departure_at' => ['nullable','regex:/asc|desc/'],
-            'posted_at' => ['nullable','regex:/asc|desc/'],
+            'id' => ['nullable','regex:/^(asc|desc)$/'],
+            'current_stay' => ['nullable','regex:/^(asc|desc)$/'],
+            'vendor' => ['nullable','regex:/^(asc|desc)$/'],
+            'arraival_at' => ['nullable','regex:/^(asc|desc)$/'],
+            'departure_at' => ['nullable','regex:/^(asc|desc)$/'],
+            'posted_at' => ['nullable','regex:/^(asc|desc)$/'],
         ]);
 
         // ***ToDo*** もう少しスマートに書けないものか?
