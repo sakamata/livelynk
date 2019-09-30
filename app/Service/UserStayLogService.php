@@ -38,10 +38,10 @@ class UserStayLogService
     {
         $arr = [];
         if ($provisionalArr['prov'] == 1) {
-            array_push($arr, 0);
+            array_push($arr, 1);
         }
         if ($provisionalArr['regl'] == 1) {
-            array_push($arr, 1);
+            array_push($arr, 0);
         }
         return UserStaylog::with('community_user.user')
         ->select(
