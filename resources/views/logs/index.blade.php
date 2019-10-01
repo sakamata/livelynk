@@ -57,9 +57,11 @@
                         <td>{{$item->community_user->user->provisional}}</td>
                         <td>{{$item->community_user->user->name}}</td>
                         <td>
-                          @foreach ($item->mac_address as $mac)
-                          {{$mac->mac_address_omission}}<br>
-                          @endforeach
+                          @if ($item->community_user->user->provisional == 1)
+                            @foreach ($item->mac_address as $mac)
+                            {{$mac->mac_address_omission}}<br>
+                            @endforeach
+                          @endif
                         </td>
                         <td>{{$item->arraival_at}}</td>
                         <td>{{$item->last_datetime}}</td>
