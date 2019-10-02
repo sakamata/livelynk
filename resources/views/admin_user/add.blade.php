@@ -9,11 +9,13 @@
             <div class="card">
                 <div class="card-header"><h2>新規ユーザー登録</h2></div>
                 <div class="card-body">
+                    @can('superAdmin')
                     @component('components.community_changer', [
                         'communities' => $communities,
                         'community_id' => $community_id,
                     ])
                     @endcomponent
+                    @endcan
                     <form method="POST" action="/admin_user/create" aria-label="{{ __('Register') }}">
                         @csrf
                         <input type="hidden" name="community_id" value="{{$community_id}}">

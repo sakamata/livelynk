@@ -13,11 +13,13 @@
                 <div class="card-header"><h2>ユーザー一覧</h2></div>
                 @endif
                 <div class="card-body">
+                @can('superAdmin')
                 @component('components.community_changer', [
                     'communities' => $communities,
                     'community_id' => $community_id,
                 ])
                 @endcomponent
+                @endcan
                 @component('components.error')
                 @endcomponent
                 <div class="blockquote text-left">
