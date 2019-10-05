@@ -7,6 +7,7 @@ use App\CommunityUser;
 use App\Router;
 use App\TalkMessage;
 use App\Http\Controllers\GoogleHomeController;
+use App\Http\Controllers\ExportPostController;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Service\CommunityService;
 use App\Service\CommunityUserService;
@@ -26,6 +27,7 @@ class InportPostController extends Controller
     private $call_tumolink;
     private $call_user;
     private $googleHome;
+    private $export;
 
     public function __construct(
         CommunityService $call_community,
@@ -33,7 +35,8 @@ class InportPostController extends Controller
         MacAddressService $call_mac,
         TumolinkService $call_tumolink,
         UserService $call_user,
-        GoogleHomeController $googleHome
+        GoogleHomeController $googleHome,
+        ExportPostController $export
         )
     {
         $this->call_community      = $call_community;
@@ -42,6 +45,7 @@ class InportPostController extends Controller
         $this->call_tumolink       = $call_tumolink;
         $this->call_user           = $call_user;
         $this->googleHome          = $googleHome;
+        $this->export              = $export;
     }
 
     // MAC アドレス一覧を受け取って、mac_addresses tableへの登録、更新を行う
@@ -226,7 +230,7 @@ class InportPostController extends Controller
             // 外部機能IFTTTに来訪通知をPOST
             Log::debug(print_r("!push_ifttt arraival!>>>>", 1));
             Log::debug(print_r($push_users, 1));
-            (new ExportPostController)->access_message_maker($push_users, $category = "arraival", $community->id);
+            $this->export->access_message_maker($push_users, $category = "arraival", $community->id);
             if ($google_talk_trigger == null) {
                 $google_talk_trigger = 'users_arraival';
             }
@@ -512,7 +516,7 @@ class InportPostController extends Controller
             Log::debug(print_r("!!!push_ifttt departure pushusers >>>>!!!", 1));
             Log::debug(print_r($push_users, 1));
 
-            (new ExportPostController)->access_message_maker($push_users, $category = "departure", $community_id);
+            $this->export->access_message_maker($push_users, $category = "departure", $community_id);
         }
     }   // end function
 }
