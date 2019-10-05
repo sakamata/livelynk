@@ -6,6 +6,7 @@ use DB;
 use App\CommunityUser;
 use App\Router;
 use App\TalkMessage;
+use App\Http\Controllers\GoogleHomeController;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Service\CommunityService;
 use App\Service\CommunityUserService;
@@ -24,13 +25,15 @@ class InportPostController extends Controller
     private $call_mac;
     private $call_tumolink;
     private $call_user;
+    private $googleHome;
 
     public function __construct(
         CommunityService $call_community,
         CommunityUserService $call_community_user,
         MacAddressService $call_mac,
         TumolinkService $call_tumolink,
-        UserService $call_user
+        UserService $call_user,
+        GoogleHomeController $googleHome
         )
     {
         $this->call_community      = $call_community;
@@ -38,6 +41,7 @@ class InportPostController extends Controller
         $this->call_mac            = $call_mac;
         $this->call_tumolink       = $call_tumolink;
         $this->call_user           = $call_user;
+        $this->googleHome          = $googleHome;
     }
 
     // MAC アドレス一覧を受け取って、mac_addresses tableへの登録、更新を行う
@@ -234,26 +238,34 @@ class InportPostController extends Controller
             //他のメッセージがDBにあれば送信して処理終了（まずはツモリンク）
             $talk_message = 'App\TalkMessage'::orderBy('id')->first();
             if ($talk_message) {
-                Log::debug(print_r('talk_message>>>', 1));
-                Log::debug(print_r('[id]' . $talk_message->id, 1));
+
+                $mac  = $talk_message->router->google_home_mac_address;
+                $name = $talk_message->router->google_home_name;
+                $mess = $talk_message->talking_message;
+
+                Log::debug(print_r('[talk_message]'. $mess, 1));
+                Log::debug(print_r('[mess_id]' . $talk_message->id, 1));
+                Log::debug(print_r('[google_home_name]' . $name, 1));
+                Log::debug(print_r('[google_home_mac]' . $mac, 1));
                 Log::debug(print_r('[router_id]' . $talk_message->router_id, 1));
-                Log::debug(print_r('[talking_message]' . $talk_message->talking_message, 1));
+
                 $talk_message->delete();
-                return $this->TalkMessageJsonResponse(
-                    $talk_message->router->google_home_mac_address,
-                    $talk_message->router->google_home_name,
-                    $talk_message->talking_message
-                );
+                return $this->TalkMessageJsonResponse($mac, $name, $mess);
             }
         }
 
         // 来訪者メッセージがあれば生成,送信して処理終了
         if ($google_talk_trigger && $community->google_home_enable == true) {
             // GoogleHomeへの音声メッセージを生成
-            $welcome_message = (new GoogleHomeController)->GoogleHomeMessageWelcomeMaker($google_talk_trigger, $community, $push_users);
+            $welcome_message = $this->googleHome->GoogleHomeMessageWelcomeMaker(
+                $google_talk_trigger,
+                $community,
+                $push_users
+            );
             $router = 'App\Router'::find($check_array['router_id']);
             Log::debug(print_r('welcome_message>>>', 1));
             Log::debug(print_r($welcome_message, 1));
+
             return $this->TalkMessageJsonResponse(
                 $router->google_home_mac_address,
                 $router->google_home_name,

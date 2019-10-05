@@ -38,7 +38,6 @@ class Kernel extends ConsoleKernel
             // ->withoutOverlapping()
             ->dailyAt('0:01');
 
-        Log::warning(print_r('!!!schedule!!!UserStayLogController@stayCheck run!!', 1));
         $schedule
             ->call('App\Http\Controllers\UserStayLogController@stayCheck')
             // ->withoutOverlapping()

@@ -18,7 +18,7 @@ class GoogleHomeController extends Controller
         $users_name_only_str = "";
         $count = 0;
         foreach ((array)$push_users as $user) {
-            $user['name_reading'] ? $user_name = $user['name_reading'] : $user_name = $user['name']; 
+            $user['name_reading'] ? $user_name = $user['name_reading'] : $user_name = $user['name'];
 
             $users_name_str .= $user_name . "さん。";
             $users_name_only_str .= $user_name . "。";
@@ -33,12 +33,12 @@ class GoogleHomeController extends Controller
         switch ($google_talk_trigger) {
             case 'new_comer':
                 if ($count == 1) {
-                    $message = 'ワイファイに接続された方' . $service_name . 'へようこそ。私は滞在者確認サービス、ライブリンクです。詳しくはパンプレットをご覧ください。';
+                    $message = 'ワイファイに接続された方。' . $service_name . '。へようこそ。私は滞在者確認サービス、ライブリンクです。詳しくはパンプレットをご覧ください。';
                     // 私は滞在者確認アプリ。スマホでここにいる人がわかるサービスです。よかったらキューアールコードを読み取り、画面の仮ユーザー名。' . $users_name_only_str .'　を、クリックして登録をお願いします。';
                 }
                 // 複数端末同時接続時の挨拶
                 if ($count > 1 || mb_strlen($message) > 200) {
-                    $message = 'ワイファイに接続された方' . $service_name . 'へようこそ。私は滞在者確認サービス、ライブリンクです。詳しくはパンプレットをご覧ください。';
+                    $message = 'ワイファイに接続された方。' . $service_name . '。へようこそ。私は滞在者確認サービス、ライブリンクです。詳しくはパンプレットをご覧ください。';
                     // $message = 'いまワイファイに接続された皆さん、ようこそ。' . $service_name . 'へ。　私は滞在者確認アプリ。スマホでここにいる人がわかるサービスです。よかったらキューアールコードを読み取って、画面をご覧ください。次回お越しの際、お一人のみで接続された際は、簡単に登録が可能です';
                 }
             break;
@@ -71,34 +71,35 @@ class GoogleHomeController extends Controller
 
     public function GoogleHomeMessageTumolinkMaker($trigger, $user_name, $time)
     {
+        $message = 'ライブリンクよりお知らせです。';
         $time = $time->format('G時i分');
         switch ($trigger) {
             case 'maybe_arraival':
-                $message = $user_name . 'さんが、' . $time . 'くらいに来るつもりみたいですよ。';
+                $message .= $user_name . 'さんが、' . $time . 'くらいに来るつもりみたいですよ。';
                 break;
 
             case 'maybe_departure':
-                $message = $user_name . 'さんが、' . $time . 'くらいに帰るつもりみたいですよ。';
+                $message .= $user_name . 'さんが、' . $time . 'くらいに帰るつもりみたいですよ。';
                 break;
 
             case 're_maybe_arraival':
-                $message = $user_name . 'さんが、やっぱり' . $time . 'くらいに来るつもりみたいですよ。';
+                $message .= $user_name . 'さんが、やっぱり' . $time . 'くらいに来るつもりみたいですよ。';
                 break;
 
             case 're_maybe_departure':
-                $message = $user_name . 'さんが、やっぱり' . $time . 'くらいに帰るつもりみたいですよ。';
+                $message .= $user_name . 'さんが、やっぱり' . $time . 'くらいに帰るつもりみたいですよ。';
                 break;
 
             case 'cancel_arraival':
-                $message = $user_name . 'さんが、来るのをやめたみたいです。';
+                $message .= $user_name . 'さんが、来るのをやめたみたいです。';
                 break;
 
             case 're_stay':
-                $message = $user_name . 'さんは、もう少しいるつもりみたいです。';
+                $message .= $user_name . 'さんは、もう少しいるつもりみたいです。';
                 break;
 
             default:
-                $message = 'ツモリンクの調子が悪いみたいです。開発者に伝えてもらえると嬉しいです。';
+                $message .= 'ツモリンクの調子が悪いみたいです。開発者に伝えてもらえると嬉しいです。';
                 break;
         }
         return $message;
