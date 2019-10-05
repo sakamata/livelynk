@@ -240,9 +240,10 @@ class InportPostController extends Controller
         // 来訪者通知が無い場合
         if ($google_talk_trigger == null) {
             //他のメッセージがDBにあれば送信して処理終了（まずはツモリンク）
-            $talk_message = 'App\TalkMessage'::orderBy('id')->first();
-            if ($talk_message) {
+            $talk_message = 'App\TalkMessage'::orderBy('id')
+                ->where('router_id', $check_array['router_id'])->first();
 
+            if ($talk_message) {
                 $mac  = $talk_message->router->google_home_mac_address;
                 $name = $talk_message->router->google_home_name;
                 $mess = $talk_message->talking_message;
