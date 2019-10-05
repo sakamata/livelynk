@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrustProxies::class,
         \App\Http\Middleware\UrlPath::class,
         \App\Http\Middleware\CssFileDate::class,
+        \App\Http\Middleware\SetLocale::class,
     ];
 
     /**

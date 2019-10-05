@@ -30,32 +30,29 @@
                     @endcan
                     @component('components.error')
                     @endcomponent
-                    <p>
-                        last_log_check : {{$lastTime}}
-                    </p>
-                    <p>
-                      now : {{$now}}
-                    </p>
                     <ul class="pagination justify-content-end mb-3">
-                        {{ $items->links() }}
+                        {{ $items->appends(request()->input())->links() }}
                     </ul>
-                    <table class="table table-hover table-bordered">
+                    <table class="table table-hover">
                       <tr class="info thead-light">
-                          <th>id</th>
-                          <th>community_user_id</th>
-                          <th>仮</th>
-                          <th>name</th>
-                          <th>mac_address</th>
-                          <th>arraival_at</th>
-                          <th>last_datetime</th>
-                          <th>departure_at</th>
+                          <th class="text-right">ID</th>
+                          <th class="text-center">区分</th>
+                          <th>MACアドレス</th>
+                          <th>名前</th>
+                          <th>来訪日時</th>
+                          <th>帰宅日時</th>
                       </tr>
                       @foreach ($items as $item)
                       <tr class="table-default">
-                        <td>{{$item->log_id}}</td>
-                      <td>{{$item->community_user_id}} :comm_id{{$item->community_id}}</td>
-                        <td>{{$item->community_user->user->provisional}}</td>
-                        <td>{{$item->community_user->user->name}}</td>
+                        <td class="text-right">
+                            {{$item->community_user_id}}
+                        </td>
+                        <td class="text-center">
+                        @if($item->community_user->user->provisional == 1)
+                            <span class="badge badge-warning">仮</span></td>
+                        @else
+                            <span class="badge badge-light">一般</span></td>
+                        @endif
                         <td>
                           @if ($item->community_user->user->provisional == 1)
                             @foreach ($item->mac_address as $mac)
@@ -63,14 +60,24 @@
                             @endforeach
                           @endif
                         </td>
-                        <td>{{$item->arraival_at}}</td>
-                        <td>{{$item->last_datetime}}</td>
-                        <td>{{$item->departure_at}}</td>
+                        <td>{{$item->community_user->user->name}}</td>
+                        <td>
+                            @if($item->arraival_at)
+                            {{$item->arraival_at->format('n月d日 H:i ') }}
+                            {{$item->arraival_at->formatLocalized('(%a)')}}
+                            @endif
+                        </td>
+                        <td>
+                            @if($item->departure_at)
+                            {{$item->departure_at->format('n月d日 H:i ') }}
+                            {{$item->departure_at->formatLocalized('(%a)')}}
+                            @endif
+                        </td>
                       </tr>
                       @endforeach
                     </table>
                     <ul class="pagination justify-content-end mb-3">
-                        {{ $items->links() }}
+                        {{ $items->appends(request()->input())->links() }}
                     </ul>
                 </div>
             </div>

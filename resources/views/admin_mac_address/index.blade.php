@@ -158,21 +158,33 @@
                                 </form>
                             </td>
                             <td class="align-middle">{{$item->router_name}}</td>
-                        @if($item->posted_at != null)
-                            <td class="align-middle">{{$item->posted_at->format('n月j日 G:i')}}</td>
-                        @else
-                            <td class="align-middle"></td>
-                        @endif
-                        @if($item->arraival_at != null)
-                            <td class="align-middle">{{$item->arraival_at->format('n月j日 G:i')}}</td>
-                        @else
-                            <td class="align-middle"></td>
-                        @endif
-                        @if($item->created_at != null)
-                            <td class="align-middle">{{$item->created_at->format('n月j日 G:i')}}</td>
-                        @else
-                            <td class="align-middle"></td>
-                        @endif
+                            <td class="align-middle">
+                                @if($item->posted_at)
+                                {{$item->posted_at->format('n月j日')}}
+                                <nobr>
+                                    {{$item->posted_at->format('G:i')}}
+                                    {{$item->posted_at->formatLocalized('(%a)')}}
+                                </nobr>
+                                @endif
+                            </td>
+                            <td class="align-middle">
+                                @if($item->arraival_at)
+                                {{$item->arraival_at->format('n月j日')}}
+                                <nobr>
+                                    {{$item->arraival_at->format('G:i')}}
+                                    {{$item->arraival_at->formatLocalized('(%a)')}}
+                                </nobr>
+                                @endif
+                            </td>
+                            <td class="align-middle">
+                                @if($item->created_at)
+                                {{$item->created_at->format('n月j日')}}
+                                <nobr>
+                                    {{$item->created_at->format('G:i')}}
+                                    {{$item->created_at->formatLocalized('(%a)')}}
+                                </nobr>
+                                @endif
+                            </td>
                         </tr>
                     @php
                     $i++;

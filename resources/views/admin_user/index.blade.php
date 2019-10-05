@@ -162,9 +162,33 @@
                                 {{$item->community_service_name}}
                             </td>
                             @endcan
-                            <td>{{$item->s_last_access->format('n月j日 G:i')}}</td>
-                            <td>{{$item->s_created_at->format('n月j日 G:i')}}</td>
-                            <td>{{$item->s_updated_at->format('n月j日 G:i')}}</td>
+                            <td>
+                                @if($item->s_last_access)
+                                {{$item->s_last_access->format('n月j日')}}
+                                <nobr>
+                                    {{$item->s_last_access->format('G:i')}}
+                                    {{$item->s_last_access->formatLocalized('(%a)')}}
+                                </nobr>
+                                @endif
+                            </td>
+                            <td>
+                                @if($item->s_created_at)
+                                {{$item->s_created_at->format('n月j日')}}
+                                <nobr>
+                                    {{$item->s_created_at->format('G:i')}}
+                                    {{$item->s_created_at->formatLocalized('(%a)')}}
+                                </nobr>
+                                @endif
+                            </td>
+                            <td>
+                                @if($item->s_updated_at)
+                                {{$item->s_updated_at->format('n月j日')}}
+                                <nobr>
+                                    {{$item->s_updated_at->format('G:i')}}
+                                    {{$item->s_updated_at->formatLocalized('(%a)')}}
+                                </nobr>
+                                @endif
+                            </td>
                             <td>
                                 <a href="/admin_user/edit?id={{$item->id}}" class="btn btn-info" role="button">編集</a>
                                 <a href="admin_user/delete?id={{$item->id}}" class="btn btn-danger" role="button">退会</a>

@@ -48,14 +48,12 @@ class UserStayLogController extends Controller
             'provisionalArr'  => $request->provisional,
             'communities'     => $communities,
             'recentStayIds'   => $recentStayIds,
-            'now'             => Carbon::now(),
-            'lastTime'        => $this->lastLogCheckDatetime,
         ]);
     }
 
     /**
      * 1分毎のcronで滞在者の確認をする 来訪、更新、帰宅をusers_stays_logs tableに残す
-     * 
+     *
      * @param void
      * @return void
      */
@@ -87,7 +85,7 @@ class UserStayLogController extends Controller
 
     /**
      * 来訪判断 foreach内の処理
-     * 
+     *
      * @param int    $community_user_id
      * @param string $last_check_time  Y-m-d H:i:s
      * @return void
@@ -107,7 +105,7 @@ class UserStayLogController extends Controller
 
     /**
      * 最終確認時間の更新
-     * 
+     *
      * @param void
      * @return void
      */
@@ -151,7 +149,7 @@ class UserStayLogController extends Controller
         // 前回調査時間から90分より大きく空いていた場合は
             // 前回調査時間から90分後を仮の帰宅時間と想定し、帰宅処理を行う。
             // curret stay 1 を全て来訪者として登録する
-            
+
         // 前回調査から <=90分であれば
             // 通常のルーティン処理
 
