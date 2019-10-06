@@ -365,3 +365,7 @@ textarea.comp-ui {
 .cssacc:checked + .accordion {
     border-radius: 5em;
 }
+
+.space-list .talking_form {
+    display: block;
+}

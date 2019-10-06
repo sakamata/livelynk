@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+
+@component('components.error')
+@endcomponent
 <h2 class="comp-title">{{ $community->service_name }}</h2>
 @if(Auth::check())
 @if(Auth::user()->id == $reader_id)
@@ -8,9 +11,20 @@
 @endif
 @endif
 @if(Auth::check() && $community->tumolink_enable)
-  @component('components.tumoli_form', ['tumolist' => $tumolist, 'tumoli_declared' => $tumoli_declared, 'community' => $community])
+  @component('components.tumoli_form', [
+      'tumolist'        => $tumolist,
+      'tumoli_declared' => $tumoli_declared,
+      'community'       => $community
+      ])
   @endcomponent
-@elseif(Auth::check() == false && $community->tumolink_enable)
+  @if($community->google_home_enable == 1  &&  Auth::user()->provisional == 0)
+  @component('components.temporary_taking_form', [
+      'community'   => $community,
+      'router'      => $router,
+  ])
+  @endcomponent
+  @endif
+  @elseif(Auth::check() == false && $community->tumolink_enable)
 <p>ログインすると行くツモリ宣言ができます</p>
 @elseif(!$community->tumolink_enable)
 {{-- <p>新機能ツモリンクをリリースしました</p> --}}

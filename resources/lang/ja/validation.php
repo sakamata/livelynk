@@ -154,6 +154,7 @@ return [
         'device_name' => 'デバイスメモ',
         'mac_address.*.device_name' => 'デバイスメモ',
         'service_name' => 'コミュニティ名称',
+        'talking_message' => 'ヒトコトメッセージ',
         'hash_key' => 'secret',
         'ifttt_event_name' => 'IFTTT Event Name',
         'ifttt_webhooks_key' => 'IFTTT Webhooks key',

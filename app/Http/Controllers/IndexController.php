@@ -6,6 +6,7 @@ use App\Service\CommunityService;
 use App\Service\CommunityUserService;
 use App\Service\MacAddressService;
 use App\Service\TumolinkService;
+use App\Service\RouterService;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -16,17 +17,20 @@ class IndexController extends Controller
 {
     private $call_community_user;
     private $call_tumolink;
+    private $callRouter;
 
     public function __construct(
         CommunityService $call_community,
         CommunityUserService $call_community_user,
         MacAddressService $call_mac_address,
-        TumolinkService $call_tumolink
+        TumolinkService $call_tumolink,
+        RouterService $callRouter
     ) {
-        $this->call_community = $call_community;
-        $this->call_community_user = $call_community_user;
-        $this->call_mac_address = $call_mac_address;
-        $this->call_tumolink = $call_tumolink;
+        $this->call_community       = $call_community;
+        $this->call_community_user  = $call_community_user;
+        $this->call_mac_address     = $call_mac_address;
+        $this->call_tumolink        = $call_tumolink;
+        $this->callRouter           = $callRouter;
     }
 
     // 一般ユーザーのメイン画面、滞在者の一覧を表示する
@@ -104,7 +108,7 @@ class IndexController extends Controller
             $reader_id = $this->getReaderID();
             $tumoli_declared = $this->call_tumolink->existsTodayPost(Auth::user()->id, $column = 'maybe_arraival');
         }
-
+        $router = $this->callRouter->CommunityRouterGet($community_id);
         return view('index.index', [
             'community' => $community,
             'items' => $unregistered,
@@ -115,6 +119,7 @@ class IndexController extends Controller
             'rate' => $unregistered_rate_array,
             'rate1' => $stays_rate_array,
             'reader_id' => $reader_id,
+            'router' => $router,
         ]);
     }
 

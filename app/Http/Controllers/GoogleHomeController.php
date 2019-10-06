@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use DB;
 use App\Community;
+use App\AuthUser;
+use App\Http\Controllers\IndexController;
+use App\TalkMessage;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +14,31 @@ use Illuminate\Support\Facades\Log;
 // 現状200文字以上ではGoogleHomeにしゃべらせることはできない
 class GoogleHomeController extends Controller
 {
+    public function temporaryTakingRecorder(Request $request, IndexController $indexController)
+    {
+        $request->validate([
+            'community_user_id' => 'required|integer',
+            'router_id'         => 'required|integer',
+            'talking_message'   => 'required|max:140',
+        ]);
+        $user = AuthUser::find($request->community_user_id);
+        if (is_null($user->name_reading)) {
+            $name = $user->name;
+        } else {
+            $name = $user->name_reading;
+        }
+        // name max 30
+        // 23文字 ライブリンクより、、さんからのメッセージです。
+        $message = 'ライブリンクより、' . $name . '、さんからのメッセージです。 ' . $request->talking_message;
+
+        $model = new TalkMessage();
+        $model->router_id           = $request->router_id;
+        $model->talking_message     = $message;
+        $model->save();
+
+        return redirect('/')->with('message', 'メッセージを受け付けました。');
+    }
+
     public function GoogleHomeMessageWelcomeMaker($google_talk_trigger, $community, $push_users)
     {
         // "Aさん Bさん ..."の連結文作成
