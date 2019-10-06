@@ -49,8 +49,10 @@
                         </td>
                         <td class="text-center">
                         @if($item->community_user->user->provisional == 1)
+                        @php $link ="admin_user_provisional"; @endphp
                             <span class="badge badge-warning">仮</span></td>
                         @else
+                        @php $link ="admin_user"; @endphp
                             <span class="badge badge-light">一般</span></td>
                         @endif
                         <td>
@@ -60,7 +62,11 @@
                             @endforeach
                           @endif
                         </td>
-                        <td>{{$item->community_user->user->name}}</td>
+                        <td>
+                            <a href="/{{$link}}#id_{{$item->community_user->id}}" class="text-primary">
+                                {{$item->community_user->user->name}}
+                            </a>
+                        </td>
                         <td>
                             @if($item->arraival_at)
                             {{$item->arraival_at->format('n月d日 H:i ') }}

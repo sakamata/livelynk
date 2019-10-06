@@ -60,6 +60,7 @@ class UserTable extends Model
             'users.unique_name',
             'users.email',
             'users.provisional',
+            'community_user.id AS id',
             'community_user.*',
             'communities_users_statuses.hide',
             'communities_users_statuses.last_access as s_last_access',
@@ -101,7 +102,7 @@ class UserTable extends Model
             case null:
                 return;
             break;
-            
+
             default:
                 return;
             break;

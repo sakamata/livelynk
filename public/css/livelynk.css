@@ -564,3 +564,10 @@ div.admin-box:nth-of-type(even) {
   margin-left: 2%;
 }
 }
+
+/* href anchor position shift */
+.anchor-shift {
+  position: relative;
+  top: -80px;/* 上下調整 */
+  display: block;
+}

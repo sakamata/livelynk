@@ -278,7 +278,7 @@ class AdminUserController extends Controller
             (int)$request->id,
             (int)$community_id
         );
-        
+
         $user_community = DB::table('communities')->where('id', $community_id)->first();
         $communities = DB::table('communities')->get();
         $taget_role = $this->call_user->IDtoRoleGet($request->id);
@@ -340,7 +340,7 @@ class AdminUserController extends Controller
         }
         $now = Carbon::now();
         //  編集を行う事でいかなる状態でも仮ユーザーを正ユーザーとする仕様
-        // provisional => false 
+        // provisional => false
         $param_user = [
             'name' => $request->name,
             'name' => $request->name,

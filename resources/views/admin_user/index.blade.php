@@ -120,6 +120,7 @@
                         <tr class="table-secondary">
                         @endif
                             <td>
+                                <a id="id_{{$item->id}}" class="anchor-shift"></a>
                                 No.{{$item->id}}</br>
                                 {{$item->hide == 1 ? '非表示' : ''}}
                             </td>
