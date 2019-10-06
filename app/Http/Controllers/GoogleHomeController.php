@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use DB;
-use App\Community;
 use App\AuthUser;
 use App\Http\Controllers\IndexController;
 use App\TalkMessage;
