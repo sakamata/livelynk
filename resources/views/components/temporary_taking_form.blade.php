@@ -11,7 +11,7 @@
                         {{ csrf_field() }}
                         <input type="hidden" name="community_user_id" value="{{ Auth::user()->id }}">
                         <input type="hidden" name="router_id" value="{{ $router->id }}">
-                        <input type="text" name="talking_message" class="comp-ui form-control mt-3 mb-3 talking_form {{ $errors->has('talking_message') ? ' is-invalid' : '' }}" value="{{old('talking_message')}}" id="talking_message">
+                        <input type="text" name="talking_message" class="comp-ui form-control mt-3 mb-3 talking_form {{ $errors->has('talking_message') ? ' is-invalid' : '' }}" value="{{old('talking_message')}}" id="talking_message" placeholder="140文字まで">
                         <button type="submit" name="action" value="tumoli" class="tumoli-button comp-ui">伝える</button>
                     </div>
                 </form>
