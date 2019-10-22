@@ -24,6 +24,9 @@ class CommunitiesTableSeeder extends Seeder
             'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
             'tumolink_enable' => 1,
             'google_home_enable' => 1,
+            'google_home_weather_enable' => 1,
+            'latitude' => '35.645414', //ギークオフィス恵比寿
+            'longitude' => '139.713022',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -41,6 +44,9 @@ class CommunitiesTableSeeder extends Seeder
             'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
             'tumolink_enable' => 1,
             'google_home_enable' => 0,
+            'google_home_weather_enable' => 1,
+            'latitude' => '42.645411', // 屋久島ヤクスギランド
+            'longitude' => '139.713012',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -58,6 +64,9 @@ class CommunitiesTableSeeder extends Seeder
             'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
             'tumolink_enable' => 1,
             'google_home_enable' => 1,
+            'google_home_weather_enable' => 1,
+            'latitude' => '32.0339336', // 宮崎県えびの
+            'longitude' => '130.6989145',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];
@@ -75,6 +84,9 @@ class CommunitiesTableSeeder extends Seeder
             'ifttt_webhooks_key' => env("IFTTT_WEBHOOKS_KEY_SEED"),
             'tumolink_enable' => 1,
             'google_home_enable' => 1,
+            'google_home_weather_enable' => 1,
+            'latitude' => '35.134943', // 城ヶ島
+            'longitude' => '139.6143781',
             'created_at' => $dateTime,
             'updated_at' => $dateTime,
         ];

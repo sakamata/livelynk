@@ -255,7 +255,9 @@ class InportPostController extends Controller
                 Log::debug(print_r('[router_id]' . $talk_message->router_id, 1));
 
                 $talk_message->delete();
-                return $this->TalkMessageJsonResponse($mac, $name, $mess);
+                if ($mess) {
+                    return $this->TalkMessageJsonResponse($mac, $name, $mess);
+                }
             }
         }
 

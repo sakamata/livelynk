@@ -38,6 +38,61 @@ class GoogleHomeController extends Controller
         return redirect('/')->with('message', 'メッセージを受け付けました。');
     }
 
+    /**
+     * 降雨予報の通知メッセージを生成する
+     */
+    public function weatherRainNotification(object $community, float $total)
+    {
+        $communityName = $this->getCommunityName($community);
+        $rainfall = $this->rainfallLangMaker($total);
+
+        return  'ライブリンクよりお知らせです。' .
+                $communityName .
+                '、周辺に、雨がふりそうです。一時間以内の降雨量は、'
+                . $rainfall . 'の予報です。';
+    }
+
+    /**
+     * 降雨が止む予報の通知メッセージを作成する
+     */
+    public function weatherStopRainingNotification(object $community, float $total)
+    {
+        $communityName = $this->getCommunityName($community);
+        $rainfall = $this->rainfallLangMaker($total);
+
+        return  'ライブリンクよりお知らせです。' .
+                $communityName .
+                '、周辺の雨がやみそうです。一時間以内の降雨量は、'
+                . $rainfall . 'の予報です。';
+    }
+
+    /**
+     * 降雨量の発話を生成する
+     */
+    public function rainfallLangMaker(float $total)
+    {
+        $rainfall = round($total);
+        if ($rainfall < 1) {
+            $rainfall = '1ミリ未満';
+        } else {
+            $rainfall = $rainfall . 'ミリ程';
+        }
+        return $rainfall;
+    }
+
+    /**
+     * コミュニティの呼び名を返す
+     */
+    public function getCommunityName(object $community)
+    {
+        if ($community->service_name_reading == "") {
+            $communityName = $community->service_name;
+        } else {
+            $communityName = $community->service_name_reading;
+        }
+        return $communityName;
+    }
+
     public function GoogleHomeMessageWelcomeMaker($google_talk_trigger, $community, $push_users)
     {
         // "Aさん Bさん ..."の連結文作成
