@@ -66,7 +66,6 @@ class AdminCommunityController extends Controller
             'enable' => true,
             'user_id' => null,
             'name' => $request->name,
-            'name_reading' => $request->name_reading,
             'service_name' => $request->service_name,
             'service_name_reading' => $request->service_name_reading,
             'hash_key' => $request->hash_key,
