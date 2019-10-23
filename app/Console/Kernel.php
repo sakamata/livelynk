@@ -33,6 +33,7 @@ class Kernel extends ConsoleKernel
             // ->withoutOverlapping()
             // ->everyMinute();
             ->daily();
+
         $schedule
             ->call('App\Http\Controllers\TumolinkController@auto_remove_before_today')
             // ->withoutOverlapping()
@@ -43,6 +44,11 @@ class Kernel extends ConsoleKernel
             // ->withoutOverlapping()
             ->everyMinute();
 
+        // 天気APIの実行 深夜は止める
+        $schedule
+            ->call('App\Http\Controllers\API\WeatherCheckController@run')
+            ->unlessBetween('1:00', '6:00')
+            ->everyTenMinutes();
         }
 
     /**

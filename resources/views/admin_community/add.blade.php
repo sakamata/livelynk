@@ -130,6 +130,26 @@
                         </div>
 
                         <div class="form-elem">
+                            <label for="InputTextarea">GoogleHome天気通知</label>
+                            <input id="google_home_weather_enable_show" type="radio" value="1" name="google_home_weather_enable" @if (old('google_home_weather_enable') == "1") checked @endif>
+                            <label for="google_home_weather_enable_show">有効</label>
+                            <input id="google_home_weather_enable_hide" type="radio" value="0" name="google_home_weather_enable" @if (old('google_home_weather_enable') == "0") checked @endif>
+                            <label for="google_home_weather_enable_hide">無効</label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="InputTextarea">緯度</label>
+                            <input t type="number" step="0.000001" class="form-control" name="latitude" value="{{old('latitude')}}">
+                            <p>南北方向 例: 35.64</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="InputTextarea">経度</label>
+                            <input t type="number" step="0.000001" class="form-control" name="longitude" value="{{old('longitude')}}">
+                            <p>東西方向 例: 139.71</p>
+                        </div>
+
+                        <div class="form-elem">
                             <label for="InputTextarea">ツモリンク</label>
                             <input id="tumolink_enable_show" type="radio" value="1" name="tumolink_enable" @if (old('tumolink_enable') == "1") checked @endif>
                             <label for="tumolink_enable_show">有効</label>

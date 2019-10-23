@@ -58,28 +58,34 @@ class AdminCommunityController extends Controller
             'calendar_public_iframe' => 'nullable|string|max:1000',
             'calendar_secret_iframe' => 'nullable|string|max:1000',
             'google_home_enable' => 'boolean',
+            'google_home_weather_enable' => 'boolean',
+            'latitude' => 'numeric|between:-90,90', // 緯度 南北
+            'longitude' => 'numeric|between:0,360', // 経度 東西
             'admin_comment' => 'nullable|string|max:1000',
         ]);
         $now = Carbon::now();
         // user_id は users tabelにinsert後に再度挿入する
         $param_community = [
-            'enable' => true,
-            'user_id' => null,
-            'name' => $request->name,
-            'service_name' => $request->service_name,
-            'service_name_reading' => $request->service_name_reading,
-            'hash_key' => $request->hash_key,
-            'url_path' => $request->url_path,
-            'ifttt_event_name' => $request->ifttt_event_name,
-            'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
-            'tumolink_enable' => $request->tumolink_enable,
-            'calendar_enable' => $request->calendar_enable,
-            'calendar_public_iframe' => $request->calendar_public_iframe,
-            'calendar_secret_iframe' => $request->calendar_secret_iframe,
-            'google_home_enable' => $request->google_home_enable,
-            'admin_comment' => $request->admin_comment,
-            'created_at' => $now,
-            'updated_at' => $now,
+            'enable'                        => true,
+            'user_id'                       => null,
+            'name'                          => $request->name,
+            'service_name'                  => $request->service_name,
+            'service_name_reading'          => $request->service_name_reading,
+            'hash_key'                      => $request->hash_key,
+            'url_path'                      => $request->url_path,
+            'ifttt_event_name'              => $request->ifttt_event_name,
+            'ifttt_webhooks_key'            => $request->ifttt_webhooks_key,
+            'tumolink_enable'               => $request->tumolink_enable,
+            'calendar_enable'               => $request->calendar_enable,
+            'calendar_public_iframe'        => $request->calendar_public_iframe,
+            'calendar_secret_iframe'        => $request->calendar_secret_iframe,
+            'google_home_enable'            => $request->google_home_enable,
+            'google_home_weather_enable'    => $request->google_home_weather_enable,
+            'latitude'                      => $request->latitude,
+            'longitude'                     => $request->longitude,
+            'admin_comment'                 => $request->admin_comment,
+            'created_at'                    => $now,
+            'updated_at'                    => $now,
         ];
         DB::beginTransaction();
         try {
@@ -152,14 +158,17 @@ class AdminCommunityController extends Controller
             'hash_key' => 'required|regex:/^[a-zA-Z0-9-]+$/|min:4|max:64',
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhooks_key' => 'nullable|string|max:191',
-            'tumolink_enable' => 'boolean',
-            'calendar_enable' => 'boolean',
-            'google_home_enable' => 'boolean',
+            'latitude' => 'numeric|between:-90,90', // 緯度 南北
+            'longitude' => 'numeric|between:0,360', // 経度 東西
         ];
         if ($user->role == 'superAdmin') {
-            $rules['admin_comment'] = 'nullable|string|max:1000';
-            $rules['calendar_public_iframe'] = 'nullable|string|max:1000';
-            $rules['calendar_secret_iframe'] = 'nullable|string|max:1000';
+            $rules['admin_comment']                 = 'nullable|string|max:1000';
+            $rules['calendar_public_iframe']        = 'nullable|string|max:1000';
+            $rules['calendar_secret_iframe']        = 'nullable|string|max:1000';
+            $rules['tumolink_enable']               = 'boolean';
+            $rules['calendar_enable']               = 'boolean';
+            $rules['google_home_enable']            = 'boolean';
+            $rules['google_home_weather_enable']    = 'boolean';
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -170,23 +179,26 @@ class AdminCommunityController extends Controller
 
         $now = Carbon::now();
         $param = [
-            'enable' => $request->enable,
-            'name' => $request->name,
-            'service_name' => $request->service_name,
-            'service_name_reading' => $request->service_name_reading,
-            'url_path' => $request->url_path,
-            'hash_key' => $request->hash_key,
-            'ifttt_event_name' => $request->ifttt_event_name,
-            'ifttt_webhooks_key' => $request->ifttt_webhooks_key,
-            'tumolink_enable' => $request->tumolink_enable,
-            'calendar_enable' => $request->calendar_enable,
-            'google_home_enable' => $request->google_home_enable,
-            'updated_at' => $now,
+            'enable'                => $request->enable,
+            'name'                  => $request->name,
+            'service_name'          => $request->service_name,
+            'service_name_reading'  => $request->service_name_reading,
+            'url_path'              => $request->url_path,
+            'hash_key'              => $request->hash_key,
+            'ifttt_event_name'      => $request->ifttt_event_name,
+            'ifttt_webhooks_key'    => $request->ifttt_webhooks_key,
+            'latitude'              => $request->latitude,
+            'longitude'             => $request->longitude,
+            'updated_at'            => $now,
         ];
         if ($user->role == 'superAdmin') {
-            $param['admin_comment'] = $request->admin_comment;
-            $param['calendar_public_iframe'] = $request->calendar_public_iframe;
-            $param['calendar_secret_iframe'] = $request->calendar_secret_iframe;
+            $param['admin_comment']                 = $request->admin_comment;
+            $param['calendar_public_iframe']        = $request->calendar_public_iframe;
+            $param['calendar_secret_iframe']        = $request->calendar_secret_iframe;
+            $param['tumolink_enable']               = $request->tumolink_enable;
+            $param['calendar_enable']               = $request->calendar_enable;
+            $param['google_home_enable']            = $request->google_home_enable;
+            $param['google_home_weather_enable']    = $request->google_home_weather_enable;
         }
         DB::table('communities')->where('id', $request->id)->update($param);
 
