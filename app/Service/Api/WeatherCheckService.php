@@ -46,7 +46,7 @@ class WeatherCheckService
             $weatherUrl = $url . $coordinates;
             $weatherUrlArr[$i] = [
                 'communityId' => $location->community_id,
-                'url'          => $weatherUrl
+                'url'         => $weatherUrl
             ];
             $i++;
         }
@@ -61,9 +61,12 @@ class WeatherCheckService
         $i = 0;
         $response = [];
         foreach ($resArr as $res) {
+            // APIステータスの抽出
+            $response[$i]['resourceAPIStatus'] =  $res['body']['ResultInfo']['Status'];
+
             $communityId = $res['communityId'];
-            // APIの天気部分を抽出
             $weatherArr =  $res['body']['Feature'][0]['Property']['WeatherList']['Weather'];
+            // APIの天気部分を抽出
             // 10分毎の雨量の合計・最初・最後を取得
             $rain = $this->rainTotalize($weatherArr);
             $first = $rain['first'];
@@ -73,17 +76,11 @@ class WeatherCheckService
             $community = $this->community::find($communityId);
             $response[$i]['communityId']   = $community->id;
             $response[$i]['communityName'] = $community->service_name;
+            $response[$i]['lastRainyDatetime'] = $community->last_rainy_datetime;
+            $response[$i]['geometry']      = $res['body']['Feature'][0]['Geometry']['Coordinates'];
             $response[$i]['firstRain']     = $rain['first'];
             $response[$i]['lastRain']      = $rain['last'];
             $response[$i]['totalRain']     = $rain['total'];
-
-            // 雨が観測された場合は雨確認時間を更新
-            if ($total > 0) {
-                $community->last_rainy_datetime = Carbon::now();
-                $community->save();
-                log::debug(print_r('last_rainy_datetime update community service_name >>>' . $community->service_name,1));
-                $response[$i]['update'] = '**雨確認時間の更新**';
-            }
 
             $message = "";
             // **雨が降りそう判定**
@@ -98,7 +95,7 @@ class WeatherCheckService
             }
 
             // **雨が止みそう判定**
-            if ($last == 0 && $total <= 1) {
+            if ($last == 0 && ($total <= 1  || $first == $total)) {
                 // 最終時間を調べて、一定期間以上なら通知を行う
                 if ($community->last_rainy_datetime < Carbon::now()->subMinutes(5)) {
                     // 発話メッセージの作成
@@ -113,12 +110,21 @@ class WeatherCheckService
                 $this->weatherCheckRepository->talkMessageSave($message, $communityId);
             }
 
+            // 雨が観測された場合は雨確認時間を更新
+            if ($total > 0) {
+                $community->last_rainy_datetime = Carbon::now();
+                $community->save();
+                log::debug(print_r('last_rainy_datetime update community service_name >>>' . $community->service_name,1));
+                $response[$i]['update'] = '**雨確認時間の更新**';
+            }
+
             // **雨が振っていない場合**
             if ($total == 0) {
                 $response[$i]['reslut'] = '雨予報無し';
             }
+
             $i++;
-        } // outer foreach end
+        } // foreach end
         return $response;
     }
 

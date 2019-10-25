@@ -124,13 +124,13 @@
 
                         <div class="form-group">
                             <label for="InputTextarea">緯度</label>
-                            <input t type="number" step="0.000001" class="form-control" name="latitude" value="{{old('latitude', $item->latitude)}}">
+                            <input t type="number" step="0.0000001" class="form-control" name="latitude" value="{{old('latitude', $item->latitude)}}">
                             <p>南北方向 例: 35.64</p>
                         </div>
 
                         <div class="form-group">
                             <label for="InputTextarea">経度</label>
-                            <input t type="number" step="0.000001" class="form-control" name="longitude" value="{{old('longitude', $item->longitude)}}">
+                            <input t type="number" step="0.0000001" class="form-control" name="longitude" value="{{old('longitude', $item->longitude)}}">
                             <p>東西方向 例: 139.71</p>
                         </div>
 

@@ -59,8 +59,8 @@ class AdminCommunityController extends Controller
             'calendar_secret_iframe' => 'nullable|string|max:1000',
             'google_home_enable' => 'boolean',
             'google_home_weather_enable' => 'boolean',
-            'latitude' => 'numeric|between:-90,90', // 緯度 南北
-            'longitude' => 'numeric|between:0,360', // 経度 東西
+            'latitude' => 'nullable|numeric|between:-90,90', // 緯度 南北
+            'longitude' => 'nullable|numeric|between:0,360', // 経度 東西
             'admin_comment' => 'nullable|string|max:1000',
         ]);
         $now = Carbon::now();
@@ -158,8 +158,8 @@ class AdminCommunityController extends Controller
             'hash_key' => 'required|regex:/^[a-zA-Z0-9-]+$/|min:4|max:64',
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhooks_key' => 'nullable|string|max:191',
-            'latitude' => 'numeric|between:-90,90', // 緯度 南北
-            'longitude' => 'numeric|between:0,360', // 経度 東西
+            'latitude' => 'nullable|numeric|between:-90,90', // 緯度 南北
+            'longitude' => 'nullable|numeric|between:0,360', // 経度 東西
         ];
         if ($user->role == 'superAdmin') {
             $rules['admin_comment']                 = 'nullable|string|max:1000';

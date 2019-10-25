@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Service\Api\WeatherCheckService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
@@ -33,8 +34,10 @@ class WeatherCheckController extends Controller
         $weatherUrlArr = $this->weatherCheckService->urlMaker();
         $client = new Client();
         $i = 0;
+        $status = "";
         $resArr = [];
         foreach ($weatherUrlArr as  $weatherUrl) {
+            // API実行で天気データを取得
             $responseData = $client->request("GET", $weatherUrl['url']);
             // CORS対応 Route::get() に書いた際必要？
             //    ->middleware(\Barryvdh\Cors\HandleCors::class);
@@ -43,12 +46,13 @@ class WeatherCheckController extends Controller
             if (!isset($responseBody['ResultInfo'])) {
                 Log::debug(print_r('weatherAPI ERROR!!! not key ResultInfo >>>', 1));
                 Log::debug(print_r($responseBody, 1));
+                $status = 404;
                 return;
             }
             if ($responseBody['ResultInfo']['Status'] != 200) {
                 Log::debug(print_r('weatherAPI ERROR!!!  Status not 200 >>>', 1));
                 Log::debug(print_r($responseBody, 1));
-                return;
+                $status = 404;
             }
             $resArr[$i] = [
                 'communityId'   => $weatherUrl['communityId'],
@@ -58,11 +62,16 @@ class WeatherCheckController extends Controller
         }
         // コミュニティIDと紐付けて雨通知の判定と発話の登録を行う
         $result = $this->weatherCheckService->responseRainJudging($resArr);
-
+        if (!$result) {
+            $status = 500;
+        } else {
+            $status = 200;
+        }
         log::debug($result);
 
         return response()->json([
-            'response' => $result
-        ]);
+            'datetime'  => Carbon::now(),
+            'result'    => $result
+        ], $status);
     }
 }

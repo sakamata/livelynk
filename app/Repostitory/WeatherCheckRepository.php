@@ -46,6 +46,8 @@ class WeatherCheckRepository
         ->where('current_stay', 1)
         ->where('google_home_enable', 1)
         ->where('google_home_weather_enable', 1)
+        ->whereNotNull('latitude')
+        ->whereNotNull('longitude')
         ->groupBy('community_id')
         ->get();
     }
