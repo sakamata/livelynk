@@ -34,6 +34,12 @@ class Kernel extends ConsoleKernel
             // ->everyMinute();
             ->daily();
 
+        // 未使用となった古い発話メッセージを削除する
+        $schedule
+            ->call('App\Http\Controllers\TaskController@noUseTalksMessageRemove')
+            // ->withoutOverlapping()
+            ->dailyAt('3:00');
+
         $schedule
             ->call('App\Http\Controllers\TumolinkController@auto_remove_before_today')
             // ->withoutOverlapping()

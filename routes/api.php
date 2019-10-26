@@ -13,4 +13,5 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/weather', 'API\WeatherCheckController@run');
+// 天気API動作確認用route postman で確認可能だが通常はコメントアウト
+// Route::get('/weather', 'API\WeatherCheckController@run');

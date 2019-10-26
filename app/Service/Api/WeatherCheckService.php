@@ -95,10 +95,12 @@ class WeatherCheckService
             }
 
             // **雨が止みそう判定**
-            if ($last == 0 && ($total <= 1  || $first == $total)) {
+            // 最後は0 かつ 全体の降雨量が 0より多くnより小さい
+            if ($last == 0 && ( 0 < $total  &&  $total <= 1 )) {
                 // 最終時間を調べて、一定期間以上なら通知を行う
                 if ($community->last_rainy_datetime < Carbon::now()->subMinutes(5)) {
                     // 発話メッセージの作成
+                    Log::debug('止みそう');
                     $message = $this->googleHomeController
                                 ->weatherStopRainingNotification($community, $total);
                     $response[$i]['reslut'] = '**雨止みそう通知**';

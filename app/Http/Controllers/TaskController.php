@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DB;
+use App\TalkMessage;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -31,5 +32,15 @@ class TaskController extends Controller
             DB::table('communities_users_statuses')->where('id', $key->community_user_id)->delete();
             DB::table('mac_addresses')->where('id', $key->mac_id)->delete();
         }
+    }
+
+
+    public function noUseTalksMessageRemove()
+    {
+        // 前日の送信されなかった発話メッセージを削除する
+        $date = Carbon::now();
+        $past = $date->subDay(1);
+        $model = 'App\TalkMessage'::where('created_at', '<', $past)->pluck('id')->toArray();
+        'App\TalkMessage'::destroy($model);
     }
 }
