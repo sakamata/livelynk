@@ -32,4 +32,9 @@ class AuthUser extends Authenticatable
         'created_at',
         'updated_at',
     ];
+
+    public function mac_address()
+    {
+        return $this->hasMany('App\MacAddress', 'community_user_id');
+    }
 }

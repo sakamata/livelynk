@@ -51,7 +51,7 @@ Route::get('/tumolink/index/{community_id?}', 'TumolinkController@index');
 Route::post('/tumolink/post', 'TumolinkController@post')->middleware('auth');
 
 // GoogleHomeヒトコト
-Route::post('/temporary_taking/post', 'GoogleHomeController@temporaryTakingRecorder')->middleware('auth');
+Route::post('/temporary_taking/post', 'TemporaryTakingController@TakingRecorder')->middleware('auth');
 
 // 管理画面 認証済みuserのみ表示
 Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {

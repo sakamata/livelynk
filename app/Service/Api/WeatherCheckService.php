@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Community;
 use Illuminate\Support\Facades\Log;
 use App\Repository\WeatherCheckRepository;
+use App\Http\Controllers\ExportPostController;
 use App\Http\Controllers\GoogleHomeController;
 
 
@@ -16,16 +17,19 @@ use App\Http\Controllers\GoogleHomeController;
 class WeatherCheckService
 {
     private $community;
+    private $exportPostController;
     private $googleHomeController;
     private $weatherCheckRepository;
 
     public function __construct(
         Community               $community,
+        ExportPostController    $exportPostController,
         GoogleHomeController    $googleHomeController,
         WeatherCheckRepository  $weatherCheckRepository
         )
     {
         $this->community                = $community;
+        $this->exportPostController     = $exportPostController;
         $this->googleHomeController     = $googleHomeController;
         $this->weatherCheckRepository   = $weatherCheckRepository;
     }
@@ -87,10 +91,13 @@ class WeatherCheckService
             if ($first == 0 && $total > 0) {
                 // 最終時間を調べて、一定期間以上なら通知を行う
                 if ($community->last_rainy_datetime < Carbon::now()->subHour(2)) {
+                    $response[$i]['reslut'] = '**雨予報あり通知**';
                     // 発話メッセージの作成
                     $message = $this->googleHomeController
                                 ->weatherRainNotification($community, $total);
-                    $response[$i]['reslut'] = '**雨予報あり通知**';
+                    $weatherStatus = 'forRain';
+                    // 通知機能へ
+                    $this->exportPostController->weatherMassageMaker($community, $weatherStatus, $total);
                 }
             }
 
@@ -99,11 +106,13 @@ class WeatherCheckService
             if ($last == 0 && ( 0 < $total  &&  $total <= 1 )) {
                 // 最終時間を調べて、一定期間以上なら通知を行う
                 if ($community->last_rainy_datetime < Carbon::now()->subMinutes(5)) {
+                    $response[$i]['reslut'] = '**雨止みそう通知**';
                     // 発話メッセージの作成
-                    Log::debug('止みそう');
                     $message = $this->googleHomeController
                                 ->weatherStopRainingNotification($community, $total);
-                    $response[$i]['reslut'] = '**雨止みそう通知**';
+                    $weatherStatus = 'StopRain';
+                    // 通知機能へ
+                    $this->exportPostController->weatherMassageMaker($community, $weatherStatus, $total);
                 }
             }
 
@@ -114,10 +123,10 @@ class WeatherCheckService
 
             // 雨が観測された場合は雨確認時間を更新
             if ($total > 0) {
+                $response[$i]['update'] = '**雨確認時間の更新**';
                 $community->last_rainy_datetime = Carbon::now();
                 $community->save();
                 log::debug(print_r('last_rainy_datetime update community service_name >>>' . $community->service_name,1));
-                $response[$i]['update'] = '**雨確認時間の更新**';
             }
 
             // **雨が振っていない場合**
