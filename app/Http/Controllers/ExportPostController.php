@@ -118,6 +118,46 @@ class ExportPostController extends Controller
         );
     }
 
+    /**
+     * ヒトコト機能のSlack通知のメッセージを生成する
+     */
+    public function temporaryTakingMessageMaker(AuthUser $user, string $message)
+    {
+        // 発信者が滞在中か確認する
+        $isStay = $user->mac_address()->where('current_stay', 1)->exists();
+        if ($isStay) {
+            $stayStatus = '[滞在中]';
+        } else {
+            $stayStatus = '[非滞在中]';
+        }
+
+        $title = $stayStatus . $user->name . 'さんのヒトコトメッセージです';
+        $community = DB::table('communities')->where('id', $user->community_id)->first();
+
+        $this->push_ifttt($title, $message, $community);
+    }
+
+    /**
+     * 雨予報通知のIFTTT送信用メッセージを作成する
+     */
+    public function weatherMassageMaker($community, string $weatherStatus, string $rainfall)
+    {
+        if (!is_null($community->service_name)) {
+
+            if ($weatherStatus == 'forRain') {
+                $title   = '雨の予報です';
+                $message = $community->service_name . "周辺に雨が降りそうです。1時間以内に" . $rainfall . "の雨の予報が出ています";
+            }
+
+            if ($weatherStatus == 'StopRain') {
+                $title   = '雨上がり予報です';
+                $message = $community->service_name . "周辺の雨が止みそうです。1時間以内の降雨量は" . $rainfall . "の予報です";
+            }
+
+            $this->push_ifttt($title, $message, $community);
+        }
+    }
+
     // IFTTTに通知をPOSTする
     // $community  = communities table single record object
     public function push_ifttt($title, $message, $community)

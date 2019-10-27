@@ -13,5 +13,8 @@ use Illuminate\Http\Request;
 |
 */
 
-// 天気API動作確認用route postman で確認可能だが通常はコメントアウト
-// Route::get('/weather', 'API\WeatherCheckController@run');
+// local test環境のみ有効
+if ( app()->isLocal() || app()->runningUnitTests() ) {
+    // 天気API動作確認用route postman で確認可能だが通常はコメントアウト
+    Route::get('/weather', 'API\WeatherCheckController@run');
+}
