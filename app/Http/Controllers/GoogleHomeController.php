@@ -12,43 +12,19 @@ class GoogleHomeController extends Controller
     /**
      * 降雨予報の通知メッセージを生成する
      */
-    public function weatherRainNotification(object $community, float $total)
+    public function weatherRainNotification(object $community, string $rainfall)
     {
-        $communityName = $this->getCommunityName($community);
-        $rainfall = $this->rainfallLangMaker($total);
-
-        return  'ライブリンクよりお知らせです。' .
-                $communityName .
-                '、周辺に、雨がふりそうです。一時間以内の降雨量は、'
-                . $rainfall . 'の予報です。';
+        // $communityName = $this->getCommunityName($community);
+        return  'ライブリンクよりお知らせです。雨がふりそうです。一時間以内の降雨量は、' . $rainfall . 'の予報です。';
     }
 
     /**
      * 降雨が止む予報の通知メッセージを作成する
      */
-    public function weatherStopRainingNotification(object $community, float $total)
+    public function weatherStopRainingNotification(object $community, string $rainfall)
     {
-        $communityName = $this->getCommunityName($community);
-        $rainfall = $this->rainfallLangMaker($total);
-
-        return  'ライブリンクよりお知らせです。' .
-                $communityName .
-                '、周辺の雨がやみそうです。一時間以内の降雨量は、'
-                . $rainfall . 'の予報です。';
-    }
-
-    /**
-     * 降雨量の発話を生成する
-     */
-    public function rainfallLangMaker(float $total)
-    {
-        $rainfall = round($total);
-        if ($rainfall < 1) {
-            $rainfall = '1ミリ未満';
-        } else {
-            $rainfall = $rainfall . 'ミリ程';
-        }
-        return $rainfall;
+        // $communityName = $this->getCommunityName($community);
+        return  'ライブリンクよりお知らせです。雨がやみそうです。一時間以内の降雨量は、' . $rainfall . 'の予報です。';
     }
 
     /**

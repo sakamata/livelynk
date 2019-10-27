@@ -66,13 +66,13 @@ class WeatherCheckService
         $response = [];
         foreach ($resArr as $res) {
             // APIステータスの抽出
-            $response[$i]['resourceAPIStatus'] =  $res['body']['ResultInfo']['Status'];
+            $response[$i]['resourceAPIStatus'] = $res['body']['ResultInfo']['Status'];
 
             $communityId = $res['communityId'];
-            $weatherArr =  $res['body']['Feature'][0]['Property']['WeatherList']['Weather'];
+            $weatherArr  = $res['body']['Feature'][0]['Property']['WeatherList']['Weather'];
             // APIの天気部分を抽出
             // 10分毎の雨量の合計・最初・最後を取得
-            $rain = $this->rainTotalize($weatherArr);
+            $rain  = $this->rainTotalize($weatherArr);
             $first = $rain['first'];
             $last  = $rain['last'];
             $total = $rain['total'];
@@ -87,32 +87,37 @@ class WeatherCheckService
             $response[$i]['totalRain']     = $rain['total'];
 
             $message = "";
-            // **雨が降りそう判定**
-            if ($first == 0 && $total > 0) {
-                // 最終時間を調べて、一定期間以上なら通知を行う
-                if ($community->last_rainy_datetime < Carbon::now()->subHour(2)) {
-                    $response[$i]['reslut'] = '**雨予報あり通知**';
-                    // 発話メッセージの作成
-                    $message = $this->googleHomeController
-                                ->weatherRainNotification($community, $total);
-                    $weatherStatus = 'forRain';
-                    // 通知機能へ
-                    $this->exportPostController->weatherMassageMaker($community, $weatherStatus, $total);
-                }
-            }
-
             // **雨が止みそう判定**
+            // こっちを雨予報より上の行に書くことで、重複条件の際は雨振り通知を上書きさせて優先判断させる
             // 最後は0 かつ 全体の降雨量が 0より多くnより小さい
             if ($last == 0 && ( 0 < $total  &&  $total <= 1 )) {
                 // 最終時間を調べて、一定期間以上なら通知を行う
                 if ($community->last_rainy_datetime < Carbon::now()->subMinutes(5)) {
                     $response[$i]['reslut'] = '**雨止みそう通知**';
+                    // 降雨量文言の生成
+                    $rainfall = $this->rainfallLangMaker($total);
                     // 発話メッセージの作成
                     $message = $this->googleHomeController
-                                ->weatherStopRainingNotification($community, $total);
+                                ->weatherStopRainingNotification($community, $rainfall);
                     $weatherStatus = 'StopRain';
                     // 通知機能へ
-                    $this->exportPostController->weatherMassageMaker($community, $weatherStatus, $total);
+                    $this->exportPostController->weatherMassageMaker($community, $weatherStatus, $rainfall);
+                }
+            }
+
+            // **雨が降りそう判定**
+            if ($first == 0 && $total > 0) {
+                // 最終時間を調べて、一定期間以上なら通知を行う
+                if ($community->last_rainy_datetime < Carbon::now()->subHour(2)) {
+                    $response[$i]['reslut'] = '**雨予報あり通知**';
+                    // 降雨量文言の生成
+                    $rainfall = $this->rainfallLangMaker($total);
+                    // 発話メッセージの作成
+                    $message = $this->googleHomeController
+                                ->weatherRainNotification($community, $rainfall);
+                    $weatherStatus = 'forRain';
+                    // 通知機能へ
+                    $this->exportPostController->weatherMassageMaker($community, $weatherStatus, $rainfall);
                 }
             }
 
@@ -164,5 +169,19 @@ class WeatherCheckService
             'total' => $total
         ];
         return $res;
+    }
+
+    /**
+     * 降雨量の発話・文言を生成する
+     */
+    public function rainfallLangMaker(float $total)
+    {
+        $rainfall = round($total);
+        if ($rainfall < 1) {
+            $rainfall = '1ミリ未満';
+        } else {
+            $rainfall = $rainfall . 'ミリ程';
+        }
+        return $rainfall;
     }
 }

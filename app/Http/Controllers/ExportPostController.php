@@ -142,18 +142,18 @@ class ExportPostController extends Controller
     /**
      * 雨予報通知のIFTTT送信用メッセージを作成する
      */
-    public function weatherMassageMaker($community, string $weatherStatus, string $total)
+    public function weatherMassageMaker($community, string $weatherStatus, string $rainfall)
     {
         if (!is_null($community->service_name)) {
 
             if ($weatherStatus == 'forRain') {
                 $title   = '雨の予報です';
-                $message = $community->service_name . "周辺に雨が降りそうです。1時間以内に" . $total . "ミリ程度の雨の予報が出ています";
+                $message = $community->service_name . "周辺に雨が降りそうです。1時間以内に" . $rainfall . "の雨の予報が出ています";
             }
 
             if ($weatherStatus == 'StopRain') {
                 $title   = '雨上がり予報です';
-                $message = $community->service_name . "周辺の雨が止みそうです。1時間以内の降雨量は" . $total . "ミリ程度の予報です";
+                $message = $community->service_name . "周辺の雨が止みそうです。1時間以内の降雨量は" . $rainfall . "の予報です";
             }
 
             $this->push_ifttt($title, $message, $community);
