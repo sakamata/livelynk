@@ -30,8 +30,7 @@ class AdminUserController extends Controller
     public function __construct(
         UserService $call_user,
         MacAddressService $call_mac
-        )
-    {
+    ) {
         $this->call_user = $call_user;
         $this->call_mac = $call_mac;
     }
@@ -57,28 +56,22 @@ class AdminUserController extends Controller
         if ($request->id) {
             $order = $request->id;
             $key = 'id';
-        }
-        elseif ($request->role) {
+        } elseif ($request->role) {
             $order = $request->role;
             $key = 'role';
-        }
-        elseif ($request->name) {
+        } elseif ($request->name) {
             $order = $request->name;
             $key = 'name';
-        }
-        elseif ($request->hide) {
+        } elseif ($request->hide) {
             $order = $request->hide;
             $key = 'hide';
-        }
-        elseif ($request->s_last_access) {
+        } elseif ($request->s_last_access) {
             $order = $request->s_last_access;
             $key = 's_last_access';
-        }
-        elseif ($request->s_created_at) {
+        } elseif ($request->s_created_at) {
             $order = $request->s_created_at;
             $key = 's_created_at';
-        }
-        elseif ($request->s_updated_at) {
+        } elseif ($request->s_updated_at) {
             $order = $request->s_updated_at;
             $key = 's_updated_at';
         } else {
@@ -124,14 +117,14 @@ class AdminUserController extends Controller
         );
         // プルダウンメニュー用 communityの既存ユーザーlistを取得
         $users = $this->call_user->SelfCommunityUsersGet(
-                (string)$key = 'user_id',
-                (string)$order = 'desc',
-                (int)$community_id,
-                (string)$case_all = 'index'
+            (string)$key = 'user_id',
+            (string)$order = 'desc',
+            (int)$community_id,
+            (string)$case_all = 'index'
         );
         $reader_id = $this->getReaderID();
 
-        return view('admin_user.index',[
+        return view('admin_user.index', [
             'items' => $items,
             'order' => $order,
             'key' => $key,
@@ -153,7 +146,9 @@ class AdminUserController extends Controller
         // superAdminはコミュニティをプルダウン選択
         if ($user->role == 'superAdmin') {
             $community_id = $request->community_id;
-            if (!$community_id) { $community_id = 1;}
+            if (!$community_id) {
+                $community_id = 1;
+            }
             $reader_id = $this->getReaderIDParam($community_id);
             $communities = DB::table('communities')->get();
         }
@@ -196,7 +191,7 @@ class AdminUserController extends Controller
             'mac_address.*.device_name' => 'nullable|string|max:40',
         ]);
         DB::beginTransaction();
-        try{
+        try {
             // 管理画面から作成の場合roleは現状 1=normal で固定
             $community_user_id  = $this->call_user->UserCreate(
                 (string)$request->name,
@@ -253,7 +248,9 @@ class AdminUserController extends Controller
             return view('errors.403');
         }
         $item = $this->call_user->PersonGet($request->id);
-        if (!$item) { return view('errors.403');}
+        if (!$item) {
+            return view('errors.403');
+        }
 
         $user = Auth::user();
         // normal は自分以外は閲覧不可
@@ -262,7 +259,7 @@ class AdminUserController extends Controller
         }
         // normalAdmin,readerAdminで自コミュニティ以外は403
         if (
-            ( $user->role == 'normalAdmin' ||  $user->role == 'readerAdmin' ) &&
+            ($user->role == 'normalAdmin' ||  $user->role == 'readerAdmin') &&
             $item->community_id != $user->community_id
         ) {
             return view('errors.403');
@@ -332,7 +329,7 @@ class AdminUserController extends Controller
         }
         // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
         if (
-            ( $user->role == 'normalAdmin' || $user->role == 'readerAdmin' ) && $request->community_id != $user->community_id
+            ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') && $request->community_id != $user->community_id
         ) {
             log::warning(print_r("Adminユーザーが異常な値でusersのupdateを試みる>>>", 1));
             log::warning(print_r($user, 1));
@@ -343,8 +340,8 @@ class AdminUserController extends Controller
         // provisional => false
         $param_user = [
             'name' => $request->name,
-            'name' => $request->name,
             'name_reading' => $request->name_reading,
+            'unique_name' => $request->unique_name,
             'email' => $request->email,
             'updated_at' => $now,
             'provisional' => false,
@@ -431,7 +428,9 @@ class AdminUserController extends Controller
         }
 
         $item = $this->call_user->PersonGet($request->id);
-        if (!$item) { return view('errors.403');}
+        if (!$item) {
+            return view('errors.403');
+        }
 
         $user = Auth::user();
         // normal は自分以外は閲覧不可
@@ -440,13 +439,13 @@ class AdminUserController extends Controller
         }
         // normalAdmin,readerAdminで自コミュニティ以外は403
         if (
-            ( $user->role == 'normalAdmin' ||  $user->role == 'readerAdmin' ) &&
+            ($user->role == 'normalAdmin' ||  $user->role == 'readerAdmin') &&
             $item->community_id != $user->community_id
         ) {
             return view('errors.403');
         }
         // readerAdmin, superAdmin は削除不可
-        if ( $item->role == 'readerAdmin' || $item->role == 'superAdmin' ) {
+        if ($item->role == 'readerAdmin' || $item->role == 'superAdmin') {
             return view('errors.403');
         }
 
@@ -477,14 +476,14 @@ class AdminUserController extends Controller
         }
         // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
         if (
-            ( $user->role == 'normalAdmin' || $user->role == 'readerAdmin' ) && $request->community_id != $user->community_id
+            ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') && $request->community_id != $user->community_id
         ) {
             log::warning(print_r("Adminユーザーが異常な値でuserのdeleteを試みる>>>", 1));
             log::warning(print_r($user, 1));
             return view('errors.403');
         }
         // readerAdmin, superAdmin は削除不可
-        if ( $taget->role == 'readerAdmin' || $taget->role == 'superAdmin' ) {
+        if ($taget->role == 'readerAdmin' || $taget->role == 'superAdmin') {
             log::warning(print_r("Adminユーザーが異常な値でAdmin userのdeleteを試みる>>>", 1));
             log::warning(print_r($user, 1));
             return view('errors.403');
@@ -501,7 +500,7 @@ class AdminUserController extends Controller
                 ->where('user_id', $user_id)->count();
             // 他のコミュニティにアカウントが無い場合はuserTableの該当アカウント削除
             if ($count <= 1) {
-                log::debug(print_r('user delete start!!!',1));
+                log::debug(print_r('user delete start!!!', 1));
                 DB::table('users')->where('id', $user_id)->delete();
             }
             DB::table('community_user')->where('id', $request->id)->delete();
