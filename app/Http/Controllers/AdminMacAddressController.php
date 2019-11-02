@@ -20,8 +20,7 @@ class AdminMacAddressController extends Controller
     public function __construct(
         UserService $call_user,
         MacAddressService $call_mac
-        )
-    {
+    ) {
         $this->call_user = $call_user;
         $this->call_mac = $call_mac;
     }
@@ -44,16 +43,13 @@ class AdminMacAddressController extends Controller
         if ($request->current_stay) {
             $order = $request->current_stay;
             $key = 'current_stay';
-        }
-        elseif ($request->arraival_at) {
+        } elseif ($request->arraival_at) {
             $order = $request->arraival_at;
             $key = 'arraival_at';
-        }
-        elseif ($request->departure_at) {
+        } elseif ($request->departure_at) {
             $order = $request->departure_at;
             $key = 'departure_at';
-        }
-        elseif ($request->posted_at) {
+        } elseif ($request->posted_at) {
             $order = $request->posted_at;
             $key = 'posted_at';
         } else {
@@ -69,7 +65,9 @@ class AdminMacAddressController extends Controller
             // サービス全管理者はプルダウン切り替えで表示
             $communities = DB::table('communities')->get();
             $community_id = $request->community_id;
-            if (!$community_id) { $community_id = 1;}
+            if (!$community_id) {
+                $community_id = 1;
+            }
             $reader_id = DB::table('communities')->where('id', $community_id)
                 ->pluck('user_id')->first();
         } else {
@@ -126,7 +124,7 @@ class AdminMacAddressController extends Controller
         $user = Auth::user();
         $reader_id = $this->getReaderID();
         // normal userが自分かreaderのID以外を編集しようとした場合は403
-        if ( $user->role == 'normal' &&
+        if ($user->role == 'normal' &&
             $item->user_id != $user->id &&
             $item->user_id != $reader_id
         ) {
@@ -134,7 +132,7 @@ class AdminMacAddressController extends Controller
         }
         // normalAdmin,readerAdminで自コミュニティ以外は403
         if (
-            ( $user->role == 'normalAdmin' ||  $user->role == 'readerAdmin' ) &&
+            ($user->role == 'normalAdmin' ||  $user->role == 'readerAdmin') &&
             $item->community_id != $user->community_id
         ) {
             return view('errors.403');
@@ -175,9 +173,9 @@ class AdminMacAddressController extends Controller
         $user = Auth::user();
         $reader_id = $this->getReaderID();
         // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
-        if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin' ) {
+        if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
             $device_community_id = $this->call_mac->MacIDtoGetCommunityID($request->id);
-            if($user->community_id != $device_community_id) {
+            if ($user->community_id != $device_community_id) {
                 log::warning(print_r("Adminユーザーが異常な値でmac_addressをupdateを試みる>>>", 1));
                 log::warning(print_r($user, 1));
                 return view('errors.403');
@@ -200,7 +198,27 @@ class AdminMacAddressController extends Controller
             'current_stay' => $current_stay,
             'updated_at' => $now,
         ];
-        'App\MacAddress'::where('id', $request->id)->update($param);
+        $targetUser = $this->call_mac->isDeviceProvisionUser($request->id);
+
+        DB::beginTransaction();
+        try {
+            // 端末オーナーが仮ユーザーで、かつ、オーナー変更がされた場合
+            // 保持端末が0となるので仮ユーザーを削除する
+            if (
+                $targetUser->provisional &&
+                $request->community_user_id != $targetUser->community_user_id
+            ) {
+                $this->call_user->ProvisionalUserDelete($targetUser->community_user_id);
+            }
+            // 端末の編集
+            'App\MacAddress'::where('id', $request->id)->update($param);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            Log::warning(print_r('Admin MacAddress Edit Error!! Exception message>>>' . $e, 1));
+            DB::rollback();
+            return redirect('/admin_mac_address/index')->with('message', 'デバイスの編集ができませんでした。');
+        }
         return redirect('/admin_mac_address/index')->with('message', 'デバイスを編集しました。');
     }
 
@@ -220,7 +238,7 @@ class AdminMacAddressController extends Controller
         $device_community_id = $this->call_mac->MacIDtoGetCommunityID($request->id);
         // normalAdmin,readerAdminで自コミュニティ以外は403
         if (
-            ( $user->role == 'normalAdmin' ||  $user->role == 'readerAdmin' ) &&
+            ($user->role == 'normalAdmin' ||  $user->role == 'readerAdmin') &&
             $device_community_id != $user->community_id
         ) {
             return view('errors.403');
@@ -243,7 +261,7 @@ class AdminMacAddressController extends Controller
         // reader,normal管理者で自分のコミュニティと異なる場合は撥ねる
         if ($user->role == 'normalAdmin' || $user->role == 'readerAdmin') {
             $device_community_id = $this->call_mac->MacIDtoGetCommunityID($request->id);
-            if($user->community_id != $device_community_id) {
+            if ($user->community_id != $device_community_id) {
                 log::warning(print_r("Adminユーザーが異常な値でmac_addressのdeleteを試みる>>>", 1));
                 log::warning(print_r($user, 1));
                 return view('errors.403');

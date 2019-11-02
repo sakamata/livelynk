@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Service;
+
 use DB;
 use App\CommunityUser;
 use App\MacAddress;
@@ -11,6 +12,14 @@ use Illuminate\Support\Facades\Log;
  */
 class MacAddressService
 {
+    private $macAddress;
+
+    public function __construct(
+        MacAddress $macAddress
+    ) {
+        $this->macAddress = $macAddress;
+    }
+
     // IndexController サブクエリ用の滞在中端末を取得
     public function GetStayMacAddressForSubQuery()
     {
@@ -29,8 +38,8 @@ class MacAddressService
     {
         return 'App\MacAddress'::UserHaving($community_user_id)
             ->MyCommunity($community_id)
-            ->orderBy('hide','asc')
-            ->orderBy('arraival_at','desc')
+            ->orderBy('hide', 'asc')
+            ->orderBy('arraival_at', 'desc')
             ->orderBy('mac_addresses.id', 'desc')
             ->get();
     }
@@ -45,7 +54,7 @@ class MacAddressService
         return 'App\CommunityUser'::MacIDtoGetCommunityID($mac_address_id);
     }
 
-    public function Update(int $mac_id, $vendor,  $device_name, bool $hide, string $now)
+    public function Update(int $mac_id, $vendor, $device_name, bool $hide, string $now)
     {
         return 'App\MacAddress'::where('id', $mac_id)
             ->update([
@@ -85,8 +94,7 @@ class MacAddressService
         string $post_mac_hash,
         int $router_id,
         string $now
-        )
-    {
+    ) {
         'App\MacAddress'::where([
             ['community_user_id', $community_user_id],
             ['mac_address_hash', $post_mac_hash],
@@ -114,8 +122,7 @@ class MacAddressService
         string $post_mac_hash,
         int $router_id,
         string $now
-        )
-    {
+    ) {
         'App\MacAddress'::where([
             ['community_user_id', $community_user_id],
             ['mac_address_hash', $post_mac_hash],
@@ -171,5 +178,33 @@ class MacAddressService
                 ['arraival_at', '>', $past_limit]
             ])
             ->exists();
+    }
+
+    /**
+     * 端末が仮ユーザーか判定する
+     * @param int $id  mac_addresses.id
+     * @return object  int community_user_id
+     * @return object  bool provisional
+     */
+    public function isDeviceProvisionUser(int $id)
+    {
+        return DB::table('mac_addresses')
+        ->select(
+            'users.provisional',
+            'mac_addresses.community_user_id'
+        )
+        ->Join(
+            'community_user',
+            'community_user.id',
+            '=',
+            'mac_addresses.community_user_id'
+        )
+        ->Join(
+            'users',
+            'community_user.user_id',
+            '=',
+            'users.id'
+        )
+        ->where('mac_addresses.id', $id)->first();
     }
 }
