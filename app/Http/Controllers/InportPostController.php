@@ -11,6 +11,7 @@ use App\Http\Controllers\ExportPostController;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Service\CommunityService;
 use App\Service\CommunityUserService;
+use App\Service\InportService;
 use App\Service\MacAddressService;
 use App\Service\TumolinkService;
 use App\Service\UserService;
@@ -23,6 +24,7 @@ class InportPostController extends Controller
 {
     private $call_community;
     private $call_community_user;
+    private $inportService;
     private $call_mac;
     private $call_tumolink;
     private $call_user;
@@ -32,6 +34,7 @@ class InportPostController extends Controller
     public function __construct(
         CommunityService $call_community,
         CommunityUserService $call_community_user,
+        InportService $inportService,
         MacAddressService $call_mac,
         TumolinkService $call_tumolink,
         UserService $call_user,
@@ -41,6 +44,7 @@ class InportPostController extends Controller
     {
         $this->call_community      = $call_community;
         $this->call_community_user = $call_community_user;
+        $this->inportService       = $inportService;
         $this->call_mac            = $call_mac;
         $this->call_tumolink       = $call_tumolink;
         $this->call_user           = $call_user;
@@ -232,7 +236,11 @@ class InportPostController extends Controller
             Log::debug(print_r($push_users, 1));
             $this->export->access_message_maker($push_users, $category = "arraival", $community->id);
             if ($google_talk_trigger == null) {
-                $google_talk_trigger = 'users_arraival';
+                // 本日来訪済みのユーザーを除外する
+                $push_users = $this->inportService->todayArraivedUserFilter($push_users);
+                if ($push_users) {
+                    $google_talk_trigger = 'users_arraival';
+                }
             }
         }
         $this->DepartureCheck($community->id);
@@ -262,7 +270,7 @@ class InportPostController extends Controller
         }
 
         // 来訪者メッセージがあれば生成,送信して処理終了
-        if ($google_talk_trigger && $community->google_home_enable == true) {
+        if ($push_users && $google_talk_trigger && $community->google_home_enable == true) {
             // GoogleHomeへの音声メッセージを生成
             $welcome_message = $this->googleHome->GoogleHomeMessageWelcomeMaker(
                 $google_talk_trigger,
