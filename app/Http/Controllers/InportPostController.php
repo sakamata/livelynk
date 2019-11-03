@@ -11,7 +11,7 @@ use App\Http\Controllers\ExportPostController;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Service\CommunityService;
 use App\Service\CommunityUserService;
-use App\Service\InportService;
+use App\Service\InportPostService;
 use App\Service\MacAddressService;
 use App\Service\TumolinkService;
 use App\Service\UserService;
@@ -24,7 +24,7 @@ class InportPostController extends Controller
 {
     private $call_community;
     private $call_community_user;
-    private $inportService;
+    private $inportPostService;
     private $call_mac;
     private $call_tumolink;
     private $call_user;
@@ -32,19 +32,18 @@ class InportPostController extends Controller
     private $export;
 
     public function __construct(
-        CommunityService $call_community,
-        CommunityUserService $call_community_user,
-        InportService $inportService,
-        MacAddressService $call_mac,
-        TumolinkService $call_tumolink,
-        UserService $call_user,
-        GoogleHomeController $googleHome,
-        ExportPostController $export
-        )
-    {
+        CommunityService        $call_community,
+        CommunityUserService    $call_community_user,
+        InportPostService       $inportPostService,
+        MacAddressService       $call_mac,
+        TumolinkService         $call_tumolink,
+        UserService             $call_user,
+        GoogleHomeController    $googleHome,
+        ExportPostController    $export
+    ) {
         $this->call_community      = $call_community;
         $this->call_community_user = $call_community_user;
-        $this->inportService       = $inportService;
+        $this->inportPostService   = $inportPostService;
         $this->call_mac            = $call_mac;
         $this->call_tumolink       = $call_tumolink;
         $this->call_user           = $call_user;
@@ -55,7 +54,7 @@ class InportPostController extends Controller
     // MAC アドレス一覧を受け取って、mac_addresses tableへの登録、更新を行う
     public function MacAddress(Request $request)
     {
-        $check_array  = $this->JsonValueCheck($request->json);
+        $check_array  = $this->inportPostService->JsonValueCheck($request->json);
         // POSTされた community_id の**半角英数字**から communities table の id を導く
         $community = $this->call_community->NameGet((string)$check_array['community_id']);
 
@@ -237,7 +236,7 @@ class InportPostController extends Controller
             $this->export->access_message_maker($push_users, $category = "arraival", $community->id);
             if ($google_talk_trigger == null) {
                 // 本日来訪済みのユーザーを除外する
-                $push_users = $this->inportService->todayArraivedUserFilter($push_users);
+                $push_users = $this->inportPostService->todayArraivedUserFilter($push_users);
                 if ($push_users) {
                     $google_talk_trigger = 'users_arraival';
                 }
@@ -310,45 +309,6 @@ class InportPostController extends Controller
         ]);
     }
 
-    public function JsonValueCheck($json)
-    {
-        if (!$json) { exit(); };
-        $check_array = json_decode($json, true);
-        Log::debug(print_r($check_array, 1));
-        // hash値が異なる場合はexit() で処理停止
-        $this->HashCheck($check_array);
-        if (!ctype_digit($check_array['time']) &&
-            !ctype_digit($check_array['router_id']) &&
-            !ctype_digit($check_array['community_id'])
-        ) {
-            Log::warning(print_r('json int value not integer!! check json ==> ', 1));
-            Log::warning(print_r($check_array, 1));
-            exit();
-        }
-        return $check_array;
-    }
-
-    public function HashCheck($check_array)
-    {
-        // hash確認 router_id が数値以外なら処理停止
-        if (!is_numeric($check_array["router_id"])) {
-            Log::warning(print_r('Inport json post router_id not integer!! posted router_id ==> ' .$check_array["router_id"], 1));
-            exit();
-        } else {
-            $router_id = $check_array["router_id"];
-        }
-        $secret = 'App\Router'::Join('communities', 'routers.community_id', '=', 'communities.id')
-            ->where('routers.id', $router_id)->pluck('hash_key')->first();
-        $time = $check_array["time"];
-        $this_side_hash = hash('sha256',$time.$secret);
-        $post_hash = $check_array["hash"];
-        if ($this_side_hash != $post_hash) {
-            Log::warning(print_r('Inport json post hash unmatch !! posted hash ==> ' .$post_hash, 1));
-            Log::warning(print_r('Inport json post hash unmatch !! This side hash ==> ' .$this_side_hash, 1));
-            exit();
-        }
-    }
-
     public function CheckMACArray(array $check_array_mac)
     {
         // MACAddressの値をPOSTされた形式別で配列処理する
@@ -374,7 +334,7 @@ class InportPostController extends Controller
         $array = array();
         foreach ($check_array_omit_mac as $check) {
             // ex 12:EF
-            if(!preg_match('/^([0-9a-fA-F][0-9a-fA-F]:[0-9a-fA-F][0-9a-fA-F])$/', $check)) {
+            if (!preg_match('/^([0-9a-fA-F][0-9a-fA-F]:[0-9a-fA-F][0-9a-fA-F])$/', $check)) {
                 Log::warning(print_r('Inport post mac_address_omission not pattern!! check_array_omit_mac posted element ==> ' . $check, 1));
                 exit();
             } else {
@@ -415,8 +375,8 @@ class InportPostController extends Controller
         $past_limit = $now->subSecond($second);
 
         // 帰宅処理が必要なIDを抽出
-            // 端末の current_stay => false
-            // user を特定、名前を取得して通知にpush
+        // 端末の current_stay => false
+        // user を特定、名前を取得して通知にpush
         $went_away = DB::table('mac_addresses')
         ->select('mac_addresses.id', 'community_user_id', 'user_id')
         ->leftJoin('community_user', 'community_user.id', '=', 'mac_addresses.community_user_id')
