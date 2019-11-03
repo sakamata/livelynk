@@ -53,10 +53,10 @@ class CommunitiesTableSeeder extends Seeder
         DB::table('communities')->insert($param);
 
         $param = [
-            'enable' => 0,
+            'enable' => 1,
             'user_id' => 3,
             'name' => 'random_name',
-            'service_name' => 'ランダム名のコミュニティ（無効化中）',
+            'service_name' => 'ランダム名のコミュニティ',
             'service_name_reading' => 'ランダム名のコミュニティ',
             'url_path' => 'hoge3',
             'hash_key' => 'bZsdNLG9RLJ7H0l5jjimnORuDq5nLki3',
@@ -76,7 +76,7 @@ class CommunitiesTableSeeder extends Seeder
             'enable' => 0,
             'user_id' => 4,
             'name' => 'faker',
-            'service_name' => 'サンプルコミュニティ',
+            'service_name' => 'サンプルコミュニティ(無効化中)',
             'service_name_reading' => 'サンプルコミュニティ',
             'url_path' => 'hoge4',
             'hash_key' => 'hoge4',

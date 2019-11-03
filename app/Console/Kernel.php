@@ -40,6 +40,11 @@ class Kernel extends ConsoleKernel
             // ->withoutOverlapping()
             ->dailyAt('3:00');
 
+        // 一定時間以上(30分)POSTの無いコミュニティの帰宅者判断を行う
+        $schedule
+            ->call('App\Http\Controllers\TaskController@taskDepartureCheck')
+            ->everyThirtyMinutes();
+
         $schedule
             ->call('App\Http\Controllers\TumolinkController@auto_remove_before_today')
             // ->withoutOverlapping()
@@ -55,7 +60,7 @@ class Kernel extends ConsoleKernel
             ->call('App\Http\Controllers\API\WeatherCheckController@run')
             ->unlessBetween('1:00', '6:00')
             ->everyTenMinutes();
-        }
+    }
 
     /**
      * Register the commands for the application.

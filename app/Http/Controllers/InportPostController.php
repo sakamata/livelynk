@@ -267,6 +267,10 @@ class InportPostController extends Controller
                 }
             }
         }
+        $router = 'App\Router'::find($check_array['router_id']);
+        // 最終POST時間の更新
+        $router->last_post_datetime = $now;
+        $router->save();
 
         // 来訪者メッセージがあれば生成,送信して処理終了
         if ($push_users && $google_talk_trigger && $community->google_home_enable == true) {
@@ -276,7 +280,6 @@ class InportPostController extends Controller
                 $community,
                 $push_users
             );
-            $router = 'App\Router'::find($check_array['router_id']);
             Log::debug(print_r('welcome_message>>>', 1));
             Log::debug(print_r($welcome_message, 1));
 
