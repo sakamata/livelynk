@@ -366,8 +366,6 @@ class InportPostController extends Controller
         }
     }
 
-    // ***ToDo*** $community 引数を排除、中で別メソッドから $community を取得させ独立した処理にさせる。さらにタイマー、またはPOSTの止まったコミュニティを探して呼び出し、コミュニティ毎に定期的に確認する処理に変更
-    // public function DepartureCheck()
     public function DepartureCheck($community_id)
     {
         // 一定時間アクセスの無いmac_address を不在に変更
