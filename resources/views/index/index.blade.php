@@ -121,6 +121,11 @@
     @can('normalAdmin')
     <a href="/admin_user/edit?id={{$item->id}}">
     @endcan
+    @guest
+    @if($item->provisional == 1)
+    <a href="/login/?path={{$url_path}}&provisional_name={{$item->unique_name}}">
+    @endif
+    @endguest
     <div class="name">
       <div class="icon">
         <i class="fas fa-user-circle"></i>
@@ -131,6 +136,11 @@
       <div class="head">OUT</div>
       <div class="time">{{date('n/j G:i', strtotime($item->last_access))}}</div>
     </div>
+    @guest
+    @if($item->provisional == 1)
+    </a>
+    @endguest
+    @endif
     @can('normalAdmin')
     </a>
     @endcan

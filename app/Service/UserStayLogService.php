@@ -34,6 +34,13 @@ class UserStayLogService
         return $provisionalArr;
     }
 
+    /**
+     * ログ一覧画面のitemを取得する
+     *
+     * @param [int] $communityId
+     * @param [array] $provisionalArr
+     * @return UserStaylog
+     */
     public function getStayLog($communityId, $provisionalArr)
     {
         $arr = [];
@@ -53,9 +60,37 @@ class UserStayLogService
         ->Join('users', 'community_user.user_id', '=', 'users.id')
         ->where('community_id', $communityId)
         ->whereIn('provisional', $arr)
-        ->orderBy('arraival_at','desc')
+        ->orderBy('arraival_at', 'desc')
         ->paginate(30);
     }
+
+    /**
+     * 仮ユーザのログイン画面に出力する仮ユーザーのlog一覧取得
+     *
+     * @param [string] $communityUserId
+     * @return UserStaylog
+     */
+    public function getStayProvisionalLog(string $provisionalName)
+    {
+        $result =  UserStaylog::with('community_user.user')
+            ->select(
+                'users_stays_logs.*',
+                'users_stays_logs.id AS log_id',
+                'community_user.*'
+            )
+            ->Join('community_user', 'community_user.id', '=', 'users_stays_logs.community_user_id')
+            ->Join('users', 'community_user.user_id', '=', 'users.id')
+            ->where('users.unique_name', $provisionalName)
+            ->where('provisional', 1)
+            ->orderBy('arraival_at', 'desc')
+            ->paginate(30);
+
+        if (count($result) == 0) {
+            $result = null;
+        }
+        return $result;
+    }
+
 
     // 来訪した community_user_id で帰宅カラムの入力がない状態が重複していないか確認する
     public function ArraivalUserDuplicationCheck(int $community_user_id)

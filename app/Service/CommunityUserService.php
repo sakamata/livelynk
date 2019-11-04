@@ -31,8 +31,11 @@ class CommunityUserService
     public function GetNotStayUsersIdObjectArray(int $owner_id, int $community_id)
     {
         return 'App\CommunityUser'::join(
-            'communities_users_statuses' , 'community_user.id', '=', 'communities_users_statuses.id'
-            )
+            'communities_users_statuses',
+            'community_user.id',
+            '=',
+            'communities_users_statuses.id'
+        )
             ->where([
                 ['user_id', '<>', $owner_id],
                 ['community_id', $community_id],
@@ -43,7 +46,14 @@ class CommunityUserService
     // IndexController で表示に使用する現在の滞在してないユーザーを取得
     public function NotStayUsersGet(int $community_id, array $not_stay_users_id)
     {
-        return 'App\CommunityUser'::select('community_user.id AS id','user_id', 'name', 'last_access')
+        return 'App\CommunityUser'::select(
+            'community_user.id AS id',
+            'user_id',
+            'name',
+            'unique_name',
+            'provisional',
+            'last_access'
+        )
             ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
             ->Join('communities_users_statuses', 'communities_users_statuses.id', '=', 'community_user.id')
             ->where([
@@ -95,7 +105,7 @@ class CommunityUserService
             'name',
             'name_reading',
             'hide'
-            )
+        )
             ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
             ->Join('communities_users_statuses', 'communities_users_statuses.id', '=', 'community_user.id')
             ->where([

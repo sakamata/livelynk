@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Service\UserStayLogService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
@@ -33,14 +34,18 @@ class LoginController extends Controller
      */
     protected $redirectTo = '/';
     protected $community;
+    protected $userStayLogService;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(Request $request)
-    {
+    public function __construct(
+        Request             $request,
+        UserStayLogService  $userStayLogService
+    ) {
+        $this->userStayLogService = $userStayLogService;
         $this->middleware('guest')->except('logout');
         $community = $this->GetCommunityFromPath($request->path);
         if (!$community) {
@@ -57,18 +62,20 @@ class LoginController extends Controller
             return redirect('/')->with('message', '存在しないページです');
         }
 
+        $provisional_name = null;
+        $logItems = null;
+
         if ($request->provisional_name) {
             $request->validate([
                 'provisional_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u'],
             ]);
             $provisional_name = $request->provisional_name;
-        } else {
-            $provisional_name = null;
+            $logItems = $this->userStayLogService->getStayProvisionalLog($provisional_name);
         }
-
-        return view('auth.login',[
+        return view('auth.login', [
             'community' => $community,
             'provisional_name' => $provisional_name,
+            'logItems' => $logItems,
         ]);
     }
 
@@ -124,7 +131,7 @@ class LoginController extends Controller
             $request->session()->put('community_user_id', $community_user_id);
             // 仮ユーザーならプロフ編集画面に遷移
             if ($user->provisional == true) {
-                return redirect('/admin_user/edit?id='. $community_user_id )->with('message', 'ログインしました。最初にプロフィールとパスワードの編集をお願いします。');
+                return redirect('/admin_user/edit?id='. $community_user_id)->with('message', 'ログインしました。最初にプロフィールとパスワードの編集をお願いします。');
             }
             return redirect('/')->with('message', 'ログインしました');
         } else {
@@ -155,7 +162,7 @@ class LoginController extends Controller
         // このコミュに存在しない場合は community_user & statusesに登録
         // community_user_id を取得する
         DB::beginTransaction();
-        try{
+        try {
             $user_id = DB::table('users')
                 ->where('unique_name', $unique_name)
                 ->pluck('id')->first();
