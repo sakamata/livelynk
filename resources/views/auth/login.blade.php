@@ -12,6 +12,7 @@
                     <div class="card-body">
                             <h3>訪問履歴</h3>
                             <p class="mb-3">MACアドレス:&nbsp;{{$logItems[0]->mac_address[0]->mac_address_omission}}</p>
+                            <p class="mb-3">端末メーカー:&nbsp;{{$logItems[0]->mac_address[0]->vendor}}</p>
                             <table class="table table-hover">
                             <tr class="info thead-light">
                                 <th>来訪日時</th>

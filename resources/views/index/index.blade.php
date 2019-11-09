@@ -25,7 +25,7 @@
   @endcomponent
   @endif
   @elseif(Auth::check() == false && $community->tumolink_enable)
-<p>ログインすると行くツモリ宣言ができます</p>
+<p>始めての方は自分の来訪時間に近い仮ユーザーを選択</p>
 @elseif(!$community->tumolink_enable)
 {{-- <p>新機能ツモリンクをリリースしました</p> --}}
 @endif

@@ -14,9 +14,22 @@ class CommunityUserService
     public function StayUsersGet($sub_query, int $owner_id, int $community_id, bool $provisional)
     {
         // user_id, name, min_arraival_at, last_access
-        return 'App\CommunityUser'::select('community_user.id AS id', 'user_id', 'unique_name', 'name', 'min_arraival_at', 'last_access')
+        return 'App\CommunityUser'::
+            select(
+                'community_user.id AS id',
+                'user_id',
+                'unique_name',
+                'name',
+                'min_arraival_at',
+                'last_access'
+            )
             ->leftJoin('users', 'users.id', '=', 'community_user.user_id')
-            ->Join('communities_users_statuses', 'communities_users_statuses.id', '=', 'community_user.id')
+            ->Join(
+                'communities_users_statuses',
+                'communities_users_statuses.id',
+                '=',
+                'community_user.id'
+            )
             ->JoinSub($sub_query, 'mac_addresses', function ($join) {
                 $join->on('community_user.id', '=', 'mac_addresses.community_user_id');
             })
