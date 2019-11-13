@@ -87,6 +87,7 @@ class WeatherCheckService
             $response[$i]['totalRain']     = $rain['total'];
 
             $message = "";
+            $weatherStatus = "";
             // **雨が止みそう判定**
             // こっちを雨予報より上の行に書くことで、重複条件の際は雨振り通知を上書きさせて優先判断させる
             // 最後は0 かつ 全体の降雨量が 0より多くnより小さい
@@ -100,8 +101,6 @@ class WeatherCheckService
                     $message = $this->googleHomeController
                                 ->weatherStopRainingNotification($community, $rainfall);
                     $weatherStatus = 'StopRain';
-                    // 通知機能へ
-                    $this->exportPostController->weatherMassageMaker($community, $weatherStatus, $rainfall);
                 }
             }
 
@@ -116,14 +115,16 @@ class WeatherCheckService
                     $message = $this->googleHomeController
                                 ->weatherRainNotification($community, $rainfall);
                     $weatherStatus = 'forRain';
-                    // 通知機能へ
-                    $this->exportPostController->weatherMassageMaker($community, $weatherStatus, $rainfall);
                 }
             }
 
             // 発話をDBに入れる
-            if ($message != null) {
+            if ($message) {
                 $this->weatherCheckRepository->talkMessageSave($message, $communityId);
+            }
+            // 通知機能へ
+            if ($weatherStatus) {
+                $this->exportPostController->weatherMassageMaker($community, $weatherStatus, $rainfall);
             }
 
             // 雨が観測された場合は雨確認時間を更新
