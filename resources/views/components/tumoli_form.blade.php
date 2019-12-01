@@ -36,34 +36,59 @@
                 </div>
             </div>
             <div class="action">
-                <form method="post" action="/tumolink/post">
+                <form name="plans" method="post" action="/tumolink/post">
                     {{ csrf_field() }}
                     <input type="hidden" name="community_user_id" value="{{ Auth::user()->id }}">
                     <div class="plans">
-                        <div class="value hour">
-                            <select name="hour" class="comp-ui">
-                            @for($i = 0; $i < 24; $i++)
-                            <option value="{{$i}}">{{$i}}</option>
-                            @endfor
+                        <div class="value when">
+                            <select name="when" class="comp-ui" id="tumori_when" onchange="timeDisplayChange();">
+                            <option value="soon">これから</option>
+                            <option value="today">きょう</option>
+                            <option value="tomorrow">あした</option>
+                            <option value="dayAfterTomorrow">あさって</option>
+                            <option value="thisWeek">今週</option>
+                            <option value="weekend">土日</option>
+                            <option value="nextWeek">来週</option>
+                            <option value="thisMonth">今月</option>
+                            <option value="nextMonth">来月</option>
                             </select>
                         </div>
-                        <div class="unit hour">時間</div>
-                        <div class="value minute">
-                            <select name="minute" class="comp-ui">
-                            <option value="0">0</option>
-                            @for($i = 1; $i < 6; $i++)
-                            <option value="{{$i}}0">{{$i}}0</option>
-                            @endfor
-                            </select>
+                    </div>
+                    <div id="timeDisplay">
+                        <div class="plans">
+                            <div class="value hour">
+                                <select name="hour" class="comp-ui">
+                                @for($i = 0; $i < 24; $i++)
+                                <option value="{{$i}}">{{$i}}</option>
+                                @endfor
+                                </select>
+                            </div>
+                            <div class="unit hour">時</div>
+                            <div class="value minute">
+                                <select name="minute" class="comp-ui">
+                                <option value="0">0</option>
+                                @for($i = 1; $i < 6; $i++)
+                                <option value="{{$i}}0">{{$i}}0</option>
+                                @endfor
+                                </select>
+                            </div>
+                            <div class="unit minute">分</div>
                         </div>
-                        <div class="unit minute">分後</div>
+                        {{--
+                        <div class="radio-block">
+                            <input type="radio" name="direction" value="arriving" checked="checked" id="direction_arriving">
+                            <label for="direction_arriving">行く</label>
+                            <input type="radio" name="direction" value="leaving" id="direction_leaving">
+                            <label for="direction_leaving">帰る</label>
+                        </div>
+                         --}}
                     </div>
-                    <div class="radio-block">
-                        <input type="radio" name="direction" value="arriving" checked="checked" id="direction_arriving">
-                        <label for="direction_arriving">行く</label>
-                        <input type="radio" name="direction" value="leaving" id="direction_leaving">
-                        <label for="direction_leaving">帰る</label>
-                    </div>
+
+                    <button type="submit" name="action" value="tumoli" class="tumoli-button comp-ui">行くヨテイ</button>
+                    @if($tumoli_declared == true)
+                    <button type="submit" name="action" value="cancel" class="tumoli-button bel-button comp-ui">取り消し</button>
+                    @endif
+
                     @if($community->google_home_enable)
                     <p class="label-text">GoogleHome通知</p>
                     <div class="radio-block">
@@ -75,10 +100,7 @@
                     @else
                     <input type="hidden" name="google_home_push" value="0">
                     @endif
-                    <button type="submit" name="action" value="tumoli" class="tumoli-button comp-ui">ツモリ</button>
-                    @if($tumoli_declared == true)
-                    <button type="submit" name="action" value="cancel" class="tumoli-button bel-button comp-ui">取り消し</button>
-                    @endif
+
                 </form>
             </div>
             <script src="{{ asset('js/bundle.js') }}"></script>
