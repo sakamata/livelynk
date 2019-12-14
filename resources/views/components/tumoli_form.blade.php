@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div class="action">
-                <form name="plans" method="post" action="/tumolink/post">
+                <form name="plans" method="post" action="/willgo/post">
                     {{ csrf_field() }}
                     <input type="hidden" name="community_user_id" value="{{ Auth::user()->id }}">
                     <div class="plans">
@@ -66,7 +66,7 @@
                             <div class="unit hour">時</div>
                             <div class="value minute">
                                 <select name="minute" class="comp-ui">
-                                <option value="0">0</option>
+                                <option value="0">00</option>
                                 @for($i = 1; $i < 6; $i++)
                                 <option value="{{$i}}0">{{$i}}0</option>
                                 @endfor
@@ -84,7 +84,7 @@
                          --}}
                     </div>
 
-                    <button type="submit" name="action" value="tumoli" class="tumoli-button comp-ui">行くヨテイ</button>
+                    <button type="submit" name="action" value="willgo" class="tumoli-button comp-ui">行くヨテイ</button>
                     @if($tumoli_declared == true)
                     <button type="submit" name="action" value="cancel" class="tumoli-button bel-button comp-ui">取り消し</button>
                     @endif

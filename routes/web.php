@@ -50,6 +50,10 @@ Route::get('/index/{path?}', 'IndexController@index')->name('index');
 Route::get('/tumolink/index/{community_id?}', 'TumolinkController@index');
 Route::post('/tumolink/post', 'TumolinkController@post')->middleware('auth');
 
+// ヨテイ
+Route::get('/willgo/index/{community_id?}', 'WillGoController@index');
+Route::post('/willgo/post', 'WillGoController@store')->middleware('auth');
+
 // GoogleHomeヒトコト
 Route::post('/temporary_taking/post', 'TemporaryTakingController@TakingRecorder')->middleware('auth');
 
@@ -98,7 +102,7 @@ Route::group(['middleware' => ['auth', 'can:superAdmin']], function () {
 
 // HTTPステータスコードを引数に、該当するエラーページを表示させる
 Route::get('error/{code}', function ($code) {
-  abort($code);
+    abort($code);
 });
 
 // 外部からのPOST受け取り先 csrf off
@@ -109,8 +113,8 @@ Route::post('/inport_post/mac_address', 'InportPostController@MacAddress');
 Route::post('/push_ifttt_arraival', 'ExportPostController@push_ifttt_arraival');
 
 // 送信メール本文のプレビュー
-Route::get('sample/mailable/preview', function () {
-    return new App\Mail\SampleNotification();
-});
+// Route::get('sample/mailable/preview', function () {
+//     return new App\Mail\SampleNotification();
+// });
 
 Route::get('sample/mailable/send', 'SampleController@SampleNotification');

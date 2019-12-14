@@ -21,8 +21,7 @@ class TumolinkController extends Controller
     public function __construct(
         CommunityUserService $call_community_user,
         TumolinkService $tumolink_service
-        )
-    {
+    ) {
         $this->call_community_user = $call_community_user;
         $this->tumolink_service = $tumolink_service;
     }
@@ -49,10 +48,12 @@ class TumolinkController extends Controller
         $time = Carbon::now()->addHour($hour)->addSecond($minute * 60);
         $direction = $request->direction;
 
+        // 行く予定に使用する
         if ($direction == 'arriving') {
             $tumolist->maybe_arraival = $time;
             $column = 'maybe_arraival';
         } else {  //   == 'leaving'
+            // 帰る予定に使用する
             $tumolist->maybe_departure = $time;
             $column = 'maybe_departure';
         }
@@ -80,7 +81,7 @@ class TumolinkController extends Controller
                 // 同日中のpostであれば該当recordを更新する
                 $this->tumolink_service->updateTime($request->community_user_id, $column, $time, $request->google_home_push);
             } else {
-            // 新規ならrecord追加
+                // 新規ならrecord追加
                 $tumolist->save();
             }
             $message = 'ツモリ宣言をしました。';
@@ -100,7 +101,7 @@ class TumolinkController extends Controller
         // GoogleHome通知作成と保存
         if ($request->google_home_push == true && $community->google_home_enable == true) {
             // よみがな優先で発話
-            Auth::user()->name_reading ? $user_name = Auth::user()->name_reading : $user_name = Auth::user()->name; 
+            Auth::user()->name_reading ? $user_name = Auth::user()->name_reading : $user_name = Auth::user()->name;
             $talking_message = (new GoogleHomeController)->GoogleHomeMessageTumolinkMaker($messages['trigger'], $user_name, $time);
             // DBに入れる
             $talkMessage = new \App\TalkMessage();
@@ -114,10 +115,10 @@ class TumolinkController extends Controller
         // POSTで固まるので処理後半で ifttt 通知
         (new ExportPostController)->push_ifttt($messages['title'], $messages['message'], $community);
         if (!$request->isJson()) {
-        // post form 処理
+            // post form 処理
             return redirect('/')->with('message', $message);
         } else {
-        // APIの場合の追加response処理があれば記載
+            // APIの場合の追加response処理があれば記載
         }
     }
 
@@ -137,7 +138,7 @@ class TumolinkController extends Controller
         // 既存のrecordを取得
         $existing = $this->tumolink_service->getTodayRecord($request->community_user_id);
         // 現状の宣言が片方のみなら、recordを削除
-        if ($existing->maybe_arraival == null || $existing->maybe_departure == null ) {
+        if ($existing->maybe_arraival == null || $existing->maybe_departure == null) {
             $this->tumolink_service->remove($existing->id);
         } elseif ($existing->maybe_arraival && $existing->maybe_departure) {
             // 両方ある場合は指定した日時をnullにする
@@ -188,6 +189,6 @@ class TumolinkController extends Controller
     {
         $res = DB::table('tumolink')
             ->where('updated_at', '<', Carbon::today())->delete();
-        log::debug(print_r('Schedule method Tumolink@auto_remove_before_today run! delete record count>>> ' . $res , 1));
+        log::debug(print_r('Schedule method Tumolink@auto_remove_before_today run! delete record count>>> ' . $res, 1));
     }
 }
