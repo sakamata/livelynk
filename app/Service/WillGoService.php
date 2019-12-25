@@ -43,6 +43,84 @@ class WillGoService
         $this->willGoRepository = $willGoRepository;
     }
 
+    public function willGoUsersGet(int $communityId)
+    {
+        $soon               = $this->soonGet($communityId);
+        $today              = $this->todayGet($communityId);
+        $tomorrow           = $this->tomorrowGet($communityId);
+        $dayAfterTomorrow   = $this->dayAfterTomorrowGet($communityId);
+        $thisWeek           = $this->thisWeekGet($communityId);
+        $weekend            = $this->weekendGet($communityId);
+        $nextWeek           = $this->nextWeekGet($communityId);
+        $thisMonth          = $this->thisMonthGet($communityId);
+        $nextMonth          = $this->nextMonthGet($communityId);
+        return [
+            'これから'  => $soon,
+            'きょう'    => $today,
+            'あした'    => $tomorrow,
+            'あさって'  => $dayAfterTomorrow,
+            '今週'      => $thisWeek,
+            '土日'      => $weekend,
+            '来週'      => $nextWeek,
+            '今月'      => $thisMonth,
+            '来月'      => $nextMonth,
+        ];
+    }
+
+    public function soonGet(int $communityId)
+    {
+        $query = $this->willGoRepository->willgoUsersGet($communityId);
+        return $query->Soon()->get();
+    }
+
+    public function todayGet(int $communityId)
+    {
+        $query = $this->willGoRepository->willgoUsersGet($communityId);
+        return $query->Today()->get();
+    }
+
+    public function tomorrowGet(int $communityId)
+    {
+        $query = $this->willGoRepository->willgoUsersGet($communityId);
+        return $query->Tomorrow()->get();
+    }
+
+    public function dayAfterTomorrowGet(int $communityId)
+    {
+        $query = $this->willGoRepository->willgoUsersGet($communityId);
+        return $query->DayAfterTomorrow()->get();
+    }
+
+    public function thisWeekGet(int $communityId)
+    {
+        $query = $this->willGoRepository->willgoUsersGet($communityId);
+        return $query->ThisWeek()->get();
+    }
+
+    public function weekendGet(int $communityId)
+    {
+        $query = $this->willGoRepository->willgoUsersGet($communityId);
+        return $query->Weekend()->get();
+    }
+
+    public function nextWeekGet(int $communityId)
+    {
+        $query = $this->willGoRepository->willgoUsersGet($communityId);
+        return $query->nextWeek()->get();
+    }
+
+    public function thisMonthGet(int $communityId)
+    {
+        $query = $this->willGoRepository->willgoUsersGet($communityId);
+        return $query->ThisMonth()->get();
+    }
+
+    public function nextMonthGet(int $communityId)
+    {
+        $query = $this->willGoRepository->willgoUsersGet($communityId);
+        return $query->NextMonth()->get();
+    }
+
     /**
      * 投稿の時間帯からDBに登録する from,to の datetimeをセットし配列で返却する
      *

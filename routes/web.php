@@ -51,6 +51,7 @@ Route::get('/tumolink/index/{community_id?}', 'TumolinkController@index');
 Route::post('/tumolink/post', 'TumolinkController@post')->middleware('auth');
 
 // ヨテイ
+// Route::get('/willgo/index', 'WillGoController@index');
 Route::get('/willgo/index/{community_id?}', 'WillGoController@index');
 Route::post('/willgo/post', 'WillGoController@store')->middleware('auth');
 
@@ -101,9 +102,9 @@ Route::group(['middleware' => ['auth', 'can:superAdmin']], function () {
 });
 
 // HTTPステータスコードを引数に、該当するエラーページを表示させる
-Route::get('error/{code}', function ($code) {
-    abort($code);
-});
+// Route::get('error/{code}', function ($code) {
+//     abort($code);
+// });
 
 // 外部からのPOST受け取り先 csrf off
 Route::post('/inport_post/mac_address', 'InportPostController@MacAddress');

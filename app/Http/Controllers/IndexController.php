@@ -7,6 +7,7 @@ use App\Service\CommunityUserService;
 use App\Service\MacAddressService;
 use App\Service\TumolinkService;
 use App\Service\RouterService;
+use App\Service\WillGoService;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -18,19 +19,22 @@ class IndexController extends Controller
     private $call_community_user;
     private $call_tumolink;
     private $callRouter;
+    private $willGoService;
 
     public function __construct(
-        CommunityService $call_community,
-        CommunityUserService $call_community_user,
-        MacAddressService $call_mac_address,
-        TumolinkService $call_tumolink,
-        RouterService $callRouter
+        CommunityService        $call_community,
+        CommunityUserService    $call_community_user,
+        MacAddressService       $call_mac_address,
+        TumolinkService         $call_tumolink,
+        RouterService           $callRouter,
+        WillGoService           $willGoService
     ) {
         $this->call_community       = $call_community;
         $this->call_community_user  = $call_community_user;
         $this->call_mac_address     = $call_mac_address;
         $this->call_tumolink        = $call_tumolink;
         $this->callRouter           = $callRouter;
+        $this->willGoService        = $willGoService;
     }
 
     // 一般ユーザーのメイン画面、滞在者の一覧を表示する
@@ -39,7 +43,9 @@ class IndexController extends Controller
         // 非ログイン と ログイン時で対象の community を取得
         // /index?path=hoge
         if (!Auth::check()) {
-            if (!$request->path) { return view('site.home'); }
+            if (!$request->path) {
+                return view('site.home');
+            }
             $community = $this->GetCommunityFromPath($request->path);
             if (!$community) {
                 return view('errors.404');
@@ -108,12 +114,16 @@ class IndexController extends Controller
             $reader_id = $this->getReaderID();
             $tumoli_declared = $this->call_tumolink->existsTodayPost(Auth::user()->id, $column = 'maybe_arraival');
         }
+
+        $willgoUsers = $this->willGoService->willGoUsersGet($community_id);
+        // dd($willgoUsers);
         $router = $this->callRouter->CommunityRouterGet($community_id);
         return view('index.index', [
             'community' => $community,
             'items' => $unregistered,
             'items1' => $stays,
             'items2' => $not_stays,
+            'willgoUsers' => $willgoUsers,
             'tumolist' => $tumolist,
             'tumoli_declared' => $tumoli_declared,
             'rate' => $unregistered_rate_array,
@@ -132,13 +142,13 @@ class IndexController extends Controller
         $res = array();
         foreach ($items as $item) {
             $n[$i] = $now - Carbon::parse($item->$column)->timestamp;
-            if($n[$i] >= $limit) {
+            if ($n[$i] >= $limit) {
                 $res[$i] = 0;
             } else {
                 $res[$i] = 100 - ($n[$i] / $limit) * 100;
                 $res[$i] = round($res[$i], 0);
             }
-        $i++;
+            $i++;
         }
         return $res;
     }

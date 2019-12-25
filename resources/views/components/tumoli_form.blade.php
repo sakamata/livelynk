@@ -5,34 +5,34 @@
         <li>
             <div class="data">
                 <div class="availabilities">
-                <div class="head">今日のヨテイ<span>{{ $tumolist->count() }} 人</span></div>
+                <div class="head">ヨテイ宣言<span>{{ $tumolist->count() }} 件</span></div>
+                @foreach ($willgoUsers as $when => $willgoUsers)
+                    @if (count($willgoUsers) > 0)
+                    <hr>
+                    <span class="when">{{$when}}</span>
                     <ul class="body">
-                        @foreach ($tumolist as $item)
+                        @foreach ($willgoUsers as $willgoUser)
                         <li class="availability afterBegin">
+
                             <div class="icon">
                                 <i class="fas fa-user-circle"></i>
                             </div>
-                            <div class="name">{{ $item->name }}</div>
+
+                            <div class="name">{{ $willgoUser->name }}</div>
                             <div class="arriving">
-                                @if($item->maybe_arraival != null)
-                                {{ date('G:i', strtotime($item->maybe_arraival)) }}
-                                @else
-                                &emsp;&emsp;&nbsp;
-                                @endif
-                                -
-                                @if($item->maybe_departure != null)
-                                {{ date('G:i', strtotime($item->maybe_departure)) }}
-                                @else
+                                @if ($willgoUser->from_datetime->hour != 0 ||
+                                     $willgoUser->from_datetime->minute != 0
+                                )
+                                {{ date('G:i', strtotime($willgoUser->from_datetime)) }}
                                 &emsp;&emsp;&nbsp;
                                 @endif
                             </div>
-                            @if ($loop->first)
-                            <span class="now">Now</span>
-                            @endif
                         </li>
                         @endforeach
                     </ul>
-                    <i class="fas fa-chevron-down btn-more"></i>
+                    @endif
+                @endforeach
+                <i class="fas fa-chevron-down btn-more"></i>
                 </div>
             </div>
             <div class="action">

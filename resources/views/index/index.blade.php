@@ -13,6 +13,7 @@
 @if(Auth::check() && $community->tumolink_enable)
   @component('components.tumoli_form', [
       'tumolist'        => $tumolist,
+      'willgoUsers'     => $willgoUsers,
       'tumoli_declared' => $tumoli_declared,
       'community'       => $community
       ])

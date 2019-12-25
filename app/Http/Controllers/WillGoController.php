@@ -20,20 +20,28 @@ class WillGoController extends Controller
         $this->willGoService        = $willGoService;
     }
 
+    /**
+     * test用メソッド使用しない
+     *
+     * @param Request $request
+     * @return void
+     */
     public function index(Request $request)
     {
+        $willgoUsers = $this->willGoService->willGoUsersGet($request->community_id);
         return response()->json([
-            'community_id' => $request->community_id,
-            'key' => 'value!',
+            'willgoUsers'    => $willgoUsers,
+            'community_id'  => $request->community_id,
+            'key' => 'value!'
         ], 200);
     }
 
     public function store(WillgoRequest $request)
     {
-        // return array
-        // from => carbon datetime
-        // to   => carbon datetime
         if ($request->action == 'willgo') {
+            // return array
+            // from => carbon datetime
+            // to   => carbon datetime
             $datetimes = $this->willGoService->postDatetimeGenerater(
                 (string)$request->when,
                 (int)$request->hour,
@@ -41,11 +49,10 @@ class WillGoController extends Controller
             );
             // TODO トランザクション
             $this->willGoService->willgoStore($request, $datetimes);
-            $textMessage = $this->willGoService->textMessageMaker($request);
-            // TODO googlehome通知
             $voiceMessage = $this->willGoService->voiceMessageMaker($request);
             $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request);
 
+            $textMessage = $this->willGoService->textMessageMaker($request);
             $this->willGoService->pushIfttt($textMessage, Auth::user()->community_id);
 
             return redirect('/')->with('message', 'ヨテイの宣言をしました。');
