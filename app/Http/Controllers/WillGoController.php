@@ -71,4 +71,33 @@ class WillGoController extends Controller
         ]
         */
     }
+
+    /**
+     * 予定1件の削除を行う
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function delete(Request $request)
+    {
+        $validatedData = $request->validate([
+            'when'  => [
+                        'required',
+                        'regex:/^(これから|きょう|あした|あさって|今週|土日|来週|今月|来月)$/'
+                    ],
+        ]);
+
+        $res = $this->willGoService->delete($request->id);
+        if (!$res) {
+            return redirect('/')->with('message', 'ヨテイを取り消しできませんでした。');
+        }
+        // 通知 iftttのみ
+        $this->willGoService->deleteIiftttPush(
+            Auth::user()->community_id,
+            Auth::user()->name,
+            $request->when
+        );
+
+        return redirect('/')->with('message', 'ヨテイを取り消しました。');
+    }
 }

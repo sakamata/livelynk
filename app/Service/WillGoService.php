@@ -6,6 +6,7 @@ use Auth;
 use DB;
 use App\Willgo;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 use App\Community;
@@ -216,7 +217,7 @@ class WillGoService
         }
         $serviceName    = $this->community::find(Auth::user()->community_id)->service_name;
 
-        return $userName . "「" . $when . $time . 'くらいに' . $serviceName . "に行くツモリ！」";
+        return $userName . "「" . $when . $time . 'くらいに' . $serviceName . "に行くかも」";
     }
 
     /**
@@ -319,7 +320,7 @@ class WillGoService
             $time = $time->format('G時i分');
         }
 
-        $voiceMessage .= $userName . 'さんが' . $when . $time . 'くらいに来るつもりみたいですよ。';
+        $voiceMessage .= $userName . 'さんが' . $when . $time . 'くらいに来るかもしれないです。';
 
         return $voiceMessage;
     }
@@ -348,20 +349,36 @@ class WillGoService
         $talkMessage->save();
     }
 
-    public function willGoGet(int $community_id)
+    /**
+     * 予定1件の削除を行う
+     *
+     * @param integer $request
+     * @return bool
+     */
+    public function delete(int $id)
     {
-        return DB::table('tumolink')
-            ->select(
-                'tumolink.*',
-                'users.name',
-                'users.name_reading',
-                'users.provisional',
-                'communities_users_statuses.hide'
-            )
-            ->join('community_user', 'community_user.id', '=', 'tumolink.community_user_id')
-            ->join('communities_users_statuses', 'community_user.id', '=', 'communities_users_statuses.id')
-            ->join('users', 'users.id', '=', 'community_user.user_id')
-            ->where('community_user.community_id', $community_id)
-            ->get();
+        $model = WillGo::find($id);
+
+        if (Auth::user()->id != $model->community_user_id) {
+            logger()->warning('異なるユーザーが予定削除を試みる');
+            logger()->warning('Auth::user()->id>>>' . Auth::user()->id);
+            return false;
+        }
+
+        return $this->willGoRepository->delete($id);
+    }
+
+    /**
+     * 予定削除の通知をIFTTTに送信する
+     *
+     * @param integer $communityId
+     * @param string $userName
+     * @param string $when
+     * @return void
+     */
+    public function deleteIiftttPush( int $communityId, string $userName,string $when)
+    {
+        $textMessage = $userName . "「". $when . "くらいに行くのはやっぱりやめるかも」";
+        $this->pushIfttt( $textMessage, $communityId);
     }
 }

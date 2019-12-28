@@ -24,7 +24,15 @@
                                      $willgoUser->from_datetime->minute != 0
                                 )
                                 {{ date('G:i', strtotime($willgoUser->from_datetime)) }}
-                                &emsp;&emsp;&nbsp;
+                                @endif
+                                @if (Auth::user()->id == $willgoUser->community_user_id)
+                                <form method="post" action="/willgo/delete/{{$willgoUser->id}}">
+                                    @csrf
+                                    <input type="hidden" name="when" value="{{$when}}">
+                                    <button type="submit" name="action" value="{{$willgoUser->id}}" class="">削除</button>
+                                </form>
+                                @else
+                                &emsp;&emsp;&nbsp;&emsp;
                                 @endif
                             </div>
                         </li>
@@ -84,7 +92,7 @@
                          --}}
                     </div>
 
-                    <button type="submit" name="action" value="willgo" class="tumoli-button comp-ui">行くヨテイ</button>
+                    <button type="submit" name="action" value="willgo" class="tumoli-button comp-ui">行くかも</button>
                     @if($tumoli_declared == true)
                     <button type="submit" name="action" value="cancel" class="tumoli-button bel-button comp-ui">取り消し</button>
                     @endif

@@ -54,6 +54,7 @@ Route::post('/tumolink/post', 'TumolinkController@post')->middleware('auth');
 // Route::get('/willgo/index', 'WillGoController@index');
 Route::get('/willgo/index/{community_id?}', 'WillGoController@index');
 Route::post('/willgo/post', 'WillGoController@store')->middleware('auth');
+Route::post('/willgo/delete/{id}', 'WillGoController@delete')->middleware('auth')->where('id', '[0-9]+');
 
 // GoogleHomeヒトコト
 Route::post('/temporary_taking/post', 'TemporaryTakingController@TakingRecorder')->middleware('auth');

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use Auth;
 use App\Community;
 use App\CommunityUser;
 use App\MacAddress;
@@ -266,5 +267,24 @@ class WillGoRepository
         $model->to_datetime         = $datetimes['to'];
         $model->google_home_push    = $request->google_home_push;
         $model->save();
+    }
+
+
+    /**
+     * 予定1件の削除を行う
+     *
+     * @param integer $id
+     * @return bool
+     */
+    public function delete(int $id)
+    {
+        $model = $this->willgo::find($id);
+        $res = $model->delete();
+        if (!$res) {
+            logger()->warning('予定の削除に失敗');
+            logger()->warning('Auth::user()->id>>>' . Auth::user()->id);
+            return false;
+        }
+        return true;
     }
 }
