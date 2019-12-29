@@ -8,33 +8,34 @@
                 <div class="head">ヨテイ宣言<span>{{ $tumolist->count() }} 件</span></div>
                 @foreach ($willgoUsers as $when => $willgoUsers)
                     @if (count($willgoUsers) > 0)
-                    <hr>
-                    <span class="when">{{$when}}</span>
-                    <ul class="body">
+                    <ul class="body all">
+                        <div class="when">{{$when}}</div>
                         @foreach ($willgoUsers as $willgoUser)
                         <li class="availability afterBegin">
+                        <div class="icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
 
-                            <div class="icon">
-                                <i class="fas fa-user-circle"></i>
-                            </div>
+                        <div class="name">{{ $willgoUser->name }}</div>
+                        <div class="arriving">
+                            @if ($willgoUser->from_datetime->hour != 0 ||
+                                    $willgoUser->from_datetime->minute != 0
+                            )
+                            {{ date('G:i', strtotime($willgoUser->from_datetime)) }}
+                            @endif
+                        </div>
+                        <div class="willgo-button-area">
 
-                            <div class="name">{{ $willgoUser->name }}</div>
-                            <div class="arriving">
-                                @if ($willgoUser->from_datetime->hour != 0 ||
-                                     $willgoUser->from_datetime->minute != 0
-                                )
-                                {{ date('G:i', strtotime($willgoUser->from_datetime)) }}
-                                @endif
-                                @if (Auth::user()->id == $willgoUser->community_user_id)
-                                <form method="post" action="/willgo/delete/{{$willgoUser->id}}">
-                                    @csrf
-                                    <input type="hidden" name="when" value="{{$when}}">
-                                    <button type="submit" name="action" value="{{$willgoUser->id}}" class="">削除</button>
-                                </form>
-                                @else
-                                &emsp;&emsp;&nbsp;&emsp;
-                                @endif
-                            </div>
+                            @if (Auth::user()->id == $willgoUser->community_user_id)
+                            <form method="post" action="/willgo/delete/{{$willgoUser->id}}" class="willgo-record">
+                                @csrf
+                                <input type="hidden" name="when" value="{{$when}}">
+                                <button type="submit" name="action" value="{{$willgoUser->id}}" class="btn willgo-delete">やめる</button>
+                            </form>
+                            @else
+                            &emsp;&emsp;&nbsp;&emsp;
+                            @endif
+                        </div>
                         </li>
                         @endforeach
                     </ul>

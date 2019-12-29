@@ -82,15 +82,24 @@
   margin-bottom: .8rem;
 }
 .space-list>li .data .availability.afterBegin {
-  border-top: solid 1px #FFCCBC;
+  border-bottom: solid 1px #FFCCBC;
   padding-top: .8rem;
-  margin-top: .8rem;
+  padding-bottom: .8rem;
+  margin-top: .4rem;
+  margin-bottom: .4rem;
 }
 .space-list>li .data .availability.afterBegin .icon {
   font-size: 1.0rem;
   color: #689F38;
   width: 2.0rem;
 }
+.space-list>li .data .when {
+    /* border-bottom: solid 1px #FFCCBC; */
+    font-size: 1.0rem;
+    padding-top: .4em;
+    margin-top: 1.2rem;
+    margin-bottom: .8rem;
+  }
 .space-list>li .data .availability.beforeEnd .now,
 .space-list>li .data .availability.afterBegin .now {
   position: absolute;
@@ -368,4 +377,16 @@ textarea.comp-ui {
 
 .space-list .talking_form {
     display: block;
+}
+.willgo-button-area {
+    padding-left: .8rem;
+    width: 5.4rem;
+}
+.willgo-record {
+    display: inline;
+}
+.willgo-delete {
+    background-color: #F4511E;
+    color: #ffffff;
+    border-radius: 3rem;
 }
