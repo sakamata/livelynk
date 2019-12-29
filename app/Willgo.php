@@ -4,9 +4,11 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Willgo extends Model
 {
+    use SoftDeletes;
     /**
      * モデルと関連しているテーブル
      *
@@ -21,6 +23,7 @@ class Willgo extends Model
         'maybe_departure_datetime',
         'created_at',
         'updated_at',
+        'deleted_at',
     ];
 
     public function community_user()

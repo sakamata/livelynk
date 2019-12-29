@@ -21,6 +21,7 @@ class CreateTableWillgo20191212 extends Migration
             $table->dateTime('maybe_departure_datetime')->nullable()->default(null);
             $table->boolean('google_home_push')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
