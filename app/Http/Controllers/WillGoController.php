@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\WillgoRequest;
 use App\Service\WillGoService;
+use Exception;
 
 class WillGoController extends Controller
 {
@@ -38,27 +39,8 @@ class WillGoController extends Controller
 
     public function store(WillgoRequest $request)
     {
-        if ($request->action == 'willgo') {
-            // return array
-            // from => carbon datetime
-            // to   => carbon datetime
-            $datetimes = $this->willGoService->postDatetimeGenerater(
-                (string)$request->when,
-                (int)$request->hour,
-                (int)$request->minute
-            );
-            // TODO トランザクション
-            $this->willGoService->willgoStore($request, $datetimes);
-            $voiceMessage = $this->willGoService->voiceMessageMaker($request);
-            $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request);
-
-            $textMessage = $this->willGoService->textMessageMaker($request);
-            $this->willGoService->pushIfttt($textMessage, Auth::user()->community_id);
-
-            return redirect('/')->with('message', 'ヨテイの宣言をしました。');
-        }
-
         /*
+        $request->all();
         array:7 [
             "_token" => "UhmmpZej2VqIS5LNohDe2yC0jD8qIsxanILcqHY5"
             "community_user_id" => "3"
@@ -70,6 +52,87 @@ class WillGoController extends Controller
             "google_home_push" => "0 | 1"
         ]
         */
+        if ($request->action == 'willgo') {
+
+            // 宣言が更新かを確認し、必要なら更新を行い処理完了をする
+            $res = $this->willGoService->checkUpdateReturnObject($request);
+            if ($res) {
+                // 更新の予定時間が既存の時間と重複していないか確認
+                $isDuplicate = $this->willGoService->isDuplicateTime(
+                    $res->from_datetime,
+                    $request->hour,
+                    $request->minute
+                );
+                if ($isDuplicate) {
+                    return redirect('/')->with('message', 'すでにその日時は宣言済みです。');
+                } else {
+                    return $this->update($res->id, $request);
+                }
+            }
+
+            // return array
+            // from => carbon datetime
+            // to   => carbon datetime
+            $datetimes = $this->willGoService->postDatetimeGenerater(
+                (string)$request->when,
+                (int)$request->hour,
+                (int)$request->minute
+            );
+            DB::beginTransaction();
+            try {
+                $this->willGoService->willgoStore($request, $datetimes);
+                $voiceMessage = $this->willGoService->voiceMessageMaker($request);
+                $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request);
+                $textMessage = $this->willGoService->textMessageMaker($request);
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+                throw new $e;
+            }
+
+            $this->willGoService->pushIfttt($textMessage, Auth::user()->community_id);
+            return redirect('/')->with('message', 'ヨテイの宣言をしました。');
+        }
+    }
+
+    /**
+     * 予定の更新を行う
+     *
+     * @param integer $id
+     * @param [type] $request
+     * @return void
+     */
+    public function update(int $id, $request)
+    {
+        // return array
+        // from => carbon datetime
+        // to   => carbon datetime
+        $datetimes = $this->willGoService->postDatetimeGenerater(
+            (string)$request->when,
+            (int)$request->hour,
+            (int)$request->minute
+        );
+
+        DB::beginTransaction();
+        try {
+            // 既存の来訪宣言時間とPOST値が異なればupdate
+            $this->willGoService->willgoUpdate($id, $request, $datetimes);
+
+            // やっぱりifttt文言作成とPOST
+            $textMessage = $this->willGoService->textReMessageMaker($request);
+            $this->willGoService->pushIfttt($textMessage, Auth::user()->community_id);
+
+            // やっぱりの音声文言作成とDB POST
+            $voiceMessage = $this->willGoService->voiceReMessageMaker($request);
+            $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new $e;
+        }
+
+        return redirect('/')->with('message', 'ヨテイの宣言を更新しました。');
     }
 
     /**

@@ -17,7 +17,7 @@ use App\TalkMessage;
 use App\Repository\WillGoRepository;
 
 /**
- *
+ * 予定機能のサービス
  */
 class WillGoService
 {
@@ -44,6 +44,12 @@ class WillGoService
         $this->willGoRepository = $willGoRepository;
     }
 
+    /**
+     * ヨテイ宣言を行ったユーザー一覧の情報を出力
+     *
+     * @param integer $communityId
+     * @return array
+     */
     public function willGoUsersGet(int $communityId)
     {
         $soon               = $this->soonGet($communityId);
@@ -197,9 +203,107 @@ class WillGoService
         return $datetimes;
     }
 
-    public function willgoStore($request, $datetimes)
+    /**
+     * ヨテイ表示のプルダウンリスト出力で必要なもののみを生成する
+     * 既に宣言しているリストは出力させない為のもの
+     *
+     * @param void
+     * @return array
+     */
+    public function willgoPullDownListGet()
+    {
+        $array =  [
+            ["when" => "soon",              "text" => "これから"],
+            ["when" => "today",             "text" => "きょう"],
+            ["when" => "tomorrow",          "text" => "あした"],
+            ["when" => "dayAfterTomorrow",  "text" => "あさって"],
+        ];
+        $collection = collect($array);
+
+        $id = Auth::user()->id;
+
+        if (!Willgo::where('community_user_id', $id)->ThisWeek()->exists()) {
+            $collection = $collection->concat([["when" => "thisWeek", "text" => "今週"]]);
+        }
+
+        if (!Willgo::where('community_user_id', $id)->Weekend()->exists()) {
+            $collection = $collection->concat([["when" => "weekend", "text" => "土日"]]);
+        }
+
+        if (!Willgo::where('community_user_id', $id)->NextWeek()->exists()) {
+            $collection = $collection->concat([["when" => "nextWeek", "text" => "来週"]]);
+        }
+
+        if (!Willgo::where('community_user_id', $id)->ThisMonth()->exists()) {
+            $collection = $collection->concat([["when" => "thisMonth", "text" => "今月"]]);
+        }
+
+        if (!Willgo::where('community_user_id', $id)->NextMonth()->exists()) {
+            $collection = $collection->concat([["when" => "nextMonth", "text" => "来月"]]);
+        }
+
+        return $collection;
+    }
+
+    /**
+     * willgo Table にヨテイを登録するメソッドの呼び出し
+     *
+     * @param object    $request
+     * @param array     $datetimes
+     * @return void
+     */
+    public function willgoStore($request, array $datetimes)
     {
         return $this->willGoRepository->willgoStore($request, $datetimes);
+    }
+
+    /**
+     * willgo Table にヨテイを更新するメソッドの呼び出し
+     *
+     * @param integer   $id
+     * @param object    $request
+     * @param array     $datetimes
+     * @return void
+     */
+    public function willgoUpdate(int $id, $request, array $datetimes)
+    {
+        return $this->willGoRepository->willgoUpdate($id, $request, $datetimes);
+    }
+
+    /**
+     * 更新が必要かを確認、更新なら必要なオブジェクトを返却
+     *
+     * @param   object      $request
+     * @return  object|null
+     */
+    public function checkUpdateReturnObject($request)
+    {
+        // 更新対象の時間帯のPOSTの確認、必要ならupdateを行う
+        $checkArray = ['soon', 'today', 'tomorrow', 'dayAfterTomorrow'];
+        if (in_array($request->when, $checkArray)) {
+            return $this->willGoRepository->returnUpdateDataOrNull($request);
+        }
+        return null;
+    }
+
+    /**
+     * 投稿された予定の時間指定が以前のものと重複しているかを確認する
+     *
+     * @param string $fromDatetime  YYYY-mm-dd hh:mm:ss
+     * @param integer $hour
+     * @param integer $minute
+     * @return boolean
+     */
+    public function isDuplicateTime(string $fromDatetime, int $hour, int $minute)
+    {
+        $from = new Carbon($fromDatetime);
+        // 重複判定 from の時間が既存レコードと同じか？
+        if ($from->hour == $hour && $from->minute == $minute) {
+            // 投稿前と同じ時間だった場合
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -221,9 +325,29 @@ class WillGoService
     }
 
     /**
+     * ifttt 通知メッセージのテキストを生成する（訪問時間更新）
+     * @param object $request
+     * @return string
+     */
+    public function textReMessageMaker($request)
+    {
+        $userName       = Auth::user()->name;
+        $when           = $this->varWhenTextChanger($request->when);
+        $time           = $this->carbonTimeMaker($request->when, $request->hour, $request->minute);
+        if ($time) {
+            $time = $time->format('G:i');
+        }
+        $serviceName    = $this->community::find(Auth::user()->community_id)->service_name;
+
+        return $userName . "「やっぱり" . $when . $time . 'くらいに' . $serviceName . "に行くかも」";
+    }
+
+    /**
      * 時間表記が必要かを判定し、nullか時間のCarbonオブジェクトを返却する
      *
-     * @param Type $var
+     * @param string $when
+     * @param string $hour
+     * @param string $minute
      * @return Carbon|null
      */
     public function carbonTimeMaker(string $when, string $hour, string $minute)
@@ -251,7 +375,7 @@ class WillGoService
     /**
      * 時間の通知が必要ない通知かを判定する 不要なら true
      *
-     * @param [type] $when
+     * @param string $when
      * @return boolean
      */
     public function isNoUseTime($when)
@@ -308,6 +432,12 @@ class WillGoService
         $this->exportPostController->push_ifttt($title, $textMessage, $community);
     }
 
+    /**
+     * 予定の音声メッセージのテキストを作成する
+     *
+     * @param object $request
+     * @return string
+     */
     public function voiceMessageMaker($request)
     {
         $voiceMessage = 'ライブリンクよりお知らせです。';
@@ -326,13 +456,36 @@ class WillGoService
     }
 
     /**
+     * 予定(更新)の音声メッセージのテキストを作成する
+     *
+     * @param object $request
+     * @return string
+     */
+    public function voiceReMessageMaker($request)
+    {
+        $voiceMessage = 'ライブリンクよりお知らせです。';
+        // よみがな優先で発話
+        Auth::user()->name_reading ? $userName = Auth::user()->name_reading : $userName = Auth::user()->name;
+        $when = $this->varWhenTextChanger($request->when);
+
+        $time = $this->carbonTimeMaker($request->when, $request->hour, $request->minute);
+        if ($time) {
+            $time = $time->format('G時i分');
+        }
+
+        $voiceMessage .= $userName . 'さんが、予定を更新しました。やっぱり' . $when . $time . 'くらいに来るかもしれないです。';
+
+        return $voiceMessage;
+    }
+
+    /**
      * GoogheHome通知が必要であるかを判定し、必要ならメッセージを登録する
      *
      * @param string    $voiceMessage
      * @param object    $request
      * @return void
      */
-    public function storeGoogleHomeMessage($voiceMessage, $request)
+    public function storeGoogleHomeMessage(string $voiceMessage, $request)
     {
         // メッセージ作成と記録の判定
         $googleHomeEnable = $this->community::find(Auth::user()->community_id)->google_home_enable;
@@ -376,9 +529,9 @@ class WillGoService
      * @param string $when
      * @return void
      */
-    public function deleteIiftttPush( int $communityId, string $userName,string $when)
+    public function deleteIiftttPush(int $communityId, string $userName, string $when)
     {
         $textMessage = $userName . "「". $when . "くらいに行くのはやっぱりやめるかも」";
-        $this->pushIfttt( $textMessage, $communityId);
+        $this->pushIfttt($textMessage, $communityId);
     }
 }

@@ -51,7 +51,10 @@
                     <div class="plans">
                         <div class="value when">
                             <select name="when" class="comp-ui" id="tumori_when" onchange="timeDisplayChange();">
-                            <option value="soon">これから</option>
+                            @foreach ($willgoPullDownList as $list)
+                            <option value="{{$list['when']}}">{{$list['text']}}</option>
+                            @endforeach
+                            {{-- <option value="soon">これから</option>
                             <option value="today">きょう</option>
                             <option value="tomorrow">あした</option>
                             <option value="dayAfterTomorrow">あさって</option>
@@ -59,7 +62,7 @@
                             <option value="weekend">土日</option>
                             <option value="nextWeek">来週</option>
                             <option value="thisMonth">今月</option>
-                            <option value="nextMonth">来月</option>
+                            <option value="nextMonth">来月</option> --}}
                             </select>
                         </div>
                     </div>

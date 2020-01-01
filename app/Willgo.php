@@ -48,7 +48,7 @@ class Willgo extends Model
                 Carbon::now(),
                 Carbon::now()->addHour()
             ])
-            ->where('to_datetime', '<', Carbon::today()->addDay());
+            ->where('to_datetime', Carbon::today()->addHours(23)->addMinutes(59));
     }
 
     /**
@@ -67,12 +67,12 @@ class Willgo extends Model
             ->orWhere(function ($query) {
                 return $query->whereBetween('from_datetime', [
                     Carbon::now()->addHour(),
-                    Carbon::today()->addDay()
+                    Carbon::today()->addHours(23)->addMinutes(59)
                 ]);
             })
             ->whereBetween('to_datetime', [
                 Carbon::now()->addHour(),
-                Carbon::today()->addDay()
+                Carbon::today()->addHours(23)->addMinutes(59)
             ]);
     }
 
@@ -134,7 +134,7 @@ class Willgo extends Model
     }
 
     /**
-     * ThisWeekend 土日
+     * Weekend 土日
      *
      * @param object $query eroquent
      * @return void
@@ -148,7 +148,6 @@ class Willgo extends Model
         $from   = Carbon::today()->addDays($addDay - 1);
         // 日曜日 23:59 を設定
         $to     = Carbon::today()->addDays($addDay)->addHours(23)->addMinutes(59);
-
         return $query
             ->where('from_datetime', $from)
             ->where('to_datetime', $to);
@@ -168,7 +167,6 @@ class Willgo extends Model
         $from   = Carbon::today()->addDays($addDay + 1);
         // 来週日曜日 23:59 を設定
         $to     = Carbon::today()->addDays($addDay + 7)->addHours(23)->addMinutes(59);
-
         return $query
             ->where('from_datetime', $from)
             ->where('to_datetime', $to);

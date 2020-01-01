@@ -12,10 +12,11 @@
 @endif
 @if(Auth::check() && $community->tumolink_enable)
   @component('components.tumoli_form', [
-      'tumolist'        => $tumolist,
-      'willgoUsers'     => $willgoUsers,
-      'tumoli_declared' => $tumoli_declared,
-      'community'       => $community
+      'tumolist'            => $tumolist,
+      'willgoUsers'         => $willgoUsers,
+      'willgoPullDownList'  => $willgoPullDownList,
+      'tumoli_declared'     => $tumoli_declared,
+      'community'           => $community
       ])
   @endcomponent
   @if($community->google_home_enable == 1  &&  Auth::user()->provisional == 0)

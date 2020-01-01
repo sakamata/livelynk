@@ -116,20 +116,21 @@ class IndexController extends Controller
         }
 
         $willgoUsers = $this->willGoService->willGoUsersGet($community_id);
-        // dd($willgoUsers);
+        $willgoPullDownList = $this->willGoService->willgoPullDownListGet();
         $router = $this->callRouter->CommunityRouterGet($community_id);
         return view('index.index', [
-            'community' => $community,
-            'items' => $unregistered,
-            'items1' => $stays,
-            'items2' => $not_stays,
-            'willgoUsers' => $willgoUsers,
-            'tumolist' => $tumolist,
-            'tumoli_declared' => $tumoli_declared,
-            'rate' => $unregistered_rate_array,
-            'rate1' => $stays_rate_array,
-            'reader_id' => $reader_id,
-            'router' => $router,
+            'community'             => $community,
+            'items'                 => $unregistered,
+            'items1'                => $stays,
+            'items2'                => $not_stays,
+            'willgoUsers'           => $willgoUsers,
+            'willgoPullDownList'    => $willgoPullDownList,
+            'tumolist'              => $tumolist,
+            'tumoli_declared'       => $tumoli_declared,
+            'rate'                  => $unregistered_rate_array,
+            'rate1'                 => $stays_rate_array,
+            'reader_id'             => $reader_id,
+            'router'                => $router,
         ]);
     }
 
