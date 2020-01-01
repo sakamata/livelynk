@@ -74,6 +74,22 @@ class WillGoService
         ];
     }
 
+    /**
+     * ヨテイの宣言の件数を取得する
+     *
+     * @param integer $communityId
+     * @return integer
+     */
+    public function willGoCountGet(int $communityId)
+    {
+        return $this->willGoRepository->willGoCountGet($communityId);
+    }
+
+    public function todayWillgoUsers(int $communityId)
+    {
+        return $this->willGoRepository->todayWillgoUsers($communityId);
+    }
+
     public function soonGet(int $communityId)
     {
         $query = $this->willGoRepository->willgoUsersGet($communityId);
@@ -208,10 +224,14 @@ class WillGoService
      * 既に宣言しているリストは出力させない為のもの
      *
      * @param void
-     * @return array
+     * @return array|null
      */
     public function willgoPullDownListGet()
     {
+        if (!Auth::check()) {
+            return null;
+        }
+
         $array =  [
             ["when" => "soon",              "text" => "これから"],
             ["when" => "today",             "text" => "きょう"],

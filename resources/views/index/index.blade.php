@@ -12,10 +12,10 @@
 @endif
 @if(Auth::check() && $community->tumolink_enable)
   @component('components.tumoli_form', [
-      'tumolist'            => $tumolist,
+      'todayWillgoUsers'    => $todayWillgoUsers,
       'willgoUsers'         => $willgoUsers,
+      'willgoCount'         => $willgoCount,
       'willgoPullDownList'  => $willgoPullDownList,
-      'tumoli_declared'     => $tumoli_declared,
       'community'           => $community
       ])
   @endcomponent
@@ -36,8 +36,8 @@
 @endcomponent
 
 <div class="comp-box-container clearfix">
-@foreach ($tumolist as $item)
-  @if ($item->maybe_arraival == null)
+@foreach ($todayWillgoUsers as $item)
+  @if ($item->from_datetime == null)
     @continue
   @endif
 <div class="comp-box clearfix tumolist">
@@ -52,8 +52,12 @@
     </div>
     <div class="arrival">
       <div class="head">予定</div>
-      <div class="time">{{date('n/j G:i', strtotime($item->maybe_arraival))}}</div>
-      <div class="accuracy tumoli_icon">ツ</div>
+      @if ($item->from_datetime->hour == 0 && $item->from_datetime->minute == 0)
+      <div class="time">きょう</div>
+      @else
+      <div class="time">{{date('G:i', strtotime($item->from_datetime))}}</div>
+      @endif
+      <div class="accuracy tumoli_icon">予</div>
     </div>
     @can('normalAdmin')
     </a>

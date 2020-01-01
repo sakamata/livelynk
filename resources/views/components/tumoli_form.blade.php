@@ -5,12 +5,12 @@
         <li>
             <div class="data">
                 <div class="availabilities">
-                <div class="head">ヨテイ宣言<span>{{ $tumolist->count() }} 件</span></div>
-                @foreach ($willgoUsers as $when => $willgoUsers)
-                    @if (count($willgoUsers) > 0)
+                <div class="head">ヨテイ宣言<span>{{$willgoCount}}件</span></div>
+                @foreach ($willgoUsers as $when => $willgoUsersList)
+                    @if (count($willgoUsersList) > 0)
                     <ul class="body all">
                         <div class="when">{{$when}}</div>
-                        @foreach ($willgoUsers as $willgoUser)
+                        @foreach ($willgoUsersList as $willgoUser)
                         <li class="availability afterBegin">
                         <div class="icon">
                             <i class="fas fa-user-circle"></i>
@@ -54,15 +54,6 @@
                             @foreach ($willgoPullDownList as $list)
                             <option value="{{$list['when']}}">{{$list['text']}}</option>
                             @endforeach
-                            {{-- <option value="soon">これから</option>
-                            <option value="today">きょう</option>
-                            <option value="tomorrow">あした</option>
-                            <option value="dayAfterTomorrow">あさって</option>
-                            <option value="thisWeek">今週</option>
-                            <option value="weekend">土日</option>
-                            <option value="nextWeek">来週</option>
-                            <option value="thisMonth">今月</option>
-                            <option value="nextMonth">来月</option> --}}
                             </select>
                         </div>
                     </div>
@@ -97,9 +88,6 @@
                     </div>
 
                     <button type="submit" name="action" value="willgo" class="tumoli-button comp-ui">行くかも</button>
-                    @if($tumoli_declared == true)
-                    <button type="submit" name="action" value="cancel" class="tumoli-button bel-button comp-ui">取り消し</button>
-                    @endif
 
                     @if($community->google_home_enable)
                     <p class="label-text">GoogleHome通知</p>

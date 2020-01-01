@@ -106,27 +106,28 @@ class IndexController extends Controller
             (array)$not_stay_users_id
         );
 
-        $tumolist = $this->call_tumolink->tumolistGet($community->id);
         $reader_id = "";
-        $tumoli_declared = false;
-        // login中であれば取得する reader_id tumolinkユーザー一覧
         if (Auth::check()) {
             $reader_id = $this->getReaderID();
-            $tumoli_declared = $this->call_tumolink->existsTodayPost(Auth::user()->id, $column = 'maybe_arraival');
         }
 
-        $willgoUsers = $this->willGoService->willGoUsersGet($community_id);
+        // 本日ヨテイ宣言をしたユーザーのリストを取得
+        $todayWillgoUsers = $this->willGoService->todayWillgoUsers($community_id);
+        // ヨテイ機能のユーザー一覧取得
+        $willgoUsers        = $this->willGoService->willGoUsersGet($community_id);
+        // コミュニティごとの宣言の件数
+        $willgoCount   = $this->willGoService->willGoCountGet($community_id);
         $willgoPullDownList = $this->willGoService->willgoPullDownListGet();
         $router = $this->callRouter->CommunityRouterGet($community_id);
         return view('index.index', [
             'community'             => $community,
+            'todayWillgoUsers'      => $todayWillgoUsers,
             'items'                 => $unregistered,
             'items1'                => $stays,
             'items2'                => $not_stays,
             'willgoUsers'           => $willgoUsers,
+            'willgoCount'           => $willgoCount,
             'willgoPullDownList'    => $willgoPullDownList,
-            'tumolist'              => $tumolist,
-            'tumoli_declared'       => $tumoli_declared,
             'rate'                  => $unregistered_rate_array,
             'rate1'                 => $stays_rate_array,
             'reader_id'             => $reader_id,

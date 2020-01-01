@@ -52,6 +52,38 @@ class WillGoRepository
             ->where('community_user.community_id', $communityId);
     }
 
+    public function todayWillgoUsers(int $communityId)
+    {
+        return $this->willgo::
+            select(
+                'willgo.*',
+                'users.name',
+                'users.name_reading',
+                'users.provisional',
+                'communities_users_statuses.hide'
+            )
+            ->join('community_user', 'community_user.id', '=', 'willgo.community_user_id')
+            ->join('communities_users_statuses', 'community_user.id', '=', 'communities_users_statuses.id')
+            ->join('users', 'users.id', '=', 'community_user.user_id')
+            ->where('community_user.community_id', $communityId)
+            ->whereBetween('from_datetime', [Carbon::today(),Carbon::today()->addHours(23)->addMinutes(59)])
+            ->get();
+    }
+
+    /**
+     * ヨテイの宣言の件数を取得する
+     *
+     * @param integer $communityId
+     * @return integer
+     */
+    public function willGoCountGet(int $communityId)
+    {
+        return $this->willgo::
+            join('community_user', 'community_user.id', '=', 'willgo.community_user_id')
+            ->where('community_user.community_id', $communityId)
+            ->count();
+    }
+
     /**
      * いまから soon の際の from to の時間を配列で返却する
      *
