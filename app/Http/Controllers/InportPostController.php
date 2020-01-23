@@ -133,6 +133,10 @@ class InportPostController extends Controller
                 if (!$success) {
                     // コケた際はひとまずlog出力
                     Log::warning(print_r('Provisional User & Device Create Error!!', 1));
+                    logger()->warning('$community_user_id>>>');
+                    logger()->warning($community_user_id);
+                    logger()->warning('$param at mac_address >>>');
+                    logger()->warning($param);
                     // continue;
                 }
                 // この宣言は外してはいけない！！
