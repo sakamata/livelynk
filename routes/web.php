@@ -52,7 +52,7 @@ Route::post('/tumolink/post', 'TumolinkController@post')->middleware('auth');
 
 // ヨテイ
 // Route::get('/willgo/index', 'WillGoController@index');
-Route::get('/willgo/index/{community_id?}', 'WillGoController@index');
+Route::get('/willgo/index/{community_id?}', 'WillGoController@index')->where('community_id', '[0-9]+');
 Route::post('/willgo/post', 'WillGoController@store')->middleware('auth');
 Route::post('/willgo/delete/{id}', 'WillGoController@delete')->middleware('auth')->where('id', '[0-9]+');
 

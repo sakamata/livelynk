@@ -37,6 +37,12 @@ class WillGoController extends Controller
         ], 200);
     }
 
+    /**
+     * ヨテイの登録を行う
+     *
+     * @param WillgoRequest $request
+     * @return void
+     */
     public function store(WillgoRequest $request)
     {
         /*
@@ -47,7 +53,7 @@ class WillGoController extends Controller
             "when" => "soon"
             "hour" => "0 .. 23"
             "minute" => "0 10 20 30 40 50"
-            "action" => "willgo | turnBack | cancel"
+            "action" => "willgo | go_back | cancel"
             "cancel_id" => "int"  willgo tableのIDを指定
             "google_home_push" => "0 | 1"
         ]
@@ -66,6 +72,7 @@ class WillGoController extends Controller
                 if ($isDuplicate) {
                     return redirect('/')->with('message', 'すでにその日時は宣言済みです。');
                 } else {
+                    // 更新作業へ
                     return $this->update($res->id, $request);
                 }
             }
@@ -83,15 +90,22 @@ class WillGoController extends Controller
                 $this->willGoService->willgoStore($request, $datetimes);
                 $voiceMessage = $this->willGoService->voiceMessageMaker($request);
                 $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request);
-                $textMessage = $this->willGoService->textMessageMaker($request);
                 DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
                 throw new $e;
             }
 
+            $textMessage = $this->willGoService->textMessageMaker($request);
             $this->willGoService->pushIfttt($textMessage, Auth::user()->community_id);
+
             return redirect('/')->with('message', 'ヨテイの宣言をしました。');
+        }
+
+        // 帰宅宣言の場合
+        if ($request->action == 'go_back') {
+            $this->willGoService->goBackStoreOrUpdate((int)$request->go_back_minute);
+            return redirect('/')->with('message', '帰る宣言をしました。');
         }
     }
 
@@ -118,10 +132,6 @@ class WillGoController extends Controller
             // 既存の来訪宣言時間とPOST値が異なればupdate
             $this->willGoService->willgoUpdate($id, $request, $datetimes);
 
-            // やっぱりifttt文言作成とPOST
-            $textMessage = $this->willGoService->textReMessageMaker($request);
-            $this->willGoService->pushIfttt($textMessage, Auth::user()->community_id);
-
             // やっぱりの音声文言作成とDB POST
             $voiceMessage = $this->willGoService->voiceReMessageMaker($request);
             $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request);
@@ -131,6 +141,10 @@ class WillGoController extends Controller
             DB::rollBack();
             throw new $e;
         }
+
+        // やっぱりifttt文言作成とPOST
+        $textMessage = $this->willGoService->textReMessageMaker($request);
+        $this->willGoService->pushIfttt($textMessage, Auth::user()->community_id);
 
         return redirect('/')->with('message', 'ヨテイの宣言を更新しました。');
     }

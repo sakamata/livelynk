@@ -12,7 +12,6 @@
 @endif
 @if(Auth::check() && $community->tumolink_enable)
   @component('components.tumoli_form', [
-      'todayWillgoUsers'    => $todayWillgoUsers,
       'willgoUsers'         => $willgoUsers,
       'willgoCount'         => $willgoCount,
       'willgoPullDownList'  => $willgoPullDownList,

@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Log;
 
 use App\Community;
 use App\CommunityUser;
+use App\CommunityUserStatus;
 use App\MacAddress;
+use App\Service\MacAddressService;
 use App\Http\Controllers\ExportPostController;
 use App\TalkMessage;
 use App\Repository\WillGoRepository;
@@ -22,38 +24,42 @@ use App\Repository\WillGoRepository;
 class WillGoService
 {
     private $community;
-    private $communityUser;
+    private $communityUserStatus;
     private $exportPostController;
     private $macAddress;
+    private $macAddressServece;
     private $talkMessage;
     private $willGoRepository;
 
     public function __construct(
-        Community           $community,
-        CommunityUser       $communityUser,
+        Community               $community,
+        CommunityUserStatus     $communityUserStatus,
         ExportPostController    $exportPostController,
-        MacAddress          $macAddress,
-        TalkMessage         $talkMessage,
-        WillGoRepository    $willGoRepository
+        MacAddress              $macAddress,
+        MacAddressService       $macAddressServece,
+        TalkMessage             $talkMessage,
+        WillGoRepository        $willGoRepository
     ) {
-        $this->community        = $community;
-        $this->communityUser    = $communityUser;
+        $this->community            = $community;
+        $this->communityUserStatus  = $communityUserStatus;
         $this->exportPostController = $exportPostController;
-        $this->macAddress       = $macAddress;
-        $this->talkMessage      = $talkMessage;
-        $this->willGoRepository = $willGoRepository;
+        $this->macAddress           = $macAddress;
+        $this->macAddressServece    = $macAddressServece;
+        $this->talkMessage          = $talkMessage;
+        $this->willGoRepository     = $willGoRepository;
     }
 
     /**
      * ヨテイ宣言を行ったユーザー一覧の情報を出力
      *
-     * @param integer $communityId
+     * @param integer   $communityId
+     * @param array     $staysUsersId
      * @return array
      */
-    public function willGoUsersGet(int $communityId)
+    public function willGoUsersGet(int $communityId, array $staysUsersId)
     {
-        $soon               = $this->soonGet($communityId);
-        $today              = $this->todayGet($communityId);
+        $soon               = $this->soonGet($communityId, $staysUsersId);
+        $today              = $this->todayGet($communityId, $staysUsersId);
         $tomorrow           = $this->tomorrowGet($communityId);
         $dayAfterTomorrow   = $this->dayAfterTomorrowGet($communityId);
         $thisWeek           = $this->thisWeekGet($communityId);
@@ -77,7 +83,7 @@ class WillGoService
     /**
      * ヨテイの宣言の件数を取得する
      *
-     * @param integer $communityId
+     * @param integer   $communityId
      * @return integer
      */
     public function willGoCountGet(int $communityId)
@@ -85,21 +91,28 @@ class WillGoService
         return $this->willGoRepository->willGoCountGet($communityId);
     }
 
-    public function todayWillgoUsers(int $communityId)
+    public function getTodayWillgoUsersIds(int $communityId)
     {
-        return $this->willGoRepository->todayWillgoUsers($communityId);
+        return $this->willGoRepository->getTodayWillgoUsersIds($communityId);
     }
 
-    public function soonGet(int $communityId)
+    public function todayWillgoUsers(int $communityId, array $staysUsersId)
     {
-        $query = $this->willGoRepository->willgoUsersGet($communityId);
-        return $query->Soon()->get();
+        return $this->willGoRepository->todayWillgoUsers($communityId, $staysUsersId);
     }
 
-    public function todayGet(int $communityId)
+    public function soonGet(int $communityId, array $staysUsersId)
     {
         $query = $this->willGoRepository->willgoUsersGet($communityId);
-        return $query->Today()->get();
+        return $query->whereNotIn('community_user.id', $staysUsersId)
+                    ->Soon()->get();
+    }
+
+    public function todayGet(int $communityId, array $staysUsersId)
+    {
+        $query = $this->willGoRepository->willgoUsersGet($communityId);
+        return $query->whereNotIn('community_user.id', $staysUsersId)
+                    ->Today()->get();
     }
 
     public function tomorrowGet(int $communityId)
@@ -221,7 +234,8 @@ class WillGoService
 
     /**
      * ヨテイ表示のプルダウンリスト出力で必要なもののみを生成する
-     * 既に宣言しているリストは出力させない為のもの
+     * 既に宣言しているリストは出力させない
+     * 来訪中は今日、これからを出力させない
      *
      * @param void
      * @return array|null
@@ -231,16 +245,24 @@ class WillGoService
         if (!Auth::check()) {
             return null;
         }
+        $id = Auth::user()->id;
+        // 該当ユーザーが来訪中の場合は「今日、これから」 表示プルダウンから除外
+        $isNowStay = $this->macAddressServece->ThisUserExists($id);
+        $array = [];
+        if (!$isNowStay) {
+            $array =  [
+                ["when" => "soon",              "text" => "これから"],
+                ["when" => "today",             "text" => "きょう"],
+            ];
+        }
 
-        $array =  [
-            ["when" => "soon",              "text" => "これから"],
-            ["when" => "today",             "text" => "きょう"],
+        $array  = array_merge($array, array(
             ["when" => "tomorrow",          "text" => "あした"],
-            ["when" => "dayAfterTomorrow",  "text" => "あさって"],
-        ];
+            ["when" => "dayAfterTomorrow",  "text" => "あさって"]
+        ));
+
         $collection = collect($array);
 
-        $id = Auth::user()->id;
 
         if (!Willgo::where('community_user_id', $id)->ThisWeek()->exists()) {
             $collection = $collection->concat([["when" => "thisWeek", "text" => "今週"]]);
@@ -288,6 +310,11 @@ class WillGoService
     public function willgoUpdate(int $id, $request, array $datetimes)
     {
         return $this->willGoRepository->willgoUpdate($id, $request, $datetimes);
+    }
+
+    public function goBackStoreOrUpdate(int $minute)
+    {
+        return $this->willGoRepository->goBackStoreOrUpdate((int)$minute);
     }
 
     /**

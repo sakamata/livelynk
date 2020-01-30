@@ -32,9 +32,10 @@ class WillgoRequest extends FormRequest
                                 ],
             'hour'              => ['nullable', 'integer', 'between:0,23'],
             'minute'            => ['nullable', 'integer', 'in:0,10,20,30,40,50'],
-            'action'            => ['required', 'regex:/^(willgo|turnBack|cancel)$/'],
+            'action'            => ['required', 'regex:/^(willgo|go_back|cancel)$/'],
             'cancel_id'         => ['nullable', 'integer', 'exists:willgo,id'],
             'google_home_push'  => ['required', 'boolean'],
+            'go_back_minute'    => ['required', 'integer', 'in:30,60,120,180'],
         ];
     }
 }

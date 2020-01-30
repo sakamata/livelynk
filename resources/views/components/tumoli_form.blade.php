@@ -101,6 +101,21 @@
                     <input type="hidden" name="google_home_push" value="0">
                     @endif
 
+                    {{-- 滞在中の条件文で非表示に --}}
+                    <div class="plans">
+                        <div class="value when">
+                            <select name="go_back_minute" class="comp-ui" id="tumori_goback" onchange="timeDisplayChange();">
+                            <option value="30">そろそろ</option>
+                            <option value="60">1時間後</option>
+                            <option value="120">2時間後</option>
+                            <option value="180">3時間後</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" name="action" value="go_back" class="tumoli-button comp-ui">帰るかも</button>
+
+
                 </form>
             </div>
             <script src="{{ asset('js/bundle.js') }}"></script>

@@ -36,6 +36,13 @@ class WillGoRepository
         $this->willgo           = $willgo;
     }
 
+    /**
+     * 予定機能の予定一覧のユーザーを取得するクエリビルダ
+     * 期間指定は呼び出し元のscopeで行う
+     *
+     * @param integer $communityId
+     * @return Illuminate\Database\Eloquent\Builder
+     */
     public function willgoUsersGet(int $communityId)
     {
         return $this->willgo::
@@ -52,7 +59,14 @@ class WillGoRepository
             ->where('community_user.community_id', $communityId);
     }
 
-    public function todayWillgoUsers(int $communityId)
+    /**
+     * 滞在者一覧に表示する 今日ヨテイ宣言したユーザーの一覧を取得（滞在中のユーザーを除外）
+     *
+     * @param integer $communityId
+     * @param array $staysUsersId   除外対象の滞在中のユーザー
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function todayWillgoUsers(int $communityId, array $staysUsersId)
     {
         return $this->willgo::
             select(
@@ -66,8 +80,8 @@ class WillGoRepository
             ->join('communities_users_statuses', 'community_user.id', '=', 'communities_users_statuses.id')
             ->join('users', 'users.id', '=', 'community_user.user_id')
             ->where('community_user.community_id', $communityId)
-            ->whereBetween('from_datetime', [Carbon::today(),Carbon::today()->addHours(23)->addMinutes(59)])
-            ->get();
+            ->whereNotIn('community_user.id', $staysUsersId)
+            ->whereBetween('from_datetime', [Carbon::today(),Carbon::today()->addHours(23)->addMinutes(59)]);
     }
 
     /**
@@ -78,10 +92,28 @@ class WillGoRepository
      */
     public function willGoCountGet(int $communityId)
     {
+        // 帰宅宣言が今日以降であれば取得 (30日に29日前の「今月中」の宣言も取得する)
         return $this->willgo::
-            join('community_user', 'community_user.id', '=', 'willgo.community_user_id')
+            leftJoin('community_user', 'community_user.id', '=', 'willgo.community_user_id')
             ->where('community_user.community_id', $communityId)
+            ->where('to_datetime', '>=', Carbon::today())
             ->count();
+    }
+
+    /**
+     * 今日来訪宣言をしたuserのIDを配列で取得（件数のcountに利用）
+     *
+     * @param integer $communityId
+     * @return array
+     */
+    public function getTodayWillgoUsersIds(int $communityId)
+    {
+        return $this->willgo::
+                join('community_user', 'community_user.id', '=', 'willgo.community_user_id')
+                ->where('community_user.community_id', $communityId)
+                ->whereDate('from_datetime', Carbon::today())
+                ->whereDate('to_datetime', Carbon::today())
+                ->pluck('community_user_id')->toArray();
     }
 
     /**
@@ -329,6 +361,47 @@ class WillGoRepository
         $model->to_datetime         = $datetimes['to'];
         $model->google_home_push    = $request->google_home_push;
         $model->save();
+    }
+
+    /**
+     * 帰宅宣言の登録・更新を行う
+     *
+     * @param integer $minute
+     * @return void
+     */
+    public function goBackStoreOrUpdate(int $minute)
+    {
+
+        // TODO willgo tableの帰宅宣言カラムをつかって全体のデータ整合性取れるのか？
+        // 設計を再度考える必要あり
+
+        // ひとまず、 to_datetime に帰宅予告時間を入れればなんとかなるか？
+        // 来訪宣言無の場合　form に0:00いれて to に　指定時間後を入れる
+        // 来訪宣言あり　ママイキ
+        // to が当日繰り越し　気にしない、 帰る時間の一覧はあくまで toだけで取得するので、その際に朝6時くらいまでの範囲で拾わせる？
+
+
+        // 来訪宣言をしているか
+        $model = $this->willgo::where('community_user_id', Auth::user()->id)
+            ->where('from_datetime', '>=', Carbon::today())
+            ->where('to_datetime', '<', Carbon::today()->addDay())
+            ->pluck('id')->first();
+
+        if (is_null($model)) {
+            logger()->debug('$model null! 来訪宣言無しの場合');
+            // 来訪宣言無しの場合
+            $model = new Willgo();
+            $model->from_datetime   = Carbon::toDay();
+        }
+        // 帰宅用レコード作成
+        // 来訪宣言ありの場合
+        $model->community_user_id = Auth::user()->id;
+        $model->to_datetime = Carbon::now()->addMinutes($minute);
+        $model->save();
+
+        // TODO 来訪あり、帰宅時間が翌日になる場合
+
+        return;
     }
 
     /**

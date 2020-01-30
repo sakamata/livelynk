@@ -97,6 +97,7 @@ class IndexController extends Controller
         $users_id = $this->ChangeObjectToArray($users_id_obj, $column = null);
         $unregistered_users_id = $this->ChangeObjectToArray($unregistered, $column = 'user_id');
         $stays_users_id = $this->ChangeObjectToArray($stays, $column = 'user_id');
+        $stays_community_user_id = $this->ChangeObjectToArray($stays, $column = 'id');
         $all_stays_users_id = array_merge($unregistered_users_id, $stays_users_id);
         // 不在中のuser_id array
         $not_stay_users_id = array_diff($users_id, $all_stays_users_id);
@@ -111,12 +112,22 @@ class IndexController extends Controller
             $reader_id = $this->getReaderID();
         }
 
+        $staysUsersId     = $stays->pluck('id')->toArray();
         // 本日ヨテイ宣言をしたユーザーのリストを取得
-        $todayWillgoUsers = $this->willGoService->todayWillgoUsers($community_id);
-        // ヨテイ機能のユーザー一覧取得
-        $willgoUsers        = $this->willGoService->willGoUsersGet($community_id);
-        // コミュニティごとの宣言の件数
+        // 滞在中のユーザーオブジェクト一覧を取得（滞在中のユーザーを除外）
+        $todayWillgoUsers = $this->willGoService->todayWillgoUsers($community_id, $staysUsersId);
+
+        // ヨテイ機能のユーザー一覧取得（滞在中のユーザーを除外）
+        $willgoUsers      = $this->willGoService->willGoUsersGet($community_id, $staysUsersId);
+        // 本日以降のコミュニティごとの予定宣言の件数を取得
         $willgoCount   = $this->willGoService->willGoCountGet($community_id);
+        // 今日来訪を宣言したユーザーのidを配列で取得
+        $todayWillgoUsersIds = $this->willGoService->getTodayWillgoUsersIds($community_id);
+        // 配列内の重複をcount 本日以降の来訪者宣言件数から countされた値を引いて
+        // 本日滞在中のユーザーの来訪宣言を抜いた予定宣言件数を取得
+        $subCount = count(array_intersect($stays_community_user_id, $todayWillgoUsersIds));
+        $willgoCount = $willgoCount - $subCount;
+
         $willgoPullDownList = $this->willGoService->willgoPullDownListGet();
         $router = $this->callRouter->CommunityRouterGet($community_id);
         return view('index.index', [
