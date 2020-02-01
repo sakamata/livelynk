@@ -36,6 +36,7 @@ class WillgoRequest extends FormRequest
             'cancel_id'         => ['nullable', 'integer', 'exists:willgo,id'],
             'google_home_push'  => ['required', 'boolean'],
             'go_back_minute'    => ['required', 'integer', 'in:30,60,120,180'],
+            'go_back_add_day'   => ['required', 'integer', 'min:0,', 'max:2'],
         ];
     }
 }

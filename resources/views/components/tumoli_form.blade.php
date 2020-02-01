@@ -104,6 +104,7 @@
                     {{-- 滞在中の条件文で非表示に --}}
                     <div class="plans">
                         <div class="value when">
+                            <input type="hidden" name="go_back_add_day" value="0">
                             <select name="go_back_minute" class="comp-ui" id="tumori_goback" onchange="timeDisplayChange();">
                             <option value="30">そろそろ</option>
                             <option value="60">1時間後</option>

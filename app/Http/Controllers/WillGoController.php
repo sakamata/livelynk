@@ -21,26 +21,26 @@ class WillGoController extends Controller
         $this->willGoService        = $willGoService;
     }
 
-    /**
-     * test用メソッド使用しない
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function index(Request $request)
-    {
-        $willgoUsers = $this->willGoService->willGoUsersGet($request->community_id);
-        return response()->json([
-            'willgoUsers'    => $willgoUsers,
-            'community_id'  => $request->community_id,
-            'key' => 'value!'
-        ], 200);
-    }
+    // /**
+    //  * test用メソッド使用しない
+    //  *
+    //  * @param Request $request
+    //  * @return void
+    //  */
+    // public function index(Request $request)
+    // {
+    //     $willgoUsers = $this->willGoService->willGoUsersGet($request->community_id);
+    //     return response()->json([
+    //         'willgoUsers'    => $willgoUsers,
+    //         'community_id'  => $request->community_id,
+    //         'key' => 'value!'
+    //     ], 200);
+    // }
 
     /**
      * ヨテイの登録を行う
      *
-     * @param WillgoRequest $request
+     * @param App\Http\Requests\WillgoRequest $request
      * @return void
      */
     public function store(WillgoRequest $request)
@@ -56,6 +56,8 @@ class WillGoController extends Controller
             "action" => "willgo | go_back | cancel"
             "cancel_id" => "int"  willgo tableのIDを指定
             "google_home_push" => "0 | 1"
+            "go_back_minute" => "30|60|90|120|180"
+            "go_back_add_day" => "0|1|2"
         ]
         */
         if ($request->action == 'willgo') {
@@ -88,12 +90,15 @@ class WillGoController extends Controller
             DB::beginTransaction();
             try {
                 $this->willGoService->willgoStore($request, $datetimes);
-                $voiceMessage = $this->willGoService->voiceMessageMaker($request);
-                $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request);
+                $voiceMessage = $this->willGoService->willgoVoiceMessageMaker($request);
+                $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request->google_home_push);
                 DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
+                logger()->critical('error!'. __METHOD__);
+                logger()->critical($e->getMessage());
                 throw new $e;
+                return redirect('/')->with('message', '帰る宣言が登録されませんでした。');
             }
 
             $textMessage = $this->willGoService->textMessageMaker($request);
@@ -104,7 +109,29 @@ class WillGoController extends Controller
 
         // 帰宅宣言の場合
         if ($request->action == 'go_back') {
-            $this->willGoService->goBackStoreOrUpdate((int)$request->go_back_minute);
+            DB::beginTransaction();
+            try {
+                $this->willGoService->goBackStoreOrUpdate(
+                    (int)$request->go_back_minute,
+                    (int)$request->go_back_add_day,
+                    (bool)$request->google_home_push
+                );
+                $voiceMessage = $this->willGoService->gobackVoiceMessageMaker(
+                    (int)$request->go_back_minute,
+                    (int)$request->go_back_add_day
+                );
+                $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request->google_home_push);
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+                logger()->critical('error!'. __METHOD__);
+                logger()->critical($e->getMessage());
+                throw new $e;
+                return redirect('/')->with('message', '帰る宣言が登録されませんでした。');
+            }
+            $textMessage = $this->willGoService->textMessageMakerForGoback($request);
+            $this->willGoService->pushIfttt($textMessage, Auth::user()->community_id);
+
             return redirect('/')->with('message', '帰る宣言をしました。');
         }
     }
@@ -134,11 +161,13 @@ class WillGoController extends Controller
 
             // やっぱりの音声文言作成とDB POST
             $voiceMessage = $this->willGoService->voiceReMessageMaker($request);
-            $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request);
+            $this->willGoService->storeGoogleHomeMessage($voiceMessage, $request->google_home_push);
 
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
+            logger()->critical('error!'. __METHOD__);
+            logger()->critical($e->getMessage());
             throw new $e;
         }
 

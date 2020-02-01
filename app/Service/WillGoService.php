@@ -312,9 +312,13 @@ class WillGoService
         return $this->willGoRepository->willgoUpdate($id, $request, $datetimes);
     }
 
-    public function goBackStoreOrUpdate(int $minute)
+    public function goBackStoreOrUpdate(int $minute, int $gobackAddDay, bool $googleHomePush)
     {
-        return $this->willGoRepository->goBackStoreOrUpdate((int)$minute);
+        return $this->willGoRepository->goBackStoreOrUpdate(
+            (int)$minute,
+            (int)$gobackAddDay,
+            (bool)$googleHomePush
+        );
     }
 
     /**
@@ -387,6 +391,27 @@ class WillGoService
         $serviceName    = $this->community::find(Auth::user()->community_id)->service_name;
 
         return $userName . "「やっぱり" . $when . $time . 'くらいに' . $serviceName . "に行くかも」";
+    }
+
+    /**
+     * ifttt 通知メッセージのテキストを生成する（帰宅予定）
+     * @param object $request
+     * @return string
+     */
+    public function textMessageMakerForGoback($request)
+    {
+        $userName   = Auth::user()->name;
+        $minute     = $request->go_back_minute;
+        if ($minute == 30) {
+            $time = 'そろそろ';
+        } elseif ($minute == 60) {
+            $time = '1時間後くらいに';
+        } else {
+            $time = Carbon::now()->addMinutes($minute)->format('G時i分') . 'くらいに';
+        }
+        $when           = $this->varGobackAddDayTextChanger($request->go_back_add_day);
+        $serviceName    = $this->community::find(Auth::user()->community_id)->service_name;
+        return $userName . "「" . $when . $time . 'くらいに' . $serviceName . "から帰るかも」";
     }
 
     /**
@@ -466,6 +491,27 @@ class WillGoService
     }
 
     /**
+     * 変数 $when の値を日本語変換する
+     *
+     * @param string $gobackAddDday
+     * @return string
+     */
+    public function varGobackAddDayTextChanger($gobackAddDday)
+    {
+        $array = [
+            '0' => '',
+            '1' => 'あした',
+            '2' => 'あさって'
+        ];
+
+        if (array_key_exists($gobackAddDday, $array)) {
+            return $array[$gobackAddDday];
+        } else {
+            // 該当無しの場合
+            return 'そのうち';
+        }
+    }
+    /**
      * ifttt通知メソッドに渡す必要な引数を揃えて通知メソッドを実行する
      *
      * @param string $textMessage
@@ -480,12 +526,12 @@ class WillGoService
     }
 
     /**
-     * 予定の音声メッセージのテキストを作成する
+     * 来訪予定の音声メッセージのテキストを作成する
      *
      * @param object $request
      * @return string
      */
-    public function voiceMessageMaker($request)
+    public function willgoVoiceMessageMaker($request)
     {
         $voiceMessage = 'ライブリンクよりお知らせです。';
         // よみがな優先で発話
@@ -526,27 +572,47 @@ class WillGoService
     }
 
     /**
+     * 帰宅予定の音声メッセージのテキストを作成する
+     *
+     * @param integer $minute
+     * @param integer $addDay
+     * @return string
+     */
+    public function gobackVoiceMessageMaker(int $minute, int $addDay)
+    {
+        $voiceMessage = 'ライブリンクよりお知らせです。';
+        // よみがな優先で発話
+        Auth::user()->name_reading ? $userName = Auth::user()->name_reading : $userName = Auth::user()->name;
+        $when = $this->varGobackAddDayTextChanger($addDay);
+
+        if ($minute == 30) {
+            $time = 'そろそろ';
+        } elseif ($minute == 60) {
+            $time = '1時間後くらいに';
+        } else {
+            $time = Carbon::now()->addMinutes($minute)->format('G時i分') . 'くらいに';
+        }
+
+        $voiceMessage .= $userName . 'さんが' . $when . $time . '帰るみたいです。';
+        logger()->debug($voiceMessage);
+        return $voiceMessage;
+    }
+
+    /**
      * GoogheHome通知が必要であるかを判定し、必要ならメッセージを登録する
      *
      * @param string    $voiceMessage
      * @param object    $request
      * @return void
      */
-    public function storeGoogleHomeMessage(string $voiceMessage, $request)
+    public function storeGoogleHomeMessage(string $voiceMessage, bool $isPush)
     {
-        // メッセージ作成と記録の判定
+        // 記録の判定
         $googleHomeEnable = $this->community::find(Auth::user()->community_id)->google_home_enable;
-        if ($request->google_home_push == false || $googleHomeEnable == false) {
+        if ($isPush == false || $googleHomeEnable == false) {
             return;
         }
-
-        // 発話tableに入れる
-        $talkMessage = new $this->talkMessage();
-        // ひままずcommunityの最初のrouterに紐づいたGoogleHomeを対象にする
-        $router = 'App\Community'::find(Auth::user()->community_id)->router()->orderBy('id')->first();
-        $talkMessage->router_id       = $router->id;
-        $talkMessage->talking_message = $voiceMessage;
-        $talkMessage->save();
+        $this->willGoRepository->storeGoogleHomeMessage((string)$voiceMessage);
     }
 
     /**

@@ -8,6 +8,7 @@ use App\CommunityUser;
 use App\MacAddress;
 use App\TalkMessage;
 use App\Willgo;
+use App\Goback;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -18,6 +19,7 @@ class WillGoRepository
 {
     private $community;
     private $communityUser;
+    private $goback;
     private $macAddress;
     private $talkMessage;
     private $willgo;
@@ -25,12 +27,14 @@ class WillGoRepository
     public function __construct(
         Community       $community,
         CommunityUser   $communityUser,
+        Goback          $goback,
         MacAddress      $macAddress,
         TalkMessage     $talkMessage,
         Willgo          $willgo
     ) {
         $this->community        = $community;
         $this->communityUser    = $communityUser;
+        $this->goback           = $goback;
         $this->macAddress       = $macAddress;
         $this->talkMessage      = $talkMessage;
         $this->willgo           = $willgo;
@@ -346,6 +350,23 @@ class WillGoRepository
     }
 
     /**
+     * GoogheHome通知が必要であるかを判定し、必要ならメッセージを登録する
+     *
+     * @param string    $voiceMessage
+     * @return void
+     */
+    public function storeGoogleHomeMessage(string $voiceMessage)
+    {
+        // 発話tableに入れる
+        $talkMessage = new $this->talkMessage();
+        // ひままずcommunityの最初のrouterに紐づいたGoogleHomeを対象にする
+        $router = 'App\Community'::find(Auth::user()->community_id)->router()->orderBy('id')->first();
+        $talkMessage->router_id       = $router->id;
+        $talkMessage->talking_message = $voiceMessage;
+        $talkMessage->save();
+    }
+
+    /**
      * 投稿の更新を行う
      *
      * @param integer   $id
@@ -367,36 +388,27 @@ class WillGoRepository
      * 帰宅宣言の登録・更新を行う
      *
      * @param integer $minute
+     * @param integer $gobackAddDay
+     * @param bool    $googleHomePush
      * @return void
      */
-    public function goBackStoreOrUpdate(int $minute)
+    public function goBackStoreOrUpdate(int $minute, int $gobackAddDay, bool $googleHomePush)
     {
-
-        // TODO willgo tableの帰宅宣言カラムをつかって全体のデータ整合性取れるのか？
-        // 設計を再度考える必要あり
-
-        // ひとまず、 to_datetime に帰宅予告時間を入れればなんとかなるか？
-        // 来訪宣言無の場合　form に0:00いれて to に　指定時間後を入れる
-        // 来訪宣言あり　ママイキ
-        // to が当日繰り越し　気にしない、 帰る時間の一覧はあくまで toだけで取得するので、その際に朝6時くらいまでの範囲で拾わせる？
-
-
-        // 来訪宣言をしているか
-        $model = $this->willgo::where('community_user_id', Auth::user()->id)
-            ->where('from_datetime', '>=', Carbon::today())
-            ->where('to_datetime', '<', Carbon::today()->addDay())
-            ->pluck('id')->first();
+        // 既に宣言をしているか
+        $model = $this->goback::where('community_user_id', Auth::user()->id)
+            ->whereBetween('maybe_departure', [
+                Carbon::today()->addDays($gobackAddDay),
+                Carbon::today()->addDays($gobackAddDay)->addHours(23)->addMinutes(59)
+            ])
+            ->first();
 
         if (is_null($model)) {
-            logger()->debug('$model null! 来訪宣言無しの場合');
             // 来訪宣言無しの場合
-            $model = new Willgo();
-            $model->from_datetime   = Carbon::toDay();
+            $model = new Goback();
         }
-        // 帰宅用レコード作成
-        // 来訪宣言ありの場合
         $model->community_user_id = Auth::user()->id;
-        $model->to_datetime = Carbon::now()->addMinutes($minute);
+        $model->maybe_departure   = Carbon::now()->addDays($gobackAddDay)->addMinutes($minute);
+        $model->google_home_push = $googleHomePush;
         $model->save();
 
         // TODO 来訪あり、帰宅時間が翌日になる場合
