@@ -18,6 +18,7 @@ class CreateTableWillgo20191212 extends Migration
             $table->integer('community_user_id');
             $table->dateTime('from_datetime')->nullable()->default(null);
             $table->dateTime('to_datetime')->nullable()->default(null);
+            $table->dateTime('maybe_departure')->nullable()->default(null);
             $table->boolean('google_home_push')->default(false);
             $table->timestamps();
             $table->softDeletes();
