@@ -18,8 +18,8 @@ $(function(){
 
 // 予定の時間フォームの表示切り替え、今日・明日・明後日は時間指定を表示する
 function timeDisplayChange() {
-    var selindex = document.getElementById('tumori_when').selectedIndex;
-    if (selindex == 1 || selindex == 2 || selindex == 3 ) {
+    var selindex = document.getElementById('tumori_when').value;
+    if (selindex == 'today' || selindex == 'tomorrow' || selindex == 'dayAfterTomorrow' ) {
         document.getElementById('timeDisplay').style.display = "none";
         document.getElementById('timeDisplay').style.display = "";
     } else {
