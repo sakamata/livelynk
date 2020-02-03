@@ -6,6 +6,34 @@
             <div class="data">
                 <div class="availabilities">
                 <div class="head">ヨテイ宣言<span>{{$willgoCount}}件</span></div>
+                <ul class="body all" style="background-color: aliceblue">
+                    <div class="when">かえる</div>
+                    @foreach ($gobackUsers as  $gobackUser)
+                    <li class="availability afterBegin">
+                        <div class="icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+
+                        <div class="name">{{ $gobackUser->name }}</div>
+                        <div class="arriving">
+                            ～{{ date('G:i', strtotime($gobackUser->maybe_departure)) }}
+                        </div>
+                        <div class="willgo-button-area">
+
+                            @if (Auth::user()->id == $gobackUser->community_user_id)
+                            <form method="post" action="/goback/delete/{{$gobackUser->id}}" class="willgo-record">
+                                @csrf
+                                <input type="hidden" name="goback" value="today">
+                                <button type="submit" name="action" value="{{$gobackUser->id}}" class="btn willgo-delete">やめる</button>
+                            </form>
+                            @else
+                            &emsp;&emsp;&nbsp;&emsp;
+                            @endif
+                        </div>
+                    </li>
+                    @endforeach
+                </ul>
+
                 @foreach ($willgoUsers as $when => $willgoUsersList)
                     @if (count($willgoUsersList) > 0)
                     <ul class="body all">
@@ -21,8 +49,12 @@
                             @if ($willgoUser->from_datetime->hour != 0 ||
                                     $willgoUser->from_datetime->minute != 0
                             )
-                            {{ date('G:i', strtotime($willgoUser->from_datetime)) }}
+                            {{ date('G:i', strtotime($willgoUser->from_datetime)) }} ～
                             @endif
+                            @if (!is_null($willgoUser->maybe_departure))
+                            {{ date('G:i', strtotime($willgoUser->maybe_departure))}}
+                            @endif
+
                         </div>
                         <div class="willgo-button-area">
 

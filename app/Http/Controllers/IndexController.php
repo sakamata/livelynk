@@ -112,6 +112,7 @@ class IndexController extends Controller
             $reader_id = $this->getReaderID();
         }
 
+        $gobackUsers = $this->willGoService->gobackUsers($community_id, $stays_community_user_id);
         $staysUsersId     = $stays->pluck('id')->toArray();
         // 本日ヨテイ宣言をしたユーザーのリストを取得
         // 滞在中のユーザーオブジェクト一覧を取得（滞在中のユーザーを除外）
@@ -136,6 +137,7 @@ class IndexController extends Controller
             'items'                 => $unregistered,
             'items1'                => $stays,
             'items2'                => $not_stays,
+            'gobackUsers'           => $gobackUsers,
             'willgoUsers'           => $willgoUsers,
             'willgoCount'           => $willgoCount,
             'willgoPullDownList'    => $willgoPullDownList,

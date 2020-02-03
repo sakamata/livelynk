@@ -8,7 +8,6 @@ use App\CommunityUser;
 use App\MacAddress;
 use App\TalkMessage;
 use App\Willgo;
-use App\Goback;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -19,7 +18,6 @@ class WillGoRepository
 {
     private $community;
     private $communityUser;
-    private $goback;
     private $macAddress;
     private $talkMessage;
     private $willgo;
@@ -27,14 +25,12 @@ class WillGoRepository
     public function __construct(
         Community       $community,
         CommunityUser   $communityUser,
-        Goback          $goback,
         MacAddress      $macAddress,
         TalkMessage     $talkMessage,
         Willgo          $willgo
     ) {
         $this->community        = $community;
         $this->communityUser    = $communityUser;
-        $this->goback           = $goback;
         $this->macAddress       = $macAddress;
         $this->talkMessage      = $talkMessage;
         $this->willgo           = $willgo;
@@ -118,6 +114,25 @@ class WillGoRepository
                 ->whereDate('from_datetime', Carbon::today())
                 ->whereDate('to_datetime', Carbon::today())
                 ->pluck('community_user_id')->toArray();
+    }
+
+    /**
+     * 来訪中で今日の帰宅宣言をしたユーザーを取得
+     *
+     * @param integer $communityId
+     * @param array   $staysCommunityUserId
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function todayGobackUsers(int $communityId, array $staysCommunityUserId)
+    {
+        return $this->willgo::
+                select('users.*', 'willgo.*')
+                    ->leftJoin('community_user', 'community_user.id', '=', 'willgo.community_user_id')
+                    ->join('users', 'users.id', '=', 'community_user.user_id')
+                    ->where('community_user.community_id', $communityId)
+                    ->whereDate('maybe_departure', Carbon::today())
+                    ->whereIn('willgo.community_user_id', $staysCommunityUserId)
+                    ->get();
     }
 
     /**
@@ -394,17 +409,19 @@ class WillGoRepository
      */
     public function goBackStoreOrUpdate(int $minute, int $gobackAddDay, bool $googleHomePush)
     {
-        // 既に宣言をしているか
-        $model = $this->goback::where('community_user_id', Auth::user()->id)
-            ->whereBetween('maybe_departure', [
-                Carbon::today()->addDays($gobackAddDay),
-                Carbon::today()->addDays($gobackAddDay)->addHours(23)->addMinutes(59)
-            ])
+        // 来訪宣言があるか？ かつ 帰宅宣言が null or 登録済みか？
+        $model = $this->willgo::where('community_user_id', Auth::user()->id)
+            ->whereDate('from_datetime', Carbon::today())
+            ->whereDate('to_datetime', Carbon::today())
+            ->where(function($query) {
+                $query->whereDate('maybe_departure', Carbon::today())
+                ->orWhereNull('maybe_departure');
+            })
             ->first();
 
         if (is_null($model)) {
             // 来訪宣言無しの場合
-            $model = new Goback();
+            $model = new Willgo();
         }
         $model->community_user_id = Auth::user()->id;
         $model->maybe_departure   = Carbon::now()->addDays($gobackAddDay)->addMinutes($minute);

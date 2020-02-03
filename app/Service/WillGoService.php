@@ -158,6 +158,23 @@ class WillGoService
     }
 
     /**
+     * 帰宅宣言をしたユーザーを取得
+     *
+     * @param integer $communityId
+     * @param array   $todayGobackUsers
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    // 現状は今日の宣言のみ取得
+    // TODO 明日、明後日の帰るリストをこのメソッドで平行して呼んでまとめる
+    public function gobackUsers(int $communityId, array $todayGobackUsers)
+    {
+        return $this->willGoRepository->todayGobackUsers(
+            (int)$communityId,
+            (array)$todayGobackUsers
+        );
+    }
+
+    /**
      * 投稿の時間帯からDBに登録する from,to の datetimeをセットし配列で返却する
      *
      * @param string    $when
