@@ -189,7 +189,7 @@ class WillGoController extends Controller
         $validatedData = $request->validate([
             'when'  => [
                         'required',
-                        'regex:/^(これから|きょう|あした|あさって|今週|土日|来週|今月|来月)$/'
+                        'regex:/^(これから|きょう|あした|あさって|今週|土日|来週|今月|来月|goback)$/'
                     ],
         ]);
 

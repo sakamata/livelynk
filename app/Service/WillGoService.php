@@ -661,7 +661,35 @@ class WillGoService
      */
     public function deleteIiftttPush(int $communityId, string $userName, string $when)
     {
+        if ($when != 'goback') {
+            $this->willgoDeleteIiftttPush($communityId, $userName, $when);
+        } else {
+            $this->gobackDeleteIiftttPush($communityId, $userName);
+        }
+    }
+
+    /**
+     * 来訪予定の宣言をキャンセルする通知をiftttにpushする
+     * @param integer $communityId
+     * @param string $userName
+     * @param string $when
+     * @return void
+     */
+    public function willgoDeleteIiftttPush(int $communityId, string $userName, string $when)
+    {
         $textMessage = $userName . "「". $when . "くらいに行くのはやっぱりやめるかも」";
+        $this->pushIfttt($textMessage, $communityId);
+    }
+
+    /**
+     * 帰宅予定の宣言をキャンセルする通知をiftttにpushする
+     * @param integer $communityId
+     * @param string $userName
+     * @return void
+     */
+    public function gobackDeleteIiftttPush(int $communityId, string $userName)
+    {
+        $textMessage = $userName . "「帰るのやめて、もう少しいるかも」";
         $this->pushIfttt($textMessage, $communityId);
     }
 }

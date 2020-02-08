@@ -6,7 +6,8 @@
             <div class="data">
                 <div class="availabilities">
                 <div class="head">ヨテイ宣言<span>{{$willgoCount}}件</span></div>
-                <ul class="body all" style="background-color: aliceblue">
+                @if(count($gobackUsers) > 0)
+                <ul class="body all">
                     <div class="when">かえる</div>
                     @foreach ($gobackUsers as  $gobackUser)
                     <li class="availability afterBegin">
@@ -21,9 +22,9 @@
                         <div class="willgo-button-area">
 
                             @if (Auth::user()->id == $gobackUser->community_user_id)
-                            <form method="post" action="/goback/delete/{{$gobackUser->id}}" class="willgo-record">
+                            <form method="post" action="/willgo/delete/{{$gobackUser->id}}" class="willgo-record">
                                 @csrf
-                                <input type="hidden" name="goback" value="today">
+                                <input type="hidden" name="when" value="goback">
                                 <button type="submit" name="action" value="{{$gobackUser->id}}" class="btn willgo-delete">やめる</button>
                             </form>
                             @else
@@ -33,7 +34,7 @@
                     </li>
                     @endforeach
                 </ul>
-
+                @endif
                 @foreach ($willgoUsers as $when => $willgoUsersList)
                     @if (count($willgoUsersList) > 0)
                     <ul class="body all">
