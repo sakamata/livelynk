@@ -12,6 +12,7 @@
 @endif
 @if(Auth::check() && $community->tumolink_enable)
   @component('components.tumoli_form', [
+      'isStay'              => $isStay,
       'gobackUsers'         => $gobackUsers,
       'willgoUsers'         => $willgoUsers,
       'willgoCount'         => $willgoCount,

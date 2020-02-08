@@ -132,8 +132,7 @@
                     @else
                     <input type="hidden" name="google_home_push" value="0">
                     @endif
-
-                    {{-- 滞在中の条件文で非表示に --}}
+                    @if($isStay)
                     <div class="plans">
                         <div class="value when">
                             <input type="hidden" name="go_back_add_day" value="0">
@@ -145,10 +144,8 @@
                             </select>
                         </div>
                     </div>
-
                     <button type="submit" name="action" value="go_back" class="tumoli-button comp-ui">帰るかも</button>
-
-
+                    @endif
                 </form>
             </div>
             <script src="{{ asset('js/bundle.js') }}"></script>

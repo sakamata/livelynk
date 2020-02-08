@@ -98,6 +98,7 @@ class IndexController extends Controller
         $unregistered_users_id = $this->ChangeObjectToArray($unregistered, $column = 'user_id');
         $stays_users_id = $this->ChangeObjectToArray($stays, $column = 'user_id');
         $stays_community_user_id = $this->ChangeObjectToArray($stays, $column = 'id');
+        in_array(Auth::user()->id, $stays_community_user_id) ? $isStay = true : $isStay = false;
         $all_stays_users_id = array_merge($unregistered_users_id, $stays_users_id);
         // 不在中のuser_id array
         $not_stay_users_id = array_diff($users_id, $all_stays_users_id);
@@ -132,6 +133,7 @@ class IndexController extends Controller
         $willgoPullDownList = $this->willGoService->willgoPullDownListGet();
         $router = $this->callRouter->CommunityRouterGet($community_id);
         return view('index.index', [
+            'isStay'                => $isStay,
             'community'             => $community,
             'todayWillgoUsers'      => $todayWillgoUsers,
             'items'                 => $unregistered,
