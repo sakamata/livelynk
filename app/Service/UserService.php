@@ -74,11 +74,15 @@ class UserService
             'created_at' => $now,
             'updated_at' => $now,
         ]);
+        logger()->warning('$user_id>>>');
+        logger()->warning($user_id);
         // 中間tableに値を入れる
         $community_user_id = DB::table('community_user')->insertGetId([
             'community_id' => $community_id,
             'user_id' => $user_id,
         ]);
+        logger()->warning('$community_user_id>>>');
+        logger()->warning($community_user_id);
         // user status管理のtableに値を入れる
         DB::table('communities_users_statuses')->insert([
             'id' => $community_user_id,
