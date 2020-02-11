@@ -117,7 +117,7 @@ class WillGoRepository
     }
 
     /**
-     * 来訪中で今日の帰宅宣言をしたユーザーを取得
+     * 来訪中で当日（深夜3時まで）の帰宅宣言をしたユーザーを取得
      *
      * @param integer $communityId
      * @param array   $staysCommunityUserId
@@ -130,7 +130,10 @@ class WillGoRepository
                     ->leftJoin('community_user', 'community_user.id', '=', 'willgo.community_user_id')
                     ->join('users', 'users.id', '=', 'community_user.user_id')
                     ->where('community_user.community_id', $communityId)
-                    ->whereDate('maybe_departure', Carbon::today())
+                    ->whereBetween('maybe_departure', [
+                        Carbon::today(),
+                        Carbon::today()->addDay()->addHours(3)
+                        ])
                     ->whereIn('willgo.community_user_id', $staysCommunityUserId)
                     ->get();
     }
@@ -411,11 +414,13 @@ class WillGoRepository
     {
         // 来訪宣言があるか？ かつ 帰宅宣言が null or 登録済みか？
         $model = $this->willgo::where('community_user_id', Auth::user()->id)
-            ->whereDate('from_datetime', Carbon::today())
-            ->whereDate('to_datetime', Carbon::today())
-            ->where(function($query) {
+            ->where(function ($query) {
+                $query->whereDate('from_datetime', Carbon::today())
+                      ->whereDate('to_datetime', Carbon::today());
+            })
+            ->orWhere(function ($query) {
                 $query->whereDate('maybe_departure', Carbon::today())
-                ->orWhereNull('maybe_departure');
+                      ->orWhereNull('maybe_departure');
             })
             ->first();
 

@@ -556,9 +556,7 @@ class WillGoService
         $when = $this->varWhenTextChanger($request->when);
 
         $time = $this->carbonTimeMaker($request->when, $request->hour, $request->minute);
-        if ($time) {
-            $time = $time->format('G時i分');
-        }
+        $time ? $time = $time->format('G時i分') : $time;
 
         $voiceMessage .= $userName . 'さんが' . $when . $time . 'くらいに来るかもしれないです。';
 
