@@ -16,7 +16,7 @@ class WillGoTest extends TestCase
     public function testExample()
     {
         $controller = app()->make('\App\Http\Controllers\WillGoController');
-        echo $controller->update($request =1);
+        // echo $controller->update($id=1, $request =1);
         $this->assertTrue(true);
     }
 }

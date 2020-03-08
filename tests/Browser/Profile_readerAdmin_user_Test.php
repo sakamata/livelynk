@@ -20,7 +20,7 @@ class Profile_readerAdmin_user_Test extends DuskTestCase
         Artisan::call('db:seed');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!static::$db_inited) {
@@ -86,7 +86,7 @@ class Profile_readerAdmin_user_Test extends DuskTestCase
                 ->assertSeeIn('div.alert.alert-danger', 'ユーザーIDは、40文字以下で指定してください。')
                 ->assertSeeIn('div.alert.alert-danger', '名前は、30文字以下で指定してください。')
                 ->assertSeeIn('div.alert.alert-danger', 'メールアドレスは、170文字以下で指定してください。');
-                // ->assertSeeIn('div.alert.alert-danger', '端末メーカーは、40文字以下にしてください。')
+            // ->assertSeeIn('div.alert.alert-danger', '端末メーカーは、40文字以下にしてください。')
                 // ->assertSeeIn('div.alert.alert-danger', 'デバイスメモは、40文字以下にしてください。');
         });
     }
@@ -190,7 +190,7 @@ class Profile_readerAdmin_user_Test extends DuskTestCase
                 ->assertInputValue('name', '編集')
                 ->assertInputValue('unique_name', 'admin2edit@laravel.com')
                 ->assertInputValue('email', 'admin2edit@laravel.com');
-                // ->assertRadioSelected('hide', '1')
+            // ->assertRadioSelected('hide', '1')
                 // ->assertInputValue('mac_address[1][vendor]', 'edit_vendor')
                 // ->assertInputValue('mac_address[1][device_name]', 'edit_device_name')
                 // ->assertChecked('mac_address[1][hide]')

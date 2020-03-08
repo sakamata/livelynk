@@ -20,7 +20,7 @@ class Change_password_test extends DuskTestCase
         Artisan::call('db:seed');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!static::$db_inited) {
@@ -47,7 +47,7 @@ class Change_password_test extends DuskTestCase
 
     // パスワード変更画面_入力無しでの変更でバリデートエラー
     // viewに required 有りの為不要
-    
+
     // パスワード変更画面_現在のpassword_想定外の値でバリデートエラー
     // form passwordの為不要
 
@@ -59,9 +59,9 @@ class Change_password_test extends DuskTestCase
         $this->browse(function ($browser) {
             $browser->loginAs(User::find(1))
                 ->visit('/password/edit?id=1')
-                ->type('now_password','zzzzzz')
-                ->type('password','aaaaaa')
-                ->type('password_confirmation','bbbbbb');
+                ->type('now_password', 'zzzzzz')
+                ->type('password', 'aaaaaa')
+                ->type('password_confirmation', 'bbbbbb');
             $browser->press('Password変更')
                 ->assertSee('現在のPasswordが一致しません');
         });
@@ -172,7 +172,7 @@ class Change_password_test extends DuskTestCase
     }
 
     // --- readerAdmin test
-    
+
     /**
      * @test
      */

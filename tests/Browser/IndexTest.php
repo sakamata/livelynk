@@ -38,9 +38,9 @@ class IndexTest extends DuskTestCase
         Artisan::call('db:seed', ['--class' => 'UsersTableSeeder']);
         // Tumolink Tableは後で検証
         // Artisan::call('db:seed', ['--class' => 'TumolinkTableSeeder']);
-    } 
+    }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         if (!static::$db_inited) {
@@ -68,8 +68,8 @@ class IndexTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $browser->visit('/?path=hoge')
                     ->assertSee('ギークオフィス恵比寿')
-                    ->assertSee('今日のイベント')
-                    ->assertMissing('.tumolist')
+                    ->assertMissing('今日のイベント')
+                    ->assertMissing('#label_tomoli')
                     ->assertSeeLink('ログイン');
         });
     }
@@ -82,8 +82,8 @@ class IndexTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $browser->visit('/?path=hoge2')
                 ->assertSee('長い名前の人コミュニティ')
-                ->assertDontSee('今日のイベント')
-                ->assertMissing('.tumolist')
+                ->assertMissing('今日のイベント')
+                ->assertMissing('#label_tomoli')
                 ->assertSeeLink('ログイン');
         });
     }
@@ -106,8 +106,8 @@ class IndexTest extends DuskTestCase
             // $browser->pause(5000);
             $browser->visit('/?path=hoge')
             ->assertSee('ギークオフィス恵比寿')
-            ->assertSee('今日のイベント')
-            ->assertPresent('.tumolist')
+            ->assertMissing('今日のイベント')
+            ->assertMissing('#label_tomoli')
             ->assertSeeLink('ログイン');
         });
         $this->assertDatabaseHas('tumolink', ['community_user_id' => 30]);
@@ -125,7 +125,7 @@ class IndexTest extends DuskTestCase
             $browser->visit('/?path=hoge2')
                 ->assertSee('長い名前の人コミュニティ')
                 ->assertDontSee('今日のイベント')
-                ->assertPresent('.tumolist')
+                ->assertMissing('#label_tomoli')
                 ->assertSeeLink('ログイン');
         });
     }
@@ -204,7 +204,7 @@ class IndexTest extends DuskTestCase
      */
     public function ログイン_正常_test()
     {
-        $this->browse(function ($browser)  {
+        $this->browse(function ($browser) {
             $browser->visit('/login/?path=hoge')
                 ->type('unique_name', 'aaa@aaa.com')
                 ->type('password', 'aaaaaa')

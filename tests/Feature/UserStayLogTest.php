@@ -24,9 +24,9 @@ class UserStayLogTest extends TestCase
     {
         Artisan::call('migrate:refresh');
         Artisan::call('db:seed');
-    } 
+    }
 
-    public function setup()
+    public function setup(): void
     {
         parent::setUp();
 
@@ -36,7 +36,6 @@ class UserStayLogTest extends TestCase
             static::$db_inited = true;
             static::initDB();
         }
-
     }
 
     /**
@@ -66,7 +65,6 @@ class UserStayLogTest extends TestCase
 
         // 今登録したレコードがあるかを確認
         $this->assertDatabaseHas('users_stays_logs', $params);
-
     }
 
     /**
@@ -86,7 +84,6 @@ class UserStayLogTest extends TestCase
 
         // 今登録したレコードがあるかを確認
         $this->assertDatabaseHas('users_stays_logs', $params);
-
     }
 
     // 来訪状態になったユーザーを確認する
@@ -99,6 +96,4 @@ class UserStayLogTest extends TestCase
 
     // 帰宅した仮ユーザーと端末,stay_logを作る
     // 帰宅と判断し departure_at に値が入る
-
-
 }

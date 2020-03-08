@@ -20,9 +20,9 @@ class SystemSettingServiceTest extends TestCase
     {
         Artisan::call('migrate:refresh');
         Artisan::call('db:seed');
-    } 
+    }
 
-    public function setup()
+    public function setup(): void
     {
         parent::setUp();
 
@@ -32,7 +32,6 @@ class SystemSettingServiceTest extends TestCase
             static::$db_inited = true;
             static::initDB();
         }
-
     }
 
     /**
@@ -46,7 +45,6 @@ class SystemSettingServiceTest extends TestCase
         $set = $service->CreateKeyOrUpdate($set_key, $set_value);
         $this->assertEquals($set_key, $set->set_key);
         $this->assertEquals($set_value, $set->set_value);
-
     }
 
     /**
@@ -71,5 +69,4 @@ class SystemSettingServiceTest extends TestCase
         $res = $service->getValue('last_log_check_datetime');
         $this->assertEquals(date('Y-m-d H:i:s', strtotime($res)), $res);
     }
-
 }

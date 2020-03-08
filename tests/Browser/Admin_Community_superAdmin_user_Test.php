@@ -18,15 +18,29 @@ class Admin_Community_superAdmin_user_Test extends DuskTestCase
     {
         Artisan::call('migrate:refresh');
         Artisan::call('db:seed');
-    } 
+    }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!static::$db_inited) {
             static::$db_inited = true;
             static::initDB();
         }
+    }
+
+    /**
+     * A basic browser test example.
+     *
+     * @return void
+     */
+    public function testBasicExample()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/')
+                    // ->dump($browser);
+              ->assertSee('Livelynk');
+        });
     }
 
     /**
@@ -62,7 +76,7 @@ class Admin_Community_superAdmin_user_Test extends DuskTestCase
     {
         $this->browse(function ($browser) {
             $browser->visit('admin_community/edit?id=1')
-                ->script("window.scrollTo(0, 600);");
+                ->script("window.scrollTo(0, 1200);");
             $browser->press('編集')
                 ->assertPathIs('/admin_community')
                 ->assertSeeIn('#app > div', 'コミュニティを編集しました。');
@@ -141,13 +155,13 @@ class Admin_Community_superAdmin_user_Test extends DuskTestCase
      */
     public function superAdmin_community編集_文字数_lessバリデート確認()
     {
-        $this->browse(function ($browser)  {
+        $this->browse(function ($browser) {
             $browser->visit('admin_community/edit?id=1')
                 ->type('service_name', '01')
                 ->type('service_name_reading', '01')
                 ->type('url_path', '012')
                 ->type('hash_key', '012')
-                ->script("window.scrollTo(0, 600);");
+                ->script("window.scrollTo(0, 1200);");
             $browser->press('編集')
                 ->assertSeeIn('div.alert.alert-danger', 'エラー')
                 ->assertSee('コミュニティ名称は、3文字以上で指定してください。')
@@ -165,7 +179,7 @@ class Admin_Community_superAdmin_user_Test extends DuskTestCase
             $browser->visit('admin_community/edit?id=1')
                 ->type('url_path', 'あいう')
                 ->type('hash_key', 'あいう')
-                ->script("window.scrollTo(0, 600);");
+                ->script("window.scrollTo(0, 1200);");
             $browser->press('編集')
                 ->assertSeeIn('div.alert.alert-danger', 'エラー')
                 ->assertSee('url pathに正しい形式を指定してください。')

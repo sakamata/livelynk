@@ -23,7 +23,7 @@ class IndexControllerTest extends TestCase
     const URL_PATH = 'hoge';
     const HASH_KEY = 'hoge';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -46,7 +46,7 @@ class IndexControllerTest extends TestCase
      */
     public function accsess_no_auth_未ログイン閲覧_存在するpathなら表示()
     {
-        $this->assertDatabaseHas('communities',[
+        $this->assertDatabaseHas('communities', [
             'url_path' => self::URL_PATH,
         ]);
     }

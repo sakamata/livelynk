@@ -20,7 +20,7 @@ class Profile_normal_user_Test extends DuskTestCase
         Artisan::call('db:seed');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!static::$db_inited) {
@@ -196,5 +196,5 @@ class Profile_normal_user_Test extends DuskTestCase
             Artisan::call('migrate:refresh');
             Artisan::call('db:seed');
         });
-    } 
+    }
 }

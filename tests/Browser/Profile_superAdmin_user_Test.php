@@ -20,7 +20,7 @@ class Profile_superAdmin_user_Test extends DuskTestCase
         Artisan::call('db:seed');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!static::$db_inited) {
@@ -205,8 +205,8 @@ class Profile_superAdmin_user_Test extends DuskTestCase
         $this->browse(function ($browser) {
             $browser->visit('/admin_user/edit?id=1')
                 ->assertSeeIn('.comp-title', 'プロフィール編集');
-                Artisan::call('migrate:refresh');
-                Artisan::call('db:seed');
+            Artisan::call('migrate:refresh');
+            Artisan::call('db:seed');
         });
-    } 
+    }
 }

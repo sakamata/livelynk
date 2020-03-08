@@ -13,7 +13,7 @@ class MacAddressServiceTest extends TestCase
 {
     use RefreshDatabase;
     public $now;
-    public function setup()
+    public function setup(): void
     {
         parent::setUp();
         $this->now = Carbon::now();
@@ -49,7 +49,7 @@ class MacAddressServiceTest extends TestCase
      */
     // 未使用　使わなくなっている
     // MacAddressService->getRecentStayCommunityUserIds の test
-    public function last_postedが現在からn分以内の滞在中のcommunity_user_idを配列で取得する($community_user_id,  $current_stay, $posted_at, $assert_bool)
+    public function last_postedが現在からn分以内の滞在中のcommunity_user_idを配列で取得する($community_user_id, $current_stay, $posted_at, $assert_bool)
     {
         factory(MacAddress::class)->create([
             'community_user_id' => $community_user_id,

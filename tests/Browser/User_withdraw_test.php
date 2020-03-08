@@ -22,7 +22,7 @@ class User_withdraw_test extends DuskTestCase
         Artisan::call('db:seed');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!static::$db_inited) {
@@ -78,7 +78,6 @@ class User_withdraw_test extends DuskTestCase
             $browser->assertDontSee('No.4')
                 ->assertDontSee('aaa@aaa.com')
                 ->assertDontSee('AAA comm1 委託管理者');
-
         });
         $this->assertDatabaseMissing('users', [
                 'id' => 4,
@@ -234,7 +233,6 @@ class User_withdraw_test extends DuskTestCase
             $browser->assertDontSee('No.13')
                 ->assertDontSee('aaa2@aaa.com')
                 ->assertDontSee('委託管理者 藤本　太郎喜左衛門将時能');
-
         });
         $this->assertDatabaseMissing('users', [
             'id' => 13,
@@ -266,7 +264,6 @@ class User_withdraw_test extends DuskTestCase
             $browser->assertDontSee('No.13')
                 ->assertDontSee('bbb2@bbb.com')
                 ->assertDontSee('田中　寿限無寿限無一郎');
-
         });
         $this->assertDatabaseMissing('users', [
             'id' => 14,
@@ -464,7 +461,6 @@ class User_withdraw_test extends DuskTestCase
             $browser->assertDontSee('No.15')
                 ->assertDontSee('ccc2@ccc.com')
                 ->assertDontSee('燕　東海林太郎兵衛宗清');
-
         });
         $this->assertDatabaseMissing('users', [
             'id' => 15,

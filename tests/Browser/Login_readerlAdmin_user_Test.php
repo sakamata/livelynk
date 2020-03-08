@@ -11,7 +11,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 class Login_readerAdmin_user_Test extends DuskTestCase
 {
     use RefreshDatabase;
-    // protected function setUp()
+    // protected function setUp(): void
     // {
     //     parent::setUp();
     //     Artisan::call('migrate:refresh');

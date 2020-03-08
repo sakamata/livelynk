@@ -21,9 +21,9 @@ class UserStayLogServiceTest extends TestCase
     {
         Artisan::call('migrate:refresh');
         Artisan::call('db:seed');
-    } 
+    }
 
-    public function setup()
+    public function setup(): void
     {
         parent::setUp();
 
@@ -33,7 +33,6 @@ class UserStayLogServiceTest extends TestCase
             static::$db_inited = true;
             static::initDB();
         }
-
     }
 
     /**
@@ -45,7 +44,7 @@ class UserStayLogServiceTest extends TestCase
         $community_user_id = 100;
         $date = Carbon::create(2018, 12, 31, 23, 59, 58);
         $service->arraivalInsertNow($community_user_id, $date);
-        $this->assertDatabaseHas('users_stays_logs',[
+        $this->assertDatabaseHas('users_stays_logs', [
             'community_user_id' => $community_user_id,
             'arraival_at' => $date,
             'departure_at' => null,
@@ -62,7 +61,7 @@ class UserStayLogServiceTest extends TestCase
         $community_user_id = 100;
         $date = Carbon::create(2018, 12, 31, 23, 59, 58);
         $response = $service->arraivalInsertNow($community_user_id, $date);
-        $this->assertDatabaseHas('users_stays_logs',[
+        $this->assertDatabaseHas('users_stays_logs', [
             'community_user_id' => $community_user_id,
             'arraival_at' => $date,
             'departure_at' => null,
@@ -77,11 +76,11 @@ class UserStayLogServiceTest extends TestCase
     {
         //ArraivalUserDuplicationCheck のtest
         $service = app()->make('\App\Service\UserStayLogService');
- 
+
         $date = Carbon::create(2018, 12, 31, 23, 59, 58);
         $community_user_id = 101;
         $service->arraivalInsertNow($community_user_id, $date);
- 
+
         $community_user_id = 102;
         $isDupl = $service->ArraivalUserDuplicationCheck($community_user_id);
         $this->assertNotTrue($isDupl);
@@ -113,14 +112,14 @@ class UserStayLogServiceTest extends TestCase
         $service = app()->make('\App\Service\UserStayLogService');
         $community_user_id = 101;
         $date = Carbon::create(2018, 12, 31, 12, 00, 00);
-        
+
         $service->arraivalInsertNow($community_user_id, $date);
-        
+
         $date2 = Carbon::create(2018, 12, 31, 12, 01, 01);
-        $service->last_datetimeUpdate($community_user_id, $date2);
+        $service->lastDatetimeUpdate($community_user_id, $date2);
 
         // last_datetimeの値が前回と異なっているか確認
-        $this->assertDatabaseMissing('users_stays_logs',[
+        $this->assertDatabaseMissing('users_stays_logs', [
             'community_user_id' => $community_user_id,
             'arraival_at' => $date,
             'departure_at' => null,
@@ -128,7 +127,7 @@ class UserStayLogServiceTest extends TestCase
         ]);
 
         // last_datetimeの値が更新されたものか確認
-        $this->assertDatabaseHas('users_stays_logs',[
+        $this->assertDatabaseHas('users_stays_logs', [
             'community_user_id' => $community_user_id,
             'arraival_at' => $date,
             'departure_at' => null,
@@ -146,13 +145,13 @@ class UserStayLogServiceTest extends TestCase
         $now = Carbon::create(2018, 12, 31, 12, 00, 00);
         $community_user_id = 101;
         $service->arraivalInsertNow($community_user_id, $now);
-        
+
         $past_limit =   Carbon::create(2018, 12, 31, 14, 59, 59);
         $departure_at = Carbon::create(2018, 12, 31, 13, 59, 59);
         $service->departurePastTimeUpdate($past_limit);
         // $service->departurePastTimeUpdate($community_user_id, $past_limit);
 
-        $this->assertDatabaseHas('users_stays_logs',[
+        $this->assertDatabaseHas('users_stays_logs', [
             // 'community_user_id' => $community_user_id,
             'arraival_at' => $now,
             'departure_at' => $past_limit,
@@ -197,14 +196,14 @@ class UserStayLogServiceTest extends TestCase
 
         // 値の有無を確認
         if ($check_bool) {
-            $this->assertDatabaseHas('users_stays_logs',[
+            $this->assertDatabaseHas('users_stays_logs', [
                 'community_user_id' => $community_user_id,
                 'arraival_at' => $arraival_at,
                 'departure_at' => $departure_at_CHECK_stamp,
                 'last_datetime' => $last_datetime,
             ]);
         } else {
-            $this->assertDatabaseMissing('users_stays_logs',[
+            $this->assertDatabaseMissing('users_stays_logs', [
                 'community_user_id' => $community_user_id,
                 'arraival_at' => $arraival_at,
                 'departure_at' => $departure_at_CHECK_stamp,
@@ -221,6 +220,5 @@ class UserStayLogServiceTest extends TestCase
         // $this->artisan('migrate:refresh', ['--seed' => '']);
         Artisan::call('migrate:refresh');
         $this->assertTrue(true);
-    } 
-
+    }
 }
