@@ -167,7 +167,7 @@ class UserStayLogTest extends TestCase
         $systemSetting->updateValue('last_log_check_datetime', $set);
 
         // 検証するロジック内で使用される帰宅時間の生成のロジック。testの境界となる時間を定義
-        $limit = Carbon::now()->subSeconds(env('JUDGE_STAY_LOGS_DEPARTURE_SECOND'));
+        $limit = Carbon::now()->subSeconds(config("env.judge_stay_logs_departure_second"));
 
         // 来訪は4時間前を想定 （カラムnotnullなので値が必要）
         $arraival = $limit->copy()->subHours(4)->toDateTimeString();
@@ -208,7 +208,7 @@ class UserStayLogTest extends TestCase
         $systemSetting->updateValue('last_log_check_datetime', $set);
 
         // 検証するロジック内で使用される帰宅時間の生成のロジック。testの境界となる時間を定義
-        $limit = Carbon::now()->subSeconds(env('JUDGE_STAY_LOGS_DEPARTURE_SECOND'));
+        $limit = Carbon::now()->subSeconds(config("env.judge_stay_logs_departure_second"));
 
         // 来訪は4時間前を想定 （カラムnotnullなので値が必要）
         $arraival = $limit->copy()->subHours(4)->toDateTimeString();

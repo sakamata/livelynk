@@ -77,7 +77,7 @@ class UserStayLogController extends Controller
         // 上のforeachに入れては駄目 取得できる時間の範囲外になる
         // log.departure_atがnull かつ log.last_datetime が調査時間より90分より大きければ90分前の時間を挿入する。
         $limit = Carbon::now();
-        $pastLimit = $limit->subSeconds(env("JUDGE_STAY_LOGS_DEPARTURE_SECOND"));
+        $pastLimit = $limit->subSeconds(config("env.judge_stay_logs_departure_second"));
         $this->userStayLogService->departurePastTimeUpdate($pastLimit);
         // 最終確認時間の更新
         $this->updateLastLogCheckDatetime();
@@ -120,13 +120,13 @@ class UserStayLogController extends Controller
     {
         // 前回調査時間から90分より大きく空いていた場合は
         // 前回調査時間から90分後を仮の帰宅時間と想定し、帰宅処理を行う。
-        $past_limit = Carbon::now()->subSeconds(env("JUDGE_DEPARTURE_INTERVAL_SECOND"));
+        $past_limit = Carbon::now()->subSeconds(config("env.judge_departure_interval_second"));
         // 最終確認時間がn分前よりも過去ならば
         if ($this->lastLogCheckDatetime < $past_limit) {
             // 滞在中だったユーザーを一気に更新
             // 最終確認時間から帰宅判断時間以降を帰宅時間と想定して滞在中ユーザー全てを帰宅状態に変更
             $last_check = new Carbon($this->lastLogCheckDatetime);
-            $departure_at = $last_check->addSeconds(env("JUDGE_DEPARTURE_INTERVAL_SECOND"));
+            $departure_at = $last_check->addSeconds(config("env.judge_departure_interval_second"));
             $this->userStayLogService->longTermStopAfterStayUsersChangeDeparture($departure_at);
         }
     }

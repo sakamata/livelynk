@@ -24,7 +24,7 @@ class ExportPostController extends Controller
         // $res['users_name_str'] => "Aさん Bさん ...",
 
         // 帰宅想定時間（分）
-        $minute = round( env("JUDGE_DEPARTURE_INTERVAL_SECOND") / 60, 0);
+        $minute = round( config("env.judge_departure_interval_second") / 60, 0);
         $now = Carbon::now();
         $time = $now->subSecond($minute * 60);
         $time = $time->format('G:i');

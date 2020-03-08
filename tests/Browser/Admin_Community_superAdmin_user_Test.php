@@ -61,7 +61,7 @@ class Admin_Community_superAdmin_user_Test extends DuskTestCase
                 ->assertInputValue('name', 'GeekOfficeEbisu')
                 ->assertInputValue('hash_key', 'hoge')
                 ->assertInputValue('ifttt_event_name', 'livelynk_local_dev')
-                ->assertInputValue('ifttt_webhooks_key', env('IFTTT_WEBHOOKS_KEY_SEED'))
+                ->assertInputValue('ifttt_webhooks_key', config("env.ifttt_webhooks_key_seed"))
                 ->assertRadioSelected('google_home_enable', '1')
                 ->assertInputValue('admin_comment', '')
 

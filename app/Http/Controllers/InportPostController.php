@@ -172,7 +172,7 @@ class InportPostController extends Controller
 
                     // 前回帰宅時間から、ルーター瞬断や中座に対応した通知処理を行う
                     $departure_at = new Carbon($mac_record->departure_at);
-                    $second = env("JUDGE_ARRAIVAL_INTERVAL_SECOND");
+                    $second = config("env.judge_arraival_interval_second");
                     // 初来訪機器で、帰宅時間がない場合は limit は現在となる
                     $limit = $departure_at->addSecond($second);
                     // 既にこのuserの他のデバイスの存在があるか?
@@ -376,7 +376,7 @@ class InportPostController extends Controller
         // last_access が 一定時間以上になった全ての current_stay true を false にする
         // ***ToDo*** 同時刻に人感センサー有りなら、帰宅確度を上げる処理を追加
         $now = Carbon::now();
-        $second = env("JUDGE_DEPARTURE_INTERVAL_SECOND");
+        $second = config("env.judge_departure_interval_second");
         $past_limit = $now->subSecond($second);
 
         // 帰宅処理が必要なIDを抽出

@@ -153,7 +153,8 @@ class IndexController extends Controller
 
     public function DepartureRateMake($items, $column)
     {
-        $judge = env('JUDGE_DEPARTURE_INTERVAL_SECOND');
+        
+        $judge = config("env.judge_departure_interval_second");
         $now = Carbon::now()->timestamp;
         $limit = $now - Carbon::now()->subSecond($judge)->timestamp;
         $i = 0;

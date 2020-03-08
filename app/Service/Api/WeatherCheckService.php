@@ -39,7 +39,7 @@ class WeatherCheckService
     public function urlMaker()
     {
         $url = "https://map.yahooapis.jp/weather/V1/place?";
-        $url .= "&appid=" . env("YHOO_API_ID");
+        $url .= "&appid=" . config("env.yahoo_api_id");
         $url .= "&output=json";
         // 天気APIが有効で滞在者のいるコミュニティの緯度経度とIDを配列で取得する
         $locations = $this->weatherCheckRepository->stayUserCommunitiesLocations();
