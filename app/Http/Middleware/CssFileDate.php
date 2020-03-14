@@ -8,24 +8,32 @@ use Illuminate\Support\Facades\View;
 class CssFileDate
 {
     /**
-     * Handle an incoming request.
-     *
+     * ファイルpathから更新日を出力、pathにパラメータを入れcssや画像のキャッシュクリアに利用
+     * @url http://doop-web.com/blog/archives/1182 Thanks!!
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        // Thanks!! http://doop-web.com/blog/archives/1182
-        // ファイルpathから更新日を出力、pathにパラメータを入れcssや画像のキャッシュクリアに利用
+        $files = [
+            'app_js'        => '/js/app.js',
+            'livelynk_js'   => '/js/livelynk.js',
+            'app_css'       => '/css/app.css',
+            'livelynk_css'  => '/css/livelynk.css',
+            'tumolink_css'  => '/css/tumolink_.css',
+        ];
         $path = public_path();
-        $filename = $path . '/css/livelynk.css';
-        if (file_exists($filename)) {
-            $file_date = date('YmdHis', filemtime($filename));
-        } else {
-            $file_date =  str_random(6);
+        $file_date = [];
+        foreach ($files as $key => $file) {
+            $filename = $path . $file;
+            if (file_exists($filename)) {
+                $file_date[$key] = date('YmdHis', filemtime($filename));
+            } else {
+                $file_date =  str_random(6);
+            }
+            View::share('file_date', $file_date);
         }
-        View::share('file_date', $file_date);
         return $next($request);
     }
 }

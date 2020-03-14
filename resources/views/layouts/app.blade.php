@@ -20,8 +20,8 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('js/livelynk.js') }}" defer></script>
+    <script src="{{ asset('js/app.js') }}?q={{$file_date['app_js']}}" defer></script>
+    <script src="{{ asset('js/livelynk.js') }}?q={{$file_date['livelynk_js']}}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -29,10 +29,10 @@
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}?q={{$file_date}}" rel="stylesheet">
-    <link href="{{ asset('css/livelynk.css') }}?q={{$file_date}}" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}?q={{$file_date['app_css']}}" rel="stylesheet">
+    <link href="{{ asset('css/livelynk.css') }}?q={{$file_date['livelynk_css']}}" rel="stylesheet">
     @if(Request::is('/') || Request::is('index'))
-    <link href="{{ asset('css/tumolink_.css') }}?q={{$file_date}}" rel="stylesheet">
+    <link href="{{ asset('css/tumolink_.css') }}?q={{$file_date['tumolink_css']}}" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet" type="text/css">
     @endif
 
