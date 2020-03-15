@@ -58,7 +58,7 @@ class Kernel extends ConsoleKernel
         // 天気APIの実行 深夜は止める
         $schedule
             ->call('App\Http\Controllers\API\WeatherCheckController@run')
-            ->unlessBetween('1:00', '6:00')
+            ->unlessBetween('0:00', '7:00')
             ->everyTenMinutes();
     }
 

@@ -10,7 +10,6 @@ use App\Repository\WeatherCheckRepository;
 use App\Http\Controllers\ExportPostController;
 use App\Http\Controllers\GoogleHomeController;
 
-
 /**
  *
  */
@@ -26,8 +25,7 @@ class WeatherCheckService
         ExportPostController    $exportPostController,
         GoogleHomeController    $googleHomeController,
         WeatherCheckRepository  $weatherCheckRepository
-        )
-    {
+    ) {
         $this->community                = $community;
         $this->exportPostController     = $exportPostController;
         $this->googleHomeController     = $googleHomeController;
@@ -72,40 +70,39 @@ class WeatherCheckService
             $weatherArr  = $res['body']['Feature'][0]['Property']['WeatherList']['Weather'];
             // APIの天気部分を抽出
             // 10分毎の雨量の合計・最初・最後を取得
-            $rain  = $this->rainTotalize($weatherArr);
-            $first = $rain['first'];
-            $last  = $rain['last'];
-            $total = $rain['total'];
+            $rain   = $this->rainTotalize($weatherArr);
+            $total  = $rain['total'];
 
             $community = $this->community::find($communityId);
-            $response[$i]['communityId']   = $community->id;
-            $response[$i]['communityName'] = $community->service_name;
-            $response[$i]['lastRainyDatetime'] = $community->last_rainy_datetime;
-            $response[$i]['geometry']      = $res['body']['Feature'][0]['Geometry']['Coordinates'];
-            $response[$i]['firstRain']     = $rain['first'];
-            $response[$i]['lastRain']      = $rain['last'];
-            $response[$i]['totalRain']     = $rain['total'];
+            $response[$i]['communityId']        = $community->id;
+            $response[$i]['communityName']      = $community->service_name;
+            $response[$i]['lastRainyDatetime']  = $community->last_rainy_datetime;
+            $response[$i]['geometry']           = $res['body']['Feature'][0]['Geometry']['Coordinates'];
+            $response[$i]['nowRain']            = $rain['now'];
+            $response[$i]['futureRain']         = $rain['future'];
+            $response[$i]['totalRain']          = $rain['total'];
 
             $message = "";
             $weatherStatus = "";
+
             // **雨が止みそう判定**
-            // こっちを雨予報より上の行に書くことで、重複条件の際は雨振り通知を上書きさせて優先判断させる
-            // 最後は0 かつ 全体の降雨量が 0より多くnより小さい
-            if ($last == 0 && ( 0 < $total  &&  $total <= 1 )) {
-                // 最終時間を調べて、一定期間以上なら通知を行う
-                if ($community->last_rainy_datetime < Carbon::now()->subMinutes(5)) {
-                    $response[$i]['reslut'] = '**雨止みそう通知**';
-                    // 降雨量文言の生成
-                    $rainfall = $this->rainfallLangMaker($total);
-                    // 発話メッセージの作成
-                    $message = $this->googleHomeController
-                                ->weatherStopRainingNotification($community, $rainfall);
-                    $weatherStatus = 'StopRain';
-                }
-            }
+            // こっち を雨予報より上の行に書くことで、重複条件の際は雨振り通知を上書きさせて優先判断させる
+            // 最後は0  かつ 全体の降雨量が 0より多くnより小さい
+            // if ($rain['future'] == 0 && (0 < $total  &&  $total <= 1)) {
+            //     //  最終時間を調べて、一定期間以上なら通知を行う
+            //     if ($community->last_sunny_datetime < Carbon::now()->subHour(1)) {
+            //         $response[$i]['reslut'] = '**雨止みそう通知**';
+            //         // 降雨量文言の生成
+            //         $rainfall = $this->rainfallLangMaker($total);
+            //         // 発話メッセージの作成
+            //         $message = $this->googleHomeController
+            //                     ->weatherStopRainingNotification($community, $rainfall);
+            //         $weatherStatus = 'StopRain';
+            //     }
+            // }
 
             // **雨が降りそう判定**
-            if ($first == 0 && $total > 0) {
+            if ($rain['now'] == 0 && $total > 0) {
                 // 最終時間を調べて、一定期間以上なら通知を行う
                 if ($community->last_rainy_datetime < Carbon::now()->subHour(2)) {
                     $response[$i]['reslut'] = '**雨予報あり通知**';
@@ -118,6 +115,33 @@ class WeatherCheckService
                 }
             }
 
+            // 雨が観測された場合は雨確認時間を更新
+            if ($total > 0) {
+                $response[$i]['update'] = '**雨確認時間の更新**';
+                $community->last_rainy_datetime = Carbon::now();
+                $community->save();
+                log::debug(print_r('last_rainy_datetime update community service_name >>>' . $community->service_name, 1));
+            }
+
+            // **雨が振っていない場合**
+            if ($total == 0) {
+                // 現在のステータスが雨なら晴れました通知を行う
+                if ($community->last_rainy_datetime > $community->last_sunny_datetime) {
+                    $response[$i]['reslut'] = '**雨止み通知**';
+                    // 降雨量文言の生成
+                    $rainfall = $this->rainfallLangMaker($total);
+                    // 発話メッセージの作成
+                    $message = $this->googleHomeController
+                                ->weatherStopRainingNotification();
+                    $weatherStatus = 'StopRain';
+                }
+
+                // 晴れステータスを更新
+                $response[$i]['reslut'] = '雨予報無し、晴れ確認時間の更新';
+                $community->last_sunny_datetime = Carbon::now();
+                $community->save();
+            }
+
             // 発話をDBに入れる
             if ($message) {
                 $this->weatherCheckRepository->talkMessageSave($message, $communityId);
@@ -125,19 +149,6 @@ class WeatherCheckService
             // 通知機能へ
             if ($weatherStatus) {
                 $this->exportPostController->weatherMassageMaker($community, $weatherStatus, $rainfall);
-            }
-
-            // 雨が観測された場合は雨確認時間を更新
-            if ($total > 0) {
-                $response[$i]['update'] = '**雨確認時間の更新**';
-                $community->last_rainy_datetime = Carbon::now();
-                $community->save();
-                log::debug(print_r('last_rainy_datetime update community service_name >>>' . $community->service_name,1));
-            }
-
-            // **雨が振っていない場合**
-            if ($total == 0) {
-                $response[$i]['reslut'] = '雨予報無し';
             }
 
             $i++;
@@ -157,17 +168,17 @@ class WeatherCheckService
             $total = $total + $val;
             if ($weather === reset($weatherArr)) {
                 // 最初
-                $first = $val;
+                $now = $val;
             }
             if ($weather === end($weatherArr)) {
-                // 最後
-                $last = $val;
+                // 最 後
+                $future = $val;
             }
         }
         $res = [
-            'first' => $first,
-            'last'  => $last,
-            'total' => $total
+            'now'     => $now,
+            'future'  => $future,
+            'total'   => $total
         ];
         return $res;
     }

@@ -24,7 +24,7 @@ class ExportPostController extends Controller
         // $res['users_name_str'] => "Aさん Bさん ...",
 
         // 帰宅想定時間（分）
-        $minute = round( config("env.judge_departure_interval_second") / 60, 0);
+        $minute = round(config("env.judge_departure_interval_second") / 60, 0);
         $now = Carbon::now();
         $time = $now->subSecond($minute * 60);
         $time = $time->format('G:i');
@@ -101,15 +101,15 @@ class ExportPostController extends Controller
         // 想定される最大滞在者数
         $about_max = $existing_count + $unknown_count;
         // 在籍者数の文字列作成 "n名", "n～n+ 名"
-        if ($existing_count  == 0 && $unknown_count == 0 ) {
+        if ($existing_count  == 0 && $unknown_count == 0) {
             $users_res = 0;
-        } elseif ($existing_count  > 0 && $unknown_count == 0 ) {
+        } elseif ($existing_count  > 0 && $unknown_count == 0) {
             $users_res = $existing_count;
-        } elseif ($existing_count == 0 && $unknown_count == 1 ) {
+        } elseif ($existing_count == 0 && $unknown_count == 1) {
             $users_res = 1;
-        } elseif ($existing_count == 0 && $unknown_count >  1 ) {
+        } elseif ($existing_count == 0 && $unknown_count >  1) {
             $users_res = "1～" . $unknown_count;
-        } elseif ($existing_count  > 0 && $unknown_count >  1 ) {
+        } elseif ($existing_count  > 0 && $unknown_count >  1) {
             $users_res = $existing_count . "～" . $about_max;
         } else {
             $users_res = $existing_count . "～" . $about_max;
@@ -145,7 +145,6 @@ class ExportPostController extends Controller
     public function weatherMassageMaker($community, string $weatherStatus, string $rainfall)
     {
         if (!is_null($community->service_name)) {
-
             if ($weatherStatus == 'forRain') {
                 $title   = '雨の予報です';
                 $message = $community->service_name . "周辺に雨が降りそうです。1時間以内に" . $rainfall . "の雨の予報が出ています";
@@ -153,7 +152,7 @@ class ExportPostController extends Controller
 
             if ($weatherStatus == 'StopRain') {
                 $title   = '雨上がり予報です';
-                $message = $community->service_name . "周辺の雨が止みそうです。1時間以内の降雨量は" . $rainfall . "の予報です";
+                $message = $community->service_name . "周辺の雨が止んだようです。";
             }
 
             $this->push_ifttt($title, $message, $community);
@@ -165,7 +164,7 @@ class ExportPostController extends Controller
     public function push_ifttt($title, $message, $community)
     {
         // testでは通知が飛ばない様に設定
-        if ( env('APP_ENV') == 'testing'
+        if (env('APP_ENV') == 'testing'
             || $community->ifttt_event_name == null
             || $community->ifttt_webhooks_key == null
         ) {

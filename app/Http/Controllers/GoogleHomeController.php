@@ -21,10 +21,10 @@ class GoogleHomeController extends Controller
     /**
      * 降雨が止む予報の通知メッセージを作成する
      */
-    public function weatherStopRainingNotification(object $community, string $rainfall)
+    public function weatherStopRainingNotification()
     {
         // $communityName = $this->getCommunityName($community);
-        return  'ライブリンクよりお知らせです。雨がやみそうです。一時間以内の降雨量は、' . $rainfall . 'の予報です。';
+        return  'ライブリンクよりお知らせです。雨がやんだようです。';
     }
 
     /**
@@ -83,7 +83,7 @@ class GoogleHomeController extends Controller
                     "打ち合わせ中でしたらすみません。そろそろ空気が読めるようになりたいです。",
                     "そのうちどなたかの伝言などをお伝えできるようになりたいです。",
                 );
-                $i = rand(0,7);
+                $i = rand(0, 7);
                 //  $frank_talk[$i] 廃止
                 $message = $greeting . $users_name_str;
                 if (mb_strlen($message) > 200) {
