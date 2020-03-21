@@ -99,7 +99,7 @@ class InportPostController extends Controller
                 try {
                     // 仮ユーザーの作成
                     $community_user_id  = $this->call_user->UserCreate(
-                        (string)$provisional_name, // name
+                        (string) '(仮)' . $check_array["vendor"][$v] , // name
                         (string)$name_reading = null, // name_ふりがな
                         (string)$provisional_name, // unique_name
                         (string)$email = null,
@@ -370,6 +370,12 @@ class InportPostController extends Controller
         }
     }
 
+    /**
+     * 帰宅者の確認とステータス更新を行う
+     * TaskContoroller->taskDepartureCheck よりも30分毎に呼び出しされる
+     * @param integer $community_id
+     * @return void
+     */
     public function DepartureCheck($community_id)
     {
         // 一定時間アクセスの無いmac_address を不在に変更
