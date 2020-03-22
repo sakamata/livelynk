@@ -19,54 +19,6 @@ class MacAddressServiceTest extends TestCase
         $this->now = Carbon::now();
     }
 
-    // 未使用　使わなくなっている
-    public function dataProvider_for_getRecentStayCommunityUserIds() :array
-    {
-        // testの仮想時間を12:00とし 遡って90前の 10:30までの滞在中userを取得できるか確認
-        $now            = Carbon::create(2018, 12, 31, 12, 00, 00);
-        $sub60Min       = Carbon::create(2018, 12, 31, 11, 00, 00);
-        $sub89Min       = Carbon::create(2018, 12, 31, 10, 31, 00);
-        $sub89Min59sec  = Carbon::create(2018, 12, 31, 10, 30, 01);
-        $sub90Min       = Carbon::create(2018, 12, 31, 10, 30, 00);
-        $sub90Min1sec   = Carbon::create(2018, 12, 31, 10, 29, 59);
-        $sub91Min       = Carbon::create(2018, 12, 31, 10, 29, 00);
-
-        //              community_user_id,  current_stay, posted_at, 取得できるか
-        return [
-            '60min_true' =>               [100,   1,  $sub60Min,       true  ],
-            '60min_not_stay_false' =>     [101,   0,  $sub60Min,       false ],
-            '89min_true' =>               [102,   1,  $sub89Min,       true  ],
-            'sub89Min59sec_true' =>       [103,   1,  $sub89Min59sec,  true  ],
-            '90min_true' =>               [104,   1,  $sub90Min,       true  ],
-            '90min1sec_false' =>          [105,   1,  $sub90Min1sec,   false ],
-            '91min_false' =>              [106,   1,  $sub91Min,       false ],
-        ];
-    }
-
-    /**
-     * @test
-     * @dataProvider dataProvider_for_getRecentStayCommunityUserIds
-     */
-    // 未使用　使わなくなっている
-    // MacAddressService->getRecentStayCommunityUserIds の test
-    public function last_postedが現在からn分以内の滞在中のcommunity_user_idを配列で取得する($community_user_id, $current_stay, $posted_at, $assert_bool)
-    {
-        factory(MacAddress::class)->create([
-            'community_user_id' => $community_user_id,
-            'current_stay' => $current_stay,
-            'posted_at' => $posted_at,
-        ]);
-        // testの仮想時間を12:00とし 遡って90前の 10:30までの滞在中userを取得できるか確認
-        $service = app()->make('\App\Service\MacAddressService');
-        $recent_datetime = Carbon::create(2018, 12, 31, 10, 30, 00);
-        $ids = $service->getRecentStayCommunityUserIds($recent_datetime);
-        if ($assert_bool) {
-            $this->assertContains($community_user_id, $ids);
-        } else {
-            $this->assertNotContains($community_user_id, $ids);
-        }
-    }
-
     /**
      * @test
      */

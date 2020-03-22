@@ -412,17 +412,12 @@ class WillGoRepository
      */
     public function goBackStoreOrUpdate(int $minute, int $gobackAddDay, bool $googleHomePush)
     {
-        // 来訪宣言があるか？ かつ 帰宅宣言が null or 登録済みか？
-        $model = $this->willgo::where('community_user_id', Auth::user()->id)
-            ->where(function ($query) {
-                $query->whereDate('from_datetime', Carbon::today())
-                      ->whereDate('to_datetime', Carbon::today());
-            })
-            ->orWhere(function ($query) {
-                $query->whereDate('maybe_departure', Carbon::today())
-                      ->orWhereNull('maybe_departure');
-            })
-            ->first();
+        // 今日の来訪宣言があれば帰宅宣言カラムを更新、なければレコード作成
+        $model = $this->willgo::
+                whereDate('from_datetime', Carbon::today())
+                ->whereDate('to_datetime', Carbon::today())
+                ->where('community_user_id', Auth::user()->id)
+                ->first();
 
         if (is_null($model)) {
             // 来訪宣言無しの場合
@@ -432,8 +427,6 @@ class WillGoRepository
         $model->maybe_departure   = Carbon::now()->addDays($gobackAddDay)->addMinutes($minute);
         $model->google_home_push = $googleHomePush;
         $model->save();
-
-        // TODO 来訪あり、帰宅時間が翌日になる場合
 
         return;
     }
