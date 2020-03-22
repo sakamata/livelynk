@@ -16,4 +16,5 @@ yarn-error.log
 .env.bk_copy
 .env.dusk.local
 .env.testing
+.phpunit.result.cache
 *.swp
