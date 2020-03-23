@@ -15,8 +15,7 @@ class WeatherCheckController extends Controller
 
     public function __construct(
         WeatherCheckService     $weatherCheckService
-    )
-    {
+    ) {
         $this->weatherCheckService  = $weatherCheckService;
     }
 

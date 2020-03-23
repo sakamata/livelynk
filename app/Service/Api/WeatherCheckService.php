@@ -115,6 +115,17 @@ class WeatherCheckService
                 }
             }
 
+            // 雨振るかも datetime の更新条件
+            // 現在は振っていないが未来に降雨予報があれば 1　更新
+            // かつ最後の雨の観測から一定時間が経過している　例:4時間
+            // 現在振っている 0　更新しない
+            // 雨が観測されない 0　更新しない
+
+            // 雨振り予報通知タイミング
+            // 前回の振るかもフラグが立った日時から一定以上の時間が経過　例：2時間
+            // かつ雨フラグからある程度の時間が経過している場合　例:4時間
+
+
             // 雨が観測された場合は雨確認時間を更新
             if ($total > 0) {
                 $response[$i]['update'] = '**雨確認時間の更新**';
@@ -129,11 +140,12 @@ class WeatherCheckService
                 if ($community->last_rainy_datetime > $community->last_sunny_datetime) {
                     $response[$i]['reslut'] = '**雨止み通知**';
                     // 降雨量文言の生成
-                    $rainfall = $this->rainfallLangMaker($total);
+                    // $rainfall = $this->rainfallLangMaker($total);
                     // 発話メッセージの作成
-                    $message = $this->googleHomeController
-                                ->weatherStopRainingNotification();
-                    $weatherStatus = 'StopRain';
+                    // TODO ひとまずコメントアウトで雨止み通知を停止する
+                    // $message = $this->googleHomeController
+                    //             ->weatherStopRainingNotification();
+                    // $weatherStatus = 'StopRain';
                 }
 
                 // 晴れステータスを更新
