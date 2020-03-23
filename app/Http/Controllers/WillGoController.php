@@ -113,7 +113,7 @@ class WillGoController extends Controller
             try {
                 $this->willGoService->goBackStoreOrUpdate(
                     (int)$request->go_back_minute,
-                    (int)$request->go_back_add_day,
+                    (int)$request->go_back_add_day, // 現状当日のみなので 0が送られる
                     (bool)$request->google_home_push
                 );
                 $voiceMessage = $this->willGoService->gobackVoiceMessageMaker(
