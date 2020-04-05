@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\API;
 
 use App\Community;
 use App\CommunityUser;
@@ -22,8 +22,7 @@ class WeatherCheckRepository
         CommunityUser   $communityUser,
         MacAddress      $macAddress,
         TalkMessage     $talkMessage
-        )
-    {
+    ) {
         $this->community     = $community;
         $this->communityUser = $communityUser;
         $this->macAddress    = $macAddress;
@@ -39,10 +38,16 @@ class WeatherCheckRepository
         ->select('community_id', 'latitude', 'longitude')
         ->Join(
             'mac_addresses',
-            'mac_addresses.community_user_id', '=', 'community_user.id')
+            'mac_addresses.community_user_id',
+            '=',
+            'community_user.id'
+        )
         ->Join(
             'communities',
-            'communities.id', '=', 'community_user.community_id')
+            'communities.id',
+            '=',
+            'community_user.community_id'
+        )
         ->where('current_stay', 1)
         ->where('google_home_enable', 1)
         ->where('google_home_weather_enable', 1)

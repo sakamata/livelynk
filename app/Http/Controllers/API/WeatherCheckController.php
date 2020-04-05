@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
+use \App;
 use App\Http\Controllers\Controller;
 use App\Service\Api\WeatherCheckService;
+use App\Service\Api\WeatherCheckDummyService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,11 +14,14 @@ use GuzzleHttp\Client;
 class WeatherCheckController extends Controller
 {
     private $weatherCheckService;
+    private $weatherCheckDummyService;
 
     public function __construct(
-        WeatherCheckService     $weatherCheckService
+        WeatherCheckService         $weatherCheckService,
+        WeatherCheckDummyService    $weatherCheckDummyService
     ) {
-        $this->weatherCheckService  = $weatherCheckService;
+        $this->weatherCheckService      = $weatherCheckService;
+        $this->weatherCheckDummyService = $weatherCheckDummyService;
     }
 
     /**
@@ -36,11 +41,19 @@ class WeatherCheckController extends Controller
         $status = "";
         $resArr = [];
         foreach ($weatherUrlArr as  $weatherUrl) {
-            // API実行で天気データを取得
-            $responseData = $client->request("GET", $weatherUrl['url']);
-            // CORS対応 Route::get() に書いた際必要？
-            //    ->middleware(\Barryvdh\Cors\HandleCors::class);
-            $responseBody = json_decode($responseData->getBody()->getContents(), true);
+            if (App::environment('production', 'staging', 'local')) {
+                // API実行で天気データを取得
+                $responseData = $client->request("GET", $weatherUrl['url']);
+                // CORS対応 Route::get() に書いた際必要？
+                //    ->middleware(\Barryvdh\Cors\HandleCors::class);
+                $responseBody = json_decode($responseData->getBody()->getContents(), true);
+            }
+
+            // testはダミーを使用
+            if (App::environment('testing')) {
+                $responseBody = $this->weatherCheckDummyService->rainyResponseDummy();
+            }
+
             // 返却値の判定
             if (!isset($responseBody['ResultInfo'])) {
                 Log::debug(print_r('weatherAPI ERROR!!! not key ResultInfo >>>', 1));

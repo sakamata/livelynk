@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\app\Repository;
+namespace Tests\Unit\app\Repository\API;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
