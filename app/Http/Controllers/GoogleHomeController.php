@@ -19,6 +19,14 @@ class GoogleHomeController extends Controller
     }
 
     /**
+     * 雨が降って来た事を通知するメッセージを生成する
+     */
+    public function weatherNowRainNotification(string $nowRainfall, string $rainfall)
+    {
+        return  'ライブリンクよりお知らせです。雨が降ってきたようです。現在、' . $nowRainfall . 'の雨のようです。一時間で' . $rainfall . 'の予報となっています。';
+    }
+
+    /**
      * 降雨が止む予報の通知メッセージを作成する
      */
     public function weatherStopRainingNotification()

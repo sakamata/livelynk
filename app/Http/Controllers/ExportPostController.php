@@ -155,6 +155,11 @@ class ExportPostController extends Controller
                 $message = $community->service_name . "周辺の雨が止んだようです。";
             }
 
+            if ($weatherStatus == 'nowRainIn') {
+                $title   = '雨が降り始めたようです';
+                $message = $community->service_name . "周辺に雨が降り始めたようです。現在" . $rainfall . "の雨が降っているようです。";
+            }
+
             $this->push_ifttt($title, $message, $community);
         }
     }
@@ -164,7 +169,7 @@ class ExportPostController extends Controller
     public function push_ifttt($title, $message, $community)
     {
         // testでは通知が飛ばない様に設定
-        if (env('APP_ENV') == 'testing'
+        if (config('env.app_env') == 'testing'
             || $community->ifttt_event_name == null
             || $community->ifttt_webhooks_key == null
         ) {
@@ -179,10 +184,10 @@ class ExportPostController extends Controller
         $domain = action('IndexController@index');
 
         // https でのヘルパ関数の動きが不明な為、ひとまずこれで環境設定切り分け
-        if (env('APP_ENV') == 'local') {
+        if (config('env.app_env') == 'local') {
             // example  'http://192.168.10.10/index'
             $domain = action('IndexController@index');
-        } elseif (env('APP_ENV') == 'production') {
+        } elseif (config('env.app_env') == 'production') {
             $domain = 'https://www.livelynk.jp/index';
         } else {
             $domain = 'https://www.livelynk.jp/index';

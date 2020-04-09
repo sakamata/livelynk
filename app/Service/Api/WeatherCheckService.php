@@ -60,8 +60,6 @@ class WeatherCheckService
      */
     public function responseRainJudging(array $resArr)
     {
-        logger()->debug('判定!!!!!!');
-
         $i = 0;
         $response = [];
         foreach ($resArr as $res) {
@@ -121,10 +119,24 @@ class WeatherCheckService
                 }
             }
 
-
             // 雨振り予報通知タイミング
-            // 前回の振るかもフラグが立った日時から一定以上の時間が経過　例：2時間
+            // 現在雨予報が出ている
+            // 五月雨通知防止 前回の振るかもフラグが立った日時から一定以上の時間が経過　例：2時間
             // かつ雨フラグからある程度の時間が経過している場合　例:4時間
+            if (
+                $rain['now'] > 0 &&
+                // 雨予報が15分前よりも最近なら
+                $community->last_maybe_rainy_datetime > Carbon::now()->subMinutes(15)
+                ) {
+                $response[$i]['result'] = '**雨降り始め通知**';
+                // 降雨量文言の生成
+                $nowRainfall = $this->rainfallLangMaker($rain['now']);
+                $rainfall = $this->rainfallLangMaker($total);
+                // 発話メッセージの作成
+                $message = $this->googleHomeController
+                                ->weatherNowRainNotification($nowRainfall, $rainfall);
+                $weatherStatus = 'nowRainIn';
+            }
 
 
             // **雨が振っていない場合**

@@ -163,7 +163,7 @@ class WeatherCheckServiceTest extends TestCase
     }
 
     /**
-     * 雨状態のダミーで返却値と処理の確認をTest
+     * 降雨量のダミーで返却値と処理の確認をTest
      * 晴れ状態が更新されるか
      * @test
      * @return void
@@ -209,8 +209,9 @@ class WeatherCheckServiceTest extends TestCase
             'last_sunny_datetime'       => Carbon::now(),
         ]);
     }
+
     /**
-     * 雨状態のダミーで返却値と処理の確認をTest
+     * 降雨量のダミーで返却値と処理の確認をTest
      * 雨予報の状態が更新されるか
      * @test
      * @return void
@@ -227,9 +228,9 @@ class WeatherCheckServiceTest extends TestCase
         // 昨日から晴れの状態を生成
         factory(Community::class)->create([
             'google_home_weather_enable'    => 1,
-            'last_maybe_rainy_datetime' => $subDay,
-            'last_rainy_datetime'       => $subDay,
-            'last_sunny_datetime'       => $subMinute,
+            'last_maybe_rainy_datetime'     => $subDay,
+            'last_rainy_datetime'           => $subDay,
+            'last_sunny_datetime'           => $subMinute,
         ]);
 
         factory(Router::class)->create([
@@ -260,6 +261,61 @@ class WeatherCheckServiceTest extends TestCase
             'last_maybe_rainy_datetime' => Carbon::now()->toDateTimeString(),
             'last_rainy_datetime'       => $subDay,
             'last_sunny_datetime'       => $subMinute,
+        ]);
+    }
+
+    /**
+     * 降雨量のダミーで返却値と処理の確認をTest
+     * 雨が降って来た状態のステータス変更と通知が行われるか
+     * @test
+     * @return void
+     *
+     */
+    public function whatherAPI雨降り通知とステータス変更Test()
+    {
+        $targetDt = Carbon::now();
+        Carbon::setTestNow($targetDt);
+
+        $subDay     = Carbon::now()->subDay()->toDateTimeString();
+        $subMinute  = Carbon::now()->subMinutes(10)->toDateTimeString();
+        $subHour    = Carbon::now()->subHour()->toDateTimeString();
+
+        // 雨予報の状態状態を生成
+        factory(Community::class)->create([
+            'google_home_weather_enable'    => 1,
+            'last_maybe_rainy_datetime'     => $subMinute,
+            'last_rainy_datetime'           => $subDay,
+            'last_sunny_datetime'           => $subHour,
+        ]);
+
+        factory(Router::class)->create([
+            'community_id'    => 1,
+        ]);
+
+
+        // 降雨量の配列を取得
+        $rainfall = $this->rainDummyPaternArray();
+
+        // メソッド実行用のパラメーター「雨降り状態」を生成
+        $resArr = [
+            [
+                'communityId'   => 1,
+                'body'          => $this->rainyResponseJsonDummy($rainfall['nowRain']['Rainfall']),
+            ]
+        ];
+
+        // メソッド実行
+        $service = app()->make('\App\Service\API\WeatherCheckService');
+        $res = $service->responseRainJudging($resArr);
+        // 雨予報通知処のresultメッセージが帰っているか?
+        $this->assertEquals($res[0]['updateStatus'], "**雨確認時間の更新**");
+        $this->assertEquals($res[0]['result'], "**雨降り始め通知**");
+        // 雨予報の状態が更新されているか
+        $this->assertDatabaseHas('communities', [
+            'id'                        =>1,
+            'last_maybe_rainy_datetime' => $subMinute,
+            'last_rainy_datetime'       => Carbon::now()->toDateTimeString(),
+            'last_sunny_datetime'       => $subHour,
         ]);
     }
 }
