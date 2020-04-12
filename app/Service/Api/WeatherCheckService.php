@@ -6,7 +6,7 @@ use DB;
 use Carbon\Carbon;
 use App\Community;
 use Illuminate\Support\Facades\Log;
-use App\Repository\Api\WeatherCheckRepository;
+use App\Repository\API\WeatherCheckRepository;
 use App\Http\Controllers\ExportPostController;
 use App\Http\Controllers\GoogleHomeController;
 
