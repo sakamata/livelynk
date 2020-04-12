@@ -56,7 +56,7 @@ class WeatherCheckService
     }
 
     /**
-     * 降雨の判定処理を行う、降雨が観測された時間の記録を行う
+     * 晴れと雨、雨予報の判定をする。それぞれの判定時間をDBに更新する
      */
     public function responseRainJudging(array $resArr)
     {
@@ -66,17 +66,17 @@ class WeatherCheckService
             // APIステータスの抽出
             $response[$i]['resourceAPIStatus'] = $res['body']['ResultInfo']['Status'];
 
-            $communityId = $res['communityId'];
-            $weatherArr  = $res['body']['Feature'][0]['Property']['WeatherList']['Weather'];
+            $communityId    = $res['communityId'];
+            $weatherArr     = $res['body']['Feature'][0]['Property']['WeatherList']['Weather'];
             // APIの天気部分を抽出
             // 10分毎の雨量の合計・最初・最後を取得
-            $rain       = $this->rainTotalize($weatherArr);
-            $total  = $rain['total'];
-
-            $community  = $this->community::find($communityId);
+            $rain           = $this->rainTotalize($weatherArr);
+            $total          = $rain['total'];
+            $beforeCommunity  = $this->community::find($communityId);
             // 雨ステータスの更新
-            $response[$i]['updateStatus'] = $this->rainStatusUpdater($rain, $community);
-
+            $response[$i]['updateStatus'] = $this->rainStatusUpdater($rain, $beforeCommunity);
+            // ステータス更新後の情報を再取得
+            $community  = $this->community::find($communityId);
             $response[$i]['communityId']        = $community->id;
             $response[$i]['communityName']      = $community->service_name;
             $response[$i]['lastRainyDatetime']  = $community->last_rainy_datetime;
@@ -88,27 +88,14 @@ class WeatherCheckService
 
             $message = "";
             $weatherStatus = "";
-
-            // **雨が止みそう判定**
-            // こっち を雨予報より上の行に書くことで、重複条件の際は雨振り通知を上書きさせて優先判断させる
-            // 最後は0  かつ 全体の降雨量が 0より多くnより小さい
-            // if ($rain['future'] == 0 && (0 < $total  &&  $total <= 1)) {
-            //     //  最終時間を調べて、一定期間以上なら通知を行う
-            //     if ($community->last_sunny_datetime < Carbon::now()->subHour(1)) {
-            //         $response[$i]['result'] = '**雨止みそう通知**';
-            //         // 降雨量文言の生成
-            //         $rainfall = $this->rainfallLangMaker($total);
-            //         // 発話メッセージの作成
-            //         $message = $this->googleHomeController
-            //                     ->weatherStopRainingNotification($community, $rainfall);
-            //         $weatherStatus = 'StopRain';
-            //     }
-            // }
+            $rainfall = "";
 
             // **雨が降りそう判定**
             if ($rain['now'] == 0 && $total > 0) {
-                // 最終時間を調べて、一定期間以上なら通知を行う
-                if ($community->last_rainy_datetime < Carbon::now()->subHour(2)) {
+                // 最終時間を調べて、最後の雨や雨予報より一定期間以上なら通知を行う
+                if (
+                    $community->last_rainy_datetime < Carbon::now()->subHour(2)
+                    ) {
                     $response[$i]['result'] = '**雨予報あり通知**';
                     // 降雨量文言の生成
                     $rainfall = $this->rainfallLangMaker($total);
@@ -125,7 +112,7 @@ class WeatherCheckService
             // かつ雨フラグからある程度の時間が経過している場合　例:4時間
             if (
                 $rain['now'] > 0 &&
-                // 雨予報が15分前よりも最近なら
+                // 雨予報が15分前よりも最近なら(前回が雨予報の更新なら)
                 $community->last_maybe_rainy_datetime > Carbon::now()->subMinutes(15)
                 ) {
                 $response[$i]['result'] = '**雨降り始め通知**';
@@ -138,25 +125,19 @@ class WeatherCheckService
                 $weatherStatus = 'nowRainIn';
             }
 
-
-            // **雨が振っていない場合**
-            if ($total == 0) {
-                // 現在のステータスが雨なら晴れました通知を行う
-                if ($community->last_rainy_datetime > $community->last_sunny_datetime) {
-                    $response[$i]['result'] = '**雨止み通知**';
-                    // 降雨量文言の生成
-                    // $rainfall = $this->rainfallLangMaker($total);
-                    // 発話メッセージの作成
-                    // TODO ひとまずコメントアウトで雨止み通知を停止する
-                    // $message = $this->googleHomeController
-                    //             ->weatherStopRainingNotification();
-                    // $weatherStatus = 'StopRain';
-                }
-
-                // 晴れステータスを更新
-                $response[$i]['result'] = '**雨予報無し・晴れ確認時間の更新**';
-                $community->last_sunny_datetime = Carbon::now();
-                $community->save();
+            // 雨止み判定と通知
+            // 晴れの時間が雨と比較して 5 ～ 15分後の間なら
+            $sunny = new Carbon($community->last_sunny_datetime);
+            $rainy = new Carbon($community->last_rainy_datetime);
+            if (
+                $sunny->diffInMinutes($rainy) >= 5 &&
+                $sunny->diffInMinutes($rainy) <= 15
+            ) {
+                $response[$i]['result'] = '**雨止み通知**';
+                // 発話メッセージの作成
+                $message = $this->googleHomeController
+                            ->weatherStopRainingNotification();
+                $weatherStatus = 'StopRain';
             }
 
             // 発話をDBに入れる
@@ -262,9 +243,5 @@ class WeatherCheckService
             }
         }
         return $message;
-
-        // 雨振り予報通知タイミング
-        // 前回の振るかもフラグが立った日時から一定以上の時間が経過　例：2時間
-        // かつ雨フラグからある程度の時間が経過している場合　例:4時間
     }
 }
