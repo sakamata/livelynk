@@ -91,10 +91,11 @@ class WeatherCheckService
             $rainfall = "";
 
             // **雨が降りそう判定**
-            if ($rain['now'] == 0 && $total > 0) {
+            if ($rain['now'] == 0 && $rain['futures'] > 0) {
                 // 最終時間を調べて、最後の雨や雨予報より一定期間以上なら通知を行う
                 if (
-                    $community->last_rainy_datetime < Carbon::now()->subHour(2)
+                    $community->last_rainy_datetime < Carbon::now()->subHour(2) &&
+                    $community->last_maybe_rainy_datetime < Carbon::now()->subHour(2)
                     ) {
                     $response[$i]['result'] = '**雨予報あり通知**';
                     // 降雨量文言の生成
