@@ -90,13 +90,18 @@ class WeatherCheckService
             $weatherStatus = "";
             $rainfall = "";
 
-            // **雨が降りそう判定**
-            if ($rain['now'] == 0 && $rain['futures'] > 0) {
+            // **雨が降りそう判定** とステータス更新
+            $lastRain = new Carbon($community->last_rainy_datetime);
+            if (
+                $rain['now'] == 0 &&
+                $rain['futures'] > 0 &&
+                $lastRain < Carbon::now()->subHours(2)
+            ) {
                 // 最終時間を調べて、最後の雨や雨予報より一定期間以上なら通知を行う
                 if (
                     $community->last_rainy_datetime < Carbon::now()->subHour(2) &&
                     $community->last_maybe_rainy_datetime < Carbon::now()->subHour(2)
-                    ) {
+                ) {
                     $response[$i]['result'] = '**雨予報あり通知**';
                     // 降雨量文言の生成
                     $rainfall = $this->rainfallLangMaker($total);
@@ -105,6 +110,14 @@ class WeatherCheckService
                                 ->weatherRainNotification($community, $rainfall);
                     $weatherStatus = 'forRain';
                 }
+
+                // 雨降りそうステータスの更新
+                // 別メソッド rainStatusUpdater で処理したかったが、ステータス更新を先に書いた事で
+                // 変化直前の状況判断が出来ない事になり、仕方なくここでステータス変更を記述
+                $community->last_maybe_rainy_datetime = Carbon::now();
+                $community->save();
+                $response[$i]['updateStatus'] = '**雨予報あり時間の更新**';
+                logger()->debug('雨降りそうの更新 community>>> id:'. $community->id . ' ' .$community->service_name);
             }
 
             // 雨振り予報通知タイミング
@@ -229,20 +242,20 @@ class WeatherCheckService
         // 雨振るかも の更新
         // 現在は振っていないが未来に降雨予報がある　かつ
         // 最後の雨の観測から一定時間が経過している
-        $lastRain = new Carbon($community->last_rainy_datetime);
-        if (
-            $rain['futures'] > 0 &&
-            $lastRain < Carbon::now()->subHours(2)
-        ) {
-            // 現在振っている 　更新しない
-            // 雨が観測されない 　更新しない
-            if (!($rain['now'] > 0 || $rain['total'] === 0)) {
-                $community->last_maybe_rainy_datetime = Carbon::now();
-                $community->save();
-                $message = '**雨予報あり時間の更新**';
-                logger()->debug('雨降りそうの更新 community>>> id:'. $community->id . ' ' .$community->service_name);
-            }
-        }
+        // $lastRain = new Carbon($community->last_rainy_datetime);
+        // if (
+        //     $rain['futures'] > 0 &&
+        //     $lastRain < Carbon::now()->subHours(2)
+        // ) {
+        //     // 現在振っている 　更新しない
+        //     // 雨が観測されない 　更新しない
+        //     if (!($rain['now'] > 0 || $rain['total'] === 0)) {
+        //         $community->last_maybe_rainy_datetime = Carbon::now();
+        //         $community->save();
+        //         $message = '**雨予報あり時間の更新**';
+        //         logger()->debug('雨降りそうの更新 community>>> id:'. $community->id . ' ' .$community->service_name);
+        //     }
+        // }
         return $message;
     }
 }
