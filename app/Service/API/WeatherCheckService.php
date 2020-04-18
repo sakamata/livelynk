@@ -174,21 +174,21 @@ class WeatherCheckService
     {
         $total = 0;
         $futures = 0;
+        $i = 1;
         // 10分毎の雨量の合計・最初・最後を取得
+        $max = count($weatherArr);
         foreach ($weatherArr as $weather) {
             $val = floatval($weather['Rainfall']);
             $total = $total + $val;
-            if ($weather === reset($weatherArr)) {
-                // 最初
+            if ($i === 1) { // 最初
                 $now = $val;
-            } else {
-                // 最初以外
+            } else { // 最初以外
                 $futures += $val;
             }
-            if ($weather === end($weatherArr)) {
-                // 最 後
+            if ($i === $max) { // 最 後
                 $mostFuture = $val;
             }
+            $i++;
         }
         $res = [
             'now'           => $now,
