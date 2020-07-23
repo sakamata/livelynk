@@ -238,24 +238,6 @@ class WeatherCheckService
             $message = '**雨確認時間の更新**';
             logger()->debug('現在雨の更新 community>>> id:'. $community->id . ' ' .$community->service_name);
         }
-
-        // 雨振るかも の更新
-        // 現在は振っていないが未来に降雨予報がある　かつ
-        // 最後の雨の観測から一定時間が経過している
-        // $lastRain = new Carbon($community->last_rainy_datetime);
-        // if (
-        //     $rain['futures'] > 0 &&
-        //     $lastRain < Carbon::now()->subHours(2)
-        // ) {
-        //     // 現在振っている 　更新しない
-        //     // 雨が観測されない 　更新しない
-        //     if (!($rain['now'] > 0 || $rain['total'] === 0)) {
-        //         $community->last_maybe_rainy_datetime = Carbon::now();
-        //         $community->save();
-        //         $message = '**雨予報あり時間の更新**';
-        //         logger()->debug('雨降りそうの更新 community>>> id:'. $community->id . ' ' .$community->service_name);
-        //     }
-        // }
         return $message;
     }
 }
