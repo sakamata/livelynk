@@ -174,21 +174,21 @@ class WeatherCheckService
     {
         $total = 0;
         $futures = 0;
+        $i = 1;
         // 10分毎の雨量の合計・最初・最後を取得
+        $max = count($weatherArr);
         foreach ($weatherArr as $weather) {
             $val = floatval($weather['Rainfall']);
             $total = $total + $val;
-            if ($weather === reset($weatherArr)) {
-                // 最初
+            if ($i === 1) { // 最初
                 $now = $val;
-            } else {
-                // 最初以外
+            } else { // 最初以外
                 $futures += $val;
             }
-            if ($weather === end($weatherArr)) {
-                // 最 後
+            if ($i === $max) { // 最 後
                 $mostFuture = $val;
             }
+            $i++;
         }
         $res = [
             'now'           => $now,
@@ -238,24 +238,6 @@ class WeatherCheckService
             $message = '**雨確認時間の更新**';
             logger()->debug('現在雨の更新 community>>> id:'. $community->id . ' ' .$community->service_name);
         }
-
-        // 雨振るかも の更新
-        // 現在は振っていないが未来に降雨予報がある　かつ
-        // 最後の雨の観測から一定時間が経過している
-        // $lastRain = new Carbon($community->last_rainy_datetime);
-        // if (
-        //     $rain['futures'] > 0 &&
-        //     $lastRain < Carbon::now()->subHours(2)
-        // ) {
-        //     // 現在振っている 　更新しない
-        //     // 雨が観測されない 　更新しない
-        //     if (!($rain['now'] > 0 || $rain['total'] === 0)) {
-        //         $community->last_maybe_rainy_datetime = Carbon::now();
-        //         $community->save();
-        //         $message = '**雨予報あり時間の更新**';
-        //         logger()->debug('雨降りそうの更新 community>>> id:'. $community->id . ' ' .$community->service_name);
-        //     }
-        // }
         return $message;
     }
 }
