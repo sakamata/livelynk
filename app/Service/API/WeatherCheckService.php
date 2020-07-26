@@ -73,7 +73,7 @@ class WeatherCheckService
             $rain           = $this->rainTotalize($weatherArr);
             $total          = $rain['total'];
             $beforeCommunity  = $this->community::find($communityId);
-            // 雨ステータスの更新
+            // 晴れと雨ステータスの更新
             $response[$i]['updateStatus'] = $this->rainStatusUpdater($rain, $beforeCommunity);
             // ステータス更新後の情報を再取得
             $community  = $this->community::find($communityId);
@@ -141,11 +141,14 @@ class WeatherCheckService
 
             // 雨止み判定と通知
             // 晴れの時間が雨と比較して 5 ～ 15分後の間なら
+            $community = $community->fresh();
             $sunny = new Carbon($community->last_sunny_datetime);
             $rainy = new Carbon($community->last_rainy_datetime);
+            $maybeRainy = new Carbon($community->last_maybe_rainy_datetime);
             if (
+                $sunny > $rainy &&
                 $sunny->diffInMinutes($rainy) >= 5 &&
-                $sunny->diffInMinutes($rainy) <= 15
+                $sunny->diffInMinutes($rainy) < 15
             ) {
                 $response[$i]['result'] = '**雨止み通知**';
                 // 発話メッセージの作成
