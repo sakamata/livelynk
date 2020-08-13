@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API;
 
 use \App;
 use App\Http\Controllers\Controller;
-use App\Service\Api\WeatherCheckService;
-use App\Service\Api\WeatherCheckDummyService;
+use App\Service\API\WeatherCheckService;
+use App\Service\API\WeatherCheckDummyService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
