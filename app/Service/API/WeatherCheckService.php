@@ -144,17 +144,25 @@ class WeatherCheckService
             $community = $community->fresh();
             $sunny = new Carbon($community->last_sunny_datetime);
             $rainy = new Carbon($community->last_rainy_datetime);
+            $rainStopInfo = new Carbon($community->last_rain_stop_info_datetime);
             $maybeRainy = new Carbon($community->last_maybe_rainy_datetime);
             if (
                 $sunny > $rainy &&
                 $sunny->diffInMinutes($rainy) >= 5 &&
-                $sunny->diffInMinutes($rainy) < 15
-            ) {
+                $sunny->diffInMinutes($rainy) < 15 &&
+                // 雨止み通知から〇分以上か？
+                $rainStopInfo <= Carbon::now()->subMinutes(60)
+
+                ) {
                 $response[$i]['result'] = '**雨止み通知**';
                 // 発話メッセージの作成
                 $message = $this->googleHomeController
                             ->weatherStopRainingNotification();
                 $weatherStatus = 'StopRain';
+
+                // 雨止み通知時間をsave
+                $community->last_rain_stop_info_datetime = Carbon::now();
+                $community->save();
             }
 
             // 発話をDBに入れる

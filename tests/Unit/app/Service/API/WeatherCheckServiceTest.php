@@ -171,6 +171,7 @@ class WeatherCheckServiceTest extends TestCase
             'last_maybe_rainy_datetime' => $subDay,
             'last_rainy_datetime'       => $subDay,
             'last_sunny_datetime'       => $subMinute,
+            'last_rain_stop_info_datetime'  => $subDay,
         ]);
         factory(Router::class)->create([
             'community_id'    => 1,
@@ -223,6 +224,7 @@ class WeatherCheckServiceTest extends TestCase
             'last_maybe_rainy_datetime'     => $subDay,
             'last_rainy_datetime'           => $subDay,
             'last_sunny_datetime'           => $subMinute,
+            'last_rain_stop_info_datetime'  => $subDay,
         ]);
 
         factory(Router::class)->create([
@@ -278,6 +280,7 @@ class WeatherCheckServiceTest extends TestCase
             'last_maybe_rainy_datetime'     => $subMinute,
             'last_rainy_datetime'           => $subDay,
             'last_sunny_datetime'           => $subHour,
+            'last_rain_stop_info_datetime'  => $subDay,
         ]);
 
         factory(Router::class)->create([
@@ -331,6 +334,7 @@ class WeatherCheckServiceTest extends TestCase
             'last_maybe_rainy_datetime'     => $subHour,
             'last_rainy_datetime'           => $subMinute,
             'last_sunny_datetime'           => $subDay,
+            'last_rain_stop_info_datetime'  => $subDay,
         ]);
 
         factory(Router::class)->create([
@@ -383,6 +387,7 @@ class WeatherCheckServiceTest extends TestCase
             'last_maybe_rainy_datetime'     => $subMinute,
             'last_rainy_datetime'           => $subMinute,
             'last_sunny_datetime'           => $subDay,
+            'last_rain_stop_info_datetime'  => $subDay,
         ]);
 
         factory(Router::class)->create([
