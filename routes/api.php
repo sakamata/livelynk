@@ -14,8 +14,10 @@ use Illuminate\Http\Request;
 */
 
 // local test環境のみ有効
-if ( app()->isLocal() || app()->runningUnitTests() ) {
+if (app()->isLocal() || app()->runningUnitTests()) {
     // 天気API動作確認用route postman で確認可能だが通常はコメントアウト
     Route::get('/weather', 'API\WeatherCheckController@run');
     Route::get('/test', 'TaskController@taskDepartureCheck');
 }
+
+Route::post('stay_info/community/{communityId}', 'API\StayInfo\MailFetchController@post')->where('communityId', '[0-9]+');
