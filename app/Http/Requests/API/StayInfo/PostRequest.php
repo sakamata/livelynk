@@ -5,6 +5,7 @@ namespace App\Http\Requests\API\StayInfo;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 use \Symfony\Component\HttpFoundation\Response;
 
 class PostRequest extends FormRequest
@@ -27,10 +28,16 @@ class PostRequest extends FormRequest
     public function rules()
     {
         return [
-            'hashKey' => ['required', 'regex:/^[a-zA-Z0-9-]+$/', 'min:4', 'max:64'],
+            'hash_key' => [
+                'required', 'regex:/^[a-zA-Z0-9-]+$/', 'min:4', 'max:64',
+                Rule::exists('communities')->where(function ($query) {
+                    $query->where('id', $this->community_id)
+                        ->where('hash_key', $this->hash_key);
+                })
+            ],
             'name' => ['required', 'string', 'max:255'],
             'domain' => ['required','string', 'max:255'],
-            'globalIp' => ['required', 'ip', 'min:1', 'max:255'],
+            'global_ip' => ['required', 'ip', 'min:1', 'max:255'],
         ];
     }
 

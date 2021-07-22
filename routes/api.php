@@ -20,4 +20,5 @@ if (app()->isLocal() || app()->runningUnitTests()) {
     Route::get('/test', 'TaskController@taskDepartureCheck');
 }
 
-Route::post('stay_info/community/{communityId}', 'API\StayInfo\MailFetchController@post')->where('communityId', '[0-9]+');
+Route::post('stay_info/community/{community_id}', 'API\StayInfo\MailFetchController@post')
+    ->where('community_id', '[0-9]+');
