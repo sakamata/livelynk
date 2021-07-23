@@ -33,4 +33,9 @@ class Community extends Model
     {
         return $this->hasOne('App\UserTable', 'id', 'user_id');
     }
+
+    public function globalIps()
+    {
+        return $this->hasMany(GlobalIp::class, 'community_id');
+    }
 }

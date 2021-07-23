@@ -43,9 +43,9 @@ class AdminCommunityController extends Controller
     {
         $request->validate([
             'user_name' => 'required|string|min:3|max:30',
+            'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', 'unique:users'],
             'email' => 'nullable|string|email|max:170',
             'password' => 'required|string|min:6|max:100|confirmed',
-            'unique_name' => ['required', 'string', 'min:6', 'max:40', 'regex:/^[a-zA-Z0-9@_\-.]{6,40}$/u', 'unique:users'],
             'name' => 'required|string|alpha_dash|min:3|max:32|unique:communities',
             'service_name' => 'required|string|min:3|max:32',
             'service_name_reading' => 'nullable|string|min:3|max:64',
@@ -53,6 +53,7 @@ class AdminCommunityController extends Controller
             'hash_key' => 'required|regex:/^[a-zA-Z0-9-]+$/|min:4|max:64',
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhook_key' => 'nullable|string|max:191',
+            'mail_box_domain' => 'nullable|string|max:191',
             'tumolink_enable' => 'boolean',
             'calendar_enable' => 'boolean',
             'calendar_public_iframe' => 'nullable|string|max:1000',
@@ -75,6 +76,7 @@ class AdminCommunityController extends Controller
             'url_path'                      => $request->url_path,
             'ifttt_event_name'              => $request->ifttt_event_name,
             'ifttt_webhooks_key'            => $request->ifttt_webhooks_key,
+            'mail_box_domain'               => $request->mail_box_domain,
             'tumolink_enable'               => $request->tumolink_enable,
             'calendar_enable'               => $request->calendar_enable,
             'calendar_public_iframe'        => $request->calendar_public_iframe,
@@ -93,7 +95,7 @@ class AdminCommunityController extends Controller
             // role_id "readerAdmin" = 3 に固定
             $user_id = $this->call_user->UserCreate(
                 (string)$request->user_name,
-                (string)$request->name_reading,
+                null,
                 (string)$request->unique_name,
                 (string)$request->email,
                 (bool)$provisional = false,
@@ -158,6 +160,7 @@ class AdminCommunityController extends Controller
             'hash_key' => 'required|regex:/^[a-zA-Z0-9-]+$/|min:4|max:64',
             'ifttt_event_name' => 'nullable|string|max:191',
             'ifttt_webhooks_key' => 'nullable|string|max:191',
+            'mail_box_domain' => 'nullable|string|max:191',
             'latitude' => 'nullable|numeric|between:-90,90', // 緯度 南北
             'longitude' => 'nullable|numeric|between:0,360', // 経度 東西
         ];
@@ -187,6 +190,7 @@ class AdminCommunityController extends Controller
             'hash_key'              => $request->hash_key,
             'ifttt_event_name'      => $request->ifttt_event_name,
             'ifttt_webhooks_key'    => $request->ifttt_webhooks_key,
+            'mail_box_domain'       => $request->mail_box_domain,
             'latitude'              => $request->latitude,
             'longitude'             => $request->longitude,
             'updated_at'            => $now,

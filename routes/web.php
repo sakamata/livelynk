@@ -83,10 +83,16 @@ Route::group(['middleware' => ['auth', 'can:normalAdmin']], function () {
     Route::post('/admin_mac_address/update', 'AdminMacAddressController@update');
 
     Route::get('/admin_router', 'AdminRouterController@index');
-    Route::get('/admin_router/add', 'AdminRouterController@add');
-    Route::post('/admin_router/create', 'AdminRouterController@create');
-    Route::get('/admin_router/edit{id?}', 'AdminRouterController@edit');
-    Route::post('/admin_router/update', 'AdminRouterController@update');
+    Route::get('/admin_router/create', 'AdminRouterController@create');
+    Route::post('/admin_router', 'AdminRouterController@store');
+    Route::get('/admin_router/{id}/edit', 'AdminRouterController@edit');
+    Route::post('/admin_router/{id}', 'AdminRouterController@update');
+
+    Route::get('/admin_global_ip', 'AdminGlobalIpController@index');
+    Route::get('/admin_global_ip/create', 'AdminGlobalIpController@create');
+    Route::post('/admin_global_ip', 'AdminGlobalIpController@store');
+    Route::get('/admin_global_ip/{id}/edit', 'AdminGlobalIpController@edit');
+    Route::post('/admin_global_ip/{id}', 'AdminGlobalIpController@update');
 
     Route::get('/admin_community/edit{id?}', 'AdminCommunityController@edit');
     Route::post('/admin_community/update', 'AdminCommunityController@update');

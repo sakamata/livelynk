@@ -1,18 +1,19 @@
 <?php
 use App\Community;
+use App\UserTable;
 use Carbon\Carbon;
 use Faker\Generator as Faker;
 
 $factory->define(Community::class, function (Faker $faker) {
     return [
-        'id' => 1,
         'enable' => true,
-        'user_id' => 1,
+        'user_id' => factory(UserTable::class)->create()->id,
         'name' => $faker->country,
         'service_name' => $faker->company,
         'service_name_reading' => $faker->company,
         'url_path' => $faker->password,
         'hash_key' => $faker->password,
+        'mail_box_domain' => $faker->safeEmailDomain,
         'tumolink_enable' => false,
         'calendar_enable' => false,
         'calendar_public_iframe' => null,

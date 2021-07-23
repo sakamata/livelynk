@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header"><h2>ルーター新規登録</h2></div>
                 <div class="card-body">
-                    <form action="/admin_router/create" method="post">
+                    <form action="/admin_router" method="post">
                         {{ csrf_field() }}
                         @component('components.error')
                         @endcomponent

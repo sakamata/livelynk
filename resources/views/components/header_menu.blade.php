@@ -10,6 +10,7 @@
 <a href="/admin_user">ユーザー一覧</a>
 <a href="/admin_mac_address/index">デバイス一覧</a>
 <a href="/admin_router">ルーター一覧</a>
+<a href="/admin_global_ip">グローバルIP一覧</a>
 <a href="/admin_community/edit?id={{Auth::user()->community_id}}">コミュニティ編集</a>
 <a href="/admin_log">滞在ログ一覧</a>
 @endcan

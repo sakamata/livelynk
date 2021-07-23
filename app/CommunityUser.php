@@ -44,6 +44,11 @@ class CommunityUser extends Model
         return $this->hasMany('App\MacAddress');
     }
 
+    public function mailBoxNames()
+    {
+        return $this->hasMany(MailBoxName::class);
+    }
+
     public function tumolink()
     {
         return $this->hasOne('App\Tumolink', 'community_user_id', 'id');
@@ -56,7 +61,7 @@ class CommunityUser extends Model
 
     public function scopeGetCommunityID($query, $community_user_id)
     {
-        return $query->where('id',$community_user_id)
+        return $query->where('id', $community_user_id)
             ->pluck('community_id')->first();
     }
 
@@ -95,6 +100,6 @@ class CommunityUser extends Model
                 ['community_user.community_id', $community_id],
                 ])
                 ->orderBy($key, $order);
-                // ['community_user.user_id', $cmp, $reader_id],
+        // ['community_user.user_id', $cmp, $reader_id],
     }
 }

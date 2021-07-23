@@ -110,6 +110,12 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="InputTextarea">メールボックスドメイン</label>
+                            <input type="text" class="form-control form-control-lg" name="mail_box_domain" value="{{old('mail_box_domain')}}">
+                            <p>メールサーバーによる滞在確認を行う際は、送信時のドメイン名が必要です。</p>
+                        </div>
+
+                        <div class="form-group">
                             <label for="InputTextarea">IFTTT Event Name</label>
                             <input type="text" class="form-control form-control-lg" name="ifttt_event_name" value="{{old('ifttt_event_name')}}"  onInput="checkForm(this)">
                             <p>(任意)通知設定の為のIFTTTのEvent Nameを登録します</p>
