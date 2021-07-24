@@ -1,4 +1,6 @@
 <?php
+// laravel 6.0
+use Illuminate\Support\Str;
 
 return [
 
@@ -85,10 +87,12 @@ return [
     | value to get prefixed to all our keys so we can avoid collisions.
     |
     */
+    // laravel 5.6
+    // 'prefix' => env(
+    //     'CACHE_PREFIX',
+    //     str_slug(env('APP_NAME', 'laravel'), '_').'_cache'
+    // ),
 
-    'prefix' => env(
-        'CACHE_PREFIX',
-        str_slug(env('APP_NAME', 'laravel'), '_').'_cache'
-    ),
-
+    // laravel 6.0
+    'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache'),
 ];
