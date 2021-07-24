@@ -102,4 +102,17 @@ class CommunityUser extends Model
                 ->orderBy($key, $order);
         // ['community_user.user_id', $cmp, $reader_id],
     }
+
+    /**
+     * コミュニティに存在するuser_id を配列で返却
+     *
+     * @param integer $communityId
+     * @return array
+     */
+    public static function getIds(int $communityId)
+    {
+        return self::where('community_id', $communityId)
+            ->pluck('id')
+            ->toArray();
+    }
 }

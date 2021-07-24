@@ -15,10 +15,10 @@
                             <h3>ID&nbsp;:&nbsp;&nbsp;{{$item->id}}</h3>
                         </div>
                         <div>
-                            登録日時: {{$item->created_at->format('n月j日 G:i:s')}}
+                            登録日時: {{@$item->created_at->format('n月j日 G:i:s')}}
                         </div>
                         <div>
-                            更新日時: {{$item->updated_at->format('n月j日 G:i:s')}}
+                            更新日時: {{@$item->updated_at->format('n月j日 G:i:s')}}
                         </div>
                         <hr>
                         <input type="hidden" name="id" value="{{$item->id}}">

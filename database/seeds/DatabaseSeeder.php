@@ -20,5 +20,6 @@ class DatabaseSeeder extends Seeder
         $this->call(RoutersTableSeeder::class);
         $this->call(UserStayLogTableSeeder::class);
         $this->call(UsersTableSeeder::class);
+        $this->call(GlobalIpTableSeeder::class);
     }
 }

@@ -29,15 +29,21 @@ class PostRequest extends FormRequest
     {
         return [
             'hash_key' => [
-                'required', 'regex:/^[a-zA-Z0-9-]+$/', 'min:4', 'max:64',
+                'required', 'regex:/^[a-zA-Z0-9-]+$/', 'max:64',
                 Rule::exists('communities')->where(function ($query) {
                     $query->where('id', $this->community_id)
                         ->where('hash_key', $this->hash_key);
                 })
             ],
-            'name' => ['required', 'string', 'max:255'],
-            'domain' => ['required','string', 'max:255'],
-            'global_ip' => ['required', 'ip', 'min:1', 'max:255'],
+            'domain' => [
+                'required','string', 'max:191',
+                Rule::exists('communities', 'mail_box_domain')->where(function ($query) {
+                    $query->where('id', $this->community_id)
+                        ->where('mail_box_domain', $this->domain);
+                })
+            ],
+            'global_ip' => ['required', 'ip', 'max:191'],
+            'name' => ['required', 'string', 'max:191'],
         ];
     }
 

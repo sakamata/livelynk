@@ -35,8 +35,8 @@
                             <td>{{$item->community->service_name}}</td>
                             <td>{{$item->global_ip}}</td>
                             <td>{{$item->name}}</td>
-                            <td>{{$item->created_at->format('n月j日 G:i')}}</td>
-                            <td>{{$item->updated_at->format('n月j日 G:i')}}</td>
+                            <td>{{@$item->created_at->format('n月j日 G:i')}}</td>
+                            <td>{{@$item->updated_at->format('n月j日 G:i')}}</td>
                             <td>
                                 <a href="/admin_global_ip/{{$item->id}}/edit" class="btn btn-info" role="button">編集</a>
                             </td>
