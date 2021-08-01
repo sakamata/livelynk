@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use DB;
+use App\CommunityUser;
+use App\Community;
+use App\MailBoxName;
+use App\Http\Controllers\ExportPostController;
 use App\Http\Controllers\InportPostController;
-use App\TalkMessage;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+use DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -86,6 +88,42 @@ class TaskController extends Controller
         foreach ($communityIds as  $communityId) {
             log::debug(print_r('Schedule TaskController@taskDepartureCheck run!  DepartureCheck community_id >>>' . $communityId, 1));
             $this->inportPostController->DepartureCheck($communityId);
+        }
+    }
+
+    /**
+     * MailBox式の帰宅処理と通知
+     *
+     * @return void
+     */
+    public function taskGlobalIpDepartureCheck()
+    {
+        $communities = Community::whereNotNull('mail_box_domain')->get();
+
+        foreach ($communities as $community) {
+            $communityUserIds = CommunityUser::where('community_id', $community->id)
+                ->pluck('id')->toArray();
+            $mailBoxNames = MailBoxName::getNowDepartures($communityUserIds);
+
+            $push_users = [];
+            foreach ($mailBoxNames as $mailBoxName) {
+                // 帰宅状態に更新
+                $mailBoxName->setDeparture($mailBoxName->community_user_id);
+                $push_users[] = [
+                    "id" => $mailBoxName->communityUser->user_id,
+                    "name" => $mailBoxName->communityUser->user->name,
+                ];
+            }
+            if (!empty($push_users)) {
+                // 帰宅通知
+                logger()->debug('mailbox帰宅通知');
+                $exportController = new ExportPostController();
+                $exportController->access_message_maker(
+                    $push_users,
+                    $category = 'mail_fatch_departure',
+                    $community->id
+                );
+            }
         }
     }
 }

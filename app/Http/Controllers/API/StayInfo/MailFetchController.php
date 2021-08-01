@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\API\StayInfo;
 
 use App\CommunityUser;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\API\StayInfo\PostRequest;
+use App\GlobalIp;
 use App\MailBoxName;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\ExportPostController;
+use App\Http\Requests\API\StayInfo\PostRequest;
 use App\Service\UserService;
 use DB;
 use Illuminate\Support\Facades\Log;
@@ -14,72 +16,127 @@ class MailFetchController extends Controller
 {
     public function post(PostRequest $request)
     {
+        $communityUserIds = CommunityUser::getIds($request->community_id);
+        $communityUserId = MailBoxName::getCommunityUserId($communityUserIds, $request->name);
+        if (!$communityUserId) {
+            // アカウント登録、来訪なら通知する
+            return $this->userCreate($request);
+        }
 
-        // return $request->all();
+        // 滞在判定
+        $isStay = GlobalIp::isStay($request->community_id, $request->global_ip);
+        if (!$isStay) {
+            $message = '非滞在中、処理無し';
+            $request->merge(['status' => $message]);
+            Log::debug($message);
+            Log::debug($request->all());
+            return $request->all();
+        }
 
-        // 既存データの存在確認
-        // 確認対象
-        // global_ip => global_ips.global_ip
-        // name => mail_box_names.mail_box_name
+        $isArraival = MailBoxName::isArraival($communityUserId, $request);
+        $mailBoxName = new MailBoxName();
 
-        // name  新規なら登録
-        $communityUserId = $this->userSearchOrCreate($request);
-        return $communityUserId;
+        if (!$isArraival) {
+            // 滞在更新
+            $mailBoxName->setStayUpdate($communityUserId, $request);
+            $message = '滞在更新';
+            $request->merge(['status' => $message]);
+            Log::debug($message);
+            Log::debug($request->all());
+            return $request->all();
+        }
 
         // 来訪判定
+        $mailBoxName->setArraival($communityUserId, $request);
 
-        // 非滞在
-        // 来訪 通知
-        // 滞在継続
-        // 帰宅 通知
+        $export = new ExportPostController();
+        $push_users = $this::setUserInfo($communityUserId);
+        $export->access_message_maker(
+            $push_users,
+            $category = 'arraival',
+            $request->community_id
+        );
 
-        // global_ip DB登録以外の値は来訪と見なさない
-        // global_ip 既存の値
+        $message = '来訪者あり';
+        $request->merge(['status' => $message]);
+        Log::debug($message);
+        Log::debug($request->all());
+        return $request->all();
 
-        // mail_box_name 無ければ登録
-
-        // global_ip が既存データだった場合
-
+        // memo 帰宅処理は以下で schedule 実行
+        // App\Http\Controllers\TaskController->taskGlobalIpDepartureCheck()
     }
 
     /**
-     * ユーザーを検索、無ければ生成、荒ればcommunity_user_idを返却
+     * ユーザーを登録、来訪中ならば来訪セット
      * @param PostRequest $request
-     * @return integer $communityUserId
+     * @return array
      */
-    public function userSearchOrCreate($request)
+    public function userCreate($request)
     {
         $name = $request->name;
         $domain = $request->domain;
         $communityId = $request->community_id;
 
-        $communityUserIds = CommunityUser::getIds($communityId);
-        $communityUserId = MailBoxName::getCommunityUserId($communityUserIds, $name);
+        $userService = new UserService();
+        DB::beginTransaction();
+        try {
+            $communityUserId = $userService->UserCreate(
+                $name,
+                $name_reading = null,
+                $name . '@' . $domain,
+                $name . '@' . $domain,
+                $provisional = 1,
+                $name,
+                $communityId,
+                $role_id = 1,
+                $action = 'InportPostProvisional'
+            );
+            MailBoxName::store($request, $communityUserId);
+            $message = '新規ユーザーを登録しました : ';
 
-        if (!$communityUserId) {
-            $userService = new UserService();
-            DB::beginTransaction();
-            try {
-                $communityUserId = $userService->UserCreate(
-                    $name,
-                    $name_reading = null,
-                    $name . '@' . $domain,
-                    $name . '@' . $domain,
-                    $provisional = 1,
-                    $name,
-                    $communityId,
-                    $role_id = 1,
-                    $action = 'InportPostProvisional'
+            $export = new ExportPostController();
+            $push_users = $this::setUserInfo($communityUserId);
+            // ユーザー登録をslack通知
+            $export->access_message_maker(
+                $push_users,
+                $category = 'mail_box_create',
+                $request->community_id
+            );
+
+            // アクセス元が登録済み global_ip なら初来訪処理を追加
+            $isStay = GlobalIp::isStay($communityId, $request->global_ip);
+            if ($isStay) {
+                $mailBoxName = new MailBoxName();
+                $mailBoxName->setArraival($communityUserId, $request);
+                $message = $message . '新規ユーザー登録、初来訪';
+                // 初来訪をslack通知
+                $export->access_message_maker(
+                    $push_users,
+                    $category = 'mail_box_first_arraival',
+                    $request->community_id
                 );
-                MailBoxName::store($request, $communityUserId);
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollback();
-                Log::error('transaction'. __FILE__ .':'. __FUNCTION__ .':'.  __LINE__);
-                report($e);
             }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('transaction'. __FILE__ .':'. __FUNCTION__ .':'.  __LINE__);
+            report($e);
         }
 
-        return $communityUserId;
+        $request->merge(['status' => $message]);
+        Log::debug($message);
+        Log::debug($request->all());
+        return $request->all();
+    }
+
+    protected static function setUserInfo(int $communityUserId)
+    {
+        $communityUser = CommunityUser::find($communityUserId);
+        $push_users[] = [
+            "id" => $communityUser->user_id,
+            "name" => $communityUser->user->name,
+        ];
+        return $push_users;
     }
 }

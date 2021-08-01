@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use App\AuthUser;
-use App\CommunityUser;
-// use Illuminate\Http\Request;
-use App\Http\Middleware\VerifyCsrfToken;
+use App\MailBoxName;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
@@ -23,32 +21,47 @@ class ExportPostController extends Controller
         // $res['users_count_str'] => "〇~〇（人）",
         // $res['users_name_str'] => "Aさん Bさん ...",
 
-        // 帰宅想定時間（分）
         $minute = round(config("env.judge_departure_interval_second") / 60, 0);
+
+        if ($category === 'mail_fatch_departure') {
+            $minute = MailBoxName::MAX_MINUTES_JUDGE_STAY;
+        }
+
         $now = Carbon::now();
         $time = $now->subSecond($minute * 60);
         $time = $time->format('G:i');
 
-        // 通知の種別設定
-        switch ($category) {
-            case 'arraival':
-                $title = $community->service_name . 'に来訪者です';
-                $message = $res['users_name_str'] . "が". $community->service_name . "に来ました。今たぶん" . $res['users_count_str'] . "名がいます。";
-                break;
+        if ($category === 'arraival') {
+            $title = $community->service_name . 'に来訪者です';
+            $message = $res['users_name_str'] . "が".
+                $community->service_name . "に来ました。今たぶん" .
+                $res['users_count_str'] . "名がいます。";
+        }
 
-            case 'departure':
-                $title = $community->service_name . 'から帰宅者です';
-                if ($res['users_count_str'] == 0) {
-                    $message = $res['users_name_str'] . "が". $minute . "分程前(". $time .")に" . $community->service_name . "から帰りました。今たぶん誰もいません。";
-                } else {
-                    $message = $res['users_name_str'] . "が". $minute . "分程前(". $time .")に" . $community->service_name . "から帰りました。今たぶん" . $res['users_count_str'] . "名がいます。";
-                }
-                break;
+        if ($category === 'mail_box_first_arraival') {
+            $title = $community->service_name . 'に初来訪者です';
+            $message = $res['users_name_str'] . "が".
+                $community->service_name . "に来ました。今たぶん" .
+                $res['users_count_str'] . "名がいます。";
+        }
 
-            default:
-                $title = "";
-                $message = "";
-                break;
+        if ($category === 'mail_box_create') {
+            $title = $community->service_name . 'にユーザーが登録されました';
+            $message = 'メールアカウント : '. $push_users[0]['name'];
+        }
+
+        if ($category === 'departure' || $category === 'mail_fatch_departure') {
+            $title = $community->service_name . 'から帰宅者です';
+            if ($res['users_count_str'] == 0) {
+                $message = $res['users_name_str'] . "が".
+                    $minute . "分程前(". $time .")に" .
+                    $community->service_name . "から帰りました。今たぶん誰もいません。";
+            } else {
+                $message = $res['users_name_str'] . "が".
+                    $minute . "分程前(". $time .")に" .
+                    $community->service_name . "から帰りました。今たぶん" .
+                    $res['users_count_str'] . "名がいます。";
+            }
         }
         $this->push_ifttt($title, $message, $community);
     }

@@ -40,4 +40,11 @@ class GlobalIp extends Model
             ->first();
         return $model ? $model->id : null;
     }
+
+    public static function isStay($communityId, $globalIp)
+    {
+        return self::where('community_id', $communityId)
+            ->where('global_ip', $globalIp)
+            ->exists();
+    }
 }

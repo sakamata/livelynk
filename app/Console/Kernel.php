@@ -45,6 +45,11 @@ class Kernel extends ConsoleKernel
             ->call('App\Http\Controllers\TaskController@taskDepartureCheck')
             ->everyThirtyMinutes();
 
+        // メールによるGlobalIPでの滞在判定と帰宅処理を行う
+        $schedule
+            ->call('App\Http\Controllers\TaskController@taskGlobalIpDepartureCheck')
+            ->everyFiveMinutes();
+
         $schedule
             ->call('App\Http\Controllers\TumolinkController@auto_remove_before_today')
             // ->withoutOverlapping()
