@@ -77,9 +77,10 @@ class ExportPostController extends Controller
             $users_name_str .= "『" . $user['name'] . "』さん ";
         }
 
+        // todo これと同様の処理で合計をmail_box_names で導く
         // コミュニティの管理 user_id 以外の既存user滞在者数を求める
         // community_user_id でのgroupByはMySQLのメモリオーバーになるのでコツコツ処理する
-        $community_user_ids = DB::table('community_user')
+        $macAddressCommunityUserIds = DB::table('community_user')
             ->select('community_user_id')
             ->leftJoin('mac_addresses', 'mac_addresses.community_user_id', '=', 'community_user.id')
             ->where([
@@ -88,17 +89,20 @@ class ExportPostController extends Controller
                 ['current_stay', 1],
                 ['hide', 0],
             ])
-        ->get();
+            ->get()->unique()->pluck('community_user_id');
 
-        // 取得した community_user_id から重複を削除して滞在者数をcount
-        $existing = array();
-        $i = 0;
-        foreach ($community_user_ids as $id) {
-            $existing[$i] = $id->community_user_id;
-            $i++;
-        }
+        $mailBoxCommunityUserIds = DB::table('community_user')
+            ->select('community_user_id')
+            ->leftJoin('mail_box_names', 'mail_box_names.community_user_id', '=', 'community_user.id')
+            ->where([
+                ['community_id', $community->id],
+                ['user_id','<>', $community->user_id],
+                ['current_stay', 1],
+            ])
+            ->get()->unique()->pluck('community_user_id');
+
         // 既存 user 滞在者数
-        $existing_count = count(array_unique($existing));
+        $existing_count = count($macAddressCommunityUserIds->merge($mailBoxCommunityUserIds)->unique());
 
         // 未登録 newcomer! の滞在数（コミュニティの管理 user_id に紐づいた滞在中のデバイス）
         $unknown_count = DB::table('community_user')
