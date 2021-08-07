@@ -126,7 +126,6 @@ class MailFetchController extends Controller
 
         $request->merge(['status' => $message]);
         Log::debug($message);
-        Log::debug($request->all());
         return $request->all();
     }
 

@@ -98,6 +98,7 @@ class TaskController extends Controller
      */
     public function taskGlobalIpDepartureCheck()
     {
+        logger()->debug('taskGlobalIpDepartureCheck run!');
         $communities = Community::whereNotNull('mail_box_domain')->get();
 
         foreach ($communities as $community) {
