@@ -25,7 +25,7 @@ class MailBoxName extends Model
 
     public const STAY = 1;
     public const NOT_STAY = 0;
-    public const MAX_MINUTES_JUDGE_STAY = 15;
+    public const MAX_MINUTES_JUDGE_STAY = 30;
 
     public function communityUser()
     {
