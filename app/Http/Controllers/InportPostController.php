@@ -99,7 +99,7 @@ class InportPostController extends Controller
                 try {
                     // 仮ユーザーの作成
                     $community_user_id  = $this->call_user->UserCreate(
-                        (string) '(仮)' . $check_array["vendor"][$v] , // name
+                        (string) '(仮)' . $check_array["vendor"][$v], // name
                         (string)$name_reading = null, // name_ふりがな
                         (string)$provisional_name, // unique_name
                         (string)$email = null,
