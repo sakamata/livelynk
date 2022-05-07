@@ -18,3 +18,13 @@ yarn-error.log
 .env.testing
 .phpunit.result.cache
 *.swp
+
+# Laravel9 update時 追加
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.idea
+/.vscode
