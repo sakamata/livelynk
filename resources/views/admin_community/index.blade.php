@@ -46,7 +46,7 @@
                                         <tr class="table">
                                             <td>ID:{{$router->id}}</td>
                                             <td>{{$router->name}}</td>
-                                            <td class="blockquote text-right"><a href="/admin_router/edit?id={{$router->id}}" class="btn btn-info" role="button">編集</a>
+                                            <td class="blockquote text-right"><a href="/admin_router/{{$router->id}}/edit" class="btn btn-info" role="button">編集</a>
                                             </td>
                                         </tr>
                                 @endforeach
