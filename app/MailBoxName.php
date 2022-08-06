@@ -2,11 +2,14 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
 class MailBoxName extends Model
 {
+    use HasFactory;
+
     /**
      * モデルと関連しているテーブル
      *

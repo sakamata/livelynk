@@ -1,7 +1,11 @@
 <?php
+
+namespace Database\Seeders;
+
 use App\UserStayLog;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class UserStayLogTableSeeder extends Seeder
 {
@@ -40,7 +44,7 @@ class UserStayLogTableSeeder extends Seeder
 
         $i= 0;
         foreach ($arr as $key => $value) {
-            factory(UserStayLog::class)->create([
+            UserStayLog::factory()->create([
                 'community_user_id' => $value['id'],
                 'arraival_at' => $value['arrai'],
                 'departure_at' => $value['dep'],
@@ -48,6 +52,5 @@ class UserStayLogTableSeeder extends Seeder
             ]);
             $i++;
         }
-
     }
 }

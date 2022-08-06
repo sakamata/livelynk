@@ -2,11 +2,14 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 class UserTable extends Model
 {
+    use HasFactory;
+
     /**
      * モデルと関連しているテーブル
      *
@@ -47,7 +50,7 @@ class UserTable extends Model
             'community_user_id',
             'user_id',
             'community_user.id'
-            )
+        )
             ->where('community_user.community_id', $community_id)->orderBy('arraival_at', 'desc');
     }
 

@@ -1,6 +1,10 @@
 <?php
 
+namespace Database\Seeders;
+
+use App\UserTable;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class UsersTableSeeder extends Seeder
 {
@@ -317,6 +321,6 @@ class UsersTableSeeder extends Seeder
         }
 
         // community 4
-        factory(App\UserTable::class,10)->create();
+        UserTable::factory(10)->create();
     }
 }

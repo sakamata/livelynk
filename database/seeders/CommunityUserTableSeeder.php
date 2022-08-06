@@ -1,7 +1,10 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CommunityUserTableSeeder extends Seeder
 {
@@ -96,7 +99,7 @@ class CommunityUserTableSeeder extends Seeder
         }
 
         // faker用 community 4 10名分
-        for ($i=37; $i < 47; $i++) { 
+        for ($i=37; $i < 47; $i++) {
             $param = [
                 'community_id' => 4,
                 'user_id' => $i,

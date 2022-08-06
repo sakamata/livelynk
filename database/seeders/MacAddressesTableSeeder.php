@@ -1,7 +1,10 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class MacAddressesTableSeeder extends Seeder
 {
@@ -15,13 +18,13 @@ class MacAddressesTableSeeder extends Seeder
         // tikara waza
         $now = Carbon::now();
         $subSecond = Carbon::now();
-        $subSecond = $subSecond->subSecond(rand(1,59));
+        $subSecond = $subSecond->subSecond(rand(1, 59));
         $subHour5 = Carbon::now();
-        $subHour5 = $subHour5->subHour(rand(1,5));
+        $subHour5 = $subHour5->subHour(rand(1, 5));
         $subHour = Carbon::now();
-        $subHour = $subHour->subHour(rand(1,23));
+        $subHour = $subHour->subHour(rand(1, 23));
         $subDay = Carbon::now();
-        $subDay = $subDay->subDay(rand(1,59));
+        $subDay = $subDay->subDay(rand(1, 59));
 
         $param = [
             'community_user_id' => 1,
@@ -99,19 +102,19 @@ class MacAddressesTableSeeder extends Seeder
         for ($i=5; $i <= 8; $i++) {
             $now = Carbon::now();
             $subSecond = Carbon::now();
-            $subSecond = $subSecond->subSecond(rand(1,600));
+            $subSecond = $subSecond->subSecond(rand(1, 600));
             $subMinutes = Carbon::now();
-            $subMinutes = $subMinutes->subMinutes(rand(11,59));
+            $subMinutes = $subMinutes->subMinutes(rand(11, 59));
             $subHour5 = Carbon::now();
-            $subHour5 = $subHour5->subHour(rand(1,5));
+            $subHour5 = $subHour5->subHour(rand(1, 5));
             $subHour = Carbon::now();
-            $subHour = $subHour->subHour(rand(1,23));
+            $subHour = $subHour->subHour(rand(1, 23));
             $subDay = Carbon::now();
-            $subDay = $subDay->subDay(rand(1,59));
+            $subDay = $subDay->subDay(rand(1, 59));
 
-            $rand_router = rand(1,2);
+            $rand_router = rand(1, 2);
             $posted = Carbon::now();
-            $posted = $posted->subSecond(rand(1,59));
+            $posted = $posted->subSecond(rand(1, 59));
 
             $stay = 1;
             $mac_top = strtoupper(str_random(2)) ;
@@ -143,19 +146,19 @@ class MacAddressesTableSeeder extends Seeder
         for ($i=9; $i <= 12; $i++) {
             $now = Carbon::now();
             $subSecond = Carbon::now();
-            $subSecond = $subSecond->subSecond(rand(1800,40000));
+            $subSecond = $subSecond->subSecond(rand(1800, 40000));
             $subMinutes = Carbon::now();
-            $subMinutes = $subMinutes->subMinutes(rand(1,59));
+            $subMinutes = $subMinutes->subMinutes(rand(1, 59));
             $subHour = Carbon::now();
-            $subHour = $subHour->subHour(rand(24,48));
+            $subHour = $subHour->subHour(rand(24, 48));
             $subHour2 = Carbon::now();
-            $subHour2 = $subHour2->subHour(rand(12,23));
+            $subHour2 = $subHour2->subHour(rand(12, 23));
             $subDay = Carbon::now();
-            $subDay = $subDay->subDay(rand(1,59));
+            $subDay = $subDay->subDay(rand(1, 59));
 
-            $rand_router = rand(1,2);
+            $rand_router = rand(1, 2);
             $posted = Carbon::now();
-            $posted = $posted->subSecond(rand(1,59));
+            $posted = $posted->subSecond(rand(1, 59));
 
             $stay = 0;
             $mac_top = strtoupper(str_random(2)) ;
@@ -187,19 +190,19 @@ class MacAddressesTableSeeder extends Seeder
         for ($i=13; $i <= 21; $i++) {
             $now = Carbon::now();
             $subSecond = Carbon::now();
-            $subSecond = $subSecond->subSecond(rand(1,59));
+            $subSecond = $subSecond->subSecond(rand(1, 59));
             $subMinutes = Carbon::now();
-            $subMinutes = $subMinutes->subMinutes(rand(1,59));
+            $subMinutes = $subMinutes->subMinutes(rand(1, 59));
             $subHour5 = Carbon::now();
-            $subHour5 = $subHour5->subHour(rand(1,5));
+            $subHour5 = $subHour5->subHour(rand(1, 5));
             $subHour = Carbon::now();
-            $subHour = $subHour->subHour(rand(1,23));
+            $subHour = $subHour->subHour(rand(1, 23));
             $subDay = Carbon::now();
-            $subDay = $subDay->subDay(rand(1,59));
+            $subDay = $subDay->subDay(rand(1, 59));
 
-            $rand_router = rand(3,4);
+            $rand_router = rand(3, 4);
             $posted = Carbon::now();
-            $posted = $posted->subSecond(rand(1,59));
+            $posted = $posted->subSecond(rand(1, 59));
 
             $posted30 = Carbon::now();
             $posted30 = $posted30->subSecond(30);
@@ -237,19 +240,19 @@ class MacAddressesTableSeeder extends Seeder
         for ($i=22; $i <= 30; $i++) {
             $now = Carbon::now();
             $subSecond = Carbon::now();
-            $subSecond = $subSecond->subSecond(rand(1,59));
+            $subSecond = $subSecond->subSecond(rand(1, 59));
             $subMinutes = Carbon::now();
-            $subMinutes = $subMinutes->subMinutes(rand(1,59));
+            $subMinutes = $subMinutes->subMinutes(rand(1, 59));
             $subHour5 = Carbon::now();
-            $subHour5 = $subHour5->subHour(rand(1,5));
+            $subHour5 = $subHour5->subHour(rand(1, 5));
             $subHour = Carbon::now();
-            $subHour = $subHour->subHour(rand(1,23));
+            $subHour = $subHour->subHour(rand(1, 23));
             $subDay = Carbon::now();
-            $subDay = $subDay->subDay(rand(1,59));
+            $subDay = $subDay->subDay(rand(1, 59));
 
             $rand_router = 5;
             $posted = Carbon::now();
-            $posted = $posted->subSecond(rand(1,59));
+            $posted = $posted->subSecond(rand(1, 59));
 
             $posted30 = Carbon::now();
             $posted30 = $posted30->subSecond(30);
@@ -287,19 +290,19 @@ class MacAddressesTableSeeder extends Seeder
         for ($i=31; $i <= 36; $i++) {
             $now = Carbon::now();
             $subSecond = Carbon::now();
-            $subSecond = $subSecond->subSecond(rand(1,59));
+            $subSecond = $subSecond->subSecond(rand(1, 59));
             $subMinutes = Carbon::now();
-            $subMinutes = $subMinutes->subMinutes(rand(1,59));
+            $subMinutes = $subMinutes->subMinutes(rand(1, 59));
             $subHour5 = Carbon::now();
-            $subHour5 = $subHour5->subHour(rand(1,5));
+            $subHour5 = $subHour5->subHour(rand(1, 5));
             $subHour = Carbon::now();
-            $subHour = $subHour->subHour(rand(1,23));
+            $subHour = $subHour->subHour(rand(1, 23));
             $subDay = Carbon::now();
-            $subDay = $subDay->subDay(rand(1,59));
+            $subDay = $subDay->subDay(rand(1, 59));
 
-            $rand_router = rand(3,4);
+            $rand_router = rand(3, 4);
             $posted = Carbon::now();
-            $posted = $posted->subSecond(rand(1,59));
+            $posted = $posted->subSecond(rand(1, 59));
 
             $posted30 = Carbon::now();
             $posted30 = $posted30->subSecond(30);
@@ -310,7 +313,8 @@ class MacAddressesTableSeeder extends Seeder
             }
             $mac_top = strtoupper(str_random(2)) ;
             $mac_bottom = strtoupper(str_random(2)) ;
-            $mac = $mac_top .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. $mac_bottom;            $XX = strtoupper(str_random(2));
+            $mac = $mac_top .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. strtoupper(str_random(2)) .':'. $mac_bottom;
+            $XX = strtoupper(str_random(2));
             $vendor = $XX . $XX . $XX . '.inc';
             $device = $XX . $XX . $XX . $XX;
             $param = [
@@ -336,19 +340,19 @@ class MacAddressesTableSeeder extends Seeder
         for ($i=37; $i <= 40; $i++) {
             $now = Carbon::now();
             $subSecond = Carbon::now();
-            $subSecond = $subSecond->subSecond(rand(1,59));
+            $subSecond = $subSecond->subSecond(rand(1, 59));
             $subMinutes = Carbon::now();
-            $subMinutes = $subMinutes->subMinutes(rand(1,59));
+            $subMinutes = $subMinutes->subMinutes(rand(1, 59));
             $subHour5 = Carbon::now();
-            $subHour5 = $subHour5->subHour(rand(1,5));
+            $subHour5 = $subHour5->subHour(rand(1, 5));
             $subHour = Carbon::now();
-            $subHour = $subHour->subHour(rand(1,23));
+            $subHour = $subHour->subHour(rand(1, 23));
             $subDay = Carbon::now();
-            $subDay = $subDay->subDay(rand(1,59));
+            $subDay = $subDay->subDay(rand(1, 59));
 
             $rand_router = 5;
             $posted = Carbon::now();
-            $posted = $posted->subSecond(rand(1,59));
+            $posted = $posted->subSecond(rand(1, 59));
 
             $posted30 = Carbon::now();
             $posted30 = $posted30->subSecond(30);
@@ -416,18 +420,18 @@ class MacAddressesTableSeeder extends Seeder
         for ($i=47; $i <= 56; $i++) {
             $now = Carbon::now();
             $subSecond = Carbon::now();
-            $subSecond = $subSecond->subSecond(rand(1,59));
+            $subSecond = $subSecond->subSecond(rand(1, 59));
             $subMinutes = Carbon::now();
-            $subMinutes = $subMinutes->subMinutes(rand(1,59));
+            $subMinutes = $subMinutes->subMinutes(rand(1, 59));
             $subHour5 = Carbon::now();
-            $subHour5 = $subHour5->subHour(rand(1,5));
+            $subHour5 = $subHour5->subHour(rand(1, 5));
             $subHour = Carbon::now();
-            $subHour = $subHour->subHour(rand(1,23));
+            $subHour = $subHour->subHour(rand(1, 23));
             $subDay = Carbon::now();
-            $subDay = $subDay->subDay(rand(1,59));
+            $subDay = $subDay->subDay(rand(1, 59));
 
             $posted = Carbon::now();
-            $posted = $posted->subSecond(rand(1,59));
+            $posted = $posted->subSecond(rand(1, 59));
 
             $posted30 = Carbon::now();
             $posted30 = $posted30->subSecond(30);

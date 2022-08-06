@@ -2,10 +2,13 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommunityUserStatus extends Model
 {
+    use HasFactory;
+
     /**
      * モデルと関連しているテーブル
      *
@@ -29,6 +32,4 @@ class CommunityUserStatus extends Model
             ->where('communities_users_statuses.id', $community_user_id)
             ->pluck('role')->first();
     }
-
-
 }

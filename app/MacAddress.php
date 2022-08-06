@@ -2,10 +2,13 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class MacAddress extends Model
 {
+    use HasFactory;
+
     /**
      * モデルと関連しているテーブル
      *
@@ -47,5 +50,4 @@ class MacAddress extends Model
             ->Join('community_user', 'community_user.id', '=', 'mac_addresses.community_user_id')
             ->where('community_user.id', $community_user_id);
     }
-
 }

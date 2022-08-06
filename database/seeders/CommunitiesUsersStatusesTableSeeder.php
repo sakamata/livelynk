@@ -1,7 +1,10 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CommunitiesUsersStatusesTableSeeder extends Seeder
 {
@@ -13,13 +16,13 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
     public function run()
     {
         $subSecond = Carbon::now();
-        $subSecond = $subSecond->subSecond(rand(1,59));
+        $subSecond = $subSecond->subSecond(rand(1, 59));
         $subHour = Carbon::now();
-        $subHour = $subHour->subHour(rand(1,23));
+        $subHour = $subHour->subHour(rand(1, 23));
         $subDay = Carbon::now();
-        $subDay = $subDay->subDay(rand(31,59));
+        $subDay = $subDay->subDay(rand(31, 59));
         $subDay2 = Carbon::now();
-        $subDay2 = $subDay2->subDay(rand(1,30));
+        $subDay2 = $subDay2->subDay(rand(1, 30));
 
         // user1 comm1 super管理者
         $param = [
@@ -69,13 +72,13 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
         // 管理ユーザー& community1 前半 滞在中
         for ($i=5; $i <= 8; $i++) {
             $subSecond = Carbon::now();
-            $subSecond = $subSecond->subSecond(rand(1,59));
+            $subSecond = $subSecond->subSecond(rand(1, 59));
             $subHour = Carbon::now();
-            $subHour = $subHour->subHour(rand(1,23));
+            $subHour = $subHour->subHour(rand(1, 23));
             $subDay = Carbon::now();
-            $subDay = $subDay->subDay(rand(31,59));
+            $subDay = $subDay->subDay(rand(31, 59));
             $subDay2 = Carbon::now();
-            $subDay2 = $subDay2->subDay(rand(1,30));
+            $subDay2 = $subDay2->subDay(rand(1, 30));
             $param = [
                 'id' => $i,
                 'role_id' => 1,
@@ -90,13 +93,13 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
         // community1 後半 帰宅中
         for ($i=9; $i <= 14; $i++) {
             $subSecond = Carbon::now();
-            $subSecond = $subSecond->subSecond(rand(1,59));
+            $subSecond = $subSecond->subSecond(rand(1, 59));
             $subHour = Carbon::now();
-            $subHour = $subHour->subHour(rand(1,23));
+            $subHour = $subHour->subHour(rand(1, 23));
             $subDay = Carbon::now();
-            $subDay = $subDay->subDay(rand(31,59));
+            $subDay = $subDay->subDay(rand(31, 59));
             $subDay2 = Carbon::now();
-            $subDay2 = $subDay2->subDay(rand(1,30));
+            $subDay2 = $subDay2->subDay(rand(1, 30));
             $role = $i == 13 ? 2 : 1;
             $param = [
                 'id' => $i,
@@ -112,13 +115,13 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
         // community2 & 3 重複ユーザー 全て滞在中
         for ($i=15; $i <= 40; $i++) {
             $subSecond = Carbon::now();
-            $subSecond = $subSecond->subSecond(rand(1,59));
+            $subSecond = $subSecond->subSecond(rand(1, 59));
             $subHour = Carbon::now();
-            $subHour = $subHour->subHour(rand(1,23));
+            $subHour = $subHour->subHour(rand(1, 23));
             $subDay = Carbon::now();
-            $subDay = $subDay->subDay(rand(31,59));
+            $subDay = $subDay->subDay(rand(31, 59));
             $subDay2 = Carbon::now();
-            $subDay2 = $subDay2->subDay(rand(1,30));
+            $subDay2 = $subDay2->subDay(rand(1, 30));
             $param = [
                 'id' => $i,
                 'role_id' => 1,
@@ -132,7 +135,7 @@ class CommunitiesUsersStatusesTableSeeder extends Seeder
 
         // provisonal user
         $id = 41;
-        for ($i= 0; $i <= 5; $i++) { 
+        for ($i= 0; $i <= 5; $i++) {
             $param = [
                 'id' => $id,
                 'role_id' => 1,

@@ -1,7 +1,10 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use App\GlobalIp;
+use Illuminate\Support\Facades\DB;
 
 class GlobalIpTableSeeder extends Seeder
 {

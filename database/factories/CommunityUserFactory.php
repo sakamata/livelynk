@@ -3,12 +3,13 @@
 namespace Database\Factories;
 
 use App\Community;
+use App\UserTable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\GlobalIp>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\CommunityUser>
  */
-class GlobalIpFactory extends Factory
+class CommunityUserFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,10 +18,9 @@ class GlobalIpFactory extends Factory
      */
     public function definition()
     {
-        $ips = ['::ffff:'. $this->faker->ipv4, $this->faker->ipv6];
         return [
             'community_id' => Community::factory()->create()->id,
-            'global_ip' => $ips[array_rand($ips)],
+            'user_id' => UserTable::factory()->create()->id,
         ];
     }
 }
