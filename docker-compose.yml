@@ -1,0 +1,49 @@
+version: "3"
+services:
+  web:
+    image: nginx:1.15.6
+    ports:
+      - "8000:80"
+    depends_on:
+      - app
+    volumes:
+      - ./docker/web/default.conf:/etc/nginx/conf.d/default.conf
+      # https://teratail.com/questions/264426
+      # "web" コンテナにも /var/www/html/myapp をマウントする
+      - .:/var/www/html
+
+  app:
+    build: ./docker/php
+    volumes:
+      # jsFMにした際は修正
+      - .:/var/www/html
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: whois
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # volumes:
+      # - ./mysql-data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    links:
+      - mysql
+    ports:
+      - 8080:80
+    volumes:
+      - /sessions
+volumes:
+  mysql-data:
